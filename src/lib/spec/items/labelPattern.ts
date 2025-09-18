@@ -31,12 +31,14 @@ function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
   return issues;
 }
 
- 
 function heal(
   _issues: Issue[],
   _params: Params,
   _pack?: unknown
 ): string | null {
+  void _issues;
+  void _params;
+  void _pack;
   return `Conform section headers to the label pattern "# {n}. {title}" (e.g., "# 1. TL;DR").`;
 }
 

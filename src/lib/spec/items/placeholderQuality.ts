@@ -7,17 +7,19 @@ export const itemId = "placeholder-quality";
 const METRIC_KEYWORDS = /(baseline|target|metric)/i;
 const UNIT_KEYWORDS = /(minutes|hours|days|%|count|users)/i;
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function toPrompt(_params: Record<string, never>, _pack?: unknown): string {
+  void _params;
+  void _pack;
   return "Placeholders must be specific: include data, units, timeframe, and source.";
 }
 
- 
 function validate(
   draft: string,
   _params: Record<string, never>,
   _pack?: unknown
 ): Issue[] {
+  void _params;
+  void _pack;
   const issues: Issue[] = [];
   const placeholders = draft.match(/\[PM_INPUT_NEEDED:[^\]]+\]/g) || [];
 
@@ -50,12 +52,13 @@ function validate(
   return issues;
 }
 
- 
 function heal(
   issues: Issue[],
   _params: Record<string, never>,
   _pack?: unknown
 ): string | null {
+  void _params;
+  void _pack;
   if (!issues.length) return null;
   return "Make placeholders more specific by including units, timeframes, and data sources. Use at least 3 words and include units for metric-related placeholders.";
 }

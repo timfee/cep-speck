@@ -63,12 +63,13 @@ function validate(draft: string, params: Params, pack?: SpecPack): Issue[] {
   return issues;
 }
 
- 
 function heal(
   issues: Issue[],
   _params: Params,
   _pack?: SpecPack
 ): string | null {
+  void _params;
+  void _pack;
   if (!issues.length) return null;
   return `Replace banned terms with precise CEP/Admin Console terminology appropriate to context.`;
 }

@@ -138,12 +138,13 @@ function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
   return issues;
 }
 
- 
 function heal(
   issues: Issue[],
   _params: Params,
   _pack?: unknown
 ): string | null {
+  void _params;
+  void _pack;
   if (!issues.length) return null;
 
   const healingInstructions: string[] = [];

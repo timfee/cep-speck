@@ -61,12 +61,14 @@ function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
   return issues;
 }
 
- 
 function heal(
   _issues?: Issue[],
   _params?: Params,
   _pack?: unknown
 ): string | null {
+  void _issues;
+  void _params;
+  void _pack;
   return `Align metric values:
 1. List each metric appearing in both TL;DR and Success Metrics.
 2. For any differing value, prefer the more specific or numerically justified one.

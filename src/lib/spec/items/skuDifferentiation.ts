@@ -48,12 +48,14 @@ function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
   return issues;
 }
 
- 
 function heal(
   _issues: Issue[],
   _params: Params,
   _pack?: unknown
 ): string | null {
+  void _issues;
+  void _params;
+  void _pack;
   return `For each feature block under "# 6. Functional Requirements":
 1. Add a line beginning with "**Target SKU:**" followed by one of (Core | Premium | Both).
 2. If the overall PRD target SKU is Premium and a feature is marked Core, immediately follow with a one-sentence differentiation rationale referencing:

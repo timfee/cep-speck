@@ -144,8 +144,7 @@ export async function POST(req: NextRequest) {
           try {
             const { confirmed, filtered } = await performSelfReview(
               draft,
-              report.issues,
-              pack
+              report.issues
             );
             controller.enqueue(
               sseLine({

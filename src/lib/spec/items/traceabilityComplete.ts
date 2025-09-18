@@ -70,17 +70,19 @@ function doesMetricReferenceFeature(
   return keywordMatch || firstWordMatch;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function toPrompt(_params: Record<string, never>, _pack?: unknown): string {
+  void _params;
+  void _pack;
   return "Ensure every problem maps to a feature and every feature has at least one success metric.";
 }
 
- 
 function validate(
   draft: string,
   _params: Record<string, never>,
   _pack?: unknown
 ): Issue[] {
+  void _params;
+  void _pack;
   const issues: Issue[] = [];
   const problemBlock = section(
     draft,
@@ -137,12 +139,14 @@ function validate(
   return issues;
 }
 
- 
 function heal(
   _issues: Issue[],
   _params: Record<string, never>,
   _pack?: unknown
 ): string | null {
+  void _issues;
+  void _params;
+  void _pack;
   return `Restore problem→feature→metric chain:
 1. For each People Problem bullet, cite it explicitly in at least one feature intro sentence.
 2. For each feature, add at least one Success Metric referencing a distinctive keyword from the feature name.
