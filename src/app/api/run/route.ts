@@ -5,6 +5,7 @@ import { buildSystemPrompt, buildUserPrompt } from '@/lib/spec/prompt';
 import { validateAll } from '@/lib/spec/validate';
 import { aggregateHealing } from '@/lib/spec/healing/aggregate';
 import { readKnowledgeDirectory } from '@/lib/knowledge/reader';
+import { performCompetitorResearch } from '@/lib/research/webSearch';
 import pack from '@/lib/spec/packs/prd-v1.json';
 import type { SpecPack } from '@/lib/spec/types';
 import '@/lib/spec/items';
@@ -30,9 +31,23 @@ export async function POST(req: NextRequest) {
         controller.enqueue(sseLine({ type: 'phase', phase: 'loading-knowledge', attempt: 0 }));
         const knowledgeFiles = await readKnowledgeDirectory('./knowledge');
         
-        const researchContext = knowledgeFiles.length > 0 
-          ? `\n\nKnowledge Base Context:\n${knowledgeFiles.map(f => `${f.path}:\n${f.content}`).join('\n\n')}`
-          : '';
+        controller.enqueue(sseLine({ type: 'phase', phase: 'performing-research', attempt: 0 }));
+        const researchResult = await performCompetitorResearch(['Zscaler', 'Island', 'Talon', 'Microsoft Edge for Business']);
+        
+        let researchContext = '';
+        if (knowledgeFiles.length > 0) {
+          researchContext += `\n\nKnowledge Base Context:\n${knowledgeFiles.map(f => `${f.path}:\n${f.content}`).join('\n\n')}`;
+        }
+        
+        if (researchResult.competitors.length > 0) {
+          researchContext += `\n\nCompetitor Research Results:\n${researchResult.competitors.map((c) => 
+            `${c.vendor}:\n- Onboarding: ${c.onboardingDefaults}\n- Policy Templates: ${c.policyTemplates}\n- Enterprise Browser: ${c.enterpriseBrowser}\n- Data Protection: ${c.dataProtection}\n- Mobile Support: ${c.mobileSupport}`
+          ).join('\n\n')}`;
+        }
+        
+        if (researchResult.autoFilledFacts.length > 0) {
+          researchContext += `\n\nAuto-filled Facts: ${researchResult.autoFilledFacts.join(', ')}`;
+        }
         
         const system = buildSystemPrompt(pack as SpecPack) + researchContext;
         const messages: { role: 'system'|'user'|'assistant'; content: string }[] = [

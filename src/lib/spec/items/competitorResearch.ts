@@ -9,7 +9,7 @@ export type Params = {
 
 export function toPrompt(params: Params): string {
   const vendors = params.vendors.join(', ');
-  return `Perform competitor research on: ${vendors}. Include a brief competitive snapshot in the TL;DR section. Research onboarding defaults, policy templates, enterprise browser posture, data protection capabilities, and mobile support. Use sources from the last ${params.recencyDays} days.`;
+  return `IMPORTANT: Use your web search capabilities to research current information about these enterprise browser vendors: ${vendors}. For each vendor, research and include specific details about: onboarding defaults, policy templates, enterprise browser posture, data protection capabilities, and mobile support. Include a brief competitive snapshot in the TL;DR section with specific vendor capabilities and positioning. Add citations with sources and dates in a Footnotes section after the Annexes. Use sources from the last ${params.recencyDays} days when possible.`;
 }
 
 export function validate(draft: string, params: Params): Issue[] {
@@ -30,9 +30,23 @@ export function validate(draft: string, params: Params): Issue[] {
           evidence: 'No competitive analysis found in TL;DR'
         });
       }
+      
+      const vendorMentions = params.vendors.filter(vendor => 
+        tldrContent.toLowerCase().includes(vendor.toLowerCase())
+      );
+      
+      if (vendorMentions.length === 0) {
+        issues.push({
+          id: 'missing-vendor-analysis',
+          itemId,
+          severity: 'warn',
+          message: 'TL;DR missing specific vendor analysis',
+          evidence: `Expected mentions of: ${params.vendors.join(', ')}`
+        });
+      }
     }
     
-    const hasFootnotes = /footnotes|references/i.test(draft);
+    const hasFootnotes = /footnotes|references|citations/i.test(draft);
     if (!hasFootnotes) {
       issues.push({
         id: 'missing-research-citations',
@@ -40,6 +54,21 @@ export function validate(draft: string, params: Params): Issue[] {
         severity: 'warn',
         message: 'Missing research citations in footnotes',
         evidence: 'No footnotes section found'
+      });
+    }
+    
+    const pmInputMatches = draft.match(/\[PM_INPUT_NEEDED:[^\]]+\]/g) || [];
+    const researchableTopics = pmInputMatches.filter(match => 
+      /competitor|research|analysis|snapshot/i.test(match)
+    );
+    
+    if (researchableTopics.length > 2) {
+      issues.push({
+        id: 'insufficient-research',
+        itemId,
+        severity: 'warn',
+        message: 'Too many research placeholders - web research should auto-fill more facts',
+        evidence: `Found ${researchableTopics.length} researchable placeholders`
       });
     }
   }

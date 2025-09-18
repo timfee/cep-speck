@@ -6,6 +6,7 @@ import * as bannedText from './bannedText';
 import * as labelPattern from './labelPattern';
 import * as wordBudget from './wordBudget';
 import * as competitorResearch from './competitorResearch';
+import * as executiveQuality from './executiveQuality';
 
 registerItem({
   itemId: sectionCount.itemId,
@@ -47,4 +48,11 @@ registerItem({
   toPrompt: (params: unknown) => competitorResearch.toPrompt(params as competitorResearch.Params),
   validate: (draft: string, params: unknown) => competitorResearch.validate(draft, params as competitorResearch.Params),
   heal: (issues: Issue[], params?: unknown) => competitorResearch.heal(issues, params as competitorResearch.Params)
+});
+
+registerItem({
+  itemId: executiveQuality.itemId,
+  toPrompt: (params: unknown) => executiveQuality.toPrompt(params as executiveQuality.Params),
+  validate: (draft: string, params: unknown) => executiveQuality.validate(draft, params as executiveQuality.Params),
+  heal: (issues: Issue[], params?: unknown) => executiveQuality.heal(issues, params as executiveQuality.Params)
 });
