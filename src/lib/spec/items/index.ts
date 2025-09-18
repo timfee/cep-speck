@@ -8,7 +8,7 @@ import * as wordBudget from './wordBudget';
 import * as competitorResearch from './competitorResearch';
 import * as executiveQuality from './executiveQuality';
 import * as crossSectionConsistency from './crossSectionConsistency';
-import * as placeholderQuality from './placeholderQuality';
+import * as technicalFeasibility from './technicalFeasibility';
 
 registerItem({
   itemId: sectionCount.itemId,
@@ -67,8 +67,8 @@ registerItem({
 });
 
 registerItem({
-  itemId: placeholderQuality.itemId,
-  toPrompt: () => placeholderQuality.toPrompt(),
-  validate: (draft: string) => placeholderQuality.validate(draft),
-  heal: (issues: Issue[]) => placeholderQuality.heal(issues)
+  itemId: technicalFeasibility.itemId,
+  toPrompt: () => technicalFeasibility.toPrompt(),
+  validate: (draft: string) => technicalFeasibility.validate(draft),
+  heal: () => technicalFeasibility.heal()
 });

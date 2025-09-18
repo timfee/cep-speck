@@ -102,9 +102,9 @@
       }
     },
     {
-      "id": "placeholder-quality",
+      "id": "technical-feasibility",
       "kind": "policy",
-      "priority": 20,
+      "priority": 85,
       "severity": "error",
       "params": {}
     }
