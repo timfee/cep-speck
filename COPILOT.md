@@ -355,11 +355,11 @@ This repository enforces a strictly deterministic first-pass validation before a
 
 ### Common Anti-Patterns
 
-| Pattern | Why Rejected | Correct Approach |
-|---------|--------------|------------------|
-| Global rewrite suggestion | Erodes author voice | Localized line edits only |
-| Adding invented metrics | Risk of hallucination | Insert `[PM_INPUT_NEEDED: metric baseline <detail>]` |
-| Looping self-review until clean | Token waste, risk of homogenization | Single confirm pass; then heal |
+| Pattern                         | Why Rejected                        | Correct Approach                                     |
+| ------------------------------- | ----------------------------------- | ---------------------------------------------------- |
+| Global rewrite suggestion       | Erodes author voice                 | Localized line edits only                            |
+| Adding invented metrics         | Risk of hallucination               | Insert `[PM_INPUT_NEEDED: metric baseline <detail>]` |
+| Looping self-review until clean | Token waste, risk of homogenization | Single confirm pass; then heal                       |
 
 ### Runtime Guarantees
 
@@ -369,4 +369,3 @@ This repository enforces a strictly deterministic first-pass validation before a
 
 **Rationale**
 Fail-fast + minimal deterministic surface keeps the system predictable and cheap, while optional model filtering prevents overfitting to brittle regexes.
-

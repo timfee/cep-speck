@@ -1,12 +1,11 @@
 import { SpecPack } from './types';
-import { getItem } from './registry';
+import { invokeItemToPrompt } from './registry';
 import { CRITICAL_VALIDATION_REQUIREMENTS } from './config/criticalValidationRules';
 
 export function buildSystemPrompt(pack: SpecPack): string {
   const lines: string[] = [];
   for (const def of pack.items) {
-    const mod = getItem(def.id);
-    const p = mod.toPrompt(def.params as unknown, pack);
+    const p = invokeItemToPrompt(def.id, def, pack);
     if (p) lines.push(`- [${def.kind}] ${p}`);
   }
   if (pack.composition?.labelPattern) {

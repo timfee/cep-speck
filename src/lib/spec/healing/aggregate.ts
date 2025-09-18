@@ -1,5 +1,5 @@
 import type { SpecPack, Issue } from '../types';
-import { getItem } from '../registry';
+import { invokeItemHeal } from '../registry';
 
 export function aggregateHealing(draftIssues: Issue[], pack: SpecPack): string {
   if (!draftIssues.length) return '';
@@ -33,8 +33,8 @@ export function aggregateHealing(draftIssues: Issue[], pack: SpecPack): string {
   const chunks: string[] = [];
   for (const id of sortedItemIds) {
     const def = defsById.get(id)!;
-    const mod = getItem(id);
-    const msg = mod.heal(byItem.get(id)!, def.params as unknown, pack);
+    const issues = byItem.get(id)!;
+    const msg = invokeItemHeal(id, issues, def, pack);
     if (msg) chunks.push(`${id}: ${msg}`);
   }
 

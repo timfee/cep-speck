@@ -40,11 +40,12 @@ export function validateSpecPack(pack: SpecPack): PackValidationError[] {
   for (const r of regexList) {
     try {
       new RegExp(r);
-    } catch (e) {
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
       errs.push({
         code: "BAD_REGEX",
         message: `Invalid bannedText regex: ${r}`,
-        evidence: (e as Error).message,
+        evidence: errorMessage,
       });
     }
   }
@@ -52,11 +53,12 @@ export function validateSpecPack(pack: SpecPack): PackValidationError[] {
   if (pack.composition?.headerRegex) {
     try {
       new RegExp(pack.composition.headerRegex);
-    } catch (e) {
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
       errs.push({
         code: "BAD_HEADER_REGEX",
         message: "Invalid headerRegex",
-        evidence: (e as Error).message,
+        evidence: errorMessage,
       });
     }
   }

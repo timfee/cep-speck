@@ -3,15 +3,21 @@ import { readKnowledgeDirectory } from "@/lib/knowledge/reader";
 import { performCompetitorResearch } from "@/lib/research/webSearch";
 import { aggregateHealing } from "@/lib/spec/healing/aggregate";
 import "@/lib/spec/items";
-import pack from "@/lib/spec/packs/prd-v1.json";
+import packData from "@/lib/spec/packs/prd-v1.json";
 import { assertValidSpecPack } from "@/lib/spec/packValidate";
 import { buildSystemPrompt, buildUserPrompt } from "@/lib/spec/prompt";
+import { performSelfReview } from "@/lib/spec/selfReview";
 import type { SpecPack } from "@/lib/spec/types";
 import { validateAll } from "@/lib/spec/validate";
 import { streamText } from "ai";
 import { NextRequest } from "next/server";
 
 export const runtime = "nodejs";
+
+// Type-cast the imported JSON to SpecPack once at module level
+// TODO: This `as` cast is necessary due to TypeScript's JSON import limitations
+// The pack is validated at runtime via assertValidSpecPack()
+const pack: SpecPack = packData as SpecPack;
 
 function sseLine(obj: Record<string, unknown>) {
   return new TextEncoder().encode(JSON.stringify(obj) + "\n");
@@ -20,7 +26,7 @@ function sseLine(obj: Record<string, unknown>) {
 export async function POST(req: NextRequest) {
   const { specText, maxAttempts: maxOverride } = await req.json();
   const maxAttempts = Math.min(
-    maxOverride ?? (pack as SpecPack).healPolicy.maxAttempts ?? 3,
+    maxOverride ?? pack.healPolicy.maxAttempts ?? 3,
     5
   );
 
@@ -40,10 +46,11 @@ export async function POST(req: NextRequest) {
         }
         // Validate pack once (fail fast if structurally invalid)
         try {
-          assertValidSpecPack(pack as SpecPack);
-        } catch (e) {
+          assertValidSpecPack(pack);
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : String(error);
           controller.enqueue(
-            sseLine({ type: "error", message: (e as Error).message })
+            sseLine({ type: "error", message: errorMessage })
           );
           controller.close();
           return;
@@ -85,7 +92,7 @@ export async function POST(req: NextRequest) {
           )}`;
         }
 
-        const system = buildSystemPrompt(pack as SpecPack) + researchContext;
+        const system = buildSystemPrompt(pack) + researchContext;
         const messages: {
           role: "system" | "user" | "assistant";
           content: string;
@@ -117,7 +124,7 @@ export async function POST(req: NextRequest) {
           controller.enqueue(
             sseLine({ type: "phase", phase: "validating", attempt })
           );
-          const report = validateAll(draft, pack as SpecPack);
+          const report = validateAll(draft, pack);
           controller.enqueue(sseLine({ type: "validation", report }));
 
           if (report.ok) {
@@ -129,10 +136,41 @@ export async function POST(req: NextRequest) {
             break;
           }
 
+          // AI self-review phase for filtering false positives
+          controller.enqueue(
+            sseLine({ type: "phase", phase: "self-reviewing", attempt })
+          );
+          
+          let issuesToHeal = report.issues;
+          try {
+            const { confirmed, filtered } = await performSelfReview(draft, report.issues, pack);
+            controller.enqueue(sseLine({ 
+              type: "self-review", 
+              confirmed: confirmed.length,
+              filtered: filtered.length,
+              originalIssues: report.issues.length
+            }));
+            
+            // Use confirmed issues for healing
+            if (confirmed.length === 0) {
+              finalDraft = draft;
+              controller.enqueue(
+                sseLine({ type: "phase", phase: "done", attempt })
+              );
+              controller.enqueue(sseLine({ type: "result", draft: finalDraft }));
+              break;
+            }
+            
+            issuesToHeal = confirmed;
+          } catch (selfReviewError) {
+            console.warn('Self-review failed, proceeding with all issues:', selfReviewError);
+            // Continue with original issues if self-review fails
+          }
+
           controller.enqueue(
             sseLine({ type: "phase", phase: "healing", attempt })
           );
-          const followup = aggregateHealing(report.issues, pack as SpecPack);
+          const followup = aggregateHealing(issuesToHeal, pack);
           messages.push({ role: "assistant", content: draft });
           messages.push({ role: "user", content: followup });
           finalDraft = draft;
