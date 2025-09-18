@@ -1,13 +1,13 @@
-import type { SpecPack, Issue } from '../types';
+import type { Issue } from '../types';
 
 export const itemId = 'label-pattern';
 export type Params = { pattern: string; headerRegex?: string };
 
-export function toPrompt(params: Params, _pack: SpecPack): string {
+export function toPrompt(params: Params): string {
   return `Use the header label pattern: ${params.pattern} for top-level sections.`;
 }
 
-export function validate(draft: string, params: Params, _pack: SpecPack): Issue[] {
+export function validate(draft: string, params: Params): Issue[] {
   const lines = draft.split('\n').filter(Boolean);
   const hdrRx = params.headerRegex ? new RegExp(params.headerRegex) : /^#\s+\d+\./;
   const issues: Issue[] = [];
@@ -21,6 +21,6 @@ export function validate(draft: string, params: Params, _pack: SpecPack): Issue[
   return issues;
 }
 
-export function heal(_issues: Issue[], _params: Params, _pack: SpecPack): string | null {
+export function heal(): string | null {
   return `Conform section headers to the label pattern "# {n}. {title}" (e.g., "# 1. TL;DR").`;
 }

@@ -1,14 +1,14 @@
-import type { SpecPack, Issue } from '../types';
+import type { Issue } from '../types';
 
 export const itemId = 'section-count';
 export type Params = { exact?: number; min?: number; max?: number; headerRegex: string };
 
-export function toPrompt(params: Params, _pack: SpecPack): string {
+export function toPrompt(params: Params): string {
   const range = params.exact != null ? `exactly ${params.exact}` : `${params.min ?? '?'}..${params.max ?? '?'}`;
   return `Ensure the document has ${range} top-level sections; detect sections using headerRegex: ${params.headerRegex}`;
 }
 
-export function validate(draft: string, params: Params, _pack: SpecPack): Issue[] {
+export function validate(draft: string, params: Params): Issue[] {
   const rx = new RegExp(params.headerRegex, 'gm');
   const matches = draft.match(rx) ?? [];
   const count = matches.length;
@@ -30,7 +30,7 @@ export function validate(draft: string, params: Params, _pack: SpecPack): Issue[
   return issues;
 }
 
-export function heal(issues: Issue[], params: Params, _pack: SpecPack): string | null {
+export function heal(issues: Issue[], params: Params): string | null {
   if (!issues.length) return null;
   const range = params.exact != null ? `exactly ${params.exact}` : `${params.min ?? '?'}..${params.max ?? '?'}`;
   return `Adjust the number of top-level sections to ${range}. Keep compliant sections; add or trim minimally. Maintain header pattern ${params.headerRegex}.`;

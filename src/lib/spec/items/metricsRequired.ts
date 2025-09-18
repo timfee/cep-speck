@@ -1,13 +1,13 @@
-import type { SpecPack, Issue } from '../types';
+import type { Issue } from '../types';
 
 export const itemId = 'metrics-required';
 export type Params = { require: ('units'|'timeframe'|'SoT')[]; metricRegex: string };
 
-export function toPrompt(params: Params, _pack: SpecPack): string {
+export function toPrompt(params: Params): string {
   return `Every metric must include: ${params.require.join(', ')}. Identify metric lines by regex: ${params.metricRegex}`;
 }
 
-export function validate(draft: string, params: Params, _pack: SpecPack): Issue[] {
+export function validate(draft: string, params: Params): Issue[] {
   const rx = new RegExp(params.metricRegex, 'gm');
   const metricLines = draft.split('\n').filter(l => rx.test(l));
   const issues: Issue[] = [];
@@ -30,7 +30,7 @@ export function validate(draft: string, params: Params, _pack: SpecPack): Issue[
   return issues;
 }
 
-export function heal(issues: Issue[], params: Params, _pack: SpecPack): string | null {
+export function heal(issues: Issue[], params: Params): string | null {
   if (!issues.length) return null;
   const req = params.require.join(', ');
   return `For each metric line (pattern ${params.metricRegex}), add the missing attributes: ${req}. Use timeframe like "within 90 days of GA", explicit units, and name a Source of Truth (SoT). Do not rewrite unrelated content.`;
