@@ -188,3 +188,14 @@ Implemented comprehensive L7+ quality validation system with enhanced banned tex
 - 2025-09-18: Added knowledge seeds under ./knowledge (cep/policy-templates.md, enterprise-browsers/vendors.md, mobile/android-enterprise.md) to influence research context.  
 - 2025-09-18: Strengthened bannedText heading pattern to anchor additional cutesy phrases in headers; added explicit anchored variant to avoid body false-positives.  
 - 2025-09-18: Expanded executiveQuality metrics unit whitelist to reduce false positives (added s/sec/seconds, qps, rps, rpm, req/s).
+### Real-world PRD testing — 2025-09-18
+- Prompt A (sensationalist + business-speak + unitless metrics + cutesy headings + verbose transitions + competitor vendors): validators fired as expected
+  - banned-text: caught sensationalist phrases and cutesy transitions; anchored header rule engaged
+  - executive-quality: flagged numbers without units in Success Metrics
+  - metrics-required: flagged missing units/timeframe/SoT in multiple metrics
+  - competitor-research: TL;DR competitive snapshot and Footnotes present; passes after generation
+  - word-budget: exceeded 1400 target on attempt 2 (~1700 words)
+- Prompt B (heavy cutesy headings/phrases and verbose transitions; unitless metrics): same validators fired; confirms coverage
+  - Observation: anchored header regex prevents body false positives while still catching header cutesy phrasing
+  - Observation: metrics unit whitelist now avoids false positives for qps/rps/rpm/req/s
+- Knowledge seeds present under ./knowledge and app loads; further prompts will verify influence in TL;DR and body content
