@@ -2,7 +2,7 @@
 
 A Next.js application that uses AI to generate and validate Chrome Enterprise Premium (CEP) Product Requirements Documents with a self-healing validation loop using Google Gemini and modular validation system.
 
-Always reference these instructions first and fallback to search or bash commands only when you encounter unexpected information that does not match the info here.
+**ALWAYS reference these instructions first and fallback to search or bash commands ONLY when you encounter unexpected information that does not match the info here.**
 
 ## Working Effectively
 
@@ -19,22 +19,22 @@ Always reference these instructions first and fallback to search or bash command
 
 - **Install dependencies**:
   ```bash
-  # Option 1: npm (12 seconds) - NEVER CANCEL, set timeout to 5+ minutes
+  # Option 1: npm (13.2s validated) - NEVER CANCEL, set timeout to 5+ minutes
   npm install
   
-  # Option 2: pnpm (8 seconds, preferred) - NEVER CANCEL, set timeout to 5+ minutes  
+  # Option 2: pnpm (8.1s validated, preferred) - NEVER CANCEL, set timeout to 5+ minutes  
   npm install -g pnpm
   pnpm install
   ```
 
-- **Lint the code** (5 seconds max) - NEVER CANCEL, set timeout to 2+ minutes:
+- **Lint the code** (2.7s validated) - NEVER CANCEL, set timeout to 2+ minutes:
   ```bash
   npm run lint
   # OR
   pnpm lint
   ```
 
-- **Build the application** (30 seconds) - NEVER CANCEL, set timeout to 10+ minutes:
+- **Build the application** (26.7s validated) - NEVER CANCEL, set timeout to 10+ minutes:
   ```bash
   npm run build
   # OR  
@@ -48,15 +48,17 @@ Always reference these instructions first and fallback to search or bash command
   pnpm dev
   ```
   - Accesses: http://localhost:3000
-  - Ready in ~1 second
+  - Ready in ~1 second (validated)
   - Requires API key for full functionality
 
-- **Run production server**:
+- **Run production server** (KNOWN ISSUE):
   ```bash
   npm run start
   # OR
   pnpm start
   ```
+  - **ISSUE**: Production server currently fails with "routesManifest.dataRoutes is not iterable" error
+  - Use development server for testing: `pnpm dev`
 
 ## Validation
 
@@ -69,21 +71,32 @@ Always reference these instructions first and fallback to search or bash command
    - Enter spec text in left panel (e.g., "Project: Example\nTarget SKU: premium")
    - Click "Run" button
    - Verify phase indicators work (🔄 Generating, 🔍 Validating, 🩹 Healing, ✅ Complete, ❌ Error)
-4. **Test with API key** (if available):
+4. **Test complete generate-validate-heal workflow**:
+   - Application will generate a comprehensive PRD document
+   - Validation system will identify issues (banned text, word count, etc.)
+   - Self-healing will trigger (attempt counter increases)
+   - Multiple iterations will refine the document
+   - **Validated behavior**: Complete workflow takes 30-60 seconds total
+5. **Verify validation issues display**:
+   - Check "Issues" section shows specific validation failures
+   - Common issues: banned text patterns, word budget exceeded, missing metrics attributes
+6. **Test with API key** (if available):
    - Set `GOOGLE_GENERATIVE_AI_API_KEY` in `.env.local`
    - Run complete generate-validate-heal workflow
-   - Verify draft content appears in right panel
+   - Verify draft content appears in right panel with competitive research
    - Verify validation issues display correctly
-5. **Test without API key**:
+7. **Test without API key**:
    - Should show "❌ Error" with "Missing GOOGLE_GENERATIVE_AI_API_KEY" message
 
 ### Pre-commit Validation
 Always run before committing changes:
 ```bash
-pnpm lint
-pnpm build
+pnpm lint    # Must pass (2.7s) 
+pnpm build   # Must pass (26.7s)
 ```
 Both must pass successfully or CI will fail.
+
+**Note**: Production server (`pnpm start`) currently has a known issue. Use development server for all testing.
 
 ## Architecture Overview
 
@@ -92,6 +105,31 @@ Both must pass successfully or CI will fail.
 - `toPrompt(params, pack)` - Contributes to initial AI prompt
 - `validate(draft, params, pack)` - Validates generated content  
 - `heal(issues, params, pack)` - Provides healing instructions for retry
+
+## Application Functionality
+
+### Validated Capabilities
+**The application successfully**:
+- Generates comprehensive PRD documents using Google Gemini AI
+- Performs competitive research with real data (Zscaler, Island, Talon, Microsoft Edge)
+- Implements self-healing validation loop with multiple validation attempts
+- Shows real-time phase indicators and streaming content
+- Validates against 8 modular validation rules:
+  - **bannedText**: Prevents buzzwords and forbidden terms
+  - **competitorResearch**: Ensures competitive analysis
+  - **crossSectionConsistency**: Validates section consistency
+  - **executiveQuality**: Ensures executive summary quality
+  - **labelPattern**: Validates section numbering format
+  - **metricsRequired**: Validates metrics have units/timeframe/SoT
+  - **sectionCount**: Ensures minimum section count
+  - **wordBudget**: Enforces word count limits (1800 words max)
+- Provides detailed validation issue reporting with specific error messages
+
+### Expected Workflow Timing
+- **Phase 1: Generate** - AI creates initial content (10-20 seconds)
+- **Phase 2: Validate** - Modular rules check content (1-2 seconds)
+- **Phase 3: Heal** - If issues found, retry with healing instructions (10-20 seconds per attempt)
+- **Total Time**: 30-60 seconds for complete workflow with 2-3 attempts typical
 
 ### Self-Healing Validation Loop
 1. **Generate** - AI creates initial content using Gemini
@@ -104,7 +142,7 @@ Both must pass successfully or CI will fail.
 **Core Architecture**:
 - `src/lib/spec/types.ts` - TypeScript interfaces for validation system
 - `src/lib/spec/registry.ts` - Item registration system
-- `src/lib/spec/items/` - Individual validation modules (9 total)
+- `src/lib/spec/items/` - Individual validation modules (8 total)
 - `src/lib/spec/packs/prd-v1.json` - SpecPack configuration with rules
 - `src/lib/spec/prompt.ts` - System prompt building from modular items
 - `src/lib/spec/validate.ts` - Validation orchestration
@@ -182,9 +220,9 @@ Use these timings to set appropriate timeouts and avoid premature cancellation:
 
 | Command | npm | pnpm | Timeout Recommendation |
 |---------|-----|------|----------------------|
-| install | ~12s | ~8s | 5+ minutes |
-| lint | ~2.5s | ~4.5s | 2+ minutes |
-| build | ~26s | ~30s | 10+ minutes |
+| install | ~13.2s | ~8.1s | 5+ minutes |
+| lint | ~2.7s | ~2.7s | 2+ minutes |
+| build | ~26.7s | ~26.7s | 10+ minutes |
 | dev startup | ~1s | ~1s | 2+ minutes |
 
 **NEVER CANCEL these commands** - they complete quickly but may occasionally take longer on different systems.
@@ -196,6 +234,7 @@ Use these timings to set appropriate timeouts and avoid premature cancellation:
 - **Build failures**: Run `pnpm lint` first to catch TypeScript/ESLint errors
 - **Dev server won't start**: Check if port 3000 is available
 - **Module not found errors**: Run `pnpm install` to ensure dependencies are up to date
+- **Production server fails**: Known issue with "routesManifest.dataRoutes is not iterable" error. Use `pnpm dev` for testing.
 
 ### Environment Files
 - `.env.local` - Local development environment variables (not committed)
@@ -213,7 +252,15 @@ src/
     knowledge/            # Knowledge base files
     research/             # Web search capabilities
     spec/
-      items/              # 9 validation modules
+      items/              # 8 validation modules:
+        bannedText.ts     # Prevents buzzwords and forbidden terms
+        competitorResearch.ts # Ensures competitive analysis
+        crossSectionConsistency.ts # Validates section consistency  
+        executiveQuality.ts # Ensures executive summary quality
+        labelPattern.ts   # Validates section numbering format
+        metricsRequired.ts # Validates metrics have units/timeframe/SoT
+        sectionCount.ts   # Ensures minimum section count
+        wordBudget.ts     # Enforces word count limits
       packs/              # SpecPack JSON configurations
       healing/            # Healing aggregation
       prompt.ts           # System prompt builder

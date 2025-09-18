@@ -8,7 +8,7 @@ import * as wordBudget from './wordBudget';
 import * as competitorResearch from './competitorResearch';
 import * as executiveQuality from './executiveQuality';
 import * as crossSectionConsistency from './crossSectionConsistency';
-import * as traceabilityComplete from './traceabilityComplete';
+import * as technicalFeasibility from './technicalFeasibility';
 
 registerItem({
   itemId: sectionCount.itemId,
@@ -67,8 +67,8 @@ registerItem({
 });
 
 registerItem({
-  itemId: traceabilityComplete.itemId,
-  toPrompt: () => traceabilityComplete.toPrompt(),
-  validate: (draft: string) => traceabilityComplete.validate(draft),
-  heal: () => traceabilityComplete.heal()
+  itemId: technicalFeasibility.itemId,
+  toPrompt: () => technicalFeasibility.toPrompt(),
+  validate: (draft: string) => technicalFeasibility.validate(draft),
+  heal: () => technicalFeasibility.heal()
 });
