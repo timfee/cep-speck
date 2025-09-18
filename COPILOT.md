@@ -319,3 +319,54 @@ src/
 ---
 
 End of COPILOT guidelines.
+
+---
+
+## 22. Deterministic Validation & Self-Review Policy
+
+This repository enforces a strictly deterministic first-pass validation before any AI heuristic / probabilistic review:
+
+### Deterministic Layer (Primary)
+
+- Always fail fast on the first `error` severity item (design choice: faster feedback + reduces token use).
+- Validators must be pure functions of `(draft, params, pack)` with no network or time-based behavior.
+- Trivial empty `Params` types are forbidden; omit if no params required.
+- Healing instructions should be idempotent: applying them twice should not further change a compliant draft.
+
+### AI Self-Review Layer (Secondary, Planned)
+
+- After deterministic validation, a lightweight model pass MAY confirm or discard borderline issues (especially style or feasibility warnings) to reduce false positives.
+- Target output: structured JSON `{ keep: IssueID[], drop: IssueID[], rationale?: string }`.
+- The model never introduces new issues—only filters existing ones or enriches healing rationale.
+- If model parsing fails or output invalid, fallback to deterministic issues unchanged.
+
+### Design Principles
+
+- Do not re-implement generalized NLP classification; leverage model summarization when ambiguity is high.
+- Preserve document organic style: healers must not rewrite entire sections unless structure violations require.
+- Avoid multi-hop speculative reasoning chains; single pass summarization + directive is sufficient.
+
+### Healer Authoring Checklist
+
+- [ ] Only references issue IDs produced by its validator.
+- [ ] Does not ask model to generate unverifiable market claims.
+- [ ] Provides explicit formatting patterns where adding content (e.g., `**Target SKU:** Premium — rationale`).
+- [ ] Uses imperative verbs ("Add", "Replace", "Annotate") not vague guidance.
+
+### Common Anti-Patterns
+
+| Pattern | Why Rejected | Correct Approach |
+|---------|--------------|------------------|
+| Global rewrite suggestion | Erodes author voice | Localized line edits only |
+| Adding invented metrics | Risk of hallucination | Insert `[PM_INPUT_NEEDED: metric baseline <detail>]` |
+| Looping self-review until clean | Token waste, risk of homogenization | Single confirm pass; then heal |
+
+### Runtime Guarantees
+
+- Validation will never proceed to healing if pack structural validation fails (`assertValidSpecPack`).
+- Self-review (when added) runs only after at least one `error` or `warn` is present; skipped on clean drafts.
+- Fail-fast ensures upper bound on unnecessary validator execution time.
+
+**Rationale**
+Fail-fast + minimal deterministic surface keeps the system predictable and cheap, while optional model filtering prevents overfitting to brittle regexes.
+
