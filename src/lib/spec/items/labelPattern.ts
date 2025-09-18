@@ -21,6 +21,6 @@ export function validate(draft: string, params: Params, _pack: SpecPack): Issue[
   return issues;
 }
 
-export function heal(): string | null {
+export function heal(_issues: Issue[], _params: Params, _pack: SpecPack): string | null {
   return `Conform section headers to the label pattern "# {n}. {title}" (e.g., "# 1. TL;DR").`;
 }

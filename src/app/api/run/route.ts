@@ -5,17 +5,18 @@ import { buildSystemPrompt, buildUserPrompt } from '@/lib/spec/prompt';
 import { validateAll } from '@/lib/spec/validate';
 import { aggregateHealing } from '@/lib/spec/healing/aggregate';
 import pack from '@/lib/spec/packs/prd-v1.json';
+import type { SpecPack } from '@/lib/spec/types';
 import '@/lib/spec/items';
 
 export const runtime = 'nodejs';
 
-function sseLine(obj: any) {
+function sseLine(obj: Record<string, unknown>) {
   return new TextEncoder().encode(JSON.stringify(obj) + '\n');
 }
 
 export async function POST(req: NextRequest) {
   const { specText, maxAttempts: maxOverride } = await req.json();
-  const maxAttempts = Math.min(maxOverride ?? (pack as any).healPolicy.maxAttempts ?? 3, 5);
+  const maxAttempts = Math.min(maxOverride ?? (pack as SpecPack).healPolicy.maxAttempts ?? 3, 5);
 
   const stream = new ReadableStream({
     async start(controller) {
@@ -25,7 +26,7 @@ export async function POST(req: NextRequest) {
           controller.close();
           return;
         }
-        const system = buildSystemPrompt(pack as any);
+        const system = buildSystemPrompt(pack as SpecPack);
         const messages: { role: 'system'|'user'|'assistant'; content: string }[] = [
           { role: 'system', content: system },
           { role: 'user', content: buildUserPrompt(specText) },
@@ -50,7 +51,7 @@ export async function POST(req: NextRequest) {
           controller.enqueue(sseLine({ type: 'draft', draft }));
 
           controller.enqueue(sseLine({ type: 'phase', phase: 'validating', attempt }));
-          const report = validateAll(draft, pack as any);
+          const report = validateAll(draft, pack as SpecPack);
           controller.enqueue(sseLine({ type: 'validation', report }));
 
           if (report.ok) {
@@ -61,7 +62,7 @@ export async function POST(req: NextRequest) {
           }
 
           controller.enqueue(sseLine({ type: 'phase', phase: 'healing', attempt }));
-          const followup = aggregateHealing(report.issues, pack as any);
+          const followup = aggregateHealing(report.issues, pack as SpecPack);
           messages.push({ role: 'assistant', content: draft });
           messages.push({ role: 'user', content: followup });
           finalDraft = draft;
@@ -74,8 +75,9 @@ export async function POST(req: NextRequest) {
         }
 
         controller.close();
-      } catch (e: any) {
-        controller.enqueue(sseLine({ type: 'error', message: e?.message ?? String(e) }));
+      } catch (e: unknown) {
+        const errorMessage = e instanceof Error ? e.message : String(e);
+        controller.enqueue(sseLine({ type: 'error', message: errorMessage }));
         controller.close();
       }
     }

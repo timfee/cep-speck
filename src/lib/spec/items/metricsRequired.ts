@@ -30,7 +30,7 @@ export function validate(draft: string, params: Params, _pack: SpecPack): Issue[
   return issues;
 }
 
-export function heal(issues: Issue[], params: Params): string | null {
+export function heal(issues: Issue[], params: Params, _pack: SpecPack): string | null {
   if (!issues.length) return null;
   const req = params.require.join(', ');
   return `For each metric line (pattern ${params.metricRegex}), add the missing attributes: ${req}. Use timeframe like "within 90 days of GA", explicit units, and name a Source of Truth (SoT). Do not rewrite unrelated content.`;

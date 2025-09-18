@@ -45,7 +45,7 @@ export function validate(draft: string, params: Params, pack: SpecPack): Issue[]
   return issues;
 }
 
-export function heal(issues: Issue[]): string | null {
+export function heal(issues: Issue[], _params: Params, _pack: SpecPack): string | null {
   if (!issues.length) return null;
   return `Replace banned terms with precise CEP/Admin Console terminology appropriate to context.`;
 }

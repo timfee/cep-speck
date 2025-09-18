@@ -4,6 +4,6 @@ import * as metricsRequired from './metricsRequired';
 import * as bannedText from './bannedText';
 import * as labelPattern from './labelPattern';
 
-[sectionCount, metricsRequired, bannedText, labelPattern].forEach((m: any) => {
+[sectionCount, metricsRequired, bannedText, labelPattern].forEach((m) => {
   registerItem({ itemId: m.itemId, toPrompt: m.toPrompt, validate: m.validate, heal: m.heal });
 });

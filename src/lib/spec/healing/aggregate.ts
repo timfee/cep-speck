@@ -34,11 +34,11 @@ export function aggregateHealing(draftIssues: Issue[], pack: SpecPack): string {
   for (const id of sortedItemIds) {
     const def = defsById.get(id)!;
     const mod = getItem(id);
-    const msg = mod.heal(byItem.get(id)!, def.params as any, pack);
+    const msg = mod.heal(byItem.get(id)!, def.params as unknown, pack);
     if (msg) chunks.push(`${id}: ${msg}`);
   }
 
-  let header = `Revise the latest draft to satisfy the following constraints without resetting compliant content:`;
+  const header = `Revise the latest draft to satisfy the following constraints without resetting compliant content:`;
   let body = chunks.map(c => `- ${c}`).join('\n');
   const labelGuard = pack.composition?.labelPattern ? `Maintain the header pattern "${pack.composition.labelPattern}".` : '';
   const footer = `${labelGuard} Perform minimal edits to satisfy constraints.`;

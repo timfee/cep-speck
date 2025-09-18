@@ -6,7 +6,7 @@ export function validateAll(draft: string, pack: SpecPack): ValidationReport {
   const coverage: Record<string, boolean> = {};
   for (const def of pack.items) {
     const mod = getItem(def.id);
-    const found = mod.validate(draft, def.params as any, pack) || [];
+    const found = mod.validate(draft, def.params as unknown, pack) || [];
     for (const it of found) {
       if (!it.severity) it.severity = def.severity;
     }

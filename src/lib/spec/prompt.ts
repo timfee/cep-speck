@@ -5,7 +5,7 @@ export function buildSystemPrompt(pack: SpecPack): string {
   const lines: string[] = [];
   for (const def of pack.items) {
     const mod = getItem(def.id);
-    const p = mod.toPrompt(def.params as any, pack);
+    const p = mod.toPrompt(def.params as unknown, pack);
     if (p) lines.push(`- [${def.kind}] ${p}`);
   }
   if (pack.composition?.labelPattern) {

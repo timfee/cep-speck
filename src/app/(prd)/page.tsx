@@ -6,12 +6,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import type { Issue } from "@/lib/spec/types";
 
 type Frame =
   | { type: 'phase'; phase: string; attempt: number }
   | { type: 'tokens'; delta: string }
   | { type: 'draft'; draft: string }
-  | { type: 'validation'; report: { ok: boolean; issues: any[] } }
+  | { type: 'validation'; report: { ok: boolean; issues: Issue[] } }
   | { type: 'result'; draft: string }
   | { type: 'error'; message: string };
 
@@ -21,7 +22,7 @@ export default function Page() {
   const [phase, setPhase] = useState<string>('');
   const [attempt, setAttempt] = useState<number>(0);
   const [draft, setDraft] = useState<string>('');
-  const [issues, setIssues] = useState<any[]>([]);
+  const [issues, setIssues] = useState<Issue[]>([]);
   const textRef = useRef<string>('');
 
   const run = useCallback(async () => {
