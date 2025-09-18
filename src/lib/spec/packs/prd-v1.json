@@ -29,6 +29,7 @@
         "(?i)(solidify our future|strengthen our position|drive growth|unlock value|maximize potential|optimize synergies|accelerate transformation|future-proof|next-level)",
         "(?i)(not just another|more than meets the eye|think again|here's the thing|plot twist|spoiler alert|the real deal|game on)",
         "(?i)^#+\\s+[^:]+:\\s+[^\\n]*\\b(not just|more than|think again|here's the thing)\\b",
+        "(?i)^#+\\s+[^\\n]*\\b(not just|more than|think again|here's the thing|plot twist|spoiler alert|the real deal|game on)\\b",
         "(?i)\\b(NPS|Net Promoter Score|satisfaction score|happiness index|engagement score)\\b",
         "(?i)\\b(significant|substantial|considerable)\\s+(improvement|savings|impact)\\b",
         "(?i)\\b(moreover|furthermore|indeed|therefore|thus|importantly|in conclusion|in summary|lastly|needless to say|notably|simply put|on the other hand)\\b",

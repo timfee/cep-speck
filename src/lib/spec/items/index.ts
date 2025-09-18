@@ -52,7 +52,7 @@ registerItem({
 
 registerItem({
   itemId: executiveQuality.itemId,
-  toPrompt: (params: unknown) => executiveQuality.toPrompt(params as executiveQuality.Params),
+  toPrompt: () => executiveQuality.toPrompt(),
   validate: (draft: string, params: unknown) => executiveQuality.validate(draft, params as executiveQuality.Params),
-  heal: (issues: Issue[], params?: unknown) => executiveQuality.heal(issues, params as executiveQuality.Params)
+  heal: (issues: Issue[]) => executiveQuality.heal(issues)
 });

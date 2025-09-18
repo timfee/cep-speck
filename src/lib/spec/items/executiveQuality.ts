@@ -64,7 +64,7 @@ export function validate(draft: string, params: Params): Issue[] {
     const metricSections = draft.match(/# \d+\. Success Metrics[\s\S]*?(?=# \d+\.|$)/i);
     if (metricSections) {
       const metricsContent = metricSections[0];
-      const numbersWithoutUnits = metricsContent.match(/\b\d+(?!\s*(?:%|ms|minutes|hours|days|weeks|months|years|MB|GB|TB|requests|users|tenants|releases))\b/g);
+      const numbersWithoutUnits = metricsContent.match(/\b\d+(?!\s*(?:%|ms|s|sec|seconds|minutes|hours|days|weeks|months|years|qps|rps|rpm|req\/s|MB|GB|TB|requests|users|tenants|releases))\b/g);
       if (numbersWithoutUnits && numbersWithoutUnits.length > 2) {
         issues.push({
           id: 'metrics-missing-units',
