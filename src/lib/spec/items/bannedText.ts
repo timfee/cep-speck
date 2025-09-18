@@ -35,7 +35,9 @@ export function validate(draft: string, params: Params, pack: SpecPack): Issue[]
   }
   for (const pattern of regex) {
     if (!pattern) continue;
-    const re = new RegExp(pattern, 'g');
+    const hasInlineI = /^\(\?i\)/.test(pattern);
+    const source = pattern.replace(/^\(\?i\)/, '');
+    const re = new RegExp(source, hasInlineI ? 'gi' : 'g');
     if (re.test(draft)) {
       issues.push({ id: 'banned-regex', itemId, severity: 'error', message: `matches banned pattern ${pattern}` });
     }

@@ -20,7 +20,7 @@
   "globals": {
     "bannedText": {
       "exact": ["portal", "dashboard"],
-      "regex": ["(?i)\\bensur(e|es|ing)\\b"]
+      "regex": ["\\bensur(e|es|ing)\\b"]
     }
   },
   "items": [
