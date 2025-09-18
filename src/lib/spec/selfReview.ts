@@ -1,18 +1,22 @@
-import type { Issue, SpecPack } from './types';
-import { geminiModel } from '@/lib/ai/provider';
-import { generateObject } from 'ai';
-import { z } from 'zod';
+import { geminiModel } from "@/lib/ai/provider";
+import { generateObject } from "ai";
+import { z } from "zod";
+import type { Issue, SpecPack } from "./types";
 
 const SelfReviewSchema = z.object({
-  confirmedIssues: z.array(z.object({
-    originalIndex: z.number(),
-    confidence: z.enum(['high', 'medium', 'low']),
-    reasoning: z.string(),
-  })),
-  filteredOut: z.array(z.object({
-    originalIndex: z.number(),
-    reason: z.string(),
-  })),
+  confirmedIssues: z.array(
+    z.object({
+      originalIndex: z.number(),
+      confidence: z.enum(["high", "medium", "low"]),
+      reasoning: z.string(),
+    })
+  ),
+  filteredOut: z.array(
+    z.object({
+      originalIndex: z.number(),
+      reason: z.string(),
+    })
+  ),
 });
 
 export type SelfReviewResult = z.infer<typeof SelfReviewSchema>;
@@ -25,26 +29,33 @@ export async function performSelfReview(
   draft: string,
   issues: Issue[],
   pack: SpecPack
-): Promise<{ confirmed: Issue[], filtered: Issue[], reviewResult: SelfReviewResult }> {
+): Promise<{
+  confirmed: Issue[];
+  filtered: Issue[];
+  reviewResult: SelfReviewResult;
+}> {
   if (issues.length === 0) {
-    return { 
-      confirmed: [], 
-      filtered: [], 
-      reviewResult: { confirmedIssues: [], filteredOut: [] }
+    return {
+      confirmed: [],
+      filtered: [],
+      reviewResult: { confirmedIssues: [], filteredOut: [] },
     };
   }
 
   // Only review issues that aren't clearly critical errors
-  const reviewableIssues = issues.filter(issue => 
-    issue.severity !== 'error' || issue.itemId === 'banned-text' || issue.itemId === 'executive-quality'
+  const reviewableIssues = issues.filter(
+    (issue) =>
+      issue.severity !== "error" ||
+      issue.itemId === "banned-text" ||
+      issue.itemId === "executive-quality"
   );
 
   if (reviewableIssues.length === 0) {
     // All issues are critical errors, no review needed
-    return { 
-      confirmed: issues, 
-      filtered: [], 
-      reviewResult: { confirmedIssues: [], filteredOut: [] }
+    return {
+      confirmed: issues,
+      filtered: [],
+      reviewResult: { confirmedIssues: [], filteredOut: [] },
     };
   }
 
@@ -58,9 +69,13 @@ export async function performSelfReview(
     });
 
     // Separate confirmed and filtered issues
-    const confirmedIndices = new Set(reviewResult.confirmedIssues.map(c => c.originalIndex));
-    const filteredIndices = new Set(reviewResult.filteredOut.map(f => f.originalIndex));
-    
+    const confirmedIndices = new Set(
+      reviewResult.confirmedIssues.map((c) => c.originalIndex)
+    );
+    const filteredIndices = new Set(
+      reviewResult.filteredOut.map((f) => f.originalIndex)
+    );
+
     const confirmed: Issue[] = [];
     const filtered: Issue[] = [];
 
@@ -81,27 +96,36 @@ export async function performSelfReview(
     });
 
     return { confirmed, filtered, reviewResult };
-
   } catch (error) {
-    console.warn('Self-review failed, defaulting to all issues confirmed:', error);
-    return { 
-      confirmed: issues, 
-      filtered: [], 
-      reviewResult: { confirmedIssues: [], filteredOut: [] }
+    console.warn(
+      "Self-review failed, defaulting to all issues confirmed:",
+      error
+    );
+    return {
+      confirmed: issues,
+      filtered: [],
+      reviewResult: { confirmedIssues: [], filteredOut: [] },
     };
   }
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function buildSelfReviewPrompt(draft: string, issues: Issue[], _pack: SpecPack): string {
-  const issueList = issues.map((issue, index) => 
-    `${index}. [${issue.severity}] ${issue.itemId}: ${issue.message}`
-  ).join('\n');
+function buildSelfReviewPrompt(
+  draft: string,
+  issues: Issue[],
+  _pack: SpecPack
+): string {
+  const issueList = issues
+    .map(
+      (issue, index) =>
+        `${index}. [${issue.severity}] ${issue.itemId}: ${issue.message}`
+    )
+    .join("\n");
 
   return `You are reviewing validation issues for a PRD document to filter out false positives while confirming genuine violations.
 
 **Document excerpt:**
-${draft.substring(0, 2000)}${draft.length > 2000 ? '...' : ''}
+${draft.substring(0, 2000)}${draft.length > 2000 ? "..." : ""}
 
 **Validation Issues to Review:**
 ${issueList}

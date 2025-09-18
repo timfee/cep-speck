@@ -48,10 +48,9 @@ export async function POST(req: NextRequest) {
         try {
           assertValidSpecPack(pack);
         } catch (error) {
-          const errorMessage = error instanceof Error ? error.message : String(error);
-          controller.enqueue(
-            sseLine({ type: "error", message: errorMessage })
-          );
+          const errorMessage =
+            error instanceof Error ? error.message : String(error);
+          controller.enqueue(sseLine({ type: "error", message: errorMessage }));
           controller.close();
           return;
         }
@@ -140,30 +139,41 @@ export async function POST(req: NextRequest) {
           controller.enqueue(
             sseLine({ type: "phase", phase: "self-reviewing", attempt })
           );
-          
+
           let issuesToHeal = report.issues;
           try {
-            const { confirmed, filtered } = await performSelfReview(draft, report.issues, pack);
-            controller.enqueue(sseLine({ 
-              type: "self-review", 
-              confirmed: confirmed.length,
-              filtered: filtered.length,
-              originalIssues: report.issues.length
-            }));
-            
+            const { confirmed, filtered } = await performSelfReview(
+              draft,
+              report.issues,
+              pack
+            );
+            controller.enqueue(
+              sseLine({
+                type: "self-review",
+                confirmed: confirmed.length,
+                filtered: filtered.length,
+                originalIssues: report.issues.length,
+              })
+            );
+
             // Use confirmed issues for healing
             if (confirmed.length === 0) {
               finalDraft = draft;
               controller.enqueue(
                 sseLine({ type: "phase", phase: "done", attempt })
               );
-              controller.enqueue(sseLine({ type: "result", draft: finalDraft }));
+              controller.enqueue(
+                sseLine({ type: "result", draft: finalDraft })
+              );
               break;
             }
-            
+
             issuesToHeal = confirmed;
           } catch (selfReviewError) {
-            console.warn('Self-review failed, proceeding with all issues:', selfReviewError);
+            console.warn(
+              "Self-review failed, proceeding with all issues:",
+              selfReviewError
+            );
             // Continue with original issues if self-review fails
           }
 

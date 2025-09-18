@@ -1,4 +1,4 @@
-import type { SpecPack, Issue, SpecItemDef } from './types';
+import type { Issue, SpecItemDef, SpecPack } from "./types";
 
 export type ItemModule = {
   itemId: string;
@@ -23,17 +23,31 @@ export function getRegisteredItemIds(): string[] {
   return Object.keys(modules);
 }
 
-export function invokeItemToPrompt(id: string, def: SpecItemDef, pack?: SpecPack): string {
+export function invokeItemToPrompt(
+  id: string,
+  def: SpecItemDef,
+  pack?: SpecPack
+): string {
   const mod = getItem(id);
   return mod.toPrompt(def.params, pack);
 }
 
-export function invokeItemValidate(id: string, draft: string, def: SpecItemDef, pack?: SpecPack): Issue[] {
+export function invokeItemValidate(
+  id: string,
+  draft: string,
+  def: SpecItemDef,
+  pack?: SpecPack
+): Issue[] {
   const mod = getItem(id);
   return mod.validate(draft, def.params, pack);
 }
 
-export function invokeItemHeal(id: string, issues: Issue[], def: SpecItemDef, pack?: SpecPack): string | null {
+export function invokeItemHeal(
+  id: string,
+  issues: Issue[],
+  def: SpecItemDef,
+  pack?: SpecPack
+): string | null {
   const mod = getItem(id);
   return mod.heal(issues, def.params, pack);
 }

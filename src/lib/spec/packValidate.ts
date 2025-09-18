@@ -41,7 +41,8 @@ export function validateSpecPack(pack: SpecPack): PackValidationError[] {
     try {
       new RegExp(r);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
       errs.push({
         code: "BAD_REGEX",
         message: `Invalid bannedText regex: ${r}`,
@@ -54,7 +55,8 @@ export function validateSpecPack(pack: SpecPack): PackValidationError[] {
     try {
       new RegExp(pack.composition.headerRegex);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
       errs.push({
         code: "BAD_HEADER_REGEX",
         message: "Invalid headerRegex",
