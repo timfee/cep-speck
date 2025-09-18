@@ -85,7 +85,9 @@
       "priority": 50,
       "severity": "error",
       "params": {
-        "targetSku": "premium"
+        "targetSku": "premium",
+        "sectionPattern": "# \\d+\\. Functional Requirements[\\s\\S]*?(?=# \\d+\\.|$)",
+        "featurePattern": "## F\\d+ —"
       }
     },
     {
