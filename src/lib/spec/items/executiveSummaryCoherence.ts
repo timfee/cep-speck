@@ -47,6 +47,12 @@ export function validate(draft: string, _params: Params): Issue[] {
   return issues;
 }
 
-export function heal(): string | null {
+export function heal(issues: Issue[]): string | null {
+  if (!issues.length) return null;
+  
+  if (issues.some(i => i.id === 'tldr-feature-mismatch')) {
+    return 'Ensure the TL;DR section mentions the key features from the Functional Requirements section to provide executives with a complete overview of deliverables.';
+  }
+  
   return null;
 }
