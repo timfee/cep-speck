@@ -4,6 +4,7 @@ import { geminiModel } from '@/lib/ai/provider';
 import { buildSystemPrompt, buildUserPrompt } from '@/lib/spec/prompt';
 import { validateAll } from '@/lib/spec/validate';
 import { aggregateHealing } from '@/lib/spec/healing/aggregate';
+import { readKnowledgeDirectory } from '@/lib/knowledge/reader';
 import pack from '@/lib/spec/packs/prd-v1.json';
 import type { SpecPack } from '@/lib/spec/types';
 import '@/lib/spec/items';
@@ -26,7 +27,14 @@ export async function POST(req: NextRequest) {
           controller.close();
           return;
         }
-        const system = buildSystemPrompt(pack as SpecPack);
+        controller.enqueue(sseLine({ type: 'phase', phase: 'loading-knowledge', attempt: 0 }));
+        const knowledgeFiles = await readKnowledgeDirectory('./knowledge');
+        
+        const researchContext = knowledgeFiles.length > 0 
+          ? `\n\nKnowledge Base Context:\n${knowledgeFiles.map(f => `${f.path}:\n${f.content}`).join('\n\n')}`
+          : '';
+        
+        const system = buildSystemPrompt(pack as SpecPack) + researchContext;
         const messages: { role: 'system'|'user'|'assistant'; content: string }[] = [
           { role: 'system', content: system },
           { role: 'user', content: buildUserPrompt(specText) },

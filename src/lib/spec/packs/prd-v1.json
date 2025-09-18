@@ -20,7 +20,12 @@
   "globals": {
     "bannedText": {
       "exact": ["portal", "dashboard"],
-      "regex": ["\\bensur(e|es|ing)\\b"]
+      "regex": [
+        "\\bensur(e|es|ing)\\b",
+        "->|=>|→|⇒",
+        "\\bFR-\\w+\\b|\\bF-\\d+\\b|\\bM-\\d+\\b|\\bPP-\\d+\\b|\\bG-\\d+\\b",
+        "\\bSoT\\b"
+      ]
     }
   },
   "items": [
@@ -51,6 +56,24 @@
       "priority": 70,
       "severity": "error",
       "params": { "listsFromPack": true }
+    },
+    {
+      "id": "word-budget",
+      "kind": "policy",
+      "priority": 60,
+      "severity": "warn",
+      "params": { "target": 1400, "hardCap": 1800 }
+    },
+    {
+      "id": "competitor-research",
+      "kind": "policy",
+      "priority": 40,
+      "severity": "warn",
+      "params": { 
+        "vendors": ["Zscaler", "Island", "Talon", "Microsoft Edge for Business"],
+        "recencyDays": 365,
+        "requireResearch": true
+      }
     }
   ]
 }
