@@ -7,12 +7,14 @@ export type Params = {
   requireResearch: boolean;
 };
 
-export function toPrompt(params: Params): string {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function toPrompt(params: Params, _pack?: unknown): string {
   const vendors = params.vendors.join(', ');
   return `IMPORTANT: Use your web search capabilities to research current information about these enterprise browser vendors: ${vendors}. For each vendor, research and include specific details about: onboarding defaults, policy templates, enterprise browser posture, data protection capabilities, and mobile support. Include a brief competitive snapshot in the TL;DR section with specific vendor capabilities and positioning. Add citations with sources and dates in a Footnotes section after the Annexes. Use sources from the last ${params.recencyDays} days when possible.`;
 }
 
-export function validate(draft: string, params: Params): Issue[] {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
   const issues: Issue[] = [];
   
   if (params.requireResearch) {
@@ -76,9 +78,12 @@ export function validate(draft: string, params: Params): Issue[] {
   return issues;
 }
 
-export function heal(issues: Issue[], params: Params): string | null {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function heal(issues: Issue[], params: Params, _pack?: unknown): string | null {
   if (!issues.length) return null;
   
   const vendors = params.vendors.join(', ');
   return `Research and integrate competitive information about ${vendors} into the TL;DR section. Focus on onboarding defaults, policy templates, enterprise browser capabilities, and data protection features. Add citations as numbered footnotes after the Annexes section.`;
 }
+
+export const itemModule = { itemId, toPrompt, validate, heal };

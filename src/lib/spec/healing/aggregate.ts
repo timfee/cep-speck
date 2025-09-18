@@ -35,7 +35,7 @@ export function aggregateHealing(draftIssues: Issue[], pack: SpecPack): string {
   for (const id of sortedItemIds) {
     const def = defsById.get(id)!;
     const issues = byItem.get(id)!;
-    const msg = invokeItemHeal(id, issues, def, pack);
+  const msg = invokeItemHeal(issues, def, pack);
     if (msg) chunks.push(`${id}: ${msg}`);
   }
 

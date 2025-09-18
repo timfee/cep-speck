@@ -1,13 +1,15 @@
 import type { Issue } from "../types";
 
 export const itemId = "technical-feasibility";
-// No Params type required
+export type Params = Record<string, never>;
 
-export function toPrompt(): string {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function toPrompt(_params: Params, _pack?: unknown): string {
   return "Reject impossible percentages (>100%) and flag unrealistic rapid adoption claims.";
 }
 
-export function validate(draft: string): Issue[] {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function validate(draft: string, _params: Params, _pack?: unknown): Issue[] {
   const issues: Issue[] = [];
 
   // Check for impossible percentages (>100%)
@@ -81,13 +83,14 @@ export function validate(draft: string): Issue[] {
       }
     }
   }
-
   return issues;
 }
-
-export function heal(): string | null {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function heal(_issues: Issue[], _params: Params, _pack?: unknown): string | null {
   return `Adjust feasibility claims:
 1. Replace any >100% value with a realistic capped figure or rephrase qualitatively.
 2. Avoid 100% adoption/coverage; use a defensible range (e.g., 85–90%).
 3. For rapid adoption timelines (>80% in <30 days), either lower % or extend timeframe with rationale (baseline install base, enforced deployment mechanism, auto-updates, etc.).`;
 }
+
+export const itemModule = { itemId, toPrompt, validate, heal };

@@ -3,11 +3,13 @@ import type { Issue } from '../types';
 export const itemId = 'label-pattern';
 export type Params = { pattern: string; headerRegex?: string };
 
-export function toPrompt(params: Params): string {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function toPrompt(params: Params, _pack?: unknown): string {
   return `Use the header label pattern: ${params.pattern} for top-level sections.`;
 }
 
-export function validate(draft: string, params: Params): Issue[] {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
   const lines = draft.split('\n').filter(Boolean);
   const hdrRx = params.headerRegex ? new RegExp(params.headerRegex) : /^#\s+\d+\./;
   const issues: Issue[] = [];
@@ -21,6 +23,9 @@ export function validate(draft: string, params: Params): Issue[] {
   return issues;
 }
 
-export function heal(): string | null {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function heal(_issues: Issue[], _params: Params, _pack?: unknown): string | null {
   return `Conform section headers to the label pattern "# {n}. {title}" (e.g., "# 1. TL;DR").`;
 }
+
+export const itemModule = { itemId, toPrompt, validate, heal };

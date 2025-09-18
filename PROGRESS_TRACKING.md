@@ -2,7 +2,35 @@
 
 Last updated: 2025-09-18
 
-## Project Requirements (v1)
+## 🚨 IMPORTANT: CODEBASE REQUIRES ARCHITECTURAL REFACTORING
+
+**This file contains historical progress. For current architectural assessment and next session priorities, see:**
+**[PROGRESS_TRACKING_ARCHITECTURAL_ASSESSMENT.md](./PROGRESS_TRACKING_ARCHITECTURAL_ASSESSMENT.md)**
+
+### Summary of Current State
+
+- ✅ **Functionally working** - App generates PRDs end-to-end successfully
+- ⚠️ **Technical debt accumulated** - Multiple LLM sessions created architectural shortcuts
+- ❌ **Type safety compromised** - Registry system uses `unknown` with 20+ `as` casts
+- ❌ **Inconsistent interfaces** - 14+ validation items have mismatched signatures
+- ❌ **Basic streaming** - NDJSON works but lacks structure and error recovery
+- ❌ **Single point of failure** - Gemini-only dependency with no resilience
+
+### Next Session Requirements
+
+**Assign to senior architect-level AI agent** with explicit mandate to:
+
+1. **Rewrite registry system** with proper TypeScript generics
+2. **Standardize validation interfaces** across all 14+ items
+3. **Implement structured streaming** with comprehensive error handling
+4. **Add AI provider resilience** with retry logic and fallbacks
+5. **Preserve all existing functionality** while improving architecture
+
+**See detailed assessment:** [PROGRESS_TRACKING_ARCHITECTURAL_ASSESSMENT.md](./PROGRESS_TRACKING_ARCHITECTURAL_ASSESSMENT.md)
+
+---
+
+## Historical Development Progress (Multiple LLM Sessions)
 
 - Stack
   - Next.js App Router under src/\*

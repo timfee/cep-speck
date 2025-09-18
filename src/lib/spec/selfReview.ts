@@ -1,7 +1,7 @@
 import { geminiModel } from "@/lib/ai/provider";
 import { generateObject } from "ai";
 import { z } from "zod";
-import type { Issue, SpecPack } from "./types";
+import type { Issue } from "./types";
 
 const SelfReviewSchema = z.object({
   confirmedIssues: z.array(
@@ -27,8 +27,7 @@ export type SelfReviewResult = z.infer<typeof SelfReviewSchema>;
  */
 export async function performSelfReview(
   draft: string,
-  issues: Issue[],
-  pack: SpecPack
+  issues: Issue[]
 ): Promise<{
   confirmed: Issue[];
   filtered: Issue[];
@@ -59,7 +58,7 @@ export async function performSelfReview(
     };
   }
 
-  const prompt = buildSelfReviewPrompt(draft, reviewableIssues, pack);
+  const prompt = buildSelfReviewPrompt(draft, reviewableIssues);
 
   try {
     const { object: reviewResult } = await generateObject({
@@ -109,11 +108,10 @@ export async function performSelfReview(
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+ 
 function buildSelfReviewPrompt(
   draft: string,
-  issues: Issue[],
-  _pack: SpecPack
+  issues: Issue[]
 ): string {
   const issueList = issues
     .map(

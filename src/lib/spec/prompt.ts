@@ -5,7 +5,7 @@ import { SpecPack } from "./types";
 export function buildSystemPrompt(pack: SpecPack): string {
   const lines: string[] = [];
   for (const def of pack.items) {
-    const p = invokeItemToPrompt(def.id, def, pack);
+    const p = invokeItemToPrompt(def, pack);
     if (p) lines.push(`- [${def.kind}] ${p}`);
   }
   if (pack.composition?.labelPattern) {

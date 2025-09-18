@@ -32,11 +32,13 @@ function extractMetrics(block: string, params: Params): Map<string, string> {
   return map;
 }
 
-export function toPrompt(): string {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function toPrompt(_params: Params, _pack?: unknown): string {
   return "Metrics in TL;DR must exactly match values in Success Metrics section.";
 }
 
-export function validate(draft: string, params: Params): Issue[] {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
   const issues: Issue[] = [];
   const tldr = draft.match(/# 1\. TL;DR[\s\S]*?(?=# \d+\.|$)/)?.[0] || "";
   const success =
@@ -59,10 +61,13 @@ export function validate(draft: string, params: Params): Issue[] {
   return issues;
 }
 
-export function heal(): string | null {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function heal(_issues?: Issue[], _params?: Params, _pack?: unknown): string | null {
   return `Align metric values:
 1. List each metric appearing in both TL;DR and Success Metrics.
 2. For any differing value, prefer the more specific or numerically justified one.
 3. Update the TL;DR for narrative brevity but keep numbers identical to Success Metrics.
 4. Do NOT add new metrics just to force alignment; remove from TL;DR if not a tracked success metric.`;
 }
+
+export const itemModule = { itemId, toPrompt, validate, heal };

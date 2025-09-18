@@ -7,7 +7,7 @@ export function validateAll(draft: string, pack: SpecPack): ValidationReport {
   const failFast = true; // Always fail-fast deterministically
 
   for (const def of pack.items) {
-    const found = invokeItemValidate(def.id, draft, def, pack);
+    const found = invokeItemValidate(draft, def, pack);
     let hasError = false;
     for (const it of found) {
       if (!it.severity) it.severity = def.severity;

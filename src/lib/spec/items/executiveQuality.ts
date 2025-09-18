@@ -7,11 +7,13 @@ export type Params = {
   banOverExplanation: boolean;
 };
 
-export function toPrompt(): string {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function toPrompt(_params: Params, _pack?: unknown): string {
   return `Write with executive precision: factual statements, specific metrics with units and timeframes, direct language without over-explanation. Avoid sensationalist claims, empty business speak, or cutesy headings. Each statement should add concrete value.`;
 }
 
-export function validate(draft: string, params: Params): Issue[] {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
   const issues: Issue[] = [];
   
   if (params.enforceFactualTone) {
@@ -112,7 +114,8 @@ export function validate(draft: string, params: Params): Issue[] {
   return issues;
 }
 
-export function heal(issues: Issue[]): string | null {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function heal(issues: Issue[], _params: Params, _pack?: unknown): string | null {
   if (!issues.length) return null;
   
   const healingInstructions: string[] = [];
@@ -137,3 +140,5 @@ export function heal(issues: Issue[]): string | null {
     ? `Enhance executive precision: ${healingInstructions.join('; ')}.`
     : null;
 }
+
+export const itemModule = { itemId, toPrompt, validate, heal };

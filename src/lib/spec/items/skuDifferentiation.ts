@@ -3,11 +3,13 @@ import type { Issue } from "../types";
 export const itemId = "sku-differentiation";
 export type Params = { targetSku: string };
 
-export function toPrompt(): string {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function toPrompt(_params: Params, _pack?: unknown): string {
   return "Each feature must state Target SKU (Core | Premium | Both) and premium differentiation rationale.";
 }
 
-export function validate(draft: string, params: Params): Issue[] {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
   const issues: Issue[] = [];
   const section =
     draft.match(/# 6\. Functional Requirements[\s\S]*?(?=# 7\.|$)/)?.[0] || "";
@@ -46,7 +48,8 @@ export function validate(draft: string, params: Params): Issue[] {
   return issues;
 }
 
-export function heal(): string | null {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function heal(_issues: Issue[], _params: Params, _pack?: unknown): string | null {
   return `For each feature block under "# 6. Functional Requirements":
 1. Add a line beginning with "**Target SKU:**" followed by one of (Core | Premium | Both).
 2. If the overall PRD target SKU is Premium and a feature is marked Core, immediately follow with a one-sentence differentiation rationale referencing:
@@ -56,3 +59,5 @@ export function heal(): string | null {
 4. Avoid vague words (better, more secure); cite concrete mechanism or measurable lever.
 Do not alter already compliant SKU annotations.`;
 }
+
+export const itemModule = { itemId, toPrompt, validate, heal };
