@@ -61,6 +61,6 @@ registerItem({
 registerItem({
   itemId: crossSectionConsistency.itemId,
   toPrompt: () => crossSectionConsistency.toPrompt(),
-  validate: (draft: string, params: unknown) => crossSectionConsistency.validate(draft),
+  validate: (draft: string, params: unknown) => crossSectionConsistency.validate(draft, params as crossSectionConsistency.Params),
   heal: () => crossSectionConsistency.heal()
 });
