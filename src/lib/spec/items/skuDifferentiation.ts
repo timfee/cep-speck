@@ -33,7 +33,7 @@ export function validate(draft: string, params: Params): Issue[] {
     
     // Check for unclear SKU differentiation in premium PRDs
     if (params.targetSku === 'premium' && /\*\*Target SKU:\*\* Core/i.test(trimmed)) {
-      const justification = /(premium.*differentiator|upgrade.*premium|core.*limitation)/i.test(trimmed);
+      const justification = /(premium.*(?:differentiator|value|offering|tier|sku)|upgrade.*premium|core.*limitation|enables.*premium|foundation.*premium)/i.test(trimmed);
       if (!justification) {
         issues.push({
           id: 'unclear-sku-differentiation',
