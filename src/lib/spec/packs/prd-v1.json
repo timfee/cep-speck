@@ -44,84 +44,19 @@
     }
   },
   "items": [
-    {
-      "id": "section-count",
-      "kind": "structure",
-      "priority": 100,
-      "severity": "error",
-      "params": { "exact": 9, "headerRegex": "^#\\s+\\d+\\." }
-    },
-    {
-      "id": "label-pattern",
-      "kind": "structure",
-      "priority": 95,
-      "severity": "error",
-      "params": { "pattern": "# {n}. {title}", "headerRegex": "^#\\s+\\d+\\." }
-    },
-    {
-      "id": "metrics-required",
-      "kind": "policy",
-      "priority": 80,
-      "severity": "error",
-      "params": { "require": ["units","timeframe","SoT"], "metricRegex": "^M-\\d+\\s*\\|" }
-    },
-    {
-      "id": "banned-text",
-      "kind": "linter",
-      "priority": 70,
-      "severity": "error",
-      "params": { "listsFromPack": true }
-    },
-    {
-      "id": "word-budget",
-      "kind": "policy",
-      "priority": 60,
-      "severity": "warn",
-      "params": { "target": 1400, "hardCap": 1800 }
-    },
-    {
-      "id": "competitor-research",
-      "kind": "policy",
-      "priority": 40,
-      "severity": "warn",
-      "params": { 
-        "vendors": ["Zscaler", "Island", "Talon", "Microsoft Edge for Business"],
-        "recencyDays": 365,
-        "requireResearch": true
-      }
-    },
-    {
-      "id": "executive-quality",
-      "kind": "policy",
-      "priority": 30,
-      "severity": "warn",
-      "params": {
-        "enforceFactualTone": true,
-        "requireSpecificMetrics": true,
-        "banOverExplanation": true
-      }
-    },
-    {
-
-      "id": "persona-coverage",
-      "kind": "policy",
-      "priority": 25,
-      "severity": "error",
-      "params": {
-        "personas": ["IT Admin", "End User", "Security Team"]
-      },
-      {
-
-      "id": "executive-summary-coherence",
-      "kind": "policy",
-      "priority": 25,
-      "severity": "warn",
-    }, {
-      "id": "technical-feasibility",
-      "kind": "policy",
-      "priority": 85,
-      "severity": "error",
-      "params": {}
-    }
+    { "id": "section-count", "kind": "structure", "priority": 100, "severity": "error", "params": { "exact": 9, "headerRegex": "^#\s+\d+\." } },
+    { "id": "label-pattern", "kind": "structure", "priority": 95, "severity": "error", "params": { "pattern": "# {n}. {title}", "headerRegex": "^#\s+\d+\." } },
+    { "id": "cross-section-consistency", "kind": "policy", "priority": 92, "severity": "error", "params": {} },
+    { "id": "technical-feasibility", "kind": "policy", "priority": 90, "severity": "error", "params": {} },
+    { "id": "metrics-required", "kind": "policy", "priority": 80, "severity": "error", "params": { "require": ["units", "timeframe", "SoT"], "metricRegex": "^M-\d+\s*\|" } },
+    { "id": "traceability-complete", "kind": "policy", "priority": 75, "severity": "error", "params": {} },
+    { "id": "banned-text", "kind": "linter", "priority": 70, "severity": "error", "params": { "listsFromPack": true } },
+    { "id": "placeholder-quality", "kind": "policy", "priority": 65, "severity": "error", "params": {} },
+    { "id": "word-budget", "kind": "policy", "priority": 60, "severity": "warn", "params": { "target": 1400, "hardCap": 1800 } },
+    { "id": "sku-differentiation", "kind": "policy", "priority": 58, "severity": "error", "params": { "targetSku": "premium" } },
+    { "id": "competitor-research", "kind": "policy", "priority": 40, "severity": "warn", "params": { "vendors": ["Zscaler", "Island", "Talon", "Microsoft Edge for Business"], "recencyDays": 365, "requireResearch": true } },
+    { "id": "executive-quality", "kind": "policy", "priority": 30, "severity": "warn", "params": { "enforceFactualTone": true, "requireSpecificMetrics": true, "banOverExplanation": true } },
+    { "id": "persona-coverage", "kind": "policy", "priority": 25, "severity": "error", "params": { "personas": ["IT Admin", "End User", "Security Team"] } },
+    { "id": "executive-summary-coherence", "kind": "policy", "priority": 20, "severity": "warn", "params": {} }
   ]
 }

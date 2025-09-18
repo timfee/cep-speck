@@ -11,6 +11,9 @@ import * as crossSectionConsistency from './crossSectionConsistency';
 import * as personaCoverage from './personaCoverage';
 import * as executiveSummaryCoherence from './executiveSummaryCoherence';
 import * as technicalFeasibility from './technicalFeasibility';
+import * as traceabilityComplete from './traceabilityComplete';
+import * as placeholderQuality from './placeholderQuality';
+import * as skuDifferentiation from './skuDifferentiation';
 
 registerItem({
   itemId: sectionCount.itemId,
@@ -88,4 +91,25 @@ registerItem({
   toPrompt: () => technicalFeasibility.toPrompt(),
   validate: (draft: string) => technicalFeasibility.validate(draft),
   heal: () => technicalFeasibility.heal()
+});
+
+registerItem({
+  itemId: traceabilityComplete.itemId,
+  toPrompt: () => traceabilityComplete.toPrompt(),
+  validate: (draft: string) => traceabilityComplete.validate(draft),
+  heal: () => traceabilityComplete.heal()
+});
+
+registerItem({
+  itemId: placeholderQuality.itemId,
+  toPrompt: () => placeholderQuality.toPrompt(),
+  validate: (draft: string) => placeholderQuality.validate(draft),
+  heal: (issues: Issue[]) => placeholderQuality.heal(issues)
+});
+
+registerItem({
+  itemId: skuDifferentiation.itemId,
+  toPrompt: (params: unknown) => skuDifferentiation.toPrompt(),
+  validate: (draft: string, params: unknown) => skuDifferentiation.validate(draft, params as skuDifferentiation.Params),
+  heal: () => skuDifferentiation.heal()
 });
