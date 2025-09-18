@@ -100,6 +100,13 @@
         "requireSpecificMetrics": true,
         "banOverExplanation": true
       }
+    },
+    {
+      "id": "technical-feasibility",
+      "kind": "policy",
+      "priority": 85,
+      "severity": "error",
+      "params": {}
     }
   ]
 }
