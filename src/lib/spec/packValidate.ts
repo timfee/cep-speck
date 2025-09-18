@@ -1,5 +1,5 @@
-import type { SpecPack } from './types';
-import { getItem } from './registry';
+import { getItem } from "./registry";
+import type { SpecPack } from "./types";
 
 export interface PackValidationError {
   code: string;
@@ -12,17 +12,27 @@ export function validateSpecPack(pack: SpecPack): PackValidationError[] {
   const seen = new Set<string>();
   for (const def of pack.items) {
     if (seen.has(def.id)) {
-      errs.push({ code: 'DUPLICATE_ID', message: `Duplicate item id: ${def.id}` });
+      errs.push({
+        code: "DUPLICATE_ID",
+        message: `Duplicate item id: ${def.id}`,
+      });
     } else {
       seen.add(def.id);
     }
-    if (typeof def.priority !== 'number' || Number.isNaN(def.priority)) {
-      errs.push({ code: 'BAD_PRIORITY', message: `Priority must be numeric: ${def.id}`, evidence: String(def.priority) });
+    if (typeof def.priority !== "number" || Number.isNaN(def.priority)) {
+      errs.push({
+        code: "BAD_PRIORITY",
+        message: `Priority must be numeric: ${def.id}`,
+        evidence: String(def.priority),
+      });
     }
     try {
       getItem(def.id);
     } catch {
-      errs.push({ code: 'UNREGISTERED', message: `Item not registered: ${def.id}` });
+      errs.push({
+        code: "UNREGISTERED",
+        message: `Item not registered: ${def.id}`,
+      });
     }
   }
   // Validate bannedText regex compilation
@@ -32,12 +42,24 @@ export function validateSpecPack(pack: SpecPack): PackValidationError[] {
       // eslint-disable-next-line no-new
       new RegExp(r);
     } catch (e) {
-      errs.push({ code: 'BAD_REGEX', message: `Invalid bannedText regex: ${r}`, evidence: (e as Error).message });
+      errs.push({
+        code: "BAD_REGEX",
+        message: `Invalid bannedText regex: ${r}`,
+        evidence: (e as Error).message,
+      });
     }
   }
   // header regex
   if (pack.composition?.headerRegex) {
-    try { new RegExp(pack.composition.headerRegex); } catch (e) { errs.push({ code: 'BAD_HEADER_REGEX', message: 'Invalid headerRegex', evidence: (e as Error).message }); }
+    try {
+      new RegExp(pack.composition.headerRegex);
+    } catch (e) {
+      errs.push({
+        code: "BAD_HEADER_REGEX",
+        message: "Invalid headerRegex",
+        evidence: (e as Error).message,
+      });
+    }
   }
   return errs;
 }
@@ -45,7 +67,11 @@ export function validateSpecPack(pack: SpecPack): PackValidationError[] {
 export function assertValidSpecPack(pack: SpecPack): void {
   const errs = validateSpecPack(pack);
   if (errs.length) {
-    const detail = errs.map(e => `${e.code}: ${e.message}${e.evidence ? ' -> ' + e.evidence : ''}`).join('\n');
-    throw new Error('SpecPack validation failed:\n' + detail);
+    const detail = errs
+      .map(
+        (e) => `${e.code}: ${e.message}${e.evidence ? " -> " + e.evidence : ""}`
+      )
+      .join("\n");
+    throw new Error("SpecPack validation failed:\n" + detail);
   }
 }

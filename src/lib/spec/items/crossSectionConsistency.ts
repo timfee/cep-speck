@@ -1,6 +1,6 @@
-import type { Issue } from '../types';
+import type { Issue } from "../types";
 
-export const itemId = 'cross-section-consistency';
+export const itemId = "cross-section-consistency";
 export type Params = { metricRegex?: string };
 
 function extractMetrics(block: string, params: Params): Map<string, string> {
@@ -8,9 +8,11 @@ function extractMetrics(block: string, params: Params): Map<string, string> {
   // The ([^#].*) pattern captures values up to a # character to handle inline comments
   const map = new Map<string, string>();
   const defaultPattern = /^[-*]\s+([^:]+):\s+([^#].*)$/;
-  const customPattern = params.metricRegex ? new RegExp(params.metricRegex) : null;
-  
-  for (const line of block.split('\n')) {
+  const customPattern = params.metricRegex
+    ? new RegExp(params.metricRegex)
+    : null;
+
+  for (const line of block.split("\n")) {
     if (customPattern) {
       // Use custom regex if provided
       const matches = line.match(customPattern);
@@ -31,33 +33,36 @@ function extractMetrics(block: string, params: Params): Map<string, string> {
 }
 
 export function toPrompt(): string {
-  return 'Metrics in TL;DR must exactly match values in Success Metrics section.';
+  return "Metrics in TL;DR must exactly match values in Success Metrics section.";
 }
 
 export function validate(draft: string, params: Params): Issue[] {
   const issues: Issue[] = [];
-  const tldr = draft.match(/# 1\. TL;DR[\s\S]*?(?=# \d+\.|$)/)?.[0] || '';
-  const success = draft.match(/# 8\. Success Metrics[\s\S]*?(?=# \d+\.|$)/)?.[0] || '';
+  const tldr = draft.match(/# 1\. TL;DR[\s\S]*?(?=# \d+\.|$)/)?.[0] || "";
+  const success =
+    draft.match(/# 8\. Success Metrics[\s\S]*?(?=# \d+\.|$)/)?.[0] || "";
   const a = extractMetrics(tldr, params);
   const b = extractMetrics(success, params);
   for (const [k, v] of a) {
     if (b.has(k) && b.get(k) !== v) {
       issues.push({
-        id: 'metric-inconsistency',
+        id: "metric-inconsistency",
         itemId,
-        severity: 'error',
-        message: `Conflicting metrics: "${k}" is ${v} in TL;DR but ${b.get(k)} in Success Metrics`,
-        evidence: `${k}: ${v} | ${b.get(k)}`
+        severity: "error",
+        message: `Conflicting metrics: "${k}" is ${v} in TL;DR but ${b.get(
+          k
+        )} in Success Metrics`,
+        evidence: `${k}: ${v} | ${b.get(k)}`,
       });
     }
   }
   return issues;
 }
 
-export function heal(): string | null { 
+export function heal(): string | null {
   return `Align metric values:
 1. List each metric appearing in both TL;DR and Success Metrics.
 2. For any differing value, prefer the more specific or numerically justified one.
 3. Update the TL;DR for narrative brevity but keep numbers identical to Success Metrics.
-4. Do NOT add new metrics just to force alignment; remove from TL;DR if not a tracked success metric.`; 
+4. Do NOT add new metrics just to force alignment; remove from TL;DR if not a tracked success metric.`;
 }
