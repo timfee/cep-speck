@@ -1,0 +1,56 @@
+{
+  "id": "prd-v1",
+  "description": "CEP PRD rules",
+  "healPolicy": {
+    "maxAttempts": 3,
+    "order": "by-severity-then-priority",
+    "groupBy": "item",
+    "maxChars": 1800,
+    "includeExamples": true,
+    "style": "bullets"
+  },
+  "composition": {
+    "sections": [
+      { "id": "1", "title": "TL;DR", "required": true },
+      { "id": "2", "title": "People Problems", "required": true }
+    ],
+    "labelPattern": "# {n}. {title}",
+    "headerRegex": "^#\\s+\\d+\\."
+  },
+  "globals": {
+    "bannedText": {
+      "exact": ["portal", "dashboard"],
+      "regex": ["(?i)\\bensur(e|es|ing)\\b"]
+    }
+  },
+  "items": [
+    {
+      "id": "section-count",
+      "kind": "structure",
+      "priority": 100,
+      "severity": "error",
+      "params": { "exact": 9, "headerRegex": "^#\\s+\\d+\\." }
+    },
+    {
+      "id": "label-pattern",
+      "kind": "structure",
+      "priority": 95,
+      "severity": "error",
+      "params": { "pattern": "# {n}. {title}", "headerRegex": "^#\\s+\\d+\\." }
+    },
+    {
+      "id": "metrics-required",
+      "kind": "policy",
+      "priority": 80,
+      "severity": "error",
+      "params": { "require": ["units","timeframe","SoT"], "metricRegex": "^M-\\d+\\s*\\|" }
+    },
+    {
+      "id": "banned-text",
+      "kind": "linter",
+      "priority": 70,
+      "severity": "error",
+      "params": { "listsFromPack": true }
+    }
+  ]
+}
