@@ -7,6 +7,7 @@ import * as labelPattern from './labelPattern';
 import * as wordBudget from './wordBudget';
 import * as competitorResearch from './competitorResearch';
 import * as executiveQuality from './executiveQuality';
+import * as crossSectionConsistency from './crossSectionConsistency';
 
 registerItem({
   itemId: sectionCount.itemId,
@@ -55,4 +56,11 @@ registerItem({
   toPrompt: () => executiveQuality.toPrompt(),
   validate: (draft: string, params: unknown) => executiveQuality.validate(draft, params as executiveQuality.Params),
   heal: (issues: Issue[]) => executiveQuality.heal(issues)
+});
+
+registerItem({
+  itemId: crossSectionConsistency.itemId,
+  toPrompt: () => crossSectionConsistency.toPrompt(),
+  validate: (draft: string, params: unknown) => crossSectionConsistency.validate(draft, params as crossSectionConsistency.Params),
+  heal: () => crossSectionConsistency.heal()
 });
