@@ -70,5 +70,5 @@ registerItem({
   itemId: placeholderQuality.itemId,
   toPrompt: () => placeholderQuality.toPrompt(),
   validate: (draft: string) => placeholderQuality.validate(draft),
-  heal: () => placeholderQuality.heal()
+  heal: (issues: Issue[]) => placeholderQuality.heal(issues)
 });
