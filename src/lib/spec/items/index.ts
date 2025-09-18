@@ -9,6 +9,9 @@ import * as competitorResearch from './competitorResearch';
 import * as executiveQuality from './executiveQuality';
 import * as crossSectionConsistency from './crossSectionConsistency';
 import * as skuDifferentiation from './skuDifferentiation';
+import * as personaCoverage from './personaCoverage';
+import * as executiveSummaryCoherence from './executiveSummaryCoherence';
+import * as technicalFeasibility from './technicalFeasibility';
 
 registerItem({
   itemId: sectionCount.itemId,
@@ -71,4 +74,25 @@ registerItem({
   toPrompt: (params: unknown) => skuDifferentiation.toPrompt(params as skuDifferentiation.Params),
   validate: (draft: string, params: unknown) => skuDifferentiation.validate(draft, params as skuDifferentiation.Params),
   heal: () => skuDifferentiation.heal()
+});
+registerItem({
+  itemId: personaCoverage.itemId,
+  toPrompt: () => personaCoverage.toPrompt(),
+  validate: (draft: string, params: unknown) => personaCoverage.validate(draft, params as personaCoverage.Params),
+  heal: () => personaCoverage.heal()
+});
+
+registerItem({
+  itemId: executiveSummaryCoherence.itemId,
+  toPrompt: () => executiveSummaryCoherence.toPrompt(),
+  validate: (draft: string, params: unknown) => executiveSummaryCoherence.validate(draft, params as executiveSummaryCoherence.Params),
+  heal: (issues: Issue[]) => executiveSummaryCoherence.heal(issues)
+});
+
+
+registerItem({
+  itemId: technicalFeasibility.itemId,
+  toPrompt: () => technicalFeasibility.toPrompt(),
+  validate: (draft: string) => technicalFeasibility.validate(draft),
+  heal: () => technicalFeasibility.heal()
 });

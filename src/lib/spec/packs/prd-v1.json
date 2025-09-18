@@ -111,6 +111,28 @@
         "requireSpecificMetrics": true,
         "banOverExplanation": true
       }
+    },
+    {
+
+      "id": "persona-coverage",
+      "kind": "policy",
+      "priority": 25,
+      "severity": "error",
+      "params": {
+        "personas": ["IT Admin", "End User", "Security Team"]
+      },
+      {
+
+      "id": "executive-summary-coherence",
+      "kind": "policy",
+      "priority": 25,
+      "severity": "warn",
+    }, {
+      "id": "technical-feasibility",
+      "kind": "policy",
+      "priority": 85,
+      "severity": "error",
+      "params": {}
     }
   ]
 }
