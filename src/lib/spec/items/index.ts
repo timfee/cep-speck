@@ -76,11 +76,12 @@ registerItem({
 registerItem({
   itemId: executiveQuality.itemId,
   toPrompt: () => executiveQuality.toPrompt(),
-  validate: (draft: string) => executiveQuality.validate(draft, {
-    enforceFactualTone: true,
-    requireSpecificMetrics: true,
-    banOverExplanation: true,
-  }),
+  validate: (draft: string) =>
+    executiveQuality.validate(draft, {
+      enforceFactualTone: true,
+      requireSpecificMetrics: true,
+      banOverExplanation: true,
+    }),
   heal: (issues: Issue[]) => executiveQuality.heal(issues),
 });
 
@@ -135,6 +136,6 @@ registerItem({
   itemId: skuDifferentiation.itemId,
   toPrompt: () => skuDifferentiation.toPrompt(),
   validate: (draft: string) =>
-    skuDifferentiation.validate(draft, { targetSku: 'premium' }),
+    skuDifferentiation.validate(draft, { targetSku: "premium" }),
   heal: () => skuDifferentiation.heal(),
 });
