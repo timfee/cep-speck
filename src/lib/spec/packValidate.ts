@@ -1,0 +1,51 @@
+import type { SpecPack } from './types';
+import { getItem } from './registry';
+
+export interface PackValidationError {
+  code: string;
+  message: string;
+  evidence?: string;
+}
+
+export function validateSpecPack(pack: SpecPack): PackValidationError[] {
+  const errs: PackValidationError[] = [];
+  const seen = new Set<string>();
+  for (const def of pack.items) {
+    if (seen.has(def.id)) {
+      errs.push({ code: 'DUPLICATE_ID', message: `Duplicate item id: ${def.id}` });
+    } else {
+      seen.add(def.id);
+    }
+    if (typeof def.priority !== 'number' || Number.isNaN(def.priority)) {
+      errs.push({ code: 'BAD_PRIORITY', message: `Priority must be numeric: ${def.id}`, evidence: String(def.priority) });
+    }
+    try {
+      getItem(def.id);
+    } catch {
+      errs.push({ code: 'UNREGISTERED', message: `Item not registered: ${def.id}` });
+    }
+  }
+  // Validate bannedText regex compilation
+  const regexList = pack.globals?.bannedText?.regex || [];
+  for (const r of regexList) {
+    try {
+      // eslint-disable-next-line no-new
+      new RegExp(r);
+    } catch (e) {
+      errs.push({ code: 'BAD_REGEX', message: `Invalid bannedText regex: ${r}`, evidence: (e as Error).message });
+    }
+  }
+  // header regex
+  if (pack.composition?.headerRegex) {
+    try { new RegExp(pack.composition.headerRegex); } catch (e) { errs.push({ code: 'BAD_HEADER_REGEX', message: 'Invalid headerRegex', evidence: (e as Error).message }); }
+  }
+  return errs;
+}
+
+export function assertValidSpecPack(pack: SpecPack): void {
+  const errs = validateSpecPack(pack);
+  if (errs.length) {
+    const detail = errs.map(e => `${e.code}: ${e.message}${e.evidence ? ' -> ' + e.evidence : ''}`).join('\n');
+    throw new Error('SpecPack validation failed:\n' + detail);
+  }
+}

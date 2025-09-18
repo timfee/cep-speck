@@ -7,6 +7,7 @@ import { aggregateHealing } from '@/lib/spec/healing/aggregate';
 import { readKnowledgeDirectory } from '@/lib/knowledge/reader';
 import { performCompetitorResearch } from '@/lib/research/webSearch';
 import pack from '@/lib/spec/packs/prd-v1.json';
+import { assertValidSpecPack } from '@/lib/spec/packValidate';
 import type { SpecPack } from '@/lib/spec/types';
 import '@/lib/spec/items';
 
@@ -25,6 +26,14 @@ export async function POST(req: NextRequest) {
       try {
         if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
           controller.enqueue(sseLine({ type: 'error', message: 'Missing GOOGLE_GENERATIVE_AI_API_KEY on server. Add it to .env.local and restart.' }));
+          controller.close();
+          return;
+        }
+        // Validate pack once (fail fast if structurally invalid)
+        try {
+          assertValidSpecPack(pack as SpecPack);
+        } catch (e) {
+          controller.enqueue(sseLine({ type: 'error', message: (e as Error).message }));
           controller.close();
           return;
         }

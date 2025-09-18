@@ -55,5 +55,9 @@ export function validate(draft: string, params: Params): Issue[] {
 }
 
 export function heal(): string | null { 
-  return null; 
+  return `Align metric values:
+1. List each metric appearing in both TL;DR and Success Metrics.
+2. For any differing value, prefer the more specific or numerically justified one.
+3. Update the TL;DR for narrative brevity but keep numbers identical to Success Metrics.
+4. Do NOT add new metrics just to force alignment; remove from TL;DR if not a tracked success metric.`; 
 }

@@ -86,5 +86,8 @@ export function validate(draft: string): Issue[] {
 }
 
 export function heal(): string | null {
-  return null;
+  return `Adjust feasibility claims:
+1. Replace any >100% value with a realistic capped figure or rephrase qualitatively.
+2. Avoid 100% adoption/coverage; use a defensible range (e.g., 85–90%).
+3. For rapid adoption timelines (>80% in <30 days), either lower % or extend timeframe with rationale (baseline install base, enforced deployment mechanism, auto-updates, etc.).`;
 }

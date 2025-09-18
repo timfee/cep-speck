@@ -34,5 +34,9 @@ export function validate(draft: string, params: Params): Issue[] {
 }
 
 export function heal(): string | null { 
-  return null; 
+  return `Ensure each persona appears in all required sections:
+1. People Problems: tie at least one bullet per persona to a concrete pain.
+2. Goals: include persona perspective (e.g., "IT Admin reduces...", "End User experiences...").
+3. CUJs: write at least one journey per persona or annotate shared journeys with persona tags.
+4. Avoid generic plural nouns; use explicit persona labels so automation can detect coverage.`; 
 }

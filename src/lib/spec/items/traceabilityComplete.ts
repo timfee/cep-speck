@@ -98,5 +98,9 @@ export function validate(draft: string): Issue[] {
 }
 
 export function heal(): string | null { 
-  return null; 
+  return `Restore problem→feature→metric chain:
+1. For each People Problem bullet, cite it explicitly in at least one feature intro sentence.
+2. For each feature, add at least one Success Metric referencing a distinctive keyword from the feature name.
+3. If a problem is too broad for a single feature, split it and map each part.
+4. If a feature is unmeasured, add a metric describing an observable behavioral or system outcome (latency, error rate, admin hours, security coverage).`;
 }
