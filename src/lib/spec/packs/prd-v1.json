@@ -80,6 +80,15 @@
       "params": { "target": 1400, "hardCap": 1800 }
     },
     {
+      "id": "sku-differentiation",
+      "kind": "policy",
+      "priority": 50,
+      "severity": "error",
+      "params": {
+        "targetSku": "premium"
+      }
+    },
+    {
       "id": "competitor-research",
       "kind": "policy",
       "priority": 40,
