@@ -35,8 +35,12 @@ function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
   return issues;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function heal(_issues: Issue[], _params: Params, _pack?: unknown): string | null {
+ 
+function heal(
+  _issues: Issue[],
+  _params: Params,
+  _pack?: unknown
+): string | null {
   return `Ensure each persona appears in all required sections:
 1. People Problems: tie at least one bullet per persona to a concrete pain.
 2. Goals: include persona perspective (e.g., "IT Admin reduces...", "End User experiences...").

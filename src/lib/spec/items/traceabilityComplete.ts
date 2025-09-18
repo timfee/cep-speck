@@ -75,8 +75,12 @@ function toPrompt(_params: Record<string, never>, _pack?: unknown): string {
   return "Ensure every problem maps to a feature and every feature has at least one success metric.";
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function validate(draft: string, _params: Record<string, never>, _pack?: unknown): Issue[] {
+ 
+function validate(
+  draft: string,
+  _params: Record<string, never>,
+  _pack?: unknown
+): Issue[] {
   const issues: Issue[] = [];
   const problemBlock = section(
     draft,
@@ -133,8 +137,12 @@ function validate(draft: string, _params: Record<string, never>, _pack?: unknown
   return issues;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function heal(_issues: Issue[], _params: Record<string, never>, _pack?: unknown): string | null {
+ 
+function heal(
+  _issues: Issue[],
+  _params: Record<string, never>,
+  _pack?: unknown
+): string | null {
   return `Restore problem→feature→metric chain:
 1. For each People Problem bullet, cite it explicitly in at least one feature intro sentence.
 2. For each feature, add at least one Success Metric referencing a distinctive keyword from the feature name.

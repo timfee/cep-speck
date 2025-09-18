@@ -4,7 +4,11 @@ import type { Issue, SpecItemDef, SpecPack } from "./types";
 export interface ValidatorModule<Params = void> {
   readonly itemId: string;
   readonly toPrompt: (params: Params, pack?: SpecPack) => string;
-  readonly validate: (draft: string, params: Params, pack?: SpecPack) => Issue[];
+  readonly validate: (
+    draft: string,
+    params: Params,
+    pack?: SpecPack
+  ) => Issue[];
   readonly heal: (
     issues: Issue[],
     params: Params,
@@ -12,7 +16,9 @@ export interface ValidatorModule<Params = void> {
   ) => string | null;
 }
 
-export function createValidatorModule<P>(m: ValidatorModule<P>): ValidatorModule<P> {
+export function createValidatorModule<P>(
+  m: ValidatorModule<P>
+): ValidatorModule<P> {
   return m;
 }
 
@@ -35,7 +41,10 @@ export function getRegisteredItemIds(): string[] {
   return Object.keys(modules);
 }
 
-export function invokeItemToPrompt<P>(def: SpecItemDef<P>, pack: SpecPack): string {
+export function invokeItemToPrompt<P>(
+  def: SpecItemDef<P>,
+  pack: SpecPack
+): string {
   const mod = getItem<P>(def.id);
   return mod.toPrompt(def.params, pack);
 }

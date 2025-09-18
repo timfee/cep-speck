@@ -108,11 +108,7 @@ export async function performSelfReview(
   }
 }
 
- 
-function buildSelfReviewPrompt(
-  draft: string,
-  issues: Issue[]
-): string {
+function buildSelfReviewPrompt(draft: string, issues: Issue[]): string {
   const issueList = issues
     .map(
       (issue, index) =>

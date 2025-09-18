@@ -12,8 +12,12 @@ function toPrompt(_params: Record<string, never>, _pack?: unknown): string {
   return "Placeholders must be specific: include data, units, timeframe, and source.";
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function validate(draft: string, _params: Record<string, never>, _pack?: unknown): Issue[] {
+ 
+function validate(
+  draft: string,
+  _params: Record<string, never>,
+  _pack?: unknown
+): Issue[] {
   const issues: Issue[] = [];
   const placeholders = draft.match(/\[PM_INPUT_NEEDED:[^\]]+\]/g) || [];
 
@@ -46,8 +50,12 @@ function validate(draft: string, _params: Record<string, never>, _pack?: unknown
   return issues;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function heal(issues: Issue[], _params: Record<string, never>, _pack?: unknown): string | null {
+ 
+function heal(
+  issues: Issue[],
+  _params: Record<string, never>,
+  _pack?: unknown
+): string | null {
   if (!issues.length) return null;
   return "Make placeholders more specific by including units, timeframes, and data sources. Use at least 3 words and include units for metric-related placeholders.";
 }

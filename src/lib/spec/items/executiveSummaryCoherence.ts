@@ -3,13 +3,15 @@ import type { Issue, SpecPack } from "../types";
 export const itemId = "executive-summary-coherence";
 export type Params = Record<string, never>;
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function toPrompt(_params: Params, _pack?: SpecPack): string {
+function toPrompt(params: Params, pack?: SpecPack): string {
+  void params; // intentional: interface compatibility
+  void pack;
   return "TL;DR must highlight at least half of the core feature set.";
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function validate(draft: string, _params: Params, _pack?: SpecPack): Issue[] {
+function validate(draft: string, params: Params, pack?: SpecPack): Issue[] {
+  void params;
+  void pack;
   const issues: Issue[] = [];
 
   // Extract TL;DR section
@@ -54,8 +56,9 @@ function validate(draft: string, _params: Params, _pack?: SpecPack): Issue[] {
   return issues;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function heal(issues: Issue[], _params: Params, _pack?: SpecPack): string | null {
+function heal(issues: Issue[], params: Params, pack?: SpecPack): string | null {
+  void params;
+  void pack;
   if (!issues.length) return null;
 
   if (issues.some((i) => i.id === "tldr-feature-mismatch")) {

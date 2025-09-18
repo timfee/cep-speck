@@ -85,8 +85,12 @@ function validate(draft: string, _params: Params, _pack?: unknown): Issue[] {
   }
   return issues;
 }
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function heal(_issues: Issue[], _params: Params, _pack?: unknown): string | null {
+ 
+function heal(
+  _issues: Issue[],
+  _params: Params,
+  _pack?: unknown
+): string | null {
   return `Adjust feasibility claims:
 1. Replace any >100% value with a realistic capped figure or rephrase qualitatively.
 2. Avoid 100% adoption/coverage; use a defensible range (e.g., 85–90%).
