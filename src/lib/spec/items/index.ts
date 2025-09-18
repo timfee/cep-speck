@@ -8,6 +8,7 @@ import * as wordBudget from './wordBudget';
 import * as competitorResearch from './competitorResearch';
 import * as executiveQuality from './executiveQuality';
 import * as crossSectionConsistency from './crossSectionConsistency';
+import * as personaCoverage from './personaCoverage';
 import * as executiveSummaryCoherence from './executiveSummaryCoherence';
 import * as technicalFeasibility from './technicalFeasibility';
 
@@ -65,6 +66,13 @@ registerItem({
   toPrompt: () => crossSectionConsistency.toPrompt(),
   validate: (draft: string, params: unknown) => crossSectionConsistency.validate(draft, params as crossSectionConsistency.Params),
   heal: () => crossSectionConsistency.heal()
+});
+
+registerItem({
+  itemId: personaCoverage.itemId,
+  toPrompt: () => personaCoverage.toPrompt(),
+  validate: (draft: string, params: unknown) => personaCoverage.validate(draft, params as personaCoverage.Params),
+  heal: () => personaCoverage.heal()
 });
 
 registerItem({

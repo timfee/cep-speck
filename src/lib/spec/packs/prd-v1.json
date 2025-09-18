@@ -103,6 +103,15 @@
     },
     {
 
+      "id": "persona-coverage",
+      "kind": "policy",
+      "priority": 25,
+      "severity": "error",
+      "params": {
+        "personas": ["IT Admin", "End User", "Security Team"]
+      },
+      {
+
       "id": "executive-summary-coherence",
       "kind": "policy",
       "priority": 25,
