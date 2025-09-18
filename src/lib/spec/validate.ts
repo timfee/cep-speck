@@ -1,18 +1,10 @@
 import { getItem } from "./registry";
 import type { Issue, SpecPack, ValidationReport } from "./types";
 
-export interface ValidateOptions {
-  failFast?: boolean; // stop after first item producing an error-level issue
-}
-
-export function validateAll(
-  draft: string,
-  pack: SpecPack,
-  opts: ValidateOptions = {}
-): ValidationReport {
+export function validateAll(draft: string, pack: SpecPack): ValidationReport {
   const issues: Issue[] = [];
   const coverage: Record<string, boolean> = {};
-  const failFast = opts.failFast || process.env.SPEC_FAIL_FAST === "1";
+  const failFast = true; // Always fail-fast deterministically
   for (const def of pack.items) {
     const mod = getItem(def.id);
     const found = (mod.validate(draft, def.params as unknown, pack) ||

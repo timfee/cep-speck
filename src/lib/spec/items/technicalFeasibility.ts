@@ -1,7 +1,7 @@
 import type { Issue } from "../types";
 
 export const itemId = "technical-feasibility";
-export type Params = Record<string, never>;
+// No Params type required
 
 export function toPrompt(): string {
   return "Reject impossible percentages (>100%) and flag unrealistic rapid adoption claims.";

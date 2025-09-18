@@ -1,7 +1,7 @@
 import type { Issue } from "../types";
 
 export const itemId = "traceability-complete";
-export type Params = Record<string, never>;
+// No Params type required
 
 // Configuration constants for matching algorithms
 const PROBLEM_SUBSTRING_LENGTH = 30;

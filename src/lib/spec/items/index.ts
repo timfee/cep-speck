@@ -76,8 +76,11 @@ registerItem({
 registerItem({
   itemId: executiveQuality.itemId,
   toPrompt: () => executiveQuality.toPrompt(),
-  validate: (draft: string, params: unknown) =>
-    executiveQuality.validate(draft, params as executiveQuality.Params),
+  validate: (draft: string) => executiveQuality.validate(draft, {
+    enforceFactualTone: true,
+    requireSpecificMetrics: true,
+    banOverExplanation: true,
+  }),
   heal: (issues: Issue[]) => executiveQuality.heal(issues),
 });
 
@@ -103,11 +106,7 @@ registerItem({
 registerItem({
   itemId: executiveSummaryCoherence.itemId,
   toPrompt: () => executiveSummaryCoherence.toPrompt(),
-  validate: (draft: string, params: unknown) =>
-    executiveSummaryCoherence.validate(
-      draft,
-      params as executiveSummaryCoherence.Params
-    ),
+  validate: (draft: string) => executiveSummaryCoherence.validate(draft),
   heal: (issues: Issue[]) => executiveSummaryCoherence.heal(issues),
 });
 
@@ -134,8 +133,8 @@ registerItem({
 
 registerItem({
   itemId: skuDifferentiation.itemId,
-  toPrompt: (params: unknown) => skuDifferentiation.toPrompt(),
-  validate: (draft: string, params: unknown) =>
-    skuDifferentiation.validate(draft, params as skuDifferentiation.Params),
+  toPrompt: () => skuDifferentiation.toPrompt(),
+  validate: (draft: string) =>
+    skuDifferentiation.validate(draft, { targetSku: 'premium' }),
   heal: () => skuDifferentiation.heal(),
 });

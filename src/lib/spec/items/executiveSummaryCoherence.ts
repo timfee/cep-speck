@@ -1,13 +1,13 @@
 import type { Issue } from '../types';
 
 export const itemId = 'executive-summary-coherence';
-export type Params = Record<string, never>;
+// No Params type needed
 
 export function toPrompt(): string {
   return 'TL;DR must highlight at least half of the core feature set.';
 }
 
-export function validate(draft: string, _params: Params): Issue[] {
+export function validate(draft: string): Issue[] {
   const issues: Issue[] = [];
   
   // Extract TL;DR section

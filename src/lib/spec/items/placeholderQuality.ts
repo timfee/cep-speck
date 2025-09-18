@@ -1,7 +1,7 @@
 import type { Issue } from '../types';
 
 export const itemId = 'placeholder-quality';
-export type Params = Record<string, never>;
+// No Params type required
 
 // Constants for pattern matching
 const METRIC_KEYWORDS = /(baseline|target|metric)/i;

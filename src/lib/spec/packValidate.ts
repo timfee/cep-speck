@@ -39,7 +39,6 @@ export function validateSpecPack(pack: SpecPack): PackValidationError[] {
   const regexList = pack.globals?.bannedText?.regex || [];
   for (const r of regexList) {
     try {
-      // eslint-disable-next-line no-new
       new RegExp(r);
     } catch (e) {
       errs.push({
