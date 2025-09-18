@@ -2,9 +2,9 @@ import type { SpecPack, Issue } from './types';
 
 export type ItemModule<P = unknown> = {
   itemId: string;
-  toPrompt: (params: P, pack: SpecPack) => string;
-  validate: (draft: string, params: P, pack: SpecPack) => Issue[];
-  heal: (issues: Issue[], params: P, pack: SpecPack) => string | null;
+  toPrompt: (params: P, pack?: SpecPack) => string;
+  validate: (draft: string, params: P, pack?: SpecPack) => Issue[];
+  heal: (issues: Issue[], params?: P, pack?: SpecPack) => string | null;
 };
 
 const modules: Record<string, ItemModule<unknown>> = {};

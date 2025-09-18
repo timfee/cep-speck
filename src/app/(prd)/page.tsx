@@ -70,9 +70,28 @@ export default function Page() {
         <h2 className="text-lg font-semibold">Spec</h2>
         <Textarea value={spec} onChange={(e) => setSpec(e.target.value)} rows={16} />
         <Button onClick={run} disabled={streaming}>Run</Button>
-        <div className="flex items-center gap-2">
-          <Badge variant="secondary">phase: {phase || '—'}</Badge>
-          <Badge variant="outline">attempt: {attempt || 0}</Badge>
+        <div className="flex items-center gap-3">
+          <Badge 
+            variant={
+              phase === 'generating' ? 'default' : 
+              phase === 'validating' ? 'secondary' : 
+              phase === 'healing' ? 'outline' : 
+              phase === 'done' ? 'default' : 
+              phase === 'error' ? 'destructive' : 
+              'secondary'
+            } 
+            className="text-base px-4 py-2 font-medium"
+          >
+            {phase === 'generating' && '🔄 Generating'}
+            {phase === 'validating' && '🔍 Validating'}
+            {phase === 'healing' && '🩹 Healing'}
+            {phase === 'done' && '✅ Complete'}
+            {phase === 'error' && '❌ Error'}
+            {!phase && '⏸️ Ready'}
+          </Badge>
+          <Badge variant="outline" className="text-sm px-3 py-1">
+            Attempt: {attempt || 0}
+          </Badge>
         </div>
       </Card>
 
