@@ -102,10 +102,16 @@
       }
     },
     {
+
       "id": "executive-summary-coherence",
       "kind": "policy",
       "priority": 25,
       "severity": "warn",
+    }, {
+      "id": "technical-feasibility",
+      "kind": "policy",
+      "priority": 85,
+      "severity": "error",
       "params": {}
     }
   ]
