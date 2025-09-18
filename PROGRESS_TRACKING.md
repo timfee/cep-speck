@@ -135,7 +135,7 @@ The application successfully fulfills the original vision of modular spec compon
 - Install and run
   - pnpm install
   - pnpm dev
-  - http://localhost:3000
+  - open `http://localhost:3000`
 - Use
   - Enter a short spec idea (e.g., project name, SKU)
   - Click Run

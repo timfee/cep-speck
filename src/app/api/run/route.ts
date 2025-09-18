@@ -1,4 +1,4 @@
-import { geminiModel } from "@/lib/ai/provider";
+import { getResilientAI } from "@/lib/ai/resilient";
 import { readKnowledgeDirectory } from "@/lib/knowledge/reader";
 import { performCompetitorResearch } from "@/lib/research/webSearch";
 import { aggregateHealing } from "@/lib/spec/healing/aggregate";
@@ -7,9 +7,20 @@ import packData from "@/lib/spec/packs/prd-v1.json";
 import { assertValidSpecPack } from "@/lib/spec/packValidate";
 import { buildSystemPrompt, buildUserPrompt } from "@/lib/spec/prompt";
 import { performSelfReview } from "@/lib/spec/selfReview";
+import { 
+  createPhaseFrame, 
+  createGenerationFrame, 
+  createValidationFrame, 
+  createErrorFrame, 
+  createResultFrame,
+  createStreamFrame,
+  encodeStreamFrame,
+  StreamingError,
+  withErrorRecovery
+} from "@/lib/spec/streaming";
 import type { SpecPack } from "@/lib/spec/types";
 import { validateAll } from "@/lib/spec/validate";
-import { streamText } from "ai";
+import type { CoreMessage } from "ai";
 import { NextRequest } from "next/server";
 
 export const runtime = "nodejs";
@@ -19,10 +30,6 @@ export const runtime = "nodejs";
 // The pack is validated at runtime via assertValidSpecPack()
 const pack: SpecPack = packData as SpecPack;
 
-function sseLine(obj: Record<string, unknown>) {
-  return new TextEncoder().encode(JSON.stringify(obj) + "\n");
-}
-
 export async function POST(req: NextRequest) {
   const { specText, maxAttempts: maxOverride } = await req.json();
   const maxAttempts = Math.min(
@@ -30,45 +37,61 @@ export async function POST(req: NextRequest) {
     5
   );
 
+  const startTime = Date.now();
+
   const stream = new ReadableStream({
     async start(controller) {
       try {
+        // API key check
         if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
-          controller.enqueue(
-            sseLine({
-              type: "error",
-              message:
-                "Missing GOOGLE_GENERATIVE_AI_API_KEY on server. Add it to .env.local and restart.",
-            })
+          const errorFrame = createErrorFrame(
+            "Missing GOOGLE_GENERATIVE_AI_API_KEY on server. Add it to .env.local and restart.",
+            false, // Not recoverable without restart
+            "MISSING_API_KEY"
           );
+          controller.enqueue(encodeStreamFrame(errorFrame));
           controller.close();
           return;
         }
-        // Validate pack once (fail fast if structurally invalid)
-        try {
+
+        // Validate pack structure
+        await withErrorRecovery(async () => {
           assertValidSpecPack(pack);
-        } catch (error) {
-          const errorMessage =
-            error instanceof Error ? error.message : String(error);
-          controller.enqueue(sseLine({ type: "error", message: errorMessage }));
-          controller.close();
-          return;
-        }
-        controller.enqueue(
-          sseLine({ type: "phase", phase: "loading-knowledge", attempt: 0 })
-        );
-        const knowledgeFiles = await readKnowledgeDirectory("./knowledge");
+        }, "SpecPack validation").catch((error) => {
+          if (error instanceof StreamingError) {
+            controller.enqueue(encodeStreamFrame(error.toStreamFrame()));
+            controller.close();
+            return;
+          }
+          throw error;
+        });
 
+        // Phase 1: Load knowledge
         controller.enqueue(
-          sseLine({ type: "phase", phase: "performing-research", attempt: 0 })
+          encodeStreamFrame(createPhaseFrame("loading-knowledge", 0, "Loading knowledge base"))
         );
-        const researchResult = await performCompetitorResearch([
-          "Zscaler",
-          "Island",
-          "Talon",
-          "Microsoft Edge for Business",
-        ]);
+        
+        const knowledgeFiles = await withErrorRecovery(
+          () => readKnowledgeDirectory("./knowledge"),
+          "Knowledge loading"
+        );
 
+        // Phase 2: Perform research
+        controller.enqueue(
+          encodeStreamFrame(createPhaseFrame("performing-research", 0, "Researching competitors"))
+        );
+        
+        const researchResult = await withErrorRecovery(
+          () => performCompetitorResearch([
+            "Zscaler",
+            "Island", 
+            "Talon",
+            "Microsoft Edge for Business",
+          ]),
+          "Competitor research"
+        );
+
+        // Build context and messages
         let researchContext = "";
         if (knowledgeFiles.length > 0) {
           researchContext += `\n\nKnowledge Base Context:\n${knowledgeFiles
@@ -92,52 +115,70 @@ export async function POST(req: NextRequest) {
         }
 
         const system = buildSystemPrompt(pack) + researchContext;
-        const messages: {
-          role: "system" | "user" | "assistant";
-          content: string;
-        }[] = [
+        const messages: CoreMessage[] = [
           { role: "system", content: system },
           { role: "user", content: buildUserPrompt(specText) },
         ];
 
+        // Initialize resilient AI
+        const ai = getResilientAI();
+
+        // Main generate-validate-heal loop
         let attempt = 0;
         let finalDraft = "";
+        let totalTokens = 0;
+        
         while (attempt < maxAttempts) {
           attempt++;
+          
+          // Phase 3: Generate content
           controller.enqueue(
-            sseLine({ type: "phase", phase: "generating", attempt })
+            encodeStreamFrame(createPhaseFrame("generating", attempt, `Generating content (attempt ${attempt}/${maxAttempts})`))
           );
 
-          const result = await streamText({
-            model: geminiModel(),
-            messages,
-          });
+          const result = await ai.generateWithFallback(messages);
 
+          let draftContent = "";
           for await (const delta of result.textStream) {
-            controller.enqueue(sseLine({ type: "tokens", delta }));
+            draftContent += delta;
+            controller.enqueue(
+              encodeStreamFrame(createGenerationFrame(delta, draftContent, ++totalTokens))
+            );
           }
 
           const draft = await result.text;
-          controller.enqueue(sseLine({ type: "draft", draft }));
+          finalDraft = draft;
 
+          // Phase 4: Validate content
+          const validationStartTime = Date.now();
           controller.enqueue(
-            sseLine({ type: "phase", phase: "validating", attempt })
+            encodeStreamFrame(createPhaseFrame("validating", attempt, "Running validation checks"))
           );
+          
           const report = validateAll(draft, pack);
-          controller.enqueue(sseLine({ type: "validation", report }));
+          
+          const validationDuration = Date.now() - validationStartTime;
+          controller.enqueue(
+            encodeStreamFrame(createValidationFrame(report, validationDuration))
+          );
 
           if (report.ok) {
             finalDraft = draft;
+            const totalDuration = Date.now() - startTime;
+            
             controller.enqueue(
-              sseLine({ type: "phase", phase: "done", attempt })
+              encodeStreamFrame(createPhaseFrame("done", attempt, "Content generation complete"))
             );
-            controller.enqueue(sseLine({ type: "result", draft: finalDraft }));
+            controller.enqueue(
+              encodeStreamFrame(createResultFrame(true, finalDraft, attempt, totalDuration))
+            );
             break;
           }
 
-          // AI self-review phase for filtering false positives
+          // Phase 5: AI self-review phase for filtering false positives
+          const selfReviewStartTime = Date.now();
           controller.enqueue(
-            sseLine({ type: "phase", phase: "self-reviewing", attempt })
+            encodeStreamFrame(createPhaseFrame("self-reviewing", attempt, "Filtering validation issues"))
           );
 
           let issuesToHeal = report.issues;
@@ -146,23 +187,26 @@ export async function POST(req: NextRequest) {
               draft,
               report.issues
             );
+            
+            const selfReviewDuration = Date.now() - selfReviewStartTime;
             controller.enqueue(
-              sseLine({
-                type: "self-review",
-                confirmed: confirmed.length,
-                filtered: filtered.length,
-                originalIssues: report.issues.length,
-              })
+              encodeStreamFrame(createStreamFrame('self-review', {
+                confirmed,
+                filtered,
+                duration: selfReviewDuration
+              }))
             );
 
             // Use confirmed issues for healing
             if (confirmed.length === 0) {
               finalDraft = draft;
+              const totalDuration = Date.now() - startTime;
+              
               controller.enqueue(
-                sseLine({ type: "phase", phase: "done", attempt })
+                encodeStreamFrame(createPhaseFrame("done", attempt, "Content approved after self-review"))
               );
               controller.enqueue(
-                sseLine({ type: "result", draft: finalDraft })
+                encodeStreamFrame(createResultFrame(true, finalDraft, attempt, totalDuration))
               );
               break;
             }
@@ -176,27 +220,46 @@ export async function POST(req: NextRequest) {
             // Continue with original issues if self-review fails
           }
 
+          // Phase 6: Healing phase
           controller.enqueue(
-            sseLine({ type: "phase", phase: "healing", attempt })
+            encodeStreamFrame(createPhaseFrame("healing", attempt, `Preparing healing instructions for ${issuesToHeal.length} issues`))
           );
           const followup = aggregateHealing(issuesToHeal, pack);
+          
+          controller.enqueue(
+            encodeStreamFrame(createStreamFrame('healing', {
+              instruction: followup,
+              issueCount: issuesToHeal.length,
+              attempt
+            }))
+          );
+          
           messages.push({ role: "assistant", content: draft });
           messages.push({ role: "user", content: followup });
           finalDraft = draft;
 
           if (attempt === maxAttempts) {
+            const totalDuration = Date.now() - startTime;
             controller.enqueue(
-              sseLine({ type: "phase", phase: "failed", attempt })
+              encodeStreamFrame(createPhaseFrame("failed", attempt, `Max attempts reached (${maxAttempts})`))
             );
-            controller.enqueue(sseLine({ type: "result", draft: finalDraft }));
+            controller.enqueue(
+              encodeStreamFrame(createResultFrame(false, finalDraft, attempt, totalDuration))
+            );
             break;
           }
         }
 
         controller.close();
       } catch (e: unknown) {
-        const errorMessage = e instanceof Error ? e.message : String(e);
-        controller.enqueue(sseLine({ type: "error", message: errorMessage }));
+        const error = e instanceof StreamingError ? e : new StreamingError(
+          e instanceof Error ? e.message : String(e),
+          false, // Unexpected errors are not recoverable
+          "UNEXPECTED_ERROR",
+          e
+        );
+        
+        controller.enqueue(encodeStreamFrame(error.toStreamFrame()));
         controller.close();
       }
     },

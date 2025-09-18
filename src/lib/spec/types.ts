@@ -51,3 +51,75 @@ export interface SpecPack {
     lexicon?: { preferred?: string[]; anti?: string[] };
   };
 }
+
+// Structured streaming protocol types
+export type StreamPhase = 
+  | 'loading-knowledge' 
+  | 'performing-research' 
+  | 'generating' 
+  | 'validating' 
+  | 'self-reviewing' 
+  | 'healing' 
+  | 'done' 
+  | 'failed' 
+  | 'error';
+
+export type StreamFrame =
+  | {
+      type: 'phase';
+      data: { 
+        phase: StreamPhase; 
+        attempt: number; 
+        timestamp: number;
+        message?: string;
+      };
+    }
+  | { 
+      type: 'generation'; 
+      data: { 
+        delta: string; 
+        total: string;
+        tokenCount?: number;
+      }; 
+    }
+  | { 
+      type: 'validation'; 
+      data: { 
+        report: ValidationReport;
+        duration?: number;
+      }; 
+    }
+  | { 
+      type: 'self-review'; 
+      data: { 
+        confirmed: Issue[]; 
+        filtered: Issue[];
+        duration?: number;
+      }; 
+    }
+  | { 
+      type: 'healing'; 
+      data: { 
+        instruction: string;
+        issueCount: number;
+        attempt: number;
+      }; 
+    }
+  | { 
+      type: 'result'; 
+      data: { 
+        success: boolean;
+        finalDraft: string;
+        totalAttempts: number;
+        totalDuration: number;
+      }; 
+    }
+  | { 
+      type: 'error'; 
+      data: { 
+        message: string; 
+        recoverable: boolean;
+        code?: string;
+        details?: unknown;
+      }; 
+    };

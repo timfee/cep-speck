@@ -6,15 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import type { Issue } from "@/lib/spec/types";
-
-type Frame =
-  | { type: 'phase'; phase: string; attempt: number }
-  | { type: 'tokens'; delta: string }
-  | { type: 'draft'; draft: string }
-  | { type: 'validation'; report: { ok: boolean; issues: Issue[] } }
-  | { type: 'result'; draft: string }
-  | { type: 'error'; message: string };
+import type { Issue, StreamFrame } from "@/lib/spec/types";
 
 export default function Page() {
   const [spec, setSpec] = useState<string>('Project: Example\nTarget SKU: premium\n\n');
@@ -51,14 +43,13 @@ export default function Page() {
       const chunk = decoder.decode(value);
       for (const line of chunk.split('\n')) {
         if (!line.trim()) continue;
-        let obj: Frame;
+        let obj: StreamFrame;
         try { obj = JSON.parse(line); } catch { continue; }
-        if (obj.type === 'phase') { setPhase(obj.phase); setAttempt(obj.attempt); }
-        if (obj.type === 'tokens') { textRef.current += obj.delta; setDraft(textRef.current); }
-        if (obj.type === 'draft') { textRef.current = obj.draft; setDraft(obj.draft); }
-        if (obj.type === 'validation') { setIssues(obj.report.issues ?? []); }
-        if (obj.type === 'result') { setDraft(obj.draft); }
-        if (obj.type === 'error') { setPhase('error'); setDraft(`Error: ${obj.message}`); setStreaming(false); break; }
+        if (obj.type === 'phase') { setPhase(obj.data.phase); setAttempt(obj.data.attempt); }
+        if (obj.type === 'generation') { textRef.current += obj.data.delta; setDraft(textRef.current); }
+        if (obj.type === 'validation') { setIssues(obj.data.report.issues ?? []); }
+        if (obj.type === 'result') { setDraft(obj.data.finalDraft); }
+        if (obj.type === 'error') { setPhase('error'); setDraft(`Error: ${obj.data.message}`); setStreaming(false); break; }
       }
     }
     setStreaming(false);
