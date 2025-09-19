@@ -107,6 +107,9 @@ export function WorkflowStatus({
         layout
         animate={{ scale: streaming && config.spinner ? [1, 1.02, 1] : 1 }}
         transition={{ duration: 2, repeat: streaming && config.spinner ? Infinity : 0 }}
+        role="status"
+        aria-live="polite"
+        aria-label={`PRD generation ${phase}, ${description}`}
       >
         {/* Status Indicator */}
         <div className="flex items-center gap-2">
