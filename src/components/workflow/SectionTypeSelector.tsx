@@ -1,25 +1,23 @@
 "use client";
 
-import { 
-  FileText, 
-  TrendingUp, 
-  List, 
-  Code, 
-  BarChart, 
-  Calendar, 
-  Shield, 
-  Users
-} from 'lucide-react';
-import React from 'react';
+import {
+  FileText,
+  TrendingUp,
+  List,
+  Code,
+  BarChart,
+  Calendar,
+  Shield,
+  Users,
+} from "lucide-react";
+import React from "react";
 
-import { Badge } from '@/components/ui/badge';
-import { Card } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
-import type { SectionDefinition } from '@/types/workflow';
-import type {
-  LucideIcon
-} from 'lucide-react';
+import type { SectionDefinition } from "@/types/workflow";
+import type { LucideIcon } from "lucide-react";
 
 const iconMap: Record<string, LucideIcon> = {
   FileText,
@@ -39,22 +37,22 @@ interface SectionTypeSelectorProps {
   className?: string;
 }
 
-export function SectionTypeSelector({ 
-  sections, 
-  selectedSections, 
-  onChange, 
-  className 
+export function SectionTypeSelector({
+  sections,
+  selectedSections,
+  onChange,
+  className,
 }: SectionTypeSelectorProps) {
   const handleSectionToggle = (sectionId: string, checked: boolean) => {
     if (checked) {
       onChange([...selectedSections, sectionId]);
     } else {
-      onChange(selectedSections.filter(id => id !== sectionId));
+      onChange(selectedSections.filter((id) => id !== sectionId));
     }
   };
 
   const totalEstimatedWords = sections
-    .filter(section => selectedSections.includes(section.id))
+    .filter((section) => selectedSections.includes(section.id))
     .reduce((total, section) => total + section.estimatedWords, 0);
 
   return (
@@ -67,12 +65,12 @@ export function SectionTypeSelector({
           </Badge>
         )}
       </div>
-      
+
       <div className="grid gap-3 md:grid-cols-2">
         {sections.map((section) => {
           const Icon = iconMap[section.icon] ?? FileText;
           const isSelected = selectedSections.includes(section.id);
-          
+
           return (
             <Card
               key={section.id}
@@ -85,16 +83,18 @@ export function SectionTypeSelector({
             >
               <div className="flex items-start space-x-3 p-4">
                 <div className="flex-shrink-0">
-                  <div className={cn(
-                    "flex h-8 w-8 items-center justify-center rounded-lg",
-                    section.required 
-                      ? "bg-blue-100 text-blue-600" 
-                      : "bg-gray-100 text-gray-600"
-                  )}>
+                  <div
+                    className={cn(
+                      "flex h-8 w-8 items-center justify-center rounded-lg",
+                      section.required
+                        ? "bg-blue-100 text-blue-600"
+                        : "bg-gray-100 text-gray-600"
+                    )}
+                  >
                     <Icon className="h-4 w-4" />
                   </div>
                 </div>
-                
+
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center justify-between">
                     <h4 className="text-sm font-medium text-foreground">
@@ -109,17 +109,19 @@ export function SectionTypeSelector({
                       <input
                         type="checkbox"
                         checked={isSelected}
-                        onChange={(e) => handleSectionToggle(section.id, e.target.checked)}
+                        onChange={(e) =>
+                          handleSectionToggle(section.id, e.target.checked)
+                        }
                         className="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
                         onClick={(e) => e.stopPropagation()}
                       />
                     </div>
                   </div>
-                  
+
                   <p className="mt-1 text-xs text-muted-foreground">
                     {section.description}
                   </p>
-                  
+
                   <div className="mt-2 flex items-center justify-between">
                     <span className="text-xs text-muted-foreground">
                       ~{section.estimatedWords} words
@@ -127,7 +129,7 @@ export function SectionTypeSelector({
                   </div>
                 </div>
               </div>
-              
+
               {/* Selection indicator */}
               {isSelected && (
                 <div className="absolute top-2 right-2">
@@ -138,7 +140,7 @@ export function SectionTypeSelector({
           );
         })}
       </div>
-      
+
       {selectedSections.length === 0 && (
         <div className="text-center py-8">
           <p className="text-sm text-muted-foreground">

@@ -1,22 +1,24 @@
 "use client";
 
-import { Check, Circle } from 'lucide-react';
-import React from 'react';
+import { Check, Circle } from "lucide-react";
+import React from "react";
 
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { cn } from '@/lib/utils';
-import { WORKFLOW_STEPS } from '@/types/workflow';
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { cn } from "@/lib/utils";
+import { WORKFLOW_STEPS } from "@/types/workflow";
 
-import type { WorkflowProgress } from '@/types/workflow';
-
+import type { WorkflowProgress } from "@/types/workflow";
 
 interface ProgressTimelineProps {
   progress: WorkflowProgress;
   className?: string;
 }
 
-export function ProgressTimeline({ progress, className }: ProgressTimelineProps) {
+export function ProgressTimeline({
+  progress,
+  className,
+}: ProgressTimelineProps) {
   return (
     <div className={cn("space-y-4", className)}>
       {/* Overall Progress */}
@@ -52,13 +54,15 @@ export function ProgressTimeline({ progress, className }: ProgressTimelineProps)
               )}
             >
               {/* Step indicator */}
-              <div className={cn(
-                "flex h-8 w-8 items-center justify-center rounded-full",
-                "transition-all duration-200",
-                isCompleted && "bg-green-500 text-white",
-                isActive && "bg-primary text-primary-foreground",
-                isUpcoming && "bg-gray-200 text-gray-500"
-              )}>
+              <div
+                className={cn(
+                  "flex h-8 w-8 items-center justify-center rounded-full",
+                  "transition-all duration-200",
+                  isCompleted && "bg-green-500 text-white",
+                  isActive && "bg-primary text-primary-foreground",
+                  isUpcoming && "bg-gray-200 text-gray-500"
+                )}
+              >
                 {isCompleted ? (
                   <Check className="h-4 w-4" />
                 ) : (
@@ -68,20 +72,24 @@ export function ProgressTimeline({ progress, className }: ProgressTimelineProps)
 
               {/* Step content */}
               <div className="flex-1 min-w-0">
-                <h4 className={cn(
-                  "text-sm font-medium",
-                  isActive && "text-primary",
-                  isCompleted && "text-green-700",
-                  isUpcoming && "text-gray-500"
-                )}>
+                <h4
+                  className={cn(
+                    "text-sm font-medium",
+                    isActive && "text-primary",
+                    isCompleted && "text-green-700",
+                    isUpcoming && "text-gray-500"
+                  )}
+                >
                   {step.name}
                 </h4>
-                <p className={cn(
-                  "text-xs",
-                  isActive && "text-primary/70",
-                  isCompleted && "text-green-600",
-                  isUpcoming && "text-gray-400"
-                )}>
+                <p
+                  className={cn(
+                    "text-xs",
+                    isActive && "text-primary/70",
+                    isCompleted && "text-green-600",
+                    isUpcoming && "text-gray-400"
+                  )}
+                >
                   {step.description}
                 </p>
               </div>

@@ -20,7 +20,7 @@ describe("StreamFrame Creation", () => {
     const frame = createPhaseFrame("validating", 2, "Running validation");
 
     expect(frame.type).toBe("phase");
-    
+
     if (frame.type === "phase") {
       expect(frame.data.phase).toBe("validating");
       expect(frame.data.attempt).toBe(2);
@@ -33,7 +33,7 @@ describe("StreamFrame Creation", () => {
     const frame = createGenerationFrame("Hello", "Hello World", 42);
 
     expect(frame.type).toBe("generation");
-    
+
     if (frame.type === "generation") {
       expect(frame.data.delta).toBe("Hello");
       expect(frame.data.total).toBe("Hello World");
@@ -42,10 +42,12 @@ describe("StreamFrame Creation", () => {
   });
 
   test("createErrorFrame should create valid error frames", () => {
-    const frame = createErrorFrame("Test error", false, "TEST_CODE", { extra: "data" });
+    const frame = createErrorFrame("Test error", false, "TEST_CODE", {
+      extra: "data",
+    });
 
     expect(frame.type).toBe("error");
-    
+
     if (frame.type === "error") {
       expect(frame.data.message).toBe("Test error");
       expect(frame.data.recoverable).toBe(false);
@@ -65,10 +67,10 @@ describe("Frame Encoding", () => {
     const decoded = new TextDecoder().decode(encoded);
 
     expect(decoded.endsWith("\n")).toBe(true);
-    
+
     const parsed = JSON.parse(decoded.trim()) as StreamFrame;
     expect(parsed.type).toBe("phase");
-    
+
     if (parsed.type === "phase") {
       expect(parsed.data.phase).toBe("generating");
     }
@@ -84,10 +86,10 @@ describe("Frame Encoding", () => {
     const encoded3 = new TextDecoder().decode(encodeStreamFrame(frame3));
 
     const combined = encoded1 + encoded2 + encoded3;
-    const lines = combined.split("\n").filter(line => line.trim());
+    const lines = combined.split("\n").filter((line) => line.trim());
 
     expect(lines).toHaveLength(3);
-    
+
     const parsed1 = JSON.parse(lines[0]) as StreamFrame;
     const parsed2 = JSON.parse(lines[1]) as StreamFrame;
     const parsed3 = JSON.parse(lines[2]) as StreamFrame;
@@ -103,7 +105,9 @@ describe("Frame Encoding", () => {
  */
 describe("Error Handling", () => {
   test("StreamingError should create proper error objects", () => {
-    const error = new StreamingError("Test error", false, "TEST_CODE", { test: true });
+    const error = new StreamingError("Test error", false, "TEST_CODE", {
+      test: true,
+    });
 
     expect(error.message).toBe("Test error");
     expect(error.recoverable).toBe(false);
@@ -117,7 +121,7 @@ describe("Error Handling", () => {
     const frame = error.toStreamFrame();
 
     expect(frame.type).toBe("error");
-    
+
     if (frame.type === "error") {
       expect(frame.data.message).toBe("Test error");
       expect(frame.data.recoverable).toBe(true);
@@ -133,9 +137,9 @@ describe("Performance", () => {
   test("should handle large frames efficiently", () => {
     const largeContent = "A".repeat(50000); // 50KB
     const frame = createGenerationFrame(largeContent, largeContent, 50000);
-    
+
     expect(frame.type).toBe("generation");
-    
+
     if (frame.type === "generation") {
       expect(frame.data.delta.length).toBe(50000);
     }
@@ -144,7 +148,7 @@ describe("Performance", () => {
     const start = performance.now();
     const encoded = encodeStreamFrame(frame);
     const encodeTime = performance.now() - start;
-    
+
     expect(encodeTime).toBeLessThan(1000); // Should complete in under 1 second
     expect(encoded.length).toBeGreaterThan(50000);
   });
@@ -152,14 +156,14 @@ describe("Performance", () => {
   test("should handle rapid frame creation", () => {
     const start = performance.now();
     const frames: StreamFrame[] = [];
-    
+
     // Create 1000 frames rapidly
     for (let i = 0; i < 1000; i++) {
       frames.push(createGenerationFrame(`token${i}`, `content${i}`, i));
     }
-    
+
     const createTime = performance.now() - start;
-    
+
     expect(frames).toHaveLength(1000);
     expect(createTime).toBeLessThan(1000); // Should complete quickly
     expect(frames[0].type).toBe("generation");
@@ -173,7 +177,7 @@ describe("Performance", () => {
 describe("Type Safety", () => {
   test("frame types should be properly discriminated", () => {
     const frame: StreamFrame = createPhaseFrame("generating", 1);
-    
+
     if (frame.type === "phase") {
       expect(frame.data.phase).toBe("generating");
       expect(frame.data.attempt).toBe(1);
@@ -192,15 +196,15 @@ describe("Type Safety", () => {
 
     // Each should have different data structures
     if (phaseFrame.type === "phase") {
-      expect('phase' in phaseFrame.data).toBe(true);
+      expect("phase" in phaseFrame.data).toBe(true);
     }
-    
+
     if (genFrame.type === "generation") {
-      expect('delta' in genFrame.data).toBe(true);
+      expect("delta" in genFrame.data).toBe(true);
     }
-    
+
     if (errorFrame.type === "error") {
-      expect('message' in errorFrame.data).toBe(true);
+      expect("message" in errorFrame.data).toBe(true);
     }
   });
 });

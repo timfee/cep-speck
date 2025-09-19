@@ -27,17 +27,17 @@ export function aggregateHealing(draftIssues: Issue[], pack: SpecPack): string {
     const da = defsById.get(a);
     const db = defsById.get(b);
     if (!da || !db) return 0; // Should not happen, but handle gracefully
-    
+
     if (order === "by-severity-then-priority") {
       const issuesA = byItem.get(a);
       const issuesB = byItem.get(b);
       if (!issuesA || !issuesB) return 0; // Should not happen, but handle gracefully
-      
+
       const sa = issuesA.some((i) => i.severity === "error") ? 1 : 0;
       const sb = issuesB.some((i) => i.severity === "error") ? 1 : 0;
       if (sa !== sb) return sb - sa;
     }
-    return (db.priority) - (da.priority);
+    return db.priority - da.priority;
   });
 
   const chunks: string[] = [];
@@ -45,16 +45,17 @@ export function aggregateHealing(draftIssues: Issue[], pack: SpecPack): string {
     const def = defsById.get(id);
     const issues = byItem.get(id);
     if (!def || !issues) continue; // Should not happen, but handle gracefully
-    
+
     const msg = invokeItemHeal(issues, def, pack);
     if ((msg ?? "").length > 0) chunks.push(`${id}: ${msg}`);
   }
 
   const header = `Revise the latest draft to satisfy the following constraints without resetting compliant content:`;
   let body = chunks.map((c) => `- ${c}`).join("\n");
-  const labelGuard = (pack.composition?.labelPattern ?? "").length > 0
-    ? `Maintain the header pattern "${pack.composition?.labelPattern}".`
-    : "";
+  const labelGuard =
+    (pack.composition?.labelPattern ?? "").length > 0
+      ? `Maintain the header pattern "${pack.composition?.labelPattern}".`
+      : "";
   const footer = `${labelGuard} Perform minimal edits to satisfy constraints.`;
 
   let content = `${header}\n${body}\n${footer}`;
@@ -67,8 +68,10 @@ export function aggregateHealing(draftIssues: Issue[], pack: SpecPack): string {
     }
     if (content.length > max) {
       content =
-        content.slice(0, max - FEASIBILITY_THRESHOLDS.HIGH_ADOPTION_PERCENTAGE) +
-        "\n- Remaining items will be fixed in the next iteration.";
+        content.slice(
+          0,
+          max - FEASIBILITY_THRESHOLDS.HIGH_ADOPTION_PERCENTAGE
+        ) + "\n- Remaining items will be fixed in the next iteration.";
     }
   }
   return content;

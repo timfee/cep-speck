@@ -88,10 +88,12 @@ class GeminiProvider implements AIProvider {
     messages: CoreMessage[]
   ): Promise<StreamTextResult<Record<string, never>, never>> {
     return await this.circuitBreaker.execute(async () => {
-      return Promise.resolve(streamText({
-        model: google("gemini-2.5-pro"),
-        messages,
-      }));
+      return Promise.resolve(
+        streamText({
+          model: google("gemini-2.5-pro"),
+          messages,
+        })
+      );
     });
   }
 
@@ -139,7 +141,11 @@ export class ResilientAI {
 
     // Try each provider - need index for provider rotation
     // eslint-disable-next-line @typescript-eslint/prefer-for-of
-    for (let providerAttempt = 0; providerAttempt < this.providers.length; providerAttempt++) {
+    for (
+      let providerAttempt = 0;
+      providerAttempt < this.providers.length;
+      providerAttempt++
+    ) {
       const provider = this.providers[this.currentProviderIndex];
 
       // Try with retries for current provider

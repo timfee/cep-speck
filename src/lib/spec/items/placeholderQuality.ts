@@ -34,7 +34,10 @@ function validate(
     }
 
     // Check for metric placeholders missing units
-    if (PATTERNS.METRIC_KEYWORDS.test(content) && !PATTERNS.UNIT_KEYWORDS.test(content)) {
+    if (
+      PATTERNS.METRIC_KEYWORDS.test(content) &&
+      !PATTERNS.UNIT_KEYWORDS.test(content)
+    ) {
       issues.push({
         id: "placeholder-missing-units",
         itemId,

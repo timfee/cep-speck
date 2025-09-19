@@ -11,25 +11,33 @@ module.exports = {
     return {
       Program(node) {
         const fileName = context.getFilename();
-        
+
         // Only check files in src/lib/spec/items/
-        if (!fileName.includes("src/lib/spec/items/") || 
-            fileName.endsWith("index.ts") ||
-            fileName.includes("test")) {
+        if (
+          !fileName.includes("src/lib/spec/items/") ||
+          fileName.endsWith("index.ts") ||
+          fileName.includes("test")
+        ) {
           return;
         }
 
         const sourceCode = context.getSourceCode();
         const text = sourceCode.getText();
-        
+
         // Check for required exports
         const requiredPatterns = [
-          { pattern: /export\s+const\s+itemId\s*=\s*["'][\w-]+["']/, name: "itemId" },
+          {
+            pattern: /export\s+const\s+itemId\s*=\s*["'][\w-]+["']/,
+            name: "itemId",
+          },
           { pattern: /export\s+type\s+Params\s*=/, name: "Params type" },
           { pattern: /function\s+toPrompt/, name: "toPrompt function" },
           { pattern: /function\s+validate/, name: "validate function" },
           { pattern: /function\s+heal/, name: "heal function" },
-          { pattern: /export\s+const\s+itemModule\s*=/, name: "itemModule export" },
+          {
+            pattern: /export\s+const\s+itemModule\s*=/,
+            name: "itemModule export",
+          },
         ];
 
         requiredPatterns.forEach(({ pattern, name }) => {
@@ -43,10 +51,15 @@ module.exports = {
 
         // Check function signatures
         const toPromptMatch = text.match(/function\s+toPrompt\s*\(([^)]*)\)/);
-        if (toPromptMatch && !toPromptMatch[1].includes("params") && !toPromptMatch[1].includes("pack")) {
+        if (
+          toPromptMatch &&
+          !toPromptMatch[1].includes("params") &&
+          !toPromptMatch[1].includes("pack")
+        ) {
           context.report({
             node,
-            message: "toPrompt function must have signature: (params: Params, pack?: SpecPack) => string",
+            message:
+              "toPrompt function must have signature: (params: Params, pack?: SpecPack) => string",
           });
         }
 
@@ -54,7 +67,8 @@ module.exports = {
         if (validateMatch && !validateMatch[1].includes("draft")) {
           context.report({
             node,
-            message: "validate function must have signature: (draft: string, params: Params, pack?: SpecPack) => Issue[]",
+            message:
+              "validate function must have signature: (draft: string, params: Params, pack?: SpecPack) => Issue[]",
           });
         }
 
@@ -62,17 +76,20 @@ module.exports = {
         if (healMatch && !healMatch[1].includes("issues")) {
           context.report({
             node,
-            message: "heal function must have signature: (issues: Issue[], params?: Params, pack?: SpecPack) => string | null",
+            message:
+              "heal function must have signature: (issues: Issue[], params?: Params, pack?: SpecPack) => string | null",
           });
         }
 
         // Check itemModule structure
         if (text.includes("export const itemModule")) {
-          const moduleMatch = text.match(/export\s+const\s+itemModule\s*=\s*\{([^}]+)\}/);
+          const moduleMatch = text.match(
+            /export\s+const\s+itemModule\s*=\s*\{([^}]+)\}/
+          );
           if (moduleMatch) {
             const moduleContent = moduleMatch[1];
             const requiredProps = ["itemId", "toPrompt", "validate", "heal"];
-            requiredProps.forEach(prop => {
+            requiredProps.forEach((prop) => {
               if (!moduleContent.includes(prop)) {
                 context.report({
                   node,

@@ -39,7 +39,7 @@ export const SIZE_LIMITS = {
   EXPANDED_LINES: 30,
 } as const;
 
-// Word budget constants  
+// Word budget constants
 export const WORD_BUDGET = {
   MINIMUM_BUDGET: 1400,
   TARGET_BUDGET: 1800,
@@ -64,21 +64,21 @@ export const UI_CONSTANTS = {
   ANIMATION_SCALE_BREATHE: 1.2,
   ANIMATION_OPACITY: 0.1,
   ANIMATION_OPACITY_MEDIUM: 0.2,
-  
+
   // Percentages and scores
   SCORE_EXCELLENT: 90,
   SCORE_GOOD: 70,
   SCORE_FAIR: 50,
   THRESHOLD_LOW: 40,
   THRESHOLD_HIGH: 85,
-  
-  // Sizes and dimensions  
+
+  // Sizes and dimensions
   ICON_SIZE: 4,
   BORDER_RADIUS: 36,
-  
+
   // Number bases and formatting
   HEX_RADIX: 36,
-  
+
   // Timing
   DISPLAY_DELAY: 30,
 } as const;

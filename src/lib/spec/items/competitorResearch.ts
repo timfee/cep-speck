@@ -7,13 +7,11 @@ export type Params = {
   requireResearch: boolean;
 };
 
- 
 function toPrompt(params: Params, _pack?: unknown): string {
   const vendors = params.vendors.join(", ");
   return `IMPORTANT: Use your web search capabilities to research current information about these enterprise browser vendors: ${vendors}. For each vendor, research and include specific details about: onboarding defaults, policy templates, enterprise browser posture, data protection capabilities, and mobile support. Include a brief competitive snapshot in the TL;DR section with specific vendor capabilities and positioning. Add citations with sources and dates in a Footnotes section after the Annexes. Use sources from the last ${params.recencyDays} days when possible.`;
 }
 
- 
 function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
   const issues: Issue[] = [];
 
@@ -82,7 +80,6 @@ function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
   return issues;
 }
 
- 
 function heal(issues: Issue[], params: Params, _pack?: unknown): string | null {
   if (!issues.length) return null;
 

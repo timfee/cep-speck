@@ -1,13 +1,20 @@
 /**
  * Integration tests for the complete streaming workflow
- * 
+ *
  * These tests validate the end-to-end streaming protocol
  * from API endpoint through client-side processing.
  */
 
-import { encodeStreamFrame, createPhaseFrame, createGenerationFrame, createValidationFrame, createErrorFrame, createResultFrame } from '../../src/lib/spec/streaming';
+import {
+  encodeStreamFrame,
+  createPhaseFrame,
+  createGenerationFrame,
+  createValidationFrame,
+  createErrorFrame,
+  createResultFrame,
+} from "../../src/lib/spec/streaming";
 
-import type { StreamFrame, Issue } from '../../src/lib/spec/types';
+import type { StreamFrame, Issue } from "../../src/lib/spec/types";
 
 /**
  * Mock API response simulator
@@ -18,11 +25,14 @@ export class StreamingAPISimulator {
   private readonly shouldError: boolean = false;
   private readonly errorFrame: number = -1;
 
-  constructor(frames: StreamFrame[], options: {
-    delay?: number;
-    shouldError?: boolean;
-    errorFrame?: number;
-  } = {}) {
+  constructor(
+    frames: StreamFrame[],
+    options: {
+      delay?: number;
+      shouldError?: boolean;
+      errorFrame?: number;
+    } = {}
+  ) {
     this.frames = frames;
     this.delay = options.delay ?? 50;
     this.shouldError = options.shouldError ?? false;
@@ -35,11 +45,18 @@ export class StreamingAPISimulator {
   async *simulate(): AsyncGenerator<Uint8Array, void, unknown> {
     for (let i = 0; i < this.frames.length; i++) {
       // Simulate network delay
-      await new Promise(resolve => setTimeout(resolve, this.delay));
+      await new Promise((resolve) => setTimeout(resolve, this.delay));
 
       // Check for simulated error
-      if (this.shouldError && (this.errorFrame === -1 || i === this.errorFrame)) {
-        const errorFrame = createErrorFrame("Simulated API error", true, "SIMULATION_ERROR");
+      if (
+        this.shouldError &&
+        (this.errorFrame === -1 || i === this.errorFrame)
+      ) {
+        const errorFrame = createErrorFrame(
+          "Simulated API error",
+          true,
+          "SIMULATION_ERROR"
+        );
         yield encodeStreamFrame(errorFrame);
         return;
       }
@@ -53,7 +70,7 @@ export class StreamingAPISimulator {
    */
   createReadableStream(): ReadableStream<Uint8Array> {
     const generator = this.simulate();
-    
+
     return new ReadableStream({
       async start(controller) {
         try {
@@ -64,7 +81,7 @@ export class StreamingAPISimulator {
         } catch (error) {
           controller.error(error);
         }
-      }
+      },
     });
   }
 }
@@ -113,7 +130,7 @@ export class ClientFrameProcessor {
         const chunk = decoder.decode(value);
         for (const line of chunk.split("\n")) {
           if (!line.trim()) continue;
-          
+
           let frame: StreamFrame;
           try {
             frame = JSON.parse(line);
@@ -127,19 +144,19 @@ export class ClientFrameProcessor {
             this.phase = frame.data.phase;
             this.attempt = frame.data.attempt;
           }
-          
+
           if (frame.type === "generation") {
             this.draft += frame.data.delta;
           }
-          
+
           if (frame.type === "validation") {
             this.issues = frame.data.report.issues ?? [];
           }
-          
+
           if (frame.type === "result") {
             this.draft = frame.data.finalDraft;
           }
-          
+
           if (frame.type === "error") {
             this.error = frame.data.message;
             this.streaming = false;
@@ -193,7 +210,7 @@ export class ClientFrameProcessor {
    * Get frame sequence for analysis
    */
   getFrameSequence(): string[] {
-    return this.frames.map(f => f.type);
+    return this.frames.map((f) => f.type);
   }
 }
 
@@ -209,17 +226,37 @@ export class IntegrationTestScenarios {
       createPhaseFrame("loading-knowledge", 1, "Loading knowledge base"),
       createPhaseFrame("performing-research", 1, "Researching competitors"),
       createPhaseFrame("generating", 1, "Generating content"),
-      createGenerationFrame("# Product Requirements Document\n\n", "# Product Requirements Document\n\n", 5),
-      createGenerationFrame("## Executive Summary\n", "# Product Requirements Document\n\n## Executive Summary\n", 8),
-      createGenerationFrame("This document outlines...", "# Product Requirements Document\n\n## Executive Summary\nThis document outlines...", 12),
+      createGenerationFrame(
+        "# Product Requirements Document\n\n",
+        "# Product Requirements Document\n\n",
+        5
+      ),
+      createGenerationFrame(
+        "## Executive Summary\n",
+        "# Product Requirements Document\n\n## Executive Summary\n",
+        8
+      ),
+      createGenerationFrame(
+        "This document outlines...",
+        "# Product Requirements Document\n\n## Executive Summary\nThis document outlines...",
+        12
+      ),
       createPhaseFrame("validating", 1, "Running validation checks"),
-      createValidationFrame({
-        ok: true,
-        issues: [],
-        coverage: { "test-item": true }
-      }, 150),
+      createValidationFrame(
+        {
+          ok: true,
+          issues: [],
+          coverage: { "test-item": true },
+        },
+        150
+      ),
       createPhaseFrame("done", 1, "Content generation complete"),
-      createResultFrame(true, "# Product Requirements Document\n\n## Executive Summary\nThis document outlines...", 1, 5000),
+      createResultFrame(
+        true,
+        "# Product Requirements Document\n\n## Executive Summary\nThis document outlines...",
+        1,
+        5000
+      ),
     ];
   }
 
@@ -231,27 +268,33 @@ export class IntegrationTestScenarios {
       createPhaseFrame("generating", 1, "Generating content"),
       createGenerationFrame("Content with issues", "Content with issues", 3),
       createPhaseFrame("validating", 1, "Running validation checks"),
-      createValidationFrame({
-        ok: false,
-        issues: [
-          {
-            id: "test-issue-1",
-            itemId: "test-item",
-            severity: "error" as const,
-            message: "Test validation error",
-            evidence: "Content with issues",
-          }
-        ],
-        coverage: { "test-item": false }
-      }, 100),
+      createValidationFrame(
+        {
+          ok: false,
+          issues: [
+            {
+              id: "test-issue-1",
+              itemId: "test-item",
+              severity: "error" as const,
+              message: "Test validation error",
+              evidence: "Content with issues",
+            },
+          ],
+          coverage: { "test-item": false },
+        },
+        100
+      ),
       createPhaseFrame("healing", 2, "Healing content"),
       createGenerationFrame("Fixed content", "Fixed content", 2),
       createPhaseFrame("validating", 2, "Running validation checks"),
-      createValidationFrame({
-        ok: true,
-        issues: [],
-        coverage: { "test-item": true }
-      }, 80),
+      createValidationFrame(
+        {
+          ok: true,
+          issues: [],
+          coverage: { "test-item": true },
+        },
+        80
+      ),
       createPhaseFrame("done", 2, "Content generation complete"),
       createResultFrame(true, "Fixed content", 2, 8000),
     ];
@@ -285,11 +328,14 @@ export class IntegrationTestScenarios {
 
     frames.push(
       createPhaseFrame("validating", 1, "Running validation checks"),
-      createValidationFrame({
-        ok: true,
-        issues: [],
-        coverage: { "test-item": true }
-      }, 200),
+      createValidationFrame(
+        {
+          ok: true,
+          issues: [],
+          coverage: { "test-item": true },
+        },
+        200
+      ),
       createPhaseFrame("done", 1, "Content generation complete"),
       createResultFrame(true, content, 1, 10000)
     );
@@ -373,7 +419,8 @@ export class EndToEndTestRunner {
     return {
       errorCaught: !result.success,
       errorMessage: result.error,
-      gracefulFailure: !!result.error && !result.error.includes("Stream processing error"),
+      gracefulFailure:
+        !!result.error && !result.error.includes("Stream processing error"),
     };
   }
 
@@ -393,7 +440,8 @@ export class EndToEndTestRunner {
     const stream = simulator.createReadableStream();
     const result = await processor.processStream(stream);
 
-    const throughput = result.totalFrames / (result.performance.duration / 1000);
+    const throughput =
+      result.totalFrames / (result.performance.duration / 1000);
 
     return {
       success: result.success,
@@ -412,12 +460,14 @@ export class EndToEndTestRunner {
     framesAfterRecovery: number;
   }> {
     const frames = IntegrationTestScenarios.createSuccessfulWorkflow();
-    
+
     // Split frames to simulate interruption
     const beforeInterruption = frames.slice(0, 3);
     const afterRecovery = frames.slice(3);
 
-    const simulator1 = new StreamingAPISimulator(beforeInterruption, { delay: 10 });
+    const simulator1 = new StreamingAPISimulator(beforeInterruption, {
+      delay: 10,
+    });
     const processor = new ClientFrameProcessor();
 
     // Process first part

@@ -6,5 +6,5 @@ module.exports = {
     "consistent-error-handling-pattern": require("./consistent-error-handling-pattern"),
     "enforce-helper-usage": require("./enforce-helper-usage"),
     "spec-pack-json-validation": require("./spec-pack-json-validation"),
-  }
+  },
 };

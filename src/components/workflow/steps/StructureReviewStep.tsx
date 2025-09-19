@@ -1,15 +1,15 @@
 "use client";
 
-import { Sparkles, RefreshCw } from 'lucide-react';
-import React from 'react';
+import { Sparkles, RefreshCw } from "lucide-react";
+import React from "react";
 
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { SectionTypeSelector } from '@/components/workflow/SectionTypeSelector';
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { SectionTypeSelector } from "@/components/workflow/SectionTypeSelector";
 import { TIMEOUTS } from "@/lib/constants";
 
-import type { SectionDefinition } from '@/types/workflow';
+import type { SectionDefinition } from "@/types/workflow";
 
 interface StructureReviewStepProps {
   initialPrompt: string;
@@ -26,22 +26,24 @@ export function StructureReviewStep({
   selectedSections,
   onSelectedSectionsChange,
   onRegenerateStructure,
-  isLoading = false
+  isLoading = false,
 }: StructureReviewStepProps) {
   const totalSelectedWords = suggestedSections
-    .filter(section => selectedSections.includes(section.id))
+    .filter((section) => selectedSections.includes(section.id))
     .reduce((total, section) => total + section.estimatedWords, 0);
 
-  const requiredSections = suggestedSections.filter(s => s.required);
-  const selectedRequiredCount = requiredSections.filter(s => selectedSections.includes(s.id)).length;
+  const requiredSections = suggestedSections.filter((s) => s.required);
+  const selectedRequiredCount = requiredSections.filter((s) =>
+    selectedSections.includes(s.id)
+  ).length;
 
   return (
     <div className="space-y-6">
       <div className="text-center space-y-2">
         <h2 className="text-2xl font-bold">Review Suggested Structure</h2>
         <p className="text-muted-foreground">
-          Based on your product description, we&apos;ve suggested these sections for your PRD. 
-          Customize the selection to fit your needs.
+          Based on your product description, we&apos;ve suggested these sections
+          for your PRD. Customize the selection to fit your needs.
         </p>
       </div>
 
@@ -59,25 +61,33 @@ export function StructureReviewStep({
             disabled={isLoading}
             className="flex items-center gap-2"
           >
-            <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+            <RefreshCw
+              className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`}
+            />
             Regenerate
           </Button>
         </div>
 
         <div className="space-y-3">
           <div className="text-sm text-muted-foreground bg-blue-50 p-3 rounded-lg border border-blue-200">
-            <strong>Based on:</strong> &quot;{initialPrompt.slice(0, 100)}{initialPrompt.length > 100 ? '...' : ''}&quot;
+            <strong>Based on:</strong> &quot;{initialPrompt.slice(0, 100)}
+            {initialPrompt.length > 100 ? "..." : ""}&quot;
           </div>
 
           <div className="flex flex-wrap gap-2">
             <Badge variant="outline">
               {selectedSections.length} sections selected
             </Badge>
-            <Badge variant="outline">
-              ~{totalSelectedWords} total words
-            </Badge>
-            <Badge variant={selectedRequiredCount === requiredSections.length ? "default" : "destructive"}>
-              {selectedRequiredCount}/{requiredSections.length} required sections
+            <Badge variant="outline">~{totalSelectedWords} total words</Badge>
+            <Badge
+              variant={
+                selectedRequiredCount === requiredSections.length
+                  ? "default"
+                  : "destructive"
+              }
+            >
+              {selectedRequiredCount}/{requiredSections.length} required
+              sections
             </Badge>
           </div>
         </div>
@@ -106,25 +116,30 @@ export function StructureReviewStep({
 
         {totalSelectedWords > TIMEOUTS.SHORT_DELAY && (
           <div className="text-sm text-amber-700 bg-amber-50 p-3 rounded-lg border border-amber-200">
-            📝 Your selected sections will generate approximately {totalSelectedWords} words. 
-            This is longer than typical PRDs. Consider removing some optional sections.
+            📝 Your selected sections will generate approximately{" "}
+            {totalSelectedWords} words. This is longer than typical PRDs.
+            Consider removing some optional sections.
           </div>
         )}
 
-        {selectedSections.length > 0 && selectedRequiredCount === requiredSections.length && (
-          <div className="text-sm text-green-700 bg-green-50 p-3 rounded-lg border border-green-200">
-            ✅ Great! Your structure looks good. You can proceed to customize section content.
-          </div>
-        )}
+        {selectedSections.length > 0 &&
+          selectedRequiredCount === requiredSections.length && (
+            <div className="text-sm text-green-700 bg-green-50 p-3 rounded-lg border border-green-200">
+              ✅ Great! Your structure looks good. You can proceed to customize
+              section content.
+            </div>
+          )}
       </div>
 
       {/* Section breakdown */}
       {selectedSections.length > 0 && (
         <Card className="p-4">
-          <h3 className="text-lg font-semibold mb-3">Selected Sections Overview</h3>
+          <h3 className="text-lg font-semibold mb-3">
+            Selected Sections Overview
+          </h3>
           <div className="space-y-2">
             {selectedSections.map((sectionId, index) => {
-              const section = suggestedSections.find(s => s.id === sectionId);
+              const section = suggestedSections.find((s) => s.id === sectionId);
               if (!section) return null;
 
               return (
@@ -136,11 +151,11 @@ export function StructureReviewStep({
                     <span className="text-sm font-medium text-muted-foreground">
                       {index + 1}.
                     </span>
-                    <span className="text-sm font-medium">
-                      {section.title}
-                    </span>
+                    <span className="text-sm font-medium">{section.title}</span>
                     {section.required && (
-                      <Badge variant="default" className="text-xs">Required</Badge>
+                      <Badge variant="default" className="text-xs">
+                        Required
+                      </Badge>
                     )}
                   </div>
                   <span className="text-xs text-muted-foreground">

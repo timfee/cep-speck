@@ -35,14 +35,21 @@ function AnimatedSpan({ children, delay }: AnimatedSpanProps) {
   );
 }
 
-export function ErrorTerminal({ error, context, className }: ErrorTerminalProps) {
-  const isRecoverable = error.code !== 'UNEXPECTED_ERROR' && error.code !== 'MISSING_API_KEY';
+export function ErrorTerminal({
+  error,
+  context,
+  className,
+}: ErrorTerminalProps) {
+  const isRecoverable =
+    error.code !== "UNEXPECTED_ERROR" && error.code !== "MISSING_API_KEY";
 
   return (
-    <div className={cn(
-      "bg-gray-900 rounded-lg border border-red-500/30 shadow-lg overflow-hidden",
-      className
-    )}>
+    <div
+      className={cn(
+        "bg-gray-900 rounded-lg border border-red-500/30 shadow-lg overflow-hidden",
+        className
+      )}
+    >
       {/* Terminal Header */}
       <div className="flex items-center justify-between px-4 py-2 bg-gray-800 border-b border-gray-700">
         <div className="flex items-center gap-2">
@@ -65,43 +72,50 @@ export function ErrorTerminal({ error, context, className }: ErrorTerminalProps)
           <span className="text-red-400">ERROR</span>{" "}
           <span className="text-gray-300">PRD Generation Failed</span>
         </AnimatedSpan>
-        
+
         <AnimatedSpan delay={100}>
           <span className="text-yellow-400">Code:</span>{" "}
           <span className="text-white">{error.code}</span>
         </AnimatedSpan>
-        
+
         <AnimatedSpan delay={200}>
           <span className="text-yellow-400">Message:</span>{" "}
           <span className="text-gray-300">{error.message}</span>
         </AnimatedSpan>
-        
+
         {(context?.phase ?? "").length > 0 && (
           <AnimatedSpan delay={300}>
             <span className="text-yellow-400">Phase:</span>{" "}
             <span className="text-white">{context?.phase}</span>
           </AnimatedSpan>
         )}
-        
-        {context?.attempt !== undefined && context.maxAttempts !== undefined && context.attempt > 0 && context.maxAttempts > 0 && (
-          <AnimatedSpan delay={400}>
-            <span className="text-yellow-400">Attempt:</span>{" "}
-            <span className="text-white">{context.attempt}/{context.maxAttempts}</span>
-          </AnimatedSpan>
-        )}
-        
+
+        {context?.attempt !== undefined &&
+          context.maxAttempts !== undefined &&
+          context.attempt > 0 &&
+          context.maxAttempts > 0 && (
+            <AnimatedSpan delay={400}>
+              <span className="text-yellow-400">Attempt:</span>{" "}
+              <span className="text-white">
+                {context.attempt}/{context.maxAttempts}
+              </span>
+            </AnimatedSpan>
+          )}
+
         <AnimatedSpan delay={500}>
           <span className="text-yellow-400">Timestamp:</span>{" "}
-          <span className="text-gray-300">{new Date(error.timestamp).toISOString()}</span>
+          <span className="text-gray-300">
+            {new Date(error.timestamp).toISOString()}
+          </span>
         </AnimatedSpan>
-        
+
         {isRecoverable && (
           <AnimatedSpan delay={600}>
             <span className="text-green-400">Recovery:</span>{" "}
             <span className="text-white">Available</span>
           </AnimatedSpan>
         )}
-        
+
         {!isRecoverable && (
           <AnimatedSpan delay={600}>
             <span className="text-red-400">Recovery:</span>{" "}
