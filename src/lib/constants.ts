@@ -32,6 +32,27 @@ export const SIZE_LIMITS = {
   EXPANDED_LINES: 30,
 } as const;
 
+// UI Component Constants
+export const UI_CONSTANTS = {
+  // Animation values
+  ANIMATION_SCALE_SMALL: 0.4,
+  ANIMATION_SCALE_MEDIUM: 1.1,
+  ANIMATION_SCALE_LARGE: 1.5,
+  ANIMATION_OPACITY: 0.1,
+  ANIMATION_OPACITY_MEDIUM: 0.2,
+  
+  // Percentages and scores
+  SCORE_EXCELLENT: 90,
+  SCORE_GOOD: 70,
+  SCORE_FAIR: 50,
+  THRESHOLD_LOW: 40,
+  THRESHOLD_HIGH: 85,
+  
+  // Sizes and dimensions  
+  ICON_SIZE: 4,
+  BORDER_RADIUS: 36,
+} as const;
+
 // Timing constants (in seconds)
 export const TIMING = {
   MINUTE_IN_SECONDS: 60,
@@ -41,5 +62,6 @@ export default {
   TIMEOUTS,
   RETRY_LIMITS,
   SIZE_LIMITS,
+  UI_CONSTANTS,
   TIMING,
 } as const;

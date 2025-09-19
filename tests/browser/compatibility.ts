@@ -355,13 +355,13 @@ export class BrowserStreamingTester {
           JSON.parse(text.trim());
           framesProcessed++;
         } catch (parseError) {
-          errors.push(`Frame parsing error: ${parseError}`);
+          errors.push(`Frame parsing error: ${parseError instanceof Error ? parseError.message : String(parseError)}`);
         }
 
         this.perfMonitor.endFrameProcessing(startTime);
       }
     } catch (error) {
-      errors.push(`Streaming test error: ${error}`);
+      errors.push(`Streaming test error: ${error instanceof Error ? error.message : String(error)}`);
     }
 
     return {

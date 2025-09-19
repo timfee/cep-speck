@@ -4,6 +4,7 @@ import { Check, Copy } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { TIMEOUTS } from "@/lib/constants";
 
 interface CopyButtonProps {
   text: string;
@@ -19,7 +20,7 @@ export function CopyButton({ text, className, onCopy }: CopyButtonProps) {
       await navigator.clipboard.writeText(text);
       setCopied(true);
       onCopy?.();
-      setTimeout(() => setCopied(false), 2000);
+      setTimeout(() => setCopied(false), TIMEOUTS.SHORT_DELAY);
     } catch (err) {
       console.error("Failed to copy text: ", err);
     }

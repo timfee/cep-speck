@@ -9,7 +9,6 @@ import { CopyButton } from "@/components/ui/copy-button";
 import { Status, StatusIndicator, StatusLabel } from "@/components/ui/status";
 // Import existing timeout constants
 import { TIMEOUTS } from "@/lib/constants";
-
 import { formatErrorForSupport, ERROR_CLASSIFICATIONS } from "@/lib/error/classification";
 
 import type { ErrorDetails, ErrorSeverityLevels } from "@/lib/error/types";

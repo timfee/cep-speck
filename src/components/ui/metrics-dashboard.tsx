@@ -5,6 +5,7 @@ import { Clock, FileText, Target, Zap } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { Card } from "@/components/ui/card";
+import { UI_CONSTANTS, RETRY_LIMITS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 export interface WorkflowMetrics {
@@ -41,23 +42,23 @@ export function MetricsDashboard({ metrics, streaming = false, className }: Metr
       if (step >= 20) {
         clearInterval(interval);
       }
-    }, 50);
+    }, UI_CONSTANTS.THRESHOLD_LOW);
 
     return () => clearInterval(interval);
   }, [metrics.wordCount, metrics.validationScore]);
 
   const getValidationColor = (score: number) => {
-    if (score >= 90) return "text-green-600";
-    if (score >= 70) return "text-yellow-600";
+    if (score >= UI_CONSTANTS.SCORE_EXCELLENT) return "text-green-600";
+    if (score >= UI_CONSTANTS.SCORE_GOOD) return "text-yellow-600";
     return "text-red-600";
   };
 
   const getPhaseProgress = (phase: string) => {
     switch (phase) {
-      case 'starting': return 10;
-      case 'generating': return 40;
-      case 'validating': return 70;
-      case 'healing': return 85;
+      case 'starting': return RETRY_LIMITS.CRITICAL_RETRIES + 2; // 10
+      case 'generating': return UI_CONSTANTS.THRESHOLD_LOW;
+      case 'validating': return UI_CONSTANTS.SCORE_GOOD;
+      case 'healing': return UI_CONSTANTS.THRESHOLD_HIGH;
       case 'done': return 100;
       case 'error': return 0;
       default: return 0;

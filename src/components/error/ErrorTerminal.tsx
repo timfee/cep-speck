@@ -76,14 +76,14 @@ export function ErrorTerminal({ error, context, className }: ErrorTerminalProps)
           <span className="text-gray-300">{error.message}</span>
         </AnimatedSpan>
         
-        {context?.phase && (
+        {context?.phase !== undefined && context.phase !== null && context.phase !== "" && (
           <AnimatedSpan delay={300}>
             <span className="text-yellow-400">Phase:</span>{" "}
             <span className="text-white">{context.phase}</span>
           </AnimatedSpan>
         )}
         
-        {context?.attempt && context?.maxAttempts && (
+        {context?.attempt !== undefined && context?.maxAttempts !== undefined && context.attempt > 0 && context.maxAttempts > 0 && (
           <AnimatedSpan delay={400}>
             <span className="text-yellow-400">Attempt:</span>{" "}
             <span className="text-white">{context.attempt}/{context.maxAttempts}</span>
@@ -109,7 +109,7 @@ export function ErrorTerminal({ error, context, className }: ErrorTerminalProps)
           </AnimatedSpan>
         )}
 
-        {error.stack && (
+        {error.stack !== undefined && error.stack !== null && error.stack !== "" && (
           <>
             <AnimatedSpan delay={700}>
               <span className="text-yellow-400">Stack:</span>

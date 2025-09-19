@@ -124,11 +124,11 @@ export default function Page() {
 
     const reader = res.body.getReader();
     const decoder = new TextDecoder();
-    let reading = true;
-    while (reading) {
+    
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    while (true) {
       const { value, done } = await reader.read();
       if (done) {
-        reading = false;
         break;
       }
       const chunk = decoder.decode(value);

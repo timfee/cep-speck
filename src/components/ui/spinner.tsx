@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 
+import { UI_CONSTANTS, RETRY_LIMITS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 export interface SpinnerProps {
@@ -24,11 +25,11 @@ const spinnerVariants = {
     transition: { duration: 1.2, repeat: Infinity, ease: "easeInOut" as const }
   },
   bars: {
-    animate: { scaleY: [1, 1.5, 1] },
+    animate: { scaleY: [1, UI_CONSTANTS.ANIMATION_SCALE_LARGE, 1] },
     transition: { duration: 0.8, repeat: Infinity, ease: "easeInOut" as const }
   },
   infinite: {
-    animate: { rotate: 360, scale: [1, 1.1, 1] },
+    animate: { rotate: 360, scale: [1, UI_CONSTANTS.ANIMATION_SCALE_MEDIUM, 1] },
     transition: { duration: 2, repeat: Infinity, ease: "linear" as const }
   }
 };
@@ -43,12 +44,12 @@ export function Spinner({ variant = "default", size = 16, className }: SpinnerPr
           <motion.div
             key={i}
             className={cn("rounded-full bg-current", baseClass)}
-            style={{ width: size / 4, height: size / 4 }}
-            animate={{ opacity: [0.4, 1, 0.4] }}
+            style={{ width: size / UI_CONSTANTS.ICON_SIZE, height: size / UI_CONSTANTS.ICON_SIZE }}
+            animate={{ opacity: [UI_CONSTANTS.ANIMATION_SCALE_SMALL, 1, UI_CONSTANTS.ANIMATION_SCALE_SMALL] }}
             transition={{
               duration: 1.2,
               repeat: Infinity,
-              delay: i * 0.2,
+              delay: i * UI_CONSTANTS.ANIMATION_OPACITY_MEDIUM,
               ease: "easeInOut"
             }}
           />
@@ -64,12 +65,12 @@ export function Spinner({ variant = "default", size = 16, className }: SpinnerPr
           <motion.div
             key={i}
             className={cn("bg-current", baseClass)}
-            style={{ width: size / 4, height: size / 2 }}
-            animate={{ scaleY: [1, 1.5, 1] }}
+            style={{ width: size / UI_CONSTANTS.ICON_SIZE, height: size / 2 }}
+            animate={{ scaleY: [1, UI_CONSTANTS.ANIMATION_SCALE_LARGE, 1] }}
             transition={{
               duration: 0.8,
               repeat: Infinity,
-              delay: i * 0.1,
+              delay: i * UI_CONSTANTS.ANIMATION_OPACITY,
               ease: "easeInOut"
             }}
           />
@@ -80,7 +81,7 @@ export function Spinner({ variant = "default", size = 16, className }: SpinnerPr
 
   // Ring and default variants
   const isRing = variant === "ring";
-  const strokeWidth = isRing ? 2 : 3;
+  const strokeWidth = isRing ? 2 : RETRY_LIMITS.DEFAULT_MAX_ATTEMPTS;
   const config = spinnerVariants[variant];
   
   return (

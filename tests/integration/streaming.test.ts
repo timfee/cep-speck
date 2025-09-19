@@ -151,7 +151,7 @@ describe('Streaming Protocol Integration', () => {
       const processor = new ClientFrameProcessor();
 
       // Create stream with some malformed data
-      const readableStream = new ReadableStream({
+      const readableStream = new ReadableStream<Uint8Array>({
         async start(controller) {
           const validFrame = encodeStreamFrame(frames[0]);
           controller.enqueue(validFrame);
@@ -199,7 +199,7 @@ describe('Streaming Protocol Integration', () => {
     test('should handle stream interruption', async () => {
       const frames = IntegrationTestScenarios.createSuccessfulWorkflow();
       
-      const readableStream = new ReadableStream({
+      const readableStream = new ReadableStream<Uint8Array>({
         async start(controller) {
           // Send first few frames
           for (let i = 0; i < 3; i++) {
