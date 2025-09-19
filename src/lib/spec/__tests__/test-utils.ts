@@ -87,7 +87,7 @@ export function createTestFrameSequence(): StreamFrame[] {
         duration: 100,
       },
     },
-    createPhaseFrame(/* phase */, /* attempt */, /* message */),
+    createPhaseFrame("completed", 1, "Test completed"),
     {
       type: "result",
       data: {
@@ -108,8 +108,8 @@ export function createErrorFrameSequence(
   recoverable: boolean = true
 ): StreamFrame[] {
   return [
-    createPhaseFrame(/* phase */, /* attempt */, /* message */),
-    createErrorFrame(/* message */, /* recoverable */, /* code */),
+    createPhaseFrame("error", 1, "Test error phase"),
+    createErrorFrame("Test error message", true, "TEST_ERROR"),
   ];
 }
 

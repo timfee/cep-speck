@@ -87,8 +87,8 @@ function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
     if (metricSections) {
       const metricsContent = metricSections[0];
       // Complex regex for numbers without units - not suitable for helper
-       
       const numbersWithoutUnits = metricsContent.match(
+        // eslint-disable-next-line custom/enforce-helper-usage
         /\b\d+(?!\s*(?:%|ms|s|sec|seconds|minutes|hours|days|weeks|months|years|qps|rps|rpm|req\/s|MB|GB|TB|requests|users|tenants|releases))\b/g
       );
       if (numbersWithoutUnits && numbersWithoutUnits.length > 2) {
@@ -102,8 +102,8 @@ function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
       }
 
       // Complex regex for heuristic masking - not suitable for simple word boundary helper
-       
       const heuristicMasking = draft.match(
+        // eslint-disable-next-line custom/enforce-helper-usage
         /\b(because|due to|in order to|to ensure|for the purpose of)\s+[^.]*\b(metric|measure|track|monitor)\b/gi
       );
       if (heuristicMasking && heuristicMasking.length > 0) {

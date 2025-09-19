@@ -2,7 +2,7 @@ import { WORD_BUDGET, FEASIBILITY_THRESHOLDS } from "@/lib/constants";
 
 import { invokeItemHeal } from "../registry";
 
-import type { Issue, SpecPack, SpecItemDef } from "../types";
+import type { Issue, SpecPack } from "../types";
 
 export function aggregateHealing(draftIssues: Issue[], pack: SpecPack): string {
   if (!draftIssues.length) return "";
