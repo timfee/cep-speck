@@ -19,26 +19,33 @@
   },
   "globals": {
     "bannedText": {
-      "exact": ["portal", "dashboard"],
+      "exact": [
+        "portal",
+        "dashboard"
+      ],
       "regex": [
-        "\\bensur(e|es|ing)\\b",
         "->|=>|→|⇒",
         "\\bFR-\\w+\\b|\\bF-\\d+\\b|\\bM-\\d+\\b|\\bPP-\\d+\\b|\\bG-\\d+\\b",
         "\\bSoT\\b",
-        "(?i)\\b(revolutionary|game-changing|breakthrough|unprecedented|groundbreaking|cutting-edge|next-generation|world-class|industry-leading|best-in-class)\\b",
-        "(?i)(solidify our future|strengthen our position|drive growth|unlock value|maximize potential|optimize synergies|accelerate transformation|future-proof|next-level)",
-        "(?i)(not just another|more than meets the eye|think again|here's the thing|plot twist|spoiler alert|the real deal|game on)",
-        "(?i)^#+\\s+[^:]+:\\s+[^\\n]*\\b(not just|more than|think again|here's the thing)\\b",
-        "(?i)^#+\\s+[^\\n]*\\b(not just|more than|think again|here's the thing|plot twist|spoiler alert|the real deal|game on)\\b",
-        "(?i)\\b(NPS|Net Promoter Score|satisfaction score|happiness index|engagement score)\\b",
-        "(?i)\\b(significant|substantial|considerable)\\s+(improvement|savings|impact)\\b",
-        "(?i)\\b(moreover|furthermore|indeed|therefore|thus|importantly|in conclusion|in summary|lastly|needless to say|notably|simply put|on the other hand)\\b",
-        "(?i)\\b(seamless|robust|comprehensive|holistic|innovative|transformative|game-changing|cutting-edge|state-of-the-art|world-class|best-in-class|industry-leading|next-generation)\\b",
-        "(?i)\\b(empower|enable|enhance|leverage|optimize|maximize|streamline|accelerate|drive|unlock|deliver|ensure)\\s+(success|growth|value|results|outcomes|benefits|synergies)\\b",
-        "(?i)\\b(at the end of the day|going forward|moving forward|that being said|with that said|it goes without saying|needless to say)\\b",
+        
+        "(?i)\\b(revolutionary|game-changing|breakthrough|unprecedented|groundbreaking|cutting-edge|next-generation|world-class|industry-leading|best-in-class|state-of-the-art|best-of-breed)\\b",
+        
+        "(?i)\\b(seamless|robust|comprehensive|holistic|innovative|transformative|dynamic|flexible|scalable|efficient|streamline(d)?)\\b",
+        
+        "(?i)\\b(solidify our future|strengthen our position|drive growth|unlock value|maximize potential|optimize synergies|accelerate transformation|future-proof|next-level|leverage|empower|enhance|enable|facilitate)\\b",
+        
+        "(?i)\\b(NPS|Net Promoter Score|satisfaction score|happiness index|engagement score|delight)\\b",
+        
+        "(?i)\\b(significant|substantial|considerable|dramatically|drastically|huge|massive)\\s+(improvement|savings|impact|reduction|increase)\\b",
+        
+        "(?i)\\b(moreover|furthermore|indeed|therefore|thus|importantly|in conclusion|in summary|lastly|needless to say|notably|simply put|on the other hand|in other words|that being said)\\b",
+        
+        "(?i)\\b(at the end of the day|going forward|moving forward|with that said|it goes without saying|needless to say)\\b",
+        
         "(?i)\\b(deep dive|circle back|touch base|low-hanging fruit|boil the ocean|think outside the box|paradigm shift|game changer)\\b",
-        "(?i)^#+\\s+[^\\n]*\\b(unleash|unlock|revolutionize|transform|reimagine|redefine|supercharge|turbocharge)\\b",
+        
         "(?i)\\b(users love|customers love|everyone knows|it's clear that|obviously|of course|naturally)\\b",
+        
         "(?i)\\b(amazing|incredible|fantastic|awesome|phenomenal|outstanding|exceptional|remarkable|extraordinary)\\b"
       ]
     }
@@ -59,37 +66,6 @@
       "params": { "pattern": "# {n}. {title}", "headerRegex": "^#s+d+." }
     },
     {
-      "id": "cross-section-consistency",
-      "kind": "policy",
-      "priority": 92,
-      "severity": "error",
-      "params": {}
-    },
-    {
-      "id": "technical-feasibility",
-      "kind": "policy",
-      "priority": 90,
-      "severity": "error",
-      "params": {}
-    },
-    {
-      "id": "metrics-required",
-      "kind": "policy",
-      "priority": 80,
-      "severity": "error",
-      "params": {
-        "require": ["units", "timeframe", "SoT"],
-        "metricRegex": "^M-d+s*|"
-      }
-    },
-    {
-      "id": "traceability-complete",
-      "kind": "policy",
-      "priority": 75,
-      "severity": "error",
-      "params": {}
-    },
-    {
       "id": "banned-text",
       "kind": "linter",
       "priority": 70,
@@ -98,24 +74,41 @@
     },
     {
       "id": "placeholder-quality",
-      "kind": "policy",
+      "kind": "linter",
       "priority": 65,
       "severity": "error",
       "params": {}
     },
     {
       "id": "word-budget",
-      "kind": "policy",
+      "kind": "linter",
       "priority": 60,
       "severity": "warn",
       "params": { "target": 1400, "hardCap": 1800 }
     },
     {
       "id": "sku-differentiation",
-      "kind": "policy",
+      "kind": "linter",
       "priority": 58,
       "severity": "error",
       "params": { "targetSku": "premium" }
+    },
+    {
+      "id": "technical-feasibility",
+      "kind": "linter",
+      "priority": 90,
+      "severity": "error",
+      "params": {}
+    },
+    {
+      "id": "metrics-required",
+      "kind": "linter",
+      "priority": 80,
+      "severity": "error",
+      "params": {
+        "require": ["units", "timeframe", "SoT"],
+        "metricRegex": "^M-d+s*|"
+      }
     },
     {
       "id": "competitor-research",
@@ -145,18 +138,18 @@
       }
     },
     {
-      "id": "persona-coverage",
+      "id": "adoption-realism",
       "kind": "policy",
-      "priority": 25,
-      "severity": "error",
-      "params": { "personas": ["IT Admin", "End User", "Security Team"] }
-    },
-    {
-      "id": "executive-summary-coherence",
-      "kind": "policy",
-      "priority": 20,
+      "priority": 85,
       "severity": "warn",
       "params": {}
+    },
+    {
+      "id": "semantic-coherence",
+      "kind": "policy",
+      "priority": 92,
+      "severity": "error",
+      "params": { "personas": ["IT Admin", "End User", "Security Team"] }
     }
   ]
 }
