@@ -4,7 +4,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Textarea } from "@/components/ui/textarea";
+import { CodeEditor } from "@/components/ui/code-editor";
+import { Status } from "@/components/ui/status";
+import { useSpecValidation } from "@/hooks/useSpecValidation";
 import type { Issue, StreamFrame } from "@/lib/spec/types";
 import { useCallback, useRef, useState } from "react";
 
@@ -18,6 +20,9 @@ export default function Page() {
   const [draft, setDraft] = useState<string>("");
   const [issues, setIssues] = useState<Issue[]>([]);
   const textRef = useRef<string>("");
+
+  // Real-time spec validation
+  const validation = useSpecValidation(spec);
 
   const run = useCallback(async () => {
     setStreaming(true);
@@ -78,14 +83,73 @@ export default function Page() {
 
   return (
     <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-      <Card className="p-4 space-y-3">
+      <Card className="p-4 space-y-4">
         <h2 className="text-lg font-semibold">Spec</h2>
-        <Textarea
+        
+        {/* Real-time validation status */}
+        <div className="flex flex-wrap items-center gap-2">
+          <Status
+            status={validation.issues.length === 0 ? "valid" : "invalid"}
+            message={
+              validation.issues.length === 0
+                ? `Spec valid (${validation.completionScore}% complete)`
+                : `${validation.issues.length} issue${validation.issues.length === 1 ? "" : "s"}`
+            }
+          />
+          <Badge variant="outline" className="text-xs">
+            {validation.estimatedWordCount} words
+          </Badge>
+        </div>
+
+        {/* Enhanced code editor */}
+        <CodeEditor
           value={spec}
-          onChange={(e) => setSpec(e.target.value)}
-          rows={16}
+          onChange={setSpec}
+          title="PRD Specification Input"
+          placeholder="Project: Example&#10;Target SKU: premium&#10;&#10;Objective: Brief description of what you want to build&#10;Target Users: Who will use this feature&#10;&#10;Enter your PRD specification here..."
+          copyButton={true}
+          showWordCount={true}
+          maxWords={200}
+          rows={14}
         />
-        <Button onClick={run} disabled={streaming}>
+
+        {/* Real-time validation feedback */}
+        {validation.issues.length > 0 && (
+          <div className="space-y-2">
+            <h4 className="text-sm font-medium text-muted-foreground">Input Suggestions:</h4>
+            <div className="space-y-1">
+              {validation.issues.map((issue, idx) => (
+                <div key={idx} className="text-xs text-muted-foreground flex items-center gap-2">
+                  <span className="w-1 h-1 bg-yellow-500 rounded-full"></span>
+                  {issue}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Suggested sections */}
+        {validation.suggestedSections.length > 0 && (
+          <div className="space-y-2">
+            <h4 className="text-sm font-medium text-muted-foreground">Suggested additions:</h4>
+            <div className="space-y-1">
+              {validation.suggestedSections.map((suggestion, idx) => (
+                <div 
+                  key={idx} 
+                  className="text-xs text-blue-600 cursor-pointer hover:text-blue-800"
+                  onClick={() => {
+                    const newSpec = spec.trim() + '\n' + suggestion;
+                    setSpec(newSpec);
+                  }}
+                >
+                  + {suggestion}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <Button onClick={run} disabled={streaming || validation.issues.length > 2}>
           Run
         </Button>
         <div className="flex items-center gap-3">
