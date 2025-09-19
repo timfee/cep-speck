@@ -1,9 +1,9 @@
-import { 
-  extractSection, 
-  extractBulletPoints, 
+import {
+  extractSection,
+  extractBulletPoints,
   doesMetricReferenceFeature,
   buildTraceabilityHealing,
-  voidUnused 
+  voidUnused,
 } from "../helpers";
 
 import type { Issue } from "../types";

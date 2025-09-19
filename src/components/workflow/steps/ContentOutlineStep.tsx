@@ -1,21 +1,26 @@
 "use client";
 
-import { 
-  CheckCircle, 
-  Edit3, 
+import {
+  CheckCircle,
+  Edit3,
   Plus,
   Target,
   BarChart3,
   Calendar,
-  FileText
-} from 'lucide-react';
-import React from 'react';
+  FileText,
+} from "lucide-react";
+import React from "react";
 
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
-import type { ContentOutline, FunctionalRequirement, SuccessMetric, Milestone } from '@/types/workflow';
+import type {
+  ContentOutline,
+  FunctionalRequirement,
+  SuccessMetric,
+  Milestone,
+} from "@/types/workflow";
 
 interface ContentOutlineStepProps {
   initialPrompt: string;
@@ -30,49 +35,52 @@ export function ContentOutlineStep({
   contentOutline,
   onChange,
   onRegenerateOutline,
-  isLoading = false
+  isLoading = false,
 }: ContentOutlineStepProps) {
-  const totalItems = 
-    contentOutline.functionalRequirements.length + 
-    contentOutline.successMetrics.length + 
+  const totalItems =
+    contentOutline.functionalRequirements.length +
+    contentOutline.successMetrics.length +
     contentOutline.milestones.length;
 
   const addFunctionalRequirement = () => {
     const newReq: FunctionalRequirement = {
       id: `fr-${Date.now()}`,
-      title: 'New Functional Requirement',
-      description: 'Enter description here',
-      priority: 'P1'
+      title: "New Functional Requirement",
+      description: "Enter description here",
+      priority: "P1",
     };
     onChange({
       ...contentOutline,
-      functionalRequirements: [...contentOutline.functionalRequirements, newReq]
+      functionalRequirements: [
+        ...contentOutline.functionalRequirements,
+        newReq,
+      ],
     });
   };
 
   const addSuccessMetric = () => {
     const newMetric: SuccessMetric = {
       id: `sm-${Date.now()}`,
-      name: 'New Success Metric',
-      description: 'Enter description here',
-      type: 'engagement'
+      name: "New Success Metric",
+      description: "Enter description here",
+      type: "engagement",
     };
     onChange({
       ...contentOutline,
-      successMetrics: [...contentOutline.successMetrics, newMetric]
+      successMetrics: [...contentOutline.successMetrics, newMetric],
     });
   };
 
   const addMilestone = () => {
     const newMilestone: Milestone = {
       id: `ms-${Date.now()}`,
-      title: 'New Milestone',
-      description: 'Enter description here',
-      phase: 'development'
+      title: "New Milestone",
+      description: "Enter description here",
+      phase: "development",
     };
     onChange({
       ...contentOutline,
-      milestones: [...contentOutline.milestones, newMilestone]
+      milestones: [...contentOutline.milestones, newMilestone],
     });
   };
 
@@ -81,8 +89,9 @@ export function ContentOutlineStep({
       <div className="text-center space-y-2">
         <h2 className="text-2xl font-bold">Review Content Outline</h2>
         <p className="text-muted-foreground">
-          AI has generated functional requirements, metrics, and milestones based on your product description. 
-          Review and customize these before generating the final PRD.
+          AI has generated functional requirements, metrics, and milestones
+          based on your product description. Review and customize these before
+          generating the final PRD.
         </p>
       </div>
 
@@ -100,22 +109,24 @@ export function ContentOutlineStep({
             disabled={isLoading}
             className="flex items-center gap-2"
           >
-            <CheckCircle className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+            <CheckCircle
+              className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`}
+            />
             Regenerate
           </Button>
         </div>
 
         <div className="space-y-3">
           <div className="text-sm text-muted-foreground bg-blue-50 p-3 rounded-lg border border-blue-200">
-            <strong>Based on:</strong> &quot;{initialPrompt.slice(0, 100)}{initialPrompt.length > 100 ? '...' : ''}&quot;
+            <strong>Based on:</strong> &quot;{initialPrompt.slice(0, 100)}
+            {initialPrompt.length > 100 ? "..." : ""}&quot;
           </div>
 
           <div className="flex flex-wrap gap-2">
+            <Badge variant="outline">{totalItems} total items</Badge>
             <Badge variant="outline">
-              {totalItems} total items
-            </Badge>
-            <Badge variant="outline">
-              {contentOutline.functionalRequirements.length} functional requirements
+              {contentOutline.functionalRequirements.length} functional
+              requirements
             </Badge>
             <Badge variant="outline">
               {contentOutline.successMetrics.length} metrics
@@ -134,23 +145,36 @@ export function ContentOutlineStep({
             <Target className="h-5 w-5 text-green-600" />
             Functional Requirements
           </h3>
-          <Button size="sm" variant="outline" onClick={addFunctionalRequirement}>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={addFunctionalRequirement}
+          >
             <Plus className="h-4 w-4 mr-2" />
             Add Requirement
           </Button>
         </div>
-        
+
         <div className="space-y-3">
           {contentOutline.functionalRequirements.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
-              No functional requirements generated. Click &quot;Add Requirement&quot; to create one.
+              No functional requirements generated. Click &quot;Add
+              Requirement&quot; to create one.
             </div>
           ) : (
             contentOutline.functionalRequirements.map((req) => (
               <div key={req.id} className="border rounded-lg p-4 space-y-2">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Badge variant={req.priority === 'P0' ? 'destructive' : req.priority === 'P1' ? 'default' : 'secondary'}>
+                    <Badge
+                      variant={
+                        req.priority === "P0"
+                          ? "destructive"
+                          : req.priority === "P1"
+                            ? "default"
+                            : "secondary"
+                      }
+                    >
                       {req.priority}
                     </Badge>
                     <h4 className="font-medium">{req.title}</h4>
@@ -159,7 +183,9 @@ export function ContentOutlineStep({
                     <Edit3 className="h-4 w-4" />
                   </Button>
                 </div>
-                <p className="text-sm text-muted-foreground">{req.description}</p>
+                <p className="text-sm text-muted-foreground">
+                  {req.description}
+                </p>
                 {(req.userStory ?? "").length > 0 && (
                   <div className="text-xs bg-gray-50 p-2 rounded border-l-2 border-blue-500">
                     <strong>User Story:</strong> {req.userStory}
@@ -183,11 +209,12 @@ export function ContentOutlineStep({
             Add Metric
           </Button>
         </div>
-        
+
         <div className="space-y-3">
           {contentOutline.successMetrics.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
-              No success metrics generated. Click &quot;Add Metric&quot; to create one.
+              No success metrics generated. Click &quot;Add Metric&quot; to
+              create one.
             </div>
           ) : (
             contentOutline.successMetrics.map((metric) => (
@@ -201,11 +228,17 @@ export function ContentOutlineStep({
                     <Edit3 className="h-4 w-4" />
                   </Button>
                 </div>
-                <p className="text-sm text-muted-foreground">{metric.description}</p>
+                <p className="text-sm text-muted-foreground">
+                  {metric.description}
+                </p>
                 {(metric.target ?? "").length > 0 && (
                   <div className="text-xs bg-green-50 p-2 rounded border-l-2 border-green-500">
                     <strong>Target:</strong> {metric.target}
-                    {(metric.measurement ?? "").length > 0 && <span className="ml-2"><strong>Measurement:</strong> {metric.measurement}</span>}
+                    {(metric.measurement ?? "").length > 0 && (
+                      <span className="ml-2">
+                        <strong>Measurement:</strong> {metric.measurement}
+                      </span>
+                    )}
                   </div>
                 )}
               </div>
@@ -226,15 +259,19 @@ export function ContentOutlineStep({
             Add Milestone
           </Button>
         </div>
-        
+
         <div className="space-y-3">
           {contentOutline.milestones.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
-              No milestones generated. Click &quot;Add Milestone&quot; to create one.
+              No milestones generated. Click &quot;Add Milestone&quot; to create
+              one.
             </div>
           ) : (
             contentOutline.milestones.map((milestone) => (
-              <div key={milestone.id} className="border rounded-lg p-4 space-y-2">
+              <div
+                key={milestone.id}
+                className="border rounded-lg p-4 space-y-2"
+              >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Badge variant="outline">{milestone.phase}</Badge>
@@ -244,7 +281,9 @@ export function ContentOutlineStep({
                     <Edit3 className="h-4 w-4" />
                   </Button>
                 </div>
-                <p className="text-sm text-muted-foreground">{milestone.description}</p>
+                <p className="text-sm text-muted-foreground">
+                  {milestone.description}
+                </p>
                 {(milestone.estimatedDate ?? "").length > 0 && (
                   <div className="text-xs bg-purple-50 p-2 rounded border-l-2 border-purple-500">
                     <strong>Estimated Date:</strong> {milestone.estimatedDate}
@@ -262,7 +301,8 @@ export function ContentOutlineStep({
           <div className="inline-flex items-center space-x-2 text-sm text-green-700 bg-green-50 p-3 rounded-lg border border-green-200">
             <CheckCircle className="h-4 w-4" />
             <span>
-              Content outline looks comprehensive. You can proceed to configure enterprise parameters.
+              Content outline looks comprehensive. You can proceed to configure
+              enterprise parameters.
             </span>
           </div>
         </div>

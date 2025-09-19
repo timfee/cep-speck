@@ -1,6 +1,6 @@
 /**
  * Critical validation requirements block for system prompt generation.
- * These rules provide upstream guidance to reduce validation churn 
+ * These rules provide upstream guidance to reduce validation churn
  * and improve first-pass PRD quality.
  */
 export const CRITICAL_VALIDATION_REQUIREMENTS = `

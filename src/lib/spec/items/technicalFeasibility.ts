@@ -2,16 +2,13 @@ import { TIMING, FEASIBILITY_THRESHOLDS } from "@/lib/constants";
 
 import type { Issue } from "../types";
 
-
 export const itemId = "technical-feasibility";
 export type Params = Record<string, never>;
 
- 
 function toPrompt(_params: Params, _pack?: unknown): string {
   return "Reject impossible percentages (>100%) and flag unrealistic rapid adoption claims.";
 }
 
- 
 function validate(draft: string, _params: Params, _pack?: unknown): Issue[] {
   const issues: Issue[] = [];
 
@@ -75,7 +72,10 @@ function validate(draft: string, _params: Params, _pack?: unknown): Issue[] {
         timeInDays = timeValue * TIMING.DAYS_PER_MONTH;
       }
 
-      if (percentageValue > FEASIBILITY_THRESHOLDS.HIGH_ADOPTION_PERCENTAGE && timeInDays < FEASIBILITY_THRESHOLDS.MINIMUM_ADOPTION_DAYS) {
+      if (
+        percentageValue > FEASIBILITY_THRESHOLDS.HIGH_ADOPTION_PERCENTAGE &&
+        timeInDays < FEASIBILITY_THRESHOLDS.MINIMUM_ADOPTION_DAYS
+      ) {
         issues.push({
           id: "unrealistic-adoption",
           itemId,

@@ -1,4 +1,10 @@
-import { PATTERNS, createHealingBuilder, HEALING_TEMPLATES, voidUnused, createWordBoundaryRegex } from "../helpers";
+import {
+  PATTERNS,
+  createHealingBuilder,
+  HEALING_TEMPLATES,
+  voidUnused,
+  createWordBoundaryRegex,
+} from "../helpers";
 
 import type { Issue } from "../types";
 
@@ -38,7 +44,10 @@ function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
     }
 
     const hedgingLanguage = draft.match(PATTERNS.HEDGING_LANGUAGE);
-    if (hedgingLanguage && hedgingLanguage.length > MAX_OVER_EXPLANATION_INSTANCES) {
+    if (
+      hedgingLanguage &&
+      hedgingLanguage.length > MAX_OVER_EXPLANATION_INSTANCES
+    ) {
       issues.push({
         id: "excessive-hedging",
         itemId,
@@ -48,9 +57,17 @@ function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
       });
     }
 
-    const qualityTheaterTerms = ["NPS", "Net Promoter Score", "satisfaction score", "happiness index", "engagement score"];
+    const qualityTheaterTerms = [
+      "NPS",
+      "Net Promoter Score",
+      "satisfaction score",
+      "happiness index",
+      "engagement score",
+    ];
     // Pre-compile regexes for efficiency
-    const qualityTheaterRegexes = qualityTheaterTerms.map(term => createWordBoundaryRegex(term, 'gi'));
+    const qualityTheaterRegexes = qualityTheaterTerms.map((term) =>
+      createWordBoundaryRegex(term, "gi")
+    );
     const inventedMetrics = qualityTheaterTerms.filter((_term, index) => {
       return qualityTheaterRegexes[index].test(draft);
     });
@@ -65,9 +82,14 @@ function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
       });
     }
 
-    const businessSpeakTerms = ["solidify our future", "strengthen our position", "position ourselves", "future-proof"];
-    const solidifyFuture = businessSpeakTerms.filter(term => {
-      const regex = createWordBoundaryRegex(term, 'gi');
+    const businessSpeakTerms = [
+      "solidify our future",
+      "strengthen our position",
+      "position ourselves",
+      "future-proof",
+    ];
+    const solidifyFuture = businessSpeakTerms.filter((term) => {
+      const regex = createWordBoundaryRegex(term, "gi");
       return regex.test(draft);
     });
     if (solidifyFuture.length > 0) {
@@ -149,10 +171,22 @@ function heal(
   if (!issues.length) return null;
 
   return createHealingBuilder()
-    .addForIssue(issues, "vague-quantifiers", HEALING_TEMPLATES.METRIC_SPECIFICITY)
+    .addForIssue(
+      issues,
+      "vague-quantifiers",
+      HEALING_TEMPLATES.METRIC_SPECIFICITY
+    )
     .addForIssue(issues, "excessive-hedging", HEALING_TEMPLATES.REDUCE_HEDGING)
-    .addForIssue(issues, "metrics-missing-units", HEALING_TEMPLATES.METRIC_UNITS)
-    .addForIssue(issues, "over-explanation", HEALING_TEMPLATES.REMOVE_META_COMMENTARY)
+    .addForIssue(
+      issues,
+      "metrics-missing-units",
+      HEALING_TEMPLATES.METRIC_UNITS
+    )
+    .addForIssue(
+      issues,
+      "over-explanation",
+      HEALING_TEMPLATES.REMOVE_META_COMMENTARY
+    )
     .build(HEALING_TEMPLATES.EXECUTIVE_PRECISION);
 }
 

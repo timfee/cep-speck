@@ -23,7 +23,7 @@ export function TypingText({
   cursorCharacter = "|",
   className,
   onComplete,
-  streaming = false
+  streaming = false,
 }: TypingTextProps) {
   const [displayedText, setDisplayedText] = useState("");
   const [isComplete, setIsComplete] = useState(false);
@@ -88,11 +88,11 @@ export interface TerminalDisplayProps {
   className?: string;
 }
 
-export function TerminalDisplay({ 
-  content, 
-  title = "PRD Output", 
+export function TerminalDisplay({
+  content,
+  title = "PRD Output",
   streaming = false,
-  className 
+  className,
 }: TerminalDisplayProps) {
   return (
     <motion.div
@@ -118,7 +118,13 @@ export function TerminalDisplay({
           <div className="flex items-center gap-2 text-xs text-gray-400">
             <motion.div
               className="w-2 h-2 bg-green-400 rounded-full"
-              animate={{ opacity: [UI_CONSTANTS.ANIMATION_SCALE_SMALL, 1, UI_CONSTANTS.ANIMATION_SCALE_SMALL] }}
+              animate={{
+                opacity: [
+                  UI_CONSTANTS.ANIMATION_SCALE_SMALL,
+                  1,
+                  UI_CONSTANTS.ANIMATION_SCALE_SMALL,
+                ],
+              }}
               transition={{ duration: 1.5, repeat: Infinity }}
             />
             <span>Live</span>

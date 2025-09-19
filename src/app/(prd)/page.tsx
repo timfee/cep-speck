@@ -8,18 +8,24 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { CodeEditor } from "@/components/ui/code-editor";
-import { MetricsDashboard, type WorkflowMetrics } from "@/components/ui/metrics-dashboard";
+import {
+  MetricsDashboard,
+  type WorkflowMetrics,
+} from "@/components/ui/metrics-dashboard";
 import { Separator } from "@/components/ui/separator";
 import { Status } from "@/components/ui/status";
 import { TerminalDisplay } from "@/components/ui/typing-text";
-import { WorkflowStatus, ProgressTimeline } from "@/components/ui/workflow-status";
+import {
+  WorkflowStatus,
+  ProgressTimeline,
+} from "@/components/ui/workflow-status";
 import { StructuredPrdWizard } from "@/components/workflow/StructuredPrdWizard";
 import { useSpecValidation } from "@/hooks/useSpecValidation";
 
 import type { ErrorDetails, ErrorCode } from "@/lib/error/types";
 import type { Issue, StreamFrame } from "@/lib/spec/types";
 
-type Mode = 'structured' | 'traditional';
+type Mode = "structured" | "traditional";
 
 // Constants for workflow timing estimates
 const GENERATION_ESTIMATE_SECONDS = 30;
@@ -38,19 +44,22 @@ function isStreamFrame(obj: unknown): obj is StreamFrame {
 
 // Type guard for ErrorCode
 function isErrorCode(code: unknown): code is ErrorCode {
-  return typeof code === "string" && [
-    "MISSING_API_KEY",
-    "NETWORK_TIMEOUT", 
-    "RATE_LIMITED",
-    "VALIDATION_FAILED",
-    "UNEXPECTED_ERROR",
-    "SERVICE_UNAVAILABLE",
-    "INVALID_INPUT"
-  ].includes(code);
+  return (
+    typeof code === "string" &&
+    [
+      "MISSING_API_KEY",
+      "NETWORK_TIMEOUT",
+      "RATE_LIMITED",
+      "VALIDATION_FAILED",
+      "UNEXPECTED_ERROR",
+      "SERVICE_UNAVAILABLE",
+      "INVALID_INPUT",
+    ].includes(code)
+  );
 }
 
 export default function Page() {
-  const [mode, setMode] = useState<Mode>('structured');
+  const [mode, setMode] = useState<Mode>("structured");
   const [spec, setSpec] = useState<string>(
     "Project: Example\nTarget SKU: premium\n\n"
   );
@@ -85,10 +94,18 @@ export default function Page() {
 
   // Calculate workflow metrics with memoization to avoid expensive recalculations
   const workflowMetrics: WorkflowMetrics = useMemo(() => {
-    const wordCount = draft ? draft.split(/\s+/).filter(word => word.length > 0).length : 0;
-    const validationScore = issues.length === 0 ? 100 : Math.max(0, 100 - (issues.length * 10));
+    const wordCount = draft
+      ? draft.split(/\s+/).filter((word) => word.length > 0).length
+      : 0;
+    const validationScore =
+      issues.length === 0 ? 100 : Math.max(0, 100 - issues.length * 10);
     const healingAttempts = Math.max(0, attempt - 1);
-    const estimatedCompletion = phase === "generating" ? GENERATION_ESTIMATE_SECONDS : phase === "validating" ? VALIDATION_ESTIMATE_SECONDS : undefined;
+    const estimatedCompletion =
+      phase === "generating"
+        ? GENERATION_ESTIMATE_SECONDS
+        : phase === "validating"
+          ? VALIDATION_ESTIMATE_SECONDS
+          : undefined;
 
     return {
       wordCount,
@@ -97,7 +114,7 @@ export default function Page() {
       elapsedTime,
       issuesFound: issues.length,
       phase,
-      estimatedCompletion
+      estimatedCompletion,
     };
   }, [draft, issues, attempt, elapsedTime, phase]);
 
@@ -124,7 +141,7 @@ export default function Page() {
 
     const reader = res.body.getReader();
     const decoder = new TextDecoder();
-    
+
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     while (true) {
       const { value, done } = await reader.read();
@@ -138,7 +155,7 @@ export default function Page() {
           const parsed: unknown = JSON.parse(line);
           if (!isStreamFrame(parsed)) continue;
           const obj = parsed;
-          
+
           if (obj.type === "phase") {
             setPhase(obj.data.phase);
             setAttempt(obj.data.attempt);
@@ -155,9 +172,11 @@ export default function Page() {
           }
           if (obj.type === "error") {
             setPhase("error");
-            
+
             // Create enhanced error details
-            const errorCode: ErrorCode = isErrorCode(obj.data.code) ? obj.data.code : "UNEXPECTED_ERROR";
+            const errorCode: ErrorCode = isErrorCode(obj.data.code)
+              ? obj.data.code
+              : "UNEXPECTED_ERROR";
             const errorDetails: ErrorDetails = {
               code: errorCode,
               message: obj.data.message,
@@ -167,15 +186,15 @@ export default function Page() {
               maxAttempts: 3,
               context: {
                 specLength: spec.length,
-                streaming: true
+                streaming: true,
               },
-              details: obj.data.details
+              details: obj.data.details,
             };
-          
-          setErrorDetails(errorDetails);
-          setStreaming(false);
-          break;
-        }
+
+            setErrorDetails(errorDetails);
+            setStreaming(false);
+            break;
+          }
         } catch {
           continue;
         }
@@ -185,10 +204,10 @@ export default function Page() {
   }, [spec, phase, attempt]);
 
   // Show structured wizard or traditional interface
-  if (mode === 'structured') {
+  if (mode === "structured") {
     return (
       <div className="p-6">
-        <StructuredPrdWizard onTraditionalMode={() => setMode('traditional')} />
+        <StructuredPrdWizard onTraditionalMode={() => setMode("traditional")} />
       </div>
     );
   }
@@ -201,12 +220,13 @@ export default function Page() {
         <div>
           <h1 className="text-3xl font-bold">PRD Generator</h1>
           <p className="text-muted-foreground">
-            Create comprehensive Product Requirements Documents with AI assistance
+            Create comprehensive Product Requirements Documents with AI
+            assistance
           </p>
         </div>
-        <Button 
-          variant="outline" 
-          onClick={() => setMode('structured')}
+        <Button
+          variant="outline"
+          onClick={() => setMode("structured")}
           className="flex items-center gap-2"
         >
           <Wand2 className="h-4 w-4" />
@@ -220,10 +240,12 @@ export default function Page() {
             <h2 className="text-lg font-semibold">Spec</h2>
             <div className="flex items-center gap-2">
               <Terminal className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm text-muted-foreground">Traditional Mode</span>
+              <span className="text-sm text-muted-foreground">
+                Traditional Mode
+              </span>
             </div>
           </div>
-          
+
           {/* Real-time validation status */}
           <div className="flex flex-wrap items-center gap-2">
             <Status
@@ -254,10 +276,15 @@ export default function Page() {
           {/* Real-time validation feedback */}
           {validation.issues.length > 0 && (
             <div className="space-y-2">
-              <h4 className="text-sm font-medium text-muted-foreground">Input Suggestions:</h4>
+              <h4 className="text-sm font-medium text-muted-foreground">
+                Input Suggestions:
+              </h4>
               <div className="space-y-1">
                 {validation.issues.map((issue, idx) => (
-                  <div key={idx} className="text-xs text-muted-foreground flex items-center gap-2">
+                  <div
+                    key={idx}
+                    className="text-xs text-muted-foreground flex items-center gap-2"
+                  >
                     <span className="w-1 h-1 bg-yellow-500 rounded-full"></span>
                     {issue}
                   </div>
@@ -269,14 +296,16 @@ export default function Page() {
           {/* Suggested sections */}
           {validation.suggestedSections.length > 0 && (
             <div className="space-y-2">
-              <h4 className="text-sm font-medium text-muted-foreground">Suggested additions:</h4>
+              <h4 className="text-sm font-medium text-muted-foreground">
+                Suggested additions:
+              </h4>
               <div className="space-y-1">
                 {validation.suggestedSections.map((suggestion, idx) => (
-                  <div 
-                    key={idx} 
+                  <div
+                    key={idx}
                     className="text-xs text-blue-600 cursor-pointer hover:text-blue-800"
                     onClick={() => {
-                      const newSpec = spec.trim() + '\n' + suggestion;
+                      const newSpec = spec.trim() + "\n" + suggestion;
                       setSpec(newSpec);
                     }}
                   >
@@ -287,37 +316,37 @@ export default function Page() {
             </div>
           )}
 
-          <Button onClick={run} disabled={streaming || validation.issues.length > 2}>
+          <Button
+            onClick={run}
+            disabled={streaming || validation.issues.length > 2}
+          >
             Run
           </Button>
-          
+
           {/* Enhanced Workflow Status */}
-          <WorkflowStatus 
-            phase={phase} 
+          <WorkflowStatus
+            phase={phase}
             attempt={attempt}
             streaming={streaming}
           />
-          
+
           {/* Progress Timeline */}
-          <ProgressTimeline 
+          <ProgressTimeline
             currentPhase={phase}
             attempt={attempt}
             maxAttempts={3}
           />
-          
+
           {/* Real-time Metrics Dashboard */}
-          <MetricsDashboard 
-            metrics={workflowMetrics}
-            streaming={streaming}
-          />
+          <MetricsDashboard metrics={workflowMetrics} streaming={streaming} />
         </Card>
 
         <Card className="p-4 space-y-3">
           <h2 className="text-lg font-semibold">Draft</h2>
-          
+
           {/* Enhanced Error Display */}
           {errorDetails ? (
-            <ErrorDisplay 
+            <ErrorDisplay
               error={errorDetails}
               onRetry={run}
               onConfigureApi={() => {
@@ -325,17 +354,19 @@ export default function Page() {
               }}
             />
           ) : draft ? (
-            <TerminalDisplay 
+            <TerminalDisplay
               content={draft}
               title="PRD Generation Output"
               streaming={streaming}
             />
           ) : (
             <div className="min-h-[200px] flex items-center justify-center text-muted-foreground bg-gray-50 rounded-lg border-2 border-dashed">
-              {streaming ? "Generating content..." : "Click 'Run' to generate your PRD"}
+              {streaming
+                ? "Generating content..."
+                : "Click 'Run' to generate your PRD"}
             </div>
           )}
-          
+
           <Separator />
           <h3 className="text-md font-medium">Issues</h3>
           <div className="space-y-2">
@@ -352,9 +383,9 @@ export default function Page() {
           </div>
         </Card>
       </div>
-      
+
       {/* API Key Configuration Dialog */}
-      <ApiKeyDialog 
+      <ApiKeyDialog
         isOpen={showApiKeyDialog}
         onClose={() => setShowApiKeyDialog(false)}
       />

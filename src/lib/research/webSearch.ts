@@ -17,33 +17,35 @@ export interface ResearchResult {
   autoFilledFacts: string[];
 }
 
-export function performCompetitorResearch(
-  vendors: string[]
-): ResearchResult {
+export function performCompetitorResearch(vendors: string[]): ResearchResult {
   const result: ResearchResult = {
     competitors: [],
     citations: [],
-    autoFilledFacts: []
+    autoFilledFacts: [],
   };
-  
+
   for (const vendor of vendors) {
     try {
       const competitorInfo = searchCompetitorInfo(vendor);
       result.competitors.push(competitorInfo);
-      
-      if ((competitorInfo.source ?? "").length > 0) {
-        result.citations.push(competitorInfo.source);
+
+      const source = competitorInfo.source ?? "";
+      if (source.length > 0) {
+        result.citations.push(source);
       }
-      
-      const autoFilledCount = (Object.values(competitorInfo) as (string | undefined)[])
-        .filter((value): value is string => 
-          typeof value === 'string' && 
-          value.length > 0 && 
-          !value.includes('[PM_INPUT_NEEDED'))
-        .length - 1; // Subtract 1 for vendor name
-      
+
+      const autoFilledCount =
+        (Object.values(competitorInfo) as (string | undefined)[]).filter(
+          (value): value is string =>
+            typeof value === "string" &&
+            value.length > 0 &&
+            !value.includes("[PM_INPUT_NEEDED")
+        ).length - 1; // Subtract 1 for vendor name
+
       if (autoFilledCount > 0) {
-        result.autoFilledFacts.push(`${vendor}: ${autoFilledCount} facts auto-filled from web research`);
+        result.autoFilledFacts.push(
+          `${vendor}: ${autoFilledCount} facts auto-filled from web research`
+        );
       }
     } catch (error) {
       console.warn(`Failed to research ${vendor}:`, error);
@@ -53,26 +55,30 @@ export function performCompetitorResearch(
         policyTemplates: `[PM_INPUT_NEEDED: ${vendor} policy templates - research failed]`,
         enterpriseBrowser: `[PM_INPUT_NEEDED: ${vendor} enterprise browser capabilities - research failed]`,
         dataProtection: `[PM_INPUT_NEEDED: ${vendor} data protection features - research failed]`,
-        mobileSupport: `[PM_INPUT_NEEDED: ${vendor} mobile support - research failed]`
+        mobileSupport: `[PM_INPUT_NEEDED: ${vendor} mobile support - research failed]`,
       });
     }
   }
-  
+
   return result;
 }
 
-export function synthesizeCompetitiveSnapshot(competitors: CompetitorInfo[]): string {
+export function synthesizeCompetitiveSnapshot(
+  competitors: CompetitorInfo[]
+): string {
   if (competitors.length === 0) {
-    return '[PM_INPUT_NEEDED: competitor snapshot]';
+    return "[PM_INPUT_NEEDED: competitor snapshot]";
   }
-  
-  const vendorNames = competitors.map(c => c.vendor).join(', ');
+
+  const vendorNames = competitors.map((c) => c.vendor).join(", ");
   return `A brief competitive snapshot indicates that enterprise browsers such as ${vendorNames} focus on different approaches to enterprise management and security controls.`;
 }
 
 export function searchCompetitorInfo(vendor: string): CompetitorInfo {
-  const timestamp = new Date().toISOString().slice(0, TIMING.ISO_DATE_SLICE_LENGTH);
-  
+  const timestamp = new Date()
+    .toISOString()
+    .slice(0, TIMING.ISO_DATE_SLICE_LENGTH);
+
   return {
     vendor,
     onboardingDefaults: `Research ${vendor} onboarding and security baseline capabilities`,
@@ -81,6 +87,6 @@ export function searchCompetitorInfo(vendor: string): CompetitorInfo {
     dataProtection: `Research ${vendor} data protection and DLP capabilities`,
     mobileSupport: `Research ${vendor} mobile device management integration`,
     source: `Gemini research ${timestamp}`,
-    date: timestamp
+    date: timestamp,
   };
 }

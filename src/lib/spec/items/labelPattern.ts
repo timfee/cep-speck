@@ -1,4 +1,8 @@
-import { validateHeaderPattern, HEALING_TEMPLATES, voidUnused } from "../helpers";
+import {
+  validateHeaderPattern,
+  HEALING_TEMPLATES,
+  voidUnused,
+} from "../helpers";
 
 import type { Issue } from "../types";
 

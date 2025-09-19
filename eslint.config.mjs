@@ -24,10 +24,10 @@ const eslintConfig = [
     plugins: {
       "@typescript-eslint": tseslint.plugin,
       "react-hooks": reactHooks,
-      "import": importPlugin,
-      "promise": promisePlugin,
-      "unicorn": unicorn,
-      "custom": customRules,
+      import: importPlugin,
+      promise: promisePlugin,
+      unicorn: unicorn,
+      custom: customRules,
     },
     languageOptions: {
       parser: tseslint.parser,
@@ -54,82 +54,103 @@ const eslintConfig = [
       "@typescript-eslint/no-unnecessary-type-assertion": "error",
 
       // ============ RULE 2: No Explicit Any ============
-      "@typescript-eslint/no-explicit-any": ["error", {
-        fixToUnknown: true,
-        ignoreRestArgs: false,
-      }],
+      "@typescript-eslint/no-explicit-any": [
+        "error",
+        {
+          fixToUnknown: true,
+          ignoreRestArgs: false,
+        },
+      ],
 
       // ============ RULE 3: Import Order ============
-      "import/order": ["error", {
-        groups: [
-          "builtin",
-          "external",
-          "internal",
-          ["parent", "sibling"],
-          "index",
-          "type",
-        ],
-        pathGroups: [
-          {
-            pattern: "@/**",
-            group: "internal",
-            position: "after",
+      "import/order": [
+        "error",
+        {
+          groups: [
+            "builtin",
+            "external",
+            "internal",
+            ["parent", "sibling"],
+            "index",
+            "type",
+          ],
+          pathGroups: [
+            {
+              pattern: "@/**",
+              group: "internal",
+              position: "after",
+            },
+            {
+              pattern: "@/lib/spec/**",
+              group: "internal",
+              position: "after",
+            },
+            {
+              pattern: "@/lib/spec/items/**",
+              group: "internal",
+              position: "after",
+            },
+            {
+              pattern: "@/lib/spec/helpers/**",
+              group: "internal",
+              position: "after",
+            },
+          ],
+          pathGroupsExcludedImportTypes: ["type"],
+          "newlines-between": "always",
+          alphabetize: {
+            order: "asc",
+            caseInsensitive: true,
           },
-          {
-            pattern: "@/lib/spec/**",
-            group: "internal",
-            position: "after",
-          },
-          {
-            pattern: "@/lib/spec/items/**",
-            group: "internal",
-            position: "after",
-          },
-          {
-            pattern: "@/lib/spec/helpers/**",
-            group: "internal",
-            position: "after",
-          },
-        ],
-        pathGroupsExcludedImportTypes: ["type"],
-        "newlines-between": "always",
-        alphabetize: {
-          order: "asc",
-          caseInsensitive: true,
         },
-      }],
+      ],
 
       // ============ RULE 4: No Floating Promises ============
-      "@typescript-eslint/no-floating-promises": ["error", {
-        ignoreVoid: false,
-        ignoreIIFE: false,
-        checkThenables: true,
-      }],
+      "@typescript-eslint/no-floating-promises": [
+        "error",
+        {
+          ignoreVoid: false,
+          ignoreIIFE: false,
+          checkThenables: true,
+        },
+      ],
 
       // ============ RULE 5: React Hooks Exhaustive Deps ============
-      "react-hooks/exhaustive-deps": ["error", {
-        additionalHooks: "(useSpecValidation|useCallback|useMemo)",
-        enableDangerousAutofixThisMayCauseInfiniteLoops: false,
-      }],
+      "react-hooks/exhaustive-deps": [
+        "error",
+        {
+          additionalHooks: "(useSpecValidation|useCallback|useMemo)",
+          enableDangerousAutofixThisMayCauseInfiniteLoops: false,
+        },
+      ],
 
       // ============ RULE 6: Consistent Type Imports ============
-      "@typescript-eslint/consistent-type-imports": ["error", {
-        prefer: "type-imports",
-        fixStyle: "separate-type-imports",
-        disallowTypeAnnotations: true,
-      }],
+      "@typescript-eslint/consistent-type-imports": [
+        "error",
+        {
+          prefer: "type-imports",
+          fixStyle: "separate-type-imports",
+          disallowTypeAnnotations: true,
+        },
+      ],
 
       // ============ RULE 7: No Magic Numbers & Prefer Const ============
-      "no-magic-numbers": ["error", {
-        ignore: [0, 1, -1, 2, 100, 1000],
-        ignoreArrayIndexes: true,
-        enforceConst: true,
-        detectObjects: false,
-      }],
-      "prefer-const": ["error", {
-        destructuring: "all",
-        ignoreReadBeforeAssign: false,
-      }],
+      "no-magic-numbers": [
+        "error",
+        {
+          ignore: [0, 1, -1, 2, 100, 1000],
+          ignoreArrayIndexes: true,
+          enforceConst: true,
+          detectObjects: false,
+        },
+      ],
+      "prefer-const": [
+        "error",
+        {
+          destructuring: "all",
+          ignoreReadBeforeAssign: false,
+        },
+      ],
 
       // ============ RULE 8: Naming Convention ============
       "@typescript-eslint/naming-convention": [
@@ -169,29 +190,43 @@ const eslintConfig = [
       ],
 
       // ============ RULE 9: No Restricted Imports (Barrel Files) ============
-      "no-restricted-imports": ["error", {
-        patterns: [
-          {
-            group: ["*/items/*", "!*/items", "!*/items/index"],
-            message: "Import from the items barrel file (index.ts) instead of individual files",
-          },
-          {
-            group: ["*/helpers/*", "!*/helpers", "!*/helpers/index"],
-            message: "Import from the helpers barrel file (index.ts) instead of individual files",
-          },
-          {
-            group: ["*/spec/*/*", "!*/spec/*/index", "!*/spec/types", "!*/spec/registry", "!*/spec/streaming"],
-            message: "Use module barrel exports or explicitly allowed files",
-          },
-        ],
-      }],
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["*/items/*", "!*/items", "!*/items/index"],
+              message:
+                "Import from the items barrel file (index.ts) instead of individual files",
+            },
+            {
+              group: ["*/helpers/*", "!*/helpers", "!*/helpers/index"],
+              message:
+                "Import from the helpers barrel file (index.ts) instead of individual files",
+            },
+            {
+              group: [
+                "*/spec/*/*",
+                "!*/spec/*/index",
+                "!*/spec/types",
+                "!*/spec/registry",
+                "!*/spec/streaming",
+              ],
+              message: "Use module barrel exports or explicitly allowed files",
+            },
+          ],
+        },
+      ],
 
       // ============ RULE 10: Nullish Coalescing & Optional Chain ============
-      "@typescript-eslint/prefer-nullish-coalescing": ["error", {
-        ignoreConditionalTests: false,
-        ignoreTernaryTests: false,
-        ignoreMixedLogicalExpressions: false,
-      }],
+      "@typescript-eslint/prefer-nullish-coalescing": [
+        "error",
+        {
+          ignoreConditionalTests: false,
+          ignoreTernaryTests: false,
+          ignoreMixedLogicalExpressions: false,
+        },
+      ],
       "@typescript-eslint/prefer-optional-chain": "error",
 
       // ============ RULE 11: Enforce Validation Module Structure ============
@@ -210,25 +245,34 @@ const eslintConfig = [
       "custom/spec-pack-json-validation": "error",
 
       // Additional helpful rules
-      "@typescript-eslint/no-unused-vars": ["error", {
-        argsIgnorePattern: "^_",
-        varsIgnorePattern: "^_",
-      }],
-      "@typescript-eslint/no-unnecessary-condition": ["error", {
-        allowConstantLoopConditions: false,
-      }],
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+        },
+      ],
+      "@typescript-eslint/no-unnecessary-condition": [
+        "error",
+        {
+          allowConstantLoopConditions: false,
+        },
+      ],
       "@typescript-eslint/no-non-null-assertion": "error",
       "@typescript-eslint/require-await": "error",
       "@typescript-eslint/await-thenable": "error",
-      "@typescript-eslint/no-misused-promises": ["error", {
-        checksVoidReturn: {
-          attributes: false,
+      "@typescript-eslint/no-misused-promises": [
+        "error",
+        {
+          checksVoidReturn: {
+            attributes: false,
+          },
         },
-      }],
+      ],
       "promise/prefer-await-to-then": "error",
       "unicorn/no-array-reduce": "error",
       "unicorn/no-array-for-each": "error",
-      
+
       // ============ ADDITIONAL STRICT RULES ============
       "@typescript-eslint/no-unsafe-assignment": "error",
       "@typescript-eslint/no-unsafe-argument": "error",
@@ -244,7 +288,15 @@ const eslintConfig = [
     },
   },
   {
-    files: ["**/types.ts", "**/spec/types.ts", "**/spec/registry.ts", "**/spec/selfReview.ts", "**/spec/validate.ts", "**/spec/helpers/**/*.ts", "**/spec/__tests__/**/*.ts"],
+    files: [
+      "**/types.ts",
+      "**/spec/types.ts",
+      "**/spec/registry.ts",
+      "**/spec/selfReview.ts",
+      "**/spec/validate.ts",
+      "**/spec/helpers/**/*.ts",
+      "**/spec/__tests__/**/*.ts",
+    ],
     rules: {
       "custom/consistent-error-handling-pattern": "off",
     },
@@ -258,7 +310,14 @@ const eslintConfig = [
     },
   },
   {
-    files: ["**/*.test.ts", "**/*.test.tsx", "**/*.spec.ts", "**/*.spec.tsx", "**/tests/**/*.ts", "**/__tests__/**/*.ts"],
+    files: [
+      "**/*.test.ts",
+      "**/*.test.tsx",
+      "**/*.spec.ts",
+      "**/*.spec.tsx",
+      "**/tests/**/*.ts",
+      "**/__tests__/**/*.ts",
+    ],
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
       "@typescript-eslint/no-non-null-assertion": "off",
@@ -277,12 +336,18 @@ const eslintConfig = [
     rules: {
       "custom/consistent-error-handling-pattern": "off",
       // Allow magic numbers in route handlers for HTTP status codes, timeouts, etc.
-      "no-magic-numbers": ["error", {
-        ignore: [0, 1, -1, 2, 3, 5, 10, 100, 200, 201, 400, 401, 403, 404, 500, 1000, 2000, 3000, 5000, 8000, 10000],
-        ignoreArrayIndexes: true,
-        enforceConst: true,
-        detectObjects: false,
-      }],
+      "no-magic-numbers": [
+        "error",
+        {
+          ignore: [
+            0, 1, -1, 2, 3, 5, 10, 100, 200, 201, 400, 401, 403, 404, 500, 1000,
+            2000, 3000, 5000, 8000, 10000,
+          ],
+          ignoreArrayIndexes: true,
+          enforceConst: true,
+          detectObjects: false,
+        },
+      ],
     },
   },
   {
@@ -290,12 +355,18 @@ const eslintConfig = [
     rules: {
       "custom/consistent-error-handling-pattern": "off",
       // Stricter rules for components but allow UI-specific numeric values
-      "no-magic-numbers": ["error", {
-        ignore: [0, 1, -1, 2, 4, 8, 10, 12, 16, 20, 24, 32, 48, 64, 100, 200, 300, 400, 500, 1000, 1200, 1400, 1800],
-        ignoreArrayIndexes: true,
-        enforceConst: true,
-        detectObjects: false,
-      }],
+      "no-magic-numbers": [
+        "error",
+        {
+          ignore: [
+            0, 1, -1, 2, 4, 8, 10, 12, 16, 20, 24, 32, 48, 64, 100, 200, 300,
+            400, 500, 1000, 1200, 1400, 1800,
+          ],
+          ignoreArrayIndexes: true,
+          enforceConst: true,
+          detectObjects: false,
+        },
+      ],
     },
   },
   {

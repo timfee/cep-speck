@@ -54,14 +54,14 @@ const MAX_ALLOWED_ATTEMPTS = 5;
 
 export async function POST(req: NextRequest) {
   const requestBody: unknown = await req.json();
-  
+
   if (!isValidRunRequest(requestBody)) {
-    return new Response(
-      JSON.stringify({ error: "Invalid request body" }),
-      { status: 400, headers: { "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({ error: "Invalid request body" }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
   }
-  
+
   const { specText, maxAttempts: maxOverride } = requestBody;
   const maxAttempts = Math.min(
     maxOverride ?? pack.healPolicy.maxAttempts,
@@ -73,20 +73,20 @@ export async function POST(req: NextRequest) {
   const stream = new ReadableStream({
     async start(controller) {
       let controllerClosed = false;
-      
+
       const safeClose = () => {
         if (!controllerClosed) {
           controller.close();
           controllerClosed = true;
         }
       };
-      
+
       const safeEnqueue = (frame: Uint8Array) => {
         if (!controllerClosed) {
           controller.enqueue(frame);
         }
       };
-      
+
       try {
         // API key check
         const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
@@ -138,7 +138,7 @@ export async function POST(req: NextRequest) {
 
         const researchResult = performCompetitorResearch([
           "Zscaler",
-          "Island", 
+          "Island",
           "Talon",
           "Microsoft Edge for Business",
         ]);

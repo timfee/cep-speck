@@ -3,12 +3,10 @@ import type { Issue } from "../types";
 export const itemId = "sku-differentiation";
 export type Params = { targetSku: string };
 
- 
 function toPrompt(_params: Params, _pack?: unknown): string {
   return "Each feature must state Target SKU (Core | Premium | Both) and premium differentiation rationale.";
 }
 
- 
 function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
   const issues: Issue[] = [];
   const section =
