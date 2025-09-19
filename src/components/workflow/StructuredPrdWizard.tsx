@@ -6,8 +6,7 @@ import { Button } from '@/components/ui/button';
 import { ProgressTimeline } from '@/components/workflow/ProgressTimeline';
 import { IdeaCaptureStep } from '@/components/workflow/steps/IdeaCaptureStep';
 import { StructureReviewStep } from '@/components/workflow/steps/StructureReviewStep';
-import { useStructuredWorkflow } from '@/hooks/useStructuredWorkflow';
-import { AVAILABLE_SECTIONS } from '@/types/workflow';
+import { useStructuredWorkflow, MIN_PROMPT_LENGTH } from '@/hooks/useStructuredWorkflow';
 import { ArrowLeft, ArrowRight, Wand2 } from 'lucide-react';
 
 interface StructuredPrdWizardProps {
@@ -18,67 +17,23 @@ export function StructuredPrdWizard({ onTraditionalMode }: StructuredPrdWizardPr
   const {
     state,
     setInitialPrompt,
-    setSuggestedSections,
     setSelectedSections,
     goToNextStep,
     goToPreviousStep,
-    resetWorkflow
+    resetWorkflow,
+    generateStructureForPrompt
   } = useStructuredWorkflow();
 
   const handleRegenerateStructure = async () => {
-    // For now, we'll use the predefined sections
-    // In the future, this would call an API to analyze the prompt
-    const relevantSections = AVAILABLE_SECTIONS.filter(section => {
-      const prompt = state.initialPrompt.toLowerCase();
-      // Simple keyword matching for demo purposes
-      if (section.id === 'executive-summary') return true; // Always include
-      if (section.id === 'feature-requirements') return true; // Always include
-      if (section.id === 'success-metrics') return true; // Always include
-      if (section.id === 'market-analysis' && (prompt.includes('market') || prompt.includes('competitive') || prompt.includes('competitor'))) return true;
-      if (section.id === 'technical-architecture' && (prompt.includes('technical') || prompt.includes('architecture') || prompt.includes('system'))) return true;
-      if (section.id === 'timeline-milestones' && (prompt.includes('timeline') || prompt.includes('milestone') || prompt.includes('schedule'))) return true;
-      if (section.id === 'risk-mitigation' && (prompt.includes('risk') || prompt.includes('challenge') || prompt.includes('mitigation'))) return true;
-      if (section.id === 'stakeholder-impact' && (prompt.includes('stakeholder') || prompt.includes('team') || prompt.includes('user'))) return true;
-      return false;
-    });
-
-    setSuggestedSections(relevantSections);
-    
-    // Auto-select required sections
-    const requiredSections = relevantSections.filter(s => s.required).map(s => s.id);
-    setSelectedSections(requiredSections);
+    generateStructureForPrompt(state.initialPrompt);
   };
 
   // Auto-generate structure when prompt is ready and we're on structure step
   React.useEffect(() => {
-    const generateStructure = async () => {
-      // For now, we'll use the predefined sections
-      // In the future, this would call an API to analyze the prompt
-      const relevantSections = AVAILABLE_SECTIONS.filter(section => {
-        const prompt = state.initialPrompt.toLowerCase();
-        // Simple keyword matching for demo purposes
-        if (section.id === 'executive-summary') return true; // Always include
-        if (section.id === 'feature-requirements') return true; // Always include
-        if (section.id === 'success-metrics') return true; // Always include
-        if (section.id === 'market-analysis' && (prompt.includes('market') || prompt.includes('competitive') || prompt.includes('competitor'))) return true;
-        if (section.id === 'technical-architecture' && (prompt.includes('technical') || prompt.includes('architecture') || prompt.includes('system'))) return true;
-        if (section.id === 'timeline-milestones' && (prompt.includes('timeline') || prompt.includes('milestone') || prompt.includes('schedule'))) return true;
-        if (section.id === 'risk-mitigation' && (prompt.includes('risk') || prompt.includes('challenge') || prompt.includes('mitigation'))) return true;
-        if (section.id === 'stakeholder-impact' && (prompt.includes('stakeholder') || prompt.includes('team') || prompt.includes('user'))) return true;
-        return false;
-      });
-
-      setSuggestedSections(relevantSections);
-      
-      // Auto-select required sections
-      const requiredSections = relevantSections.filter(s => s.required).map(s => s.id);
-      setSelectedSections(requiredSections);
-    };
-
-    if (state.currentStep === 'structure' && state.initialPrompt.trim().length > 10 && state.suggestedSections.length === 0) {
-      generateStructure();
+    if (state.currentStep === 'structure' && state.initialPrompt.trim().length > MIN_PROMPT_LENGTH && state.suggestedSections.length === 0) {
+      generateStructureForPrompt(state.initialPrompt);
     }
-  }, [state.currentStep, state.initialPrompt, state.suggestedSections.length, setSuggestedSections, setSelectedSections]);
+  }, [state.currentStep, state.initialPrompt, state.suggestedSections.length, generateStructureForPrompt]);
 
   const handleNext = () => {
     if (state.currentStep === 'idea' && state.progress.canGoNext) {

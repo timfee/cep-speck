@@ -7,6 +7,31 @@ import type {
 } from '@/types/workflow';
 import { AVAILABLE_SECTIONS, WORKFLOW_STEPS } from '@/types/workflow';
 
+// Validation constants
+export const MIN_PROMPT_LENGTH = 10;
+export const PROMPT_COMPLETION_TARGET = 50;
+
+// Helper function to filter relevant sections based on prompt content
+const getRelevantSections = (prompt: string): SectionDefinition[] => {
+  const lowercasePrompt = prompt.toLowerCase();
+  
+  return AVAILABLE_SECTIONS.filter(section => {
+    // Always include required sections
+    if (section.id === 'executive-summary') return true;
+    if (section.id === 'feature-requirements') return true;
+    if (section.id === 'success-metrics') return true;
+    
+    // Optional sections based on keyword matching
+    if (section.id === 'market-analysis' && (lowercasePrompt.includes('market') || lowercasePrompt.includes('competitive') || lowercasePrompt.includes('competitor'))) return true;
+    if (section.id === 'technical-architecture' && (lowercasePrompt.includes('technical') || lowercasePrompt.includes('architecture') || lowercasePrompt.includes('system'))) return true;
+    if (section.id === 'timeline-milestones' && (lowercasePrompt.includes('timeline') || lowercasePrompt.includes('milestone') || lowercasePrompt.includes('schedule'))) return true;
+    if (section.id === 'risk-mitigation' && (lowercasePrompt.includes('risk') || lowercasePrompt.includes('challenge') || lowercasePrompt.includes('mitigation'))) return true;
+    if (section.id === 'stakeholder-impact' && (lowercasePrompt.includes('stakeholder') || lowercasePrompt.includes('team') || lowercasePrompt.includes('user'))) return true;
+    
+    return false;
+  });
+};
+
 const initialState: StructuredWorkflowState = {
   currentStep: 'idea',
   initialPrompt: '',
@@ -39,8 +64,8 @@ export const useStructuredWorkflow = () => {
 
     switch (state.currentStep) {
       case 'idea':
-        canGoNext = state.initialPrompt.trim().length > 10;
-        completion = Math.min(100, (state.initialPrompt.length / 50) * 100);
+        canGoNext = state.initialPrompt.trim().length > MIN_PROMPT_LENGTH;
+        completion = Math.min(100, (state.initialPrompt.length / PROMPT_COMPLETION_TARGET) * 100);
         break;
       case 'structure':
         canGoNext = state.selectedSections.length > 0;
@@ -154,6 +179,15 @@ export const useStructuredWorkflow = () => {
     setState(initialState);
   }, []);
 
+  const generateStructureForPrompt = useCallback((prompt: string) => {
+    const relevantSections = getRelevantSections(prompt);
+    setSuggestedSections(relevantSections);
+    
+    // Auto-select required sections
+    const requiredSections = relevantSections.filter(s => s.required).map(s => s.id);
+    setSelectedSections(requiredSections);
+  }, [setSuggestedSections, setSelectedSections]);
+
   return {
     state: currentState,
     setInitialPrompt,
@@ -167,6 +201,7 @@ export const useStructuredWorkflow = () => {
     goToNextStep,
     goToPreviousStep,
     goToStep,
-    resetWorkflow
+    resetWorkflow,
+    generateStructureForPrompt
   };
 };

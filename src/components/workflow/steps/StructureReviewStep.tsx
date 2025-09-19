@@ -30,7 +30,6 @@ export function StructureReviewStep({
     .reduce((total, section) => total + section.estimatedWords, 0);
 
   const requiredSections = suggestedSections.filter(s => s.required);
-  // const optionalSections = suggestedSections.filter(s => !s.required);
   const selectedRequiredCount = requiredSections.filter(s => selectedSections.includes(s.id)).length;
 
   return (
