@@ -7,7 +7,6 @@ function toPrompt(_params: Params, _pack?: unknown): string {
   return "Each feature must state Target SKU (Core | Premium | Both) and premium differentiation rationale.";
 }
 
-// eslint-disable-next-line @typescript-eslint/require-await
 async function validate(draft: string, params: Params, _pack?: unknown): Promise<Issue[]> {
   const issues: Issue[] = [];
   const section =
@@ -47,7 +46,6 @@ async function validate(draft: string, params: Params, _pack?: unknown): Promise
   return issues;
 }
 
-// eslint-disable-next-line @typescript-eslint/require-await
 async function heal(
   _issues: Issue[],
   _params: Params,

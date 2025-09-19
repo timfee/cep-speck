@@ -102,12 +102,11 @@ ${tldr}
   } catch (error) {
     console.warn("ExecutiveQuality AI validation failed:", error);
     // Fail open: If the AI check fails, return no issues for this validator.
-    // The deterministic checks will still run.
+    // Other semantic validators will still run, ensuring graceful degradation.
     return [];
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/require-await
 async function heal(
   issues: Issue[],
   _params: Params,

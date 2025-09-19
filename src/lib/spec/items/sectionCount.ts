@@ -19,7 +19,6 @@ function toPrompt(params: Params, _pack?: unknown): string {
   return `Ensure the document has ${range} top-level sections; detect sections using headerRegex: ${params.headerRegex}`;
 }
 
-// eslint-disable-next-line @typescript-eslint/require-await
 async function validate(draft: string, params: Params, _pack?: unknown): Promise<Issue[]> {
   voidUnused(_pack);
   const count = countSections(draft, params.headerRegex);
@@ -45,7 +44,6 @@ async function validate(draft: string, params: Params, _pack?: unknown): Promise
   return issues;
 }
 
-// eslint-disable-next-line @typescript-eslint/require-await
 async function heal(issues: Issue[], params: Params, _pack?: unknown): Promise<string | null> {
   voidUnused(_pack);
   if (!issues.length) return null;

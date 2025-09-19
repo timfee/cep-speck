@@ -14,13 +14,11 @@ function toPrompt(params: Params, _pack?: unknown): string {
   return `Use the header label pattern: ${params.pattern} for top-level sections.`;
 }
 
-// eslint-disable-next-line @typescript-eslint/require-await
 async function validate(draft: string, params: Params, _pack?: unknown): Promise<Issue[]> {
   voidUnused(_pack);
   return validateHeaderPattern(draft, params, itemId);
 }
 
-// eslint-disable-next-line @typescript-eslint/require-await
 async function heal(
   _issues: Issue[],
   params: Params,

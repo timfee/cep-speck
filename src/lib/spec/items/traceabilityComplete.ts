@@ -27,7 +27,6 @@ function toPrompt(_params: Record<string, never>, _pack?: unknown): string {
   return "Ensure every problem maps to a feature and every feature has at least one success metric.";
 }
 
-// eslint-disable-next-line @typescript-eslint/require-await
 async function validate(
   draft: string,
   _params: Record<string, never>,
@@ -90,7 +89,6 @@ async function validate(
   return issues;
 }
 
-// eslint-disable-next-line @typescript-eslint/require-await
 async function heal(
   _issues: Issue[],
   _params: Record<string, never>,

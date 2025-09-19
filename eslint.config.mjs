@@ -302,6 +302,14 @@ const eslintConfig = [
     },
   },
   {
+    files: ["**/spec/items/**/*.ts"],
+    rules: {
+      // Validator modules must implement async interface for consistency,
+      // even if individual functions don't use await
+      "@typescript-eslint/require-await": "off",
+    },
+  },
+  {
     files: ["**/components/ui/**/*.tsx", "**/components/ui/**/*.ts"],
     rules: {
       "no-magic-numbers": "off",

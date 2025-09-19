@@ -12,7 +12,6 @@ function toPrompt(params: Params, _pack?: unknown): string {
   return `IMPORTANT: Use your web search capabilities to research current information about these enterprise browser vendors: ${vendors}. For each vendor, research and include specific details about: onboarding defaults, policy templates, enterprise browser posture, data protection capabilities, and mobile support. Include a brief competitive snapshot in the TL;DR section with specific vendor capabilities and positioning. Add citations with sources and dates in a Footnotes section after the Annexes. Use sources from the last ${params.recencyDays} days when possible.`;
 }
 
-// eslint-disable-next-line @typescript-eslint/require-await
 async function validate(draft: string, params: Params, _pack?: unknown): Promise<Issue[]> {
   const issues: Issue[] = [];
 
@@ -81,7 +80,6 @@ async function validate(draft: string, params: Params, _pack?: unknown): Promise
   return issues;
 }
 
-// eslint-disable-next-line @typescript-eslint/require-await
 async function heal(issues: Issue[], params: Params, _pack?: unknown): Promise<string | null> {
   if (!issues.length) return null;
 

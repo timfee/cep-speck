@@ -9,7 +9,6 @@ function toPrompt(params: Params, pack?: SpecPack): string {
   return "TL;DR must highlight at least half of the core feature set.";
 }
 
-// eslint-disable-next-line @typescript-eslint/require-await
 async function validate(draft: string, params: Params, pack?: SpecPack): Promise<Issue[]> {
   void params;
   void pack;
@@ -57,7 +56,6 @@ async function validate(draft: string, params: Params, pack?: SpecPack): Promise
   return issues;
 }
 
-// eslint-disable-next-line @typescript-eslint/require-await
 async function heal(issues: Issue[], params: Params, pack?: SpecPack): Promise<string | null> {
   void params;
   void pack;

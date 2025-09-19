@@ -15,7 +15,6 @@ function toPrompt(params: Params, _pack?: unknown): string {
   )}. Identify metric lines by regex: ${params.metricRegex}`;
 }
 
-// eslint-disable-next-line @typescript-eslint/require-await
 async function validate(draft: string, params: Params, _pack?: unknown): Promise<Issue[]> {
   voidUnused(_pack);
   const rx = new RegExp(params.metricRegex, "gm");
@@ -49,7 +48,6 @@ async function validate(draft: string, params: Params, _pack?: unknown): Promise
   return issues;
 }
 
-// eslint-disable-next-line @typescript-eslint/require-await
 async function heal(issues: Issue[], params: Params, _pack?: unknown): Promise<string | null> {
   voidUnused(_pack);
   return buildMetricHealing(issues, params);

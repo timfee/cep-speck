@@ -16,7 +16,6 @@ function toPrompt(_params: Params, _pack?: unknown): string {
   return "Metrics in TL;DR must exactly match values in Success Metrics section.";
 }
 
-// eslint-disable-next-line @typescript-eslint/require-await
 async function validate(draft: string, params: Params, _pack?: unknown): Promise<Issue[]> {
   voidUnused(_pack);
   const issues: Issue[] = [];
@@ -42,7 +41,6 @@ async function validate(draft: string, params: Params, _pack?: unknown): Promise
   return issues;
 }
 
-// eslint-disable-next-line @typescript-eslint/require-await
 async function heal(
   _issues?: Issue[],
   _params?: Params,

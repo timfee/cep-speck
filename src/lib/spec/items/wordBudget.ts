@@ -11,7 +11,6 @@ function toPrompt(params: Params, _pack?: unknown): string {
   return `Target word count: ${target} words (hard cap: ${cap} words). Be concise and focused.`;
 }
 
-// eslint-disable-next-line @typescript-eslint/require-await
 async function validate(draft: string, params: Params, _pack?: unknown): Promise<Issue[]> {
   const wordCount = draft.split(/\s+/).filter((word) => word.length > 0).length;
   const target = params.target ?? WORD_BUDGET.MINIMUM_BUDGET;
@@ -38,7 +37,6 @@ async function validate(draft: string, params: Params, _pack?: unknown): Promise
   return issues;
 }
 
-// eslint-disable-next-line @typescript-eslint/require-await
 async function heal(issues: Issue[], params: Params, _pack?: unknown): Promise<string | null> {
   if (!issues.length) return null;
   const target = params.target ?? WORD_BUDGET.MINIMUM_BUDGET;

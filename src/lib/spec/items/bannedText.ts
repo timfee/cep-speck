@@ -39,7 +39,6 @@ function toPrompt(params: Params, pack?: SpecPack): string {
   )}.`;
 }
 
-// eslint-disable-next-line @typescript-eslint/require-await
 async function validate(draft: string, params: Params, pack?: SpecPack): Promise<Issue[]> {
   const exact = collectExact(params, pack);
   const regex = collectRegex(params, pack);
@@ -73,7 +72,6 @@ async function validate(draft: string, params: Params, pack?: SpecPack): Promise
   return issues;
 }
 
-// eslint-disable-next-line @typescript-eslint/require-await
 async function heal(
   issues: Issue[],
   _params: Params,

@@ -10,7 +10,6 @@ function toPrompt(_params: Record<string, never>, _pack?: unknown): string {
   return "Placeholders must be specific: include data, units, timeframe, and source.";
 }
 
-// eslint-disable-next-line @typescript-eslint/require-await
 async function validate(
   draft: string,
   _params: Record<string, never>,
@@ -52,7 +51,6 @@ async function validate(
   return issues;
 }
 
-// eslint-disable-next-line @typescript-eslint/require-await
 async function heal(
   issues: Issue[],
   _params: Record<string, never>,
