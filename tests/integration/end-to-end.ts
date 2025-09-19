@@ -6,14 +6,13 @@
  */
 
 import { encodeStreamFrame, createPhaseFrame, createGenerationFrame, createValidationFrame, createErrorFrame, createResultFrame } from '../../src/lib/spec/streaming';
-import type { StreamFrame } from '../../src/lib/spec/types';
+import type { StreamFrame, Issue } from '../../src/lib/spec/types';
 
 /**
  * Mock API response simulator
  */
 export class StreamingAPISimulator {
   private frames: StreamFrame[] = [];
-  private currentFrame = 0;
   private delay = 50; // ms between frames
   private shouldError = false;
   private errorFrame: number = -1;
@@ -77,7 +76,7 @@ export class ClientFrameProcessor {
   private phase: string = "";
   private attempt: number = 0;
   private draft: string = "";
-  private issues: any[] = [];
+  private issues: Issue[] = [];
   private streaming: boolean = false;
   private error: string | null = null;
 
@@ -103,11 +102,12 @@ export class ClientFrameProcessor {
 
     const reader = stream.getReader();
     const decoder = new TextDecoder();
+    let shouldAbort = false;
 
     try {
       while (true) {
         const { value, done } = await reader.read();
-        if (done) break;
+        if (done || shouldAbort) break;
 
         const chunk = decoder.decode(value);
         for (const line of chunk.split("\n")) {
@@ -142,6 +142,7 @@ export class ClientFrameProcessor {
           if (frame.type === "error") {
             this.error = frame.data.message;
             this.streaming = false;
+            shouldAbort = true;
             break;
           }
         }
@@ -173,7 +174,7 @@ export class ClientFrameProcessor {
     phase: string;
     attempt: number;
     draft: string;
-    issues: any[];
+    issues: Issue[];
     streaming: boolean;
     framesReceived: number;
   } {
@@ -427,7 +428,7 @@ export class EndToEndTestRunner {
     const simulator2 = new StreamingAPISimulator(afterRecovery, { delay: 10 });
     const stream2 = simulator2.createReadableStream();
     const result = await processor.processStream(stream2);
-    const framesAfterRecovery = processor.getState().framesReceived - framesBeforeInterruption;
+    const framesAfterRecovery = processor.getState().framesReceived;
 
     return {
       recoverySuccessful: result.success,

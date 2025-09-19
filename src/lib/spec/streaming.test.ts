@@ -3,7 +3,6 @@
  */
 
 import {
-  createStreamFrame,
   encodeStreamFrame,
   createPhaseFrame,
   createGenerationFrame,
@@ -141,16 +140,16 @@ describe("Performance", () => {
     }
 
     // Test encoding performance
-    const start = Date.now();
+    const start = performance.now();
     const encoded = encodeStreamFrame(frame);
-    const encodeTime = Date.now() - start;
+    const encodeTime = performance.now() - start;
     
     expect(encodeTime).toBeLessThan(1000); // Should complete in under 1 second
     expect(encoded.length).toBeGreaterThan(50000);
   });
 
   test("should handle rapid frame creation", () => {
-    const start = Date.now();
+    const start = performance.now();
     const frames: StreamFrame[] = [];
     
     // Create 1000 frames rapidly
@@ -158,7 +157,7 @@ describe("Performance", () => {
       frames.push(createGenerationFrame(`token${i}`, `content${i}`, i));
     }
     
-    const createTime = Date.now() - start;
+    const createTime = performance.now() - start;
     
     expect(frames).toHaveLength(1000);
     expect(createTime).toBeLessThan(1000); // Should complete quickly

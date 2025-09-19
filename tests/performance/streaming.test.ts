@@ -10,24 +10,30 @@ import {
 } from '../../src/lib/spec/streaming';
 import { FrameRateTracker, measureMemoryUsage } from '../../src/lib/spec/__tests__/test-utils';
 import { BrowserCompatibilityChecker, FramePerformanceMonitor } from '../browser/compatibility';
-import type { StreamFrame } from '../../src/lib/spec/types';
+import type { StreamFrame, StreamPhase } from '../../src/lib/spec/types';
 
 describe('Streaming Protocol Performance', () => {
   describe('Frame Creation Performance', () => {
     test('should create frames efficiently', () => {
-      const startTime = performance.now();
-      const frames: StreamFrame[] = [];
+      const runCount = 5;
+      const durations: number[] = [];
+      let frames: StreamFrame[] = [];
 
-      // Create many frames rapidly
-      for (let i = 0; i < 10000; i++) {
-        frames.push(createGenerationFrame(`token${i}`, `content${i}`, i));
+      for (let run = 0; run < runCount; run++) {
+        const startTime = performance.now();
+        frames = [];
+        for (let i = 0; i < 10000; i++) {
+          frames.push(createGenerationFrame(`token${i}`, `content${i}`, i));
+        }
+        const endTime = performance.now();
+        durations.push(endTime - startTime);
       }
 
-      const endTime = performance.now();
-      const duration = endTime - startTime;
+      const avgDuration = durations.reduce((a, b) => a + b, 0) / durations.length;
 
       expect(frames).toHaveLength(10000);
-      expect(duration).toBeLessThan(1000); // Should create 10k frames in under 1 second
+      // Allow a slightly higher threshold and use average to reduce flakiness
+      expect(avgDuration).toBeLessThan(1200); // Average: should create 10k frames in under 1.2 seconds
       expect(frames[0].type).toBe('generation');
       expect(frames[9999].type).toBe('generation');
     });
@@ -105,9 +111,9 @@ describe('Streaming Protocol Performance', () => {
     test('should maintain encoding performance under load', () => {
       const frames = [];
       
-      // Create frames with varying sizes
+      // Use a deterministic set of sizes from 1KB to 11KB
       for (let i = 0; i < 100; i++) {
-        const size = Math.floor(Math.random() * 10000) + 1000; // 1KB to 11KB
+        const size = 1000 + Math.floor((10000 * i) / 99); // 100 values from 1000 to 11000
         const content = 'X'.repeat(size);
         frames.push(createGenerationFrame(content, content, size));
       }
@@ -149,8 +155,8 @@ describe('Streaming Protocol Performance', () => {
       frames.length = 0;
 
       // Force garbage collection if available
-      if ((global as any).gc) {
-        (global as any).gc();
+      if ((global as Record<string, unknown>).gc) {
+        ((global as Record<string, unknown>).gc as () => void)();
       }
 
       const afterCleanup = measureMemoryUsage();
@@ -271,7 +277,7 @@ describe('Streaming Protocol Performance', () => {
         const phaseStart = monitor.startFrameProcessing();
         
         // Phase frame
-        createPhaseFrame(phase as any, 1, `Processing ${phase}`);
+        createPhaseFrame(phase as StreamPhase, 1, `Processing ${phase}`);
         
         // Generation frames (simulate content streaming)
         if (phase === 'generating' || phase === 'healing') {

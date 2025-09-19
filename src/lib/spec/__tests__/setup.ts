@@ -16,7 +16,7 @@ afterEach(() => {
 });
 
 // Performance measurement availability check
-(global as any).performance = (global as any).performance || {
+(global as Record<string, unknown>).performance = (global as Record<string, unknown>).performance || {
   now: Date.now,
   memory: undefined,
 };

@@ -12,7 +12,7 @@ export function mockBrowserEnvironment(): {
   fetch: jest.Mock;
   ReadableStream: jest.Mock;
   TextDecoder: jest.Mock;
-  performance: any;
+  performance: Record<string, unknown>;
 } {
   const mockFetch = jest.fn();
   const mockReader = {
@@ -54,7 +54,7 @@ export class NetworkSimulator {
 
   constructor(options: {
     latency?: number;
-    bandwidthLimit?: number;
+    bandwidthLimit?: number; // bytes per second
     dropRate?: number;
     connected?: boolean;
   } = {}) {
@@ -82,6 +82,8 @@ export class NetworkSimulator {
 
   /**
    * Simulate bandwidth limitations
+   * @param data Data to simulate bandwidth limiting on
+   * @returns Array of chunks limited by bandwidth (expects bandwidthLimit in bytes per second)
    */
   simulateBandwidth(data: Uint8Array): Uint8Array[] {
     if (this.bandwidthLimit === Infinity) {
@@ -89,7 +91,7 @@ export class NetworkSimulator {
     }
 
     const chunks: Uint8Array[] = [];
-    const chunkSize = Math.max(1, Math.floor(this.bandwidthLimit / 8)); // Convert bps to bytes
+    const chunkSize = Math.max(1, Math.floor(this.bandwidthLimit)); // bandwidthLimit is in bytes per second
     
     for (let i = 0; i < data.length; i += chunkSize) {
       chunks.push(data.slice(i, i + chunkSize));
@@ -184,8 +186,12 @@ export class BrowserCompatibilityChecker {
     total?: number;
     limit?: number;
   } {
-    if (typeof performance !== 'undefined' && (performance as any).memory) {
-      const memory = (performance as any).memory;
+    if (typeof performance !== 'undefined' && (performance as unknown as Record<string, unknown>).memory) {
+      const memory = (performance as unknown as Record<string, unknown>).memory as {
+        usedJSHeapSize: number;
+        totalJSHeapSize: number;
+        jsHeapSizeLimit: number;
+      };
       return {
         available: true,
         used: memory.usedJSHeapSize,
@@ -309,7 +315,7 @@ export class BrowserStreamingTester {
     success: boolean;
     framesProcessed: number;
     errors: string[];
-    performance: any;
+    performance: Record<string, unknown>;
   }> {
     const errors: string[] = [];
     let framesProcessed = 0;

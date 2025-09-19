@@ -254,7 +254,7 @@
                 readableStream: typeof ReadableStream !== 'undefined',
                 textDecoder: typeof TextDecoder !== 'undefined',
                 performance: typeof performance !== 'undefined' && 'now' in performance,
-                memory: typeof performance !== 'undefined' && performance.memory,
+                memory: typeof performance !== 'undefined' && !!performance.memory,
                 webStreams: 'ReadableStream' in window && 'WritableStream' in window,
                 serviceWorker: 'serviceWorker' in navigator,
                 asyncIterator: typeof Symbol !== 'undefined' && Symbol.asyncIterator
@@ -348,10 +348,10 @@ ${JSON.stringify(frames[0], null, 2)}
             };
             
             const config = conditions[condition];
-            simulateNetworkConditions(config);
+            simulateNetworkConditions(config, condition);
         }
 
-        function simulateNetworkConditions(config) {
+        function simulateNetworkConditions(config, conditionName) {
             const startTime = performance.now();
             let processed = 0;
             let dropped = 0;
@@ -377,7 +377,7 @@ ${JSON.stringify(frames[0], null, 2)}
                 const endTime = performance.now();
                 const results = `
 Network Simulation Results:
-📊 Condition: ${Object.keys(conditions).find(k => conditions[k] === config)}
+📊 Condition: ${conditionName}
 ✅ Processed: ${processed} frames
 📉 Dropped: ${dropped} frames  
 ⏱️ Duration: ${Math.round(endTime - startTime)}ms

@@ -1,7 +1,7 @@
 /**
  * Test utilities for streaming protocol validation
  */
-import type { StreamFrame, ValidationReport, Issue, StreamPhase } from "../types";
+import type { StreamFrame, ValidationReport, Issue } from "../types";
 
 /**
  * Mock validation report for testing
@@ -231,8 +231,11 @@ export function measureMemoryUsage(): {
   }
   
   // Browser environment fallback
-  if (typeof performance !== "undefined" && (performance as any).memory) {
-    const memory = (performance as any).memory;
+  if (typeof performance !== "undefined" && (performance as unknown as Record<string, unknown>).memory) {
+    const memory = (performance as unknown as Record<string, unknown>).memory as {
+      usedJSHeapSize: number;
+      totalJSHeapSize: number;
+    };
     return {
       used: memory.usedJSHeapSize,
       total: memory.totalJSHeapSize,
