@@ -28,7 +28,7 @@ const stream = new ReadableStream({
   async start(controller) {
     // Emit progress frames
     safeEnqueue(encodeStreamFrame(createPhaseFrame("generating", 0, "Starting...")));
-    
+
     try {
       // Long operation with progress updates
       const result = await longOperation();
@@ -38,7 +38,7 @@ const stream = new ReadableStream({
     } finally {
       safeClose();
     }
-  }
+  },
 });
 ```
 

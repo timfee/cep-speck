@@ -6,7 +6,15 @@ import { CheckCircle, AlertCircle, XCircle, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface StatusProps {
-  status: "valid" | "invalid" | "warning" | "checking" | "online" | "offline" | "degraded" | "maintenance";
+  status:
+    | "valid"
+    | "invalid"
+    | "warning"
+    | "checking"
+    | "online"
+    | "offline"
+    | "degraded"
+    | "maintenance";
   message?: string;
   className?: string;
   children?: React.ReactNode;
@@ -21,7 +29,7 @@ export function Status({ status, message, className, children }: StatusProps) {
           icon: CheckCircle,
           variant: "default" as const,
           color: "text-green-600",
-          bgColor: "bg-green-50 border-green-200"
+          bgColor: "bg-green-50 border-green-200",
         };
       case "invalid":
       case "offline":
@@ -29,7 +37,7 @@ export function Status({ status, message, className, children }: StatusProps) {
           icon: XCircle,
           variant: "destructive" as const,
           color: "text-red-600",
-          bgColor: "bg-red-50 border-red-200"
+          bgColor: "bg-red-50 border-red-200",
         };
       case "warning":
       case "degraded":
@@ -37,7 +45,7 @@ export function Status({ status, message, className, children }: StatusProps) {
           icon: AlertCircle,
           variant: "secondary" as const,
           color: "text-amber-600",
-          bgColor: "bg-amber-50 border-amber-200"
+          bgColor: "bg-amber-50 border-amber-200",
         };
       case "checking":
       case "maintenance":
@@ -45,7 +53,7 @@ export function Status({ status, message, className, children }: StatusProps) {
           icon: Clock,
           variant: "outline" as const,
           color: "text-blue-600",
-          bgColor: "bg-blue-50 border-blue-200"
+          bgColor: "bg-blue-50 border-blue-200",
         };
     }
   };
@@ -61,7 +69,10 @@ export function Status({ status, message, className, children }: StatusProps) {
   }
 
   return (
-    <Badge variant={variant} className={cn("flex items-center gap-2", className)}>
+    <Badge
+      variant={variant}
+      className={cn("flex items-center gap-2", className)}
+    >
       <Icon className={cn("h-4 w-4", color)} />
       {message}
     </Badge>
@@ -76,18 +87,16 @@ export function StatusIndicator({ className }: { className?: string }) {
 }
 
 /**
- * StatusLabel component for use within Status containers  
+ * StatusLabel component for use within Status containers
  */
-export function StatusLabel({ 
-  children, 
-  className 
-}: { 
-  children: React.ReactNode; 
-  className?: string; 
+export function StatusLabel({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
 }) {
   return (
-    <span className={cn("text-sm font-medium", className)}>
-      {children}
-    </span>
+    <span className={cn("text-sm font-medium", className)}>{children}</span>
   );
 }

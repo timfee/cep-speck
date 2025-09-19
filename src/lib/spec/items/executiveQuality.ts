@@ -1,5 +1,10 @@
 import type { Issue } from "../types";
-import { PATTERNS, createHealingBuilder, HEALING_TEMPLATES, voidUnused } from "../helpers";
+import {
+  PATTERNS,
+  createHealingBuilder,
+  HEALING_TEMPLATES,
+  voidUnused,
+} from "../helpers";
 
 export const itemId = "executive-quality";
 export type Params = {
@@ -135,10 +140,22 @@ function heal(
   if (!issues.length) return null;
 
   return createHealingBuilder()
-    .addForIssue(issues, "vague-quantifiers", HEALING_TEMPLATES.METRIC_SPECIFICITY)
+    .addForIssue(
+      issues,
+      "vague-quantifiers",
+      HEALING_TEMPLATES.METRIC_SPECIFICITY
+    )
     .addForIssue(issues, "excessive-hedging", HEALING_TEMPLATES.REDUCE_HEDGING)
-    .addForIssue(issues, "metrics-missing-units", HEALING_TEMPLATES.METRIC_UNITS)
-    .addForIssue(issues, "over-explanation", HEALING_TEMPLATES.REMOVE_META_COMMENTARY)
+    .addForIssue(
+      issues,
+      "metrics-missing-units",
+      HEALING_TEMPLATES.METRIC_UNITS
+    )
+    .addForIssue(
+      issues,
+      "over-explanation",
+      HEALING_TEMPLATES.REMOVE_META_COMMENTARY
+    )
     .build(HEALING_TEMPLATES.EXECUTIVE_PRECISION);
 }
 

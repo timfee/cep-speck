@@ -1,11 +1,11 @@
 /**
  * Common healing instruction builders
- * 
+ *
  * These utilities help create consistent and reusable healing instructions
  * across validation modules.
  */
 
-import type { Issue } from '../types';
+import type { Issue } from "../types";
 
 /**
  * Builder for creating consistent healing instructions
@@ -40,8 +40,8 @@ export class HealingInstructionBuilder {
     if (this.instructions.length === 0) {
       return null;
     }
-    
-    const joined = this.instructions.join('; ');
+
+    const joined = this.instructions.join("; ");
     return prefix ? `${prefix}: ${joined}.` : `${joined}.`;
   }
 }
@@ -58,39 +58,49 @@ export function createHealingBuilder(): HealingInstructionBuilder {
  */
 export const HEALING_TEMPLATES = {
   // Metric-related healing
-  METRIC_UNITS: 'Add units and timeframes to all metrics (%, ms, minutes, # users, etc.)',
-  METRIC_SPECIFICITY: 'Replace vague quantifiers with specific numbers, percentages, or ranges',
-  METRIC_CONSISTENCY: 'Align metric values between TL;DR and Success Metrics sections',
-  
+  METRIC_UNITS:
+    "Add units and timeframes to all metrics (%, ms, minutes, # users, etc.)",
+  METRIC_SPECIFICITY:
+    "Replace vague quantifiers with specific numbers, percentages, or ranges",
+  METRIC_CONSISTENCY:
+    "Align metric values between TL;DR and Success Metrics sections",
+
   // Content quality healing
-  REDUCE_HEDGING: 'State facts directly; use hedging only for genuine uncertainty',
-  REMOVE_META_COMMENTARY: 'Remove meta-commentary and explanatory phrases; state facts directly',
-  IMPROVE_PLACEHOLDERS: 'Make placeholders more specific by including units, timeframes, and data sources',
-  
+  REDUCE_HEDGING:
+    "State facts directly; use hedging only for genuine uncertainty",
+  REMOVE_META_COMMENTARY:
+    "Remove meta-commentary and explanatory phrases; state facts directly",
+  IMPROVE_PLACEHOLDERS:
+    "Make placeholders more specific by including units, timeframes, and data sources",
+
   // Structure healing
-  HEADER_PATTERN: (pattern: string) => `Conform section headers to the label pattern "${pattern}"`,
-  SECTION_COUNT: (range: string, pattern: string) => 
+  HEADER_PATTERN: (pattern: string) =>
+    `Conform section headers to the label pattern "${pattern}"`,
+  SECTION_COUNT: (range: string, pattern: string) =>
     `Adjust the number of top-level sections to ${range}. Keep compliant sections; add or trim minimally. Maintain header pattern ${pattern}`,
-  
+
   // Persona and traceability healing
-  PERSONA_COVERAGE: 'Ensure each persona appears in all required sections with explicit persona labels',
-  TRACEABILITY: 'Restore problem→feature→metric chain with explicit citations and measurable outcomes',
-  
+  PERSONA_COVERAGE:
+    "Ensure each persona appears in all required sections with explicit persona labels",
+  TRACEABILITY:
+    "Restore problem→feature→metric chain with explicit citations and measurable outcomes",
+
   // Text quality healing
-  BANNED_TEXT: 'Replace banned terms with precise CEP/Admin Console terminology appropriate to context',
-  EXECUTIVE_PRECISION: 'Enhance executive precision',
+  BANNED_TEXT:
+    "Replace banned terms with precise CEP/Admin Console terminology appropriate to context",
+  EXECUTIVE_PRECISION: "Enhance executive precision",
 } as const;
 
 /**
  * Helper to create metric-related healing instructions
  */
 export function buildMetricHealing(
-  issues: Issue[], 
+  issues: Issue[],
   params: { require: string[]; metricRegex: string }
 ): string | null {
   if (!issues.length) return null;
-  
-  const required = params.require.join(', ');
+
+  const required = params.require.join(", ");
   return `For each metric line (pattern ${params.metricRegex}), add the missing attributes: ${required}. Use timeframe like "within 90 days of GA", explicit units, and name a Source of Truth (SoT). Do not rewrite unrelated content.`;
 }
 
@@ -106,7 +116,7 @@ export function buildConsistencyHealing(): string {
 }
 
 /**
- * Helper to create traceability healing instructions  
+ * Helper to create traceability healing instructions
  */
 export function buildTraceabilityHealing(): string {
   return `Restore problem→feature→metric chain:

@@ -183,11 +183,11 @@ export class ResilientAI {
   }
 
   private delay(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   getProviderStatus(): { name: string; available: boolean }[] {
-    return this.providers.map((provider) => ({
+    return this.providers.map(provider => ({
       name: provider.name,
       available: false, // Would need async check
     }));

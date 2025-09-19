@@ -20,26 +20,30 @@ function formatTime(milliseconds: number): string {
   return `${minutes}m ${remainingSeconds}s`;
 }
 
-export function CircuitBreakerStatus({ state, className }: CircuitBreakerStatusProps) {
+export function CircuitBreakerStatus({
+  state,
+  className,
+}: CircuitBreakerStatusProps) {
   const stateConfig = {
-    closed: { 
-      status: 'online' as const, 
-      label: 'Service Available', 
-      color: 'text-green-600',
-      description: 'All systems operational'
+    closed: {
+      status: "online" as const,
+      label: "Service Available",
+      color: "text-green-600",
+      description: "All systems operational",
     },
-    open: { 
-      status: 'offline' as const, 
-      label: 'Service Unavailable', 
-      color: 'text-red-600',
-      description: 'Service is temporarily unavailable due to repeated failures'
+    open: {
+      status: "offline" as const,
+      label: "Service Unavailable",
+      color: "text-red-600",
+      description:
+        "Service is temporarily unavailable due to repeated failures",
     },
-    halfOpen: { 
-      status: 'degraded' as const, 
-      label: 'Testing Service', 
-      color: 'text-amber-600',
-      description: 'Testing if service has recovered'
-    }
+    halfOpen: {
+      status: "degraded" as const,
+      label: "Testing Service",
+      color: "text-amber-600",
+      description: "Testing if service has recovered",
+    },
   };
 
   const config = stateConfig[state.current];
@@ -64,7 +68,7 @@ export function CircuitBreakerStatus({ state, className }: CircuitBreakerStatusP
           </div>
 
           <div className="flex items-center gap-2">
-            {state.current === 'open' && state.recoveryTime && (
+            {state.current === "open" && state.recoveryTime && (
               <div className="text-sm text-muted-foreground text-right">
                 <div>Recovery in</div>
                 <div className="font-mono">
@@ -72,11 +76,17 @@ export function CircuitBreakerStatus({ state, className }: CircuitBreakerStatusP
                 </div>
               </div>
             )}
-            
-            {state.current === 'halfOpen' && (
+
+            {state.current === "halfOpen" && (
               <div className="flex items-center gap-2">
-                <Spinner variant="ellipsis" size={16} className="text-amber-500" />
-                <span className="text-xs text-muted-foreground">Testing...</span>
+                <Spinner
+                  variant="ellipsis"
+                  size={16}
+                  className="text-amber-500"
+                />
+                <span className="text-xs text-muted-foreground">
+                  Testing...
+                </span>
               </div>
             )}
           </div>

@@ -42,20 +42,20 @@ export async function POST(req: NextRequest) {
   const stream = new ReadableStream({
     async start(controller) {
       let controllerClosed = false;
-      
+
       const safeClose = () => {
         if (!controllerClosed) {
           controller.close();
           controllerClosed = true;
         }
       };
-      
+
       const safeEnqueue = (frame: Uint8Array) => {
         if (!controllerClosed) {
           controller.enqueue(frame);
         }
       };
-      
+
       try {
         // API key check
         if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
@@ -121,14 +121,14 @@ export async function POST(req: NextRequest) {
         let researchContext = "";
         if (knowledgeFiles.length > 0) {
           researchContext += `\n\nKnowledge Base Context:\n${knowledgeFiles
-            .map((f) => `${f.path}:\n${f.content}`)
+            .map(f => `${f.path}:\n${f.content}`)
             .join("\n\n")}`;
         }
 
         if (researchResult.competitors.length > 0) {
           researchContext += `\n\nCompetitor Research Results:\n${researchResult.competitors
             .map(
-              (c) =>
+              c =>
                 `${c.vendor}:\n- Onboarding: ${c.onboardingDefaults}\n- Policy Templates: ${c.policyTemplates}\n- Enterprise Browser: ${c.enterpriseBrowser}\n- Data Protection: ${c.dataProtection}\n- Mobile Support: ${c.mobileSupport}`
             )
             .join("\n\n")}`;

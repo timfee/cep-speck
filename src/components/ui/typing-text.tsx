@@ -21,7 +21,7 @@ export function TypingText({
   cursorCharacter = "|",
   className,
   onComplete,
-  streaming = false
+  streaming = false,
 }: TypingTextProps) {
   const [displayedText, setDisplayedText] = useState("");
   const [isComplete, setIsComplete] = useState(false);
@@ -86,11 +86,11 @@ export interface TerminalDisplayProps {
   className?: string;
 }
 
-export function TerminalDisplay({ 
-  content, 
-  title = "PRD Output", 
+export function TerminalDisplay({
+  content,
+  title = "PRD Output",
   streaming = false,
-  className 
+  className,
 }: TerminalDisplayProps) {
   return (
     <motion.div

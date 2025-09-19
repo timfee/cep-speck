@@ -87,7 +87,7 @@ export { Button, buttonVariants };
 // Pattern for handling async states
 const Component = () => {
   const [state, setState] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-  
+
   return (
     <div>
       {state === 'loading' && <Spinner />}
@@ -101,18 +101,21 @@ const Component = () => {
 ## Component Categories
 
 ### `/ui` - Base Components
+
 - Low-level, reusable primitives
 - No business logic, pure presentation
 - Extensive prop interfaces for flexibility
 - Comprehensive TypeScript typing
 
 ### `/error` - Error Handling
+
 - Error boundaries for graceful failure
 - User-friendly error messages
 - Development-time debugging aids
 - Recovery action interfaces
 
 ### `/features` - Feature Components
+
 - Business logic integration
 - Domain-specific functionality
 - Composed from ui primitives

@@ -12,7 +12,7 @@ function toPrompt(params: Params, _pack?: unknown): string {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
-  const wordCount = draft.split(/\s+/).filter((word) => word.length > 0).length;
+  const wordCount = draft.split(/\s+/).filter(word => word.length > 0).length;
   const target = params.target ?? 1400;
   const cap = params.hardCap ?? 1800;
   const issues: Issue[] = [];

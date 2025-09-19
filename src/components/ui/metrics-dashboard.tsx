@@ -22,7 +22,11 @@ export interface MetricsDashboardProps {
   className?: string;
 }
 
-export function MetricsDashboard({ metrics, streaming = false, className }: MetricsDashboardProps) {
+export function MetricsDashboard({
+  metrics,
+  streaming = false,
+  className,
+}: MetricsDashboardProps) {
   const [animatedWordCount, setAnimatedWordCount] = useState(0);
   const [animatedValidationScore, setAnimatedValidationScore] = useState(0);
 
@@ -34,8 +38,12 @@ export function MetricsDashboard({ metrics, streaming = false, className }: Metr
 
     const interval = setInterval(() => {
       step++;
-      setAnimatedWordCount(Math.min(Math.floor(wordCountStep * step), metrics.wordCount));
-      setAnimatedValidationScore(Math.min(Math.floor(validationStep * step), metrics.validationScore));
+      setAnimatedWordCount(
+        Math.min(Math.floor(wordCountStep * step), metrics.wordCount)
+      );
+      setAnimatedValidationScore(
+        Math.min(Math.floor(validationStep * step), metrics.validationScore)
+      );
 
       if (step >= 20) {
         clearInterval(interval);
@@ -53,13 +61,20 @@ export function MetricsDashboard({ metrics, streaming = false, className }: Metr
 
   const getPhaseProgress = (phase: string) => {
     switch (phase) {
-      case 'starting': return 10;
-      case 'generating': return 40;
-      case 'validating': return 70;
-      case 'healing': return 85;
-      case 'done': return 100;
-      case 'error': return 0;
-      default: return 0;
+      case "starting":
+        return 10;
+      case "generating":
+        return 40;
+      case "validating":
+        return 70;
+      case "healing":
+        return 85;
+      case "done":
+        return 100;
+      case "error":
+        return 0;
+      default:
+        return 0;
     }
   };
 
@@ -100,7 +115,12 @@ export function MetricsDashboard({ metrics, streaming = false, className }: Metr
             <Target className="h-4 w-4 text-green-600" />
             <span className="text-xs text-green-700 font-medium">Quality</span>
           </div>
-          <div className={cn("text-xl font-bold", getValidationColor(metrics.validationScore))}>
+          <div
+            className={cn(
+              "text-xl font-bold",
+              getValidationColor(metrics.validationScore)
+            )}
+          >
             {streaming ? animatedValidationScore : metrics.validationScore}%
           </div>
           <div className="text-xs text-green-600">Validation</div>
@@ -142,7 +162,9 @@ export function MetricsDashboard({ metrics, streaming = false, className }: Metr
       {/* Progress Bar */}
       <Card className="p-3">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium text-muted-foreground">Overall Progress</span>
+          <span className="text-sm font-medium text-muted-foreground">
+            Overall Progress
+          </span>
           <span className="text-sm text-muted-foreground">{progress}%</span>
         </div>
         <div className="w-full bg-gray-200 rounded-full h-2">
@@ -170,7 +192,8 @@ export function MetricsDashboard({ metrics, streaming = false, className }: Metr
         >
           <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
           <span className="text-sm text-red-700">
-            {metrics.issuesFound} validation issue{metrics.issuesFound !== 1 ? 's' : ''} found
+            {metrics.issuesFound} validation issue
+            {metrics.issuesFound !== 1 ? "s" : ""} found
           </span>
         </motion.div>
       )}

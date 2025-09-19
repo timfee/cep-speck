@@ -17,7 +17,9 @@ This directory contains modular validation items for the CEP PRD validation syst
 import type { Issue } from "../types";
 
 export const itemId = "kebab-case-id";
-export type Params = { /* explicit param types */ };
+export type Params = {
+  /* explicit param types */
+};
 
 export function toPrompt(params: Params, pack?: SpecPack): string {
   // Single line imperative rule (≤140 chars ideally)

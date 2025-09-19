@@ -123,12 +123,7 @@
       "priority": 40,
       "severity": "warn",
       "params": {
-        "vendors": [
-          "Zscaler",
-          "Island",
-          "Talon",
-          "Microsoft Edge for Business"
-        ],
+        "vendors": ["Zscaler", "Island", "Talon", "Microsoft Edge for Business"],
         "recencyDays": 365,
         "requireResearch": true
       }

@@ -1,5 +1,10 @@
 import type { Issue, SpecPack } from "../types";
-import { createWordBoundaryRegex, createFlexibleRegex, HEALING_TEMPLATES, voidUnused } from "../helpers";
+import {
+  createWordBoundaryRegex,
+  createFlexibleRegex,
+  HEALING_TEMPLATES,
+  voidUnused,
+} from "../helpers";
 
 export const itemId = "banned-text";
 export type Params = {
@@ -10,14 +15,14 @@ export type Params = {
 function collectExact(params: Params, pack?: SpecPack): string[] {
   return [
     ...(params.extra?.exact ?? []),
-    ...(params.listsFromPack ? pack?.globals?.bannedText?.exact ?? [] : []),
+    ...(params.listsFromPack ? (pack?.globals?.bannedText?.exact ?? []) : []),
   ];
 }
 
 function collectRegex(params: Params, pack?: SpecPack): string[] {
   return [
     ...(params.extra?.regex ?? []),
-    ...(params.listsFromPack ? pack?.globals?.bannedText?.regex ?? [] : []),
+    ...(params.listsFromPack ? (pack?.globals?.bannedText?.regex ?? []) : []),
   ];
 }
 
@@ -33,10 +38,10 @@ function validate(draft: string, params: Params, pack?: SpecPack): Issue[] {
   const exact = collectExact(params, pack);
   const regex = collectRegex(params, pack);
   const issues: Issue[] = [];
-  
+
   for (const word of exact) {
     if (!word) continue;
-    const re = createWordBoundaryRegex(word, 'i');
+    const re = createWordBoundaryRegex(word, "i");
     if (re.test(draft)) {
       issues.push({
         id: "banned-exact",
@@ -46,7 +51,7 @@ function validate(draft: string, params: Params, pack?: SpecPack): Issue[] {
       });
     }
   }
-  
+
   for (const pattern of regex) {
     if (!pattern) continue;
     const re = createFlexibleRegex(pattern);

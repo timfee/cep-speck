@@ -394,12 +394,14 @@ This repository implements **cascading directory-specific copilot instructions**
 ### Writing Effective Directory Instructions
 
 **Do:**
+
 - Focus on domain-specific patterns and anti-patterns
-- Include concrete code examples for the specific area  
+- Include concrete code examples for the specific area
 - Reference shared utilities and patterns from parent directories
 - Maintain consistency with overall project philosophy
 
 **Don't:**
+
 - Duplicate general guidance that's already in parent directories
 - Create conflicting rules between directory levels
 - Over-specify implementation details that could change
@@ -411,6 +413,6 @@ When adding new directory-specific instructions:
 
 1. Create `.github/copilot-instructions.md` in the target directory
 2. Focus on patterns specific to that domain
-3. Reference but don't duplicate parent-level guidance  
+3. Reference but don't duplicate parent-level guidance
 4. Test the instructions by working on representative tasks in that area
 5. Update this section to document new instruction areas

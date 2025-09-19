@@ -5,7 +5,7 @@
 import type { LucideIcon } from "lucide-react";
 
 export type ErrorSeverity = "critical" | "warning" | "info";
-export type ErrorCode = 
+export type ErrorCode =
   | "MISSING_API_KEY"
   | "NETWORK_TIMEOUT"
   | "RATE_LIMITED"

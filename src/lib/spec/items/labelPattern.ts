@@ -1,5 +1,9 @@
 import type { Issue } from "../types";
-import { validateHeaderPattern, HEALING_TEMPLATES, voidUnused } from "../helpers";
+import {
+  validateHeaderPattern,
+  HEALING_TEMPLATES,
+  voidUnused,
+} from "../helpers";
 
 export const itemId = "label-pattern";
 export type Params = { pattern: string; headerRegex?: string };

@@ -43,7 +43,7 @@ export async function performSelfReview(
 
   // Only review issues that aren't clearly critical errors
   const reviewableIssues = issues.filter(
-    (issue) =>
+    issue =>
       issue.severity !== "error" ||
       issue.itemId === "banned-text" ||
       issue.itemId === "executive-quality"
@@ -69,10 +69,10 @@ export async function performSelfReview(
 
     // Separate confirmed and filtered issues
     const confirmedIndices = new Set(
-      reviewResult.confirmedIssues.map((c) => c.originalIndex)
+      reviewResult.confirmedIssues.map(c => c.originalIndex)
     );
     const filteredIndices = new Set(
-      reviewResult.filteredOut.map((f) => f.originalIndex)
+      reviewResult.filteredOut.map(f => f.originalIndex)
     );
 
     const confirmed: Issue[] = [];

@@ -8,7 +8,7 @@ Objective: [Brief description of what you want to build]
 Target Users: [Who will use this feature]
 Success Metrics: [How you'll measure success]`,
   },
-  
+
   detailed: {
     name: "Detailed PRD",
     content: `Project: [Your project name]
@@ -30,7 +30,7 @@ Success Metrics:
 Constraints:
 - [Technical or business constraints]`,
   },
-  
+
   competitive: {
     name: "Competitive Analysis",
     content: `Project: [Your project name]
@@ -51,7 +51,7 @@ Success Metrics:
 - [Market share targets]
 - [User acquisition goals]`,
   },
-  
+
   enterprise: {
     name: "Enterprise Feature",
     content: `Project: [Enterprise feature name]

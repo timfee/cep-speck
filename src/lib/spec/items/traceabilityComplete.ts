@@ -1,10 +1,10 @@
 import type { Issue } from "../types";
-import { 
-  extractSection, 
-  extractBulletPoints, 
+import {
+  extractSection,
+  extractBulletPoints,
   doesMetricReferenceFeature,
   buildTraceabilityHealing,
-  voidUnused 
+  voidUnused,
 } from "../helpers";
 
 export const itemId = "traceability-complete";
@@ -49,12 +49,12 @@ function validate(
   const problems = bullets(problemBlock);
   // Rough feature segmentation by headings
   const featureSegments = featureBlock.split(/## F\d+ —/).slice(1); // discard preamble
-  const features = featureSegments.map((s) => s.split("\n")[0].trim());
+  const features = featureSegments.map(s => s.split("\n")[0].trim());
   const metrics = bullets(metricsBlock);
 
   // Check that each problem is referenced by at least one feature
   for (const p of problems) {
-    const ref = featureSegments.some((seg) =>
+    const ref = featureSegments.some(seg =>
       seg
         .toLowerCase()
         .includes(p.toLowerCase().slice(0, PROBLEM_SUBSTRING_LENGTH))
@@ -73,7 +73,7 @@ function validate(
   // Check that each feature has at least one success metric
   for (let i = 0; i < featureSegments.length; i++) {
     const name = features[i];
-    const hasMetric = metrics.some((m) => doesMetricReferenceFeature(m, name));
+    const hasMetric = metrics.some(m => doesMetricReferenceFeature(m, name));
     if (!hasMetric) {
       issues.push({
         id: "unmeasured-feature",

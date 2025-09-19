@@ -1,5 +1,10 @@
 import type { Issue } from "../types";
-import { extractSection, PATTERNS, buildConsistencyHealing, voidUnused } from "../helpers";
+import {
+  extractSection,
+  PATTERNS,
+  buildConsistencyHealing,
+  voidUnused,
+} from "../helpers";
 
 export const itemId = "cross-section-consistency";
 export type Params = { metricRegex?: string };
@@ -43,10 +48,10 @@ function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
   const issues: Issue[] = [];
   const tldr = extractSection(draft, PATTERNS.TLDR_SECTION);
   const success = extractSection(draft, PATTERNS.SUCCESS_METRICS_SECTION);
-  
+
   const a = extractMetrics(tldr, params);
   const b = extractMetrics(success, params);
-  
+
   for (const [k, v] of a) {
     if (b.has(k) && b.get(k) !== v) {
       issues.push({

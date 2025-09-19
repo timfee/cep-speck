@@ -1,20 +1,25 @@
 "use client";
 
-import React from 'react';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { ProgressTimeline } from '@/components/workflow/ProgressTimeline';
-import { IdeaCaptureStep } from '@/components/workflow/steps/IdeaCaptureStep';
-import { ContentOutlineStep } from '@/components/workflow/steps/ContentOutlineStep';
-import { EnterpriseParametersStep } from '@/components/workflow/steps/EnterpriseParametersStep';
-import { useStructuredWorkflow, MIN_PROMPT_LENGTH } from '@/hooks/useStructuredWorkflow';
-import { ArrowLeft, ArrowRight, Wand2 } from 'lucide-react';
+import React from "react";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { ProgressTimeline } from "@/components/workflow/ProgressTimeline";
+import { IdeaCaptureStep } from "@/components/workflow/steps/IdeaCaptureStep";
+import { ContentOutlineStep } from "@/components/workflow/steps/ContentOutlineStep";
+import { EnterpriseParametersStep } from "@/components/workflow/steps/EnterpriseParametersStep";
+import {
+  useStructuredWorkflow,
+  MIN_PROMPT_LENGTH,
+} from "@/hooks/useStructuredWorkflow";
+import { ArrowLeft, ArrowRight, Wand2 } from "lucide-react";
 
 interface StructuredPrdWizardProps {
   onTraditionalMode: () => void;
 }
 
-export function StructuredPrdWizard({ onTraditionalMode }: StructuredPrdWizardProps) {
+export function StructuredPrdWizard({
+  onTraditionalMode,
+}: StructuredPrdWizardProps) {
   const {
     state,
     setInitialPrompt,
@@ -23,7 +28,7 @@ export function StructuredPrdWizard({ onTraditionalMode }: StructuredPrdWizardPr
     goToNextStep,
     goToPreviousStep,
     resetWorkflow,
-    generateContentOutlineForPrompt
+    generateContentOutlineForPrompt,
   } = useStructuredWorkflow();
 
   const handleRegenerateOutline = async () => {
@@ -32,33 +37,41 @@ export function StructuredPrdWizard({ onTraditionalMode }: StructuredPrdWizardPr
 
   // Auto-generate content outline when prompt is ready and we're on outline step
   React.useEffect(() => {
-    if (state.currentStep === 'outline' && state.initialPrompt.trim().length > MIN_PROMPT_LENGTH && 
-        state.contentOutline.functionalRequirements.length === 0) {
+    if (
+      state.currentStep === "outline" &&
+      state.initialPrompt.trim().length > MIN_PROMPT_LENGTH &&
+      state.contentOutline.functionalRequirements.length === 0
+    ) {
       generateContentOutlineForPrompt(state.initialPrompt);
     }
-  }, [state.currentStep, state.initialPrompt, state.contentOutline.functionalRequirements.length, generateContentOutlineForPrompt]);
+  }, [
+    state.currentStep,
+    state.initialPrompt,
+    state.contentOutline.functionalRequirements.length,
+    generateContentOutlineForPrompt,
+  ]);
 
   const handleNext = () => {
-    if (state.currentStep === 'idea' && state.progress.canGoNext) {
+    if (state.currentStep === "idea" && state.progress.canGoNext) {
       goToNextStep();
-    } else if (state.currentStep === 'outline' && state.progress.canGoNext) {
+    } else if (state.currentStep === "outline" && state.progress.canGoNext) {
       goToNextStep();
-    } else if (state.currentStep === 'parameters' && state.progress.canGoNext) {
+    } else if (state.currentStep === "parameters" && state.progress.canGoNext) {
       goToNextStep();
     }
   };
 
   const renderStepContent = () => {
     switch (state.currentStep) {
-      case 'idea':
+      case "idea":
         return (
           <IdeaCaptureStep
             prompt={state.initialPrompt}
             onChange={setInitialPrompt}
           />
         );
-      
-      case 'outline':
+
+      case "outline":
         return (
           <ContentOutlineStep
             initialPrompt={state.initialPrompt}
@@ -68,25 +81,26 @@ export function StructuredPrdWizard({ onTraditionalMode }: StructuredPrdWizardPr
             isLoading={state.isLoading}
           />
         );
-      
-      case 'parameters':
+
+      case "parameters":
         return (
           <EnterpriseParametersStep
             parameters={state.enterpriseParameters}
             onChange={setEnterpriseParameters}
           />
         );
-      
-      case 'generate':
+
+      case "generate":
         return (
           <div className="text-center py-12">
             <h2 className="text-2xl font-bold mb-4">Generate PRD</h2>
             <p className="text-muted-foreground">
-              Final PRD generation with content outline and enterprise parameters.
+              Final PRD generation with content outline and enterprise
+              parameters.
             </p>
           </div>
         );
-      
+
       default:
         return (
           <div className="text-center py-12">
@@ -120,9 +134,7 @@ export function StructuredPrdWizard({ onTraditionalMode }: StructuredPrdWizardPr
       </Card>
 
       {/* Step content */}
-      <Card className="p-6 min-h-[600px]">
-        {renderStepContent()}
-      </Card>
+      <Card className="p-6 min-h-[600px]">{renderStepContent()}</Card>
 
       {/* Navigation */}
       <div className="flex items-center justify-between">
@@ -136,7 +148,7 @@ export function StructuredPrdWizard({ onTraditionalMode }: StructuredPrdWizardPr
             <ArrowLeft className="h-4 w-4" />
             Previous
           </Button>
-          
+
           <Button
             variant="ghost"
             onClick={resetWorkflow}
@@ -147,7 +159,7 @@ export function StructuredPrdWizard({ onTraditionalMode }: StructuredPrdWizardPr
         </div>
 
         <div className="flex items-center space-x-2">
-          {state.currentStep === 'outline' && (
+          {state.currentStep === "outline" && (
             <Button
               variant="outline"
               onClick={handleRegenerateOutline}
@@ -158,7 +170,7 @@ export function StructuredPrdWizard({ onTraditionalMode }: StructuredPrdWizardPr
               Regenerate Outline
             </Button>
           )}
-          
+
           <Button
             onClick={handleNext}
             disabled={!state.progress.canGoNext}
@@ -173,7 +185,8 @@ export function StructuredPrdWizard({ onTraditionalMode }: StructuredPrdWizardPr
       {/* Help text */}
       <div className="text-center">
         <p className="text-xs text-muted-foreground">
-          This guided workflow helps you create better PRDs through structured input and AI assistance.
+          This guided workflow helps you create better PRDs through structured
+          input and AI assistance.
         </p>
       </div>
     </div>

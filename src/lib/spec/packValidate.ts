@@ -75,7 +75,7 @@ export function assertValidSpecPack(pack: SpecPack): void {
   if (errs.length) {
     const detail = errs
       .map(
-        (e) => `${e.code}: ${e.message}${e.evidence ? " -> " + e.evidence : ""}`
+        e => `${e.code}: ${e.message}${e.evidence ? " -> " + e.evidence : ""}`
       )
       .join("\n");
     throw new Error("SpecPack validation failed:\n" + detail);

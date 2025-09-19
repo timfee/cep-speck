@@ -106,7 +106,7 @@ export function withErrorRecovery<T>(
   operation: () => Promise<T>,
   operationName: string
 ): Promise<T> {
-  return operation().catch((error) => {
+  return operation().catch(error => {
     if (error instanceof StreamingError) {
       throw error;
     }

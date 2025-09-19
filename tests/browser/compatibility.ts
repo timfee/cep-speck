@@ -1,6 +1,6 @@
 /**
  * Browser Compatibility Testing Tools
- * 
+ *
  * This module provides utilities for testing the streaming protocol
  * across different browsers and network conditions.
  */
@@ -18,13 +18,13 @@ export function mockBrowserEnvironment(): {
   const mockReader = {
     read: jest.fn(),
   };
-  
+
   const mockReadableStream = jest.fn().mockImplementation(() => ({
     getReader: () => mockReader,
   }));
-  
+
   const mockTextDecoder = jest.fn().mockImplementation(() => ({
-    decode: jest.fn((buffer) => new TextDecoder().decode(buffer)),
+    decode: jest.fn(buffer => new TextDecoder().decode(buffer)),
   }));
 
   const mockPerformance = {
@@ -52,12 +52,14 @@ export class NetworkSimulator {
   private dropRate: number = 0;
   private isConnected: boolean = true;
 
-  constructor(options: {
-    latency?: number;
-    bandwidthLimit?: number; // bytes per second
-    dropRate?: number;
-    connected?: boolean;
-  } = {}) {
+  constructor(
+    options: {
+      latency?: number;
+      bandwidthLimit?: number; // bytes per second
+      dropRate?: number;
+      connected?: boolean;
+    } = {}
+  ) {
     this.latency = options.latency ?? 0;
     this.bandwidthLimit = options.bandwidthLimit ?? Infinity;
     this.dropRate = options.dropRate ?? 0;
@@ -92,11 +94,11 @@ export class NetworkSimulator {
 
     const chunks: Uint8Array[] = [];
     const chunkSize = Math.max(1, Math.floor(this.bandwidthLimit)); // bandwidthLimit is in bytes per second
-    
+
     for (let i = 0; i < data.length; i += chunkSize) {
       chunks.push(data.slice(i, i + chunkSize));
     }
-    
+
     return chunks;
   }
 
@@ -137,11 +139,11 @@ export class BrowserCompatibilityChecker {
     performance: boolean;
   } {
     return {
-      fetch: typeof fetch !== 'undefined',
-      readableStream: typeof ReadableStream !== 'undefined',
-      textDecoder: typeof TextDecoder !== 'undefined',
+      fetch: typeof fetch !== "undefined",
+      readableStream: typeof ReadableStream !== "undefined",
+      textDecoder: typeof TextDecoder !== "undefined",
       ndjson: true, // JSON parsing is universally supported
-      performance: typeof performance !== 'undefined' && 'now' in performance,
+      performance: typeof performance !== "undefined" && "now" in performance,
     };
   }
 
@@ -156,12 +158,12 @@ export class BrowserCompatibilityChecker {
     cookieEnabled: boolean;
     onLine: boolean;
   } {
-    if (typeof navigator === 'undefined') {
+    if (typeof navigator === "undefined") {
       return {
-        userAgent: 'Node.js Test Environment',
-        vendor: 'Node.js',
-        language: 'en-US',
-        platform: 'Node.js',
+        userAgent: "Node.js Test Environment",
+        vendor: "Node.js",
+        language: "en-US",
+        platform: "Node.js",
         cookieEnabled: false,
         onLine: true,
       };
@@ -169,7 +171,7 @@ export class BrowserCompatibilityChecker {
 
     return {
       userAgent: navigator.userAgent,
-      vendor: navigator.vendor || 'Unknown',
+      vendor: navigator.vendor || "Unknown",
       language: navigator.language,
       platform: navigator.platform,
       cookieEnabled: navigator.cookieEnabled,
@@ -186,8 +188,12 @@ export class BrowserCompatibilityChecker {
     total?: number;
     limit?: number;
   } {
-    if (typeof performance !== 'undefined' && (performance as unknown as Record<string, unknown>).memory) {
-      const memory = (performance as unknown as Record<string, unknown>).memory as {
+    if (
+      typeof performance !== "undefined" &&
+      (performance as unknown as Record<string, unknown>).memory
+    ) {
+      const memory = (performance as unknown as Record<string, unknown>)
+        .memory as {
         usedJSHeapSize: number;
         totalJSHeapSize: number;
         jsHeapSizeLimit: number;
@@ -210,7 +216,11 @@ export class BrowserCompatibilityChecker {
 export class FramePerformanceMonitor {
   private frameTimestamps: number[] = [];
   private processingTimes: number[] = [];
-  private memorySnapshots: Array<{ timestamp: number; used: number; total: number }> = [];
+  private memorySnapshots: Array<{
+    timestamp: number;
+    used: number;
+    total: number;
+  }> = [];
 
   /**
    * Record frame processing start
@@ -218,7 +228,7 @@ export class FramePerformanceMonitor {
   startFrameProcessing(): number {
     const timestamp = performance.now();
     this.frameTimestamps.push(timestamp);
-    
+
     // Record memory snapshot if available
     const memory = BrowserCompatibilityChecker.checkMemoryConstraints();
     if (memory.available) {
@@ -228,7 +238,7 @@ export class FramePerformanceMonitor {
         total: memory.total!,
       });
     }
-    
+
     return timestamp;
   }
 
@@ -255,22 +265,24 @@ export class FramePerformanceMonitor {
   } {
     const now = performance.now();
     const recentFrames = this.frameTimestamps.filter(ts => now - ts < 1000);
-    
-    const avgProcessingTime = this.processingTimes.length > 0
-      ? this.processingTimes.reduce((sum, time) => sum + time, 0) / this.processingTimes.length
-      : 0;
 
-    const maxProcessingTime = this.processingTimes.length > 0
-      ? Math.max(...this.processingTimes)
-      : 0;
+    const avgProcessingTime =
+      this.processingTimes.length > 0
+        ? this.processingTimes.reduce((sum, time) => sum + time, 0) /
+          this.processingTimes.length
+        : 0;
 
-    const minProcessingTime = this.processingTimes.length > 0
-      ? Math.min(...this.processingTimes)
-      : 0;
+    const maxProcessingTime =
+      this.processingTimes.length > 0 ? Math.max(...this.processingTimes) : 0;
 
-    const memoryGrowth = this.memorySnapshots.length >= 2
-      ? this.memorySnapshots[this.memorySnapshots.length - 1].used - this.memorySnapshots[0].used
-      : 0;
+    const minProcessingTime =
+      this.processingTimes.length > 0 ? Math.min(...this.processingTimes) : 0;
+
+    const memoryGrowth =
+      this.memorySnapshots.length >= 2
+        ? this.memorySnapshots[this.memorySnapshots.length - 1].used -
+          this.memorySnapshots[0].used
+        : 0;
 
     return {
       frameRate: recentFrames.length,
@@ -323,28 +335,28 @@ export class BrowserStreamingTester {
     try {
       for (const frameData of frames) {
         if (!this.networkSim.isOnline()) {
-          throw new Error('Network disconnected');
+          throw new Error("Network disconnected");
         }
 
         if (this.networkSim.shouldDropPacket()) {
-          errors.push('Packet dropped due to network simulation');
+          errors.push("Packet dropped due to network simulation");
           continue;
         }
 
         await this.networkSim.simulateDelay();
 
         const startTime = this.perfMonitor.startFrameProcessing();
-        
+
         // Simulate chunked delivery
         const chunks = this.networkSim.simulateBandwidth(frameData);
         let accumulated = new Uint8Array(0);
-        
+
         for (const chunk of chunks) {
           const combined = new Uint8Array(accumulated.length + chunk.length);
           combined.set(accumulated);
           combined.set(chunk, accumulated.length);
           accumulated = combined;
-          
+
           await this.networkSim.simulateDelay();
         }
 
@@ -385,7 +397,7 @@ export class BrowserStreamingTester {
 
     // Process half the frames
     const halfwayPoint = Math.floor(frames.length / 2);
-    
+
     for (let i = 0; i < halfwayPoint; i++) {
       if (this.networkSim.shouldDropPacket()) {
         framesLost++;
@@ -394,13 +406,13 @@ export class BrowserStreamingTester {
 
     // Simulate network disconnection
     this.networkSim.disconnect();
-    
+
     // Wait for recovery simulation
     await new Promise(resolve => setTimeout(resolve, 100));
-    
+
     // Reconnect
     this.networkSim.reconnect();
-    
+
     const recoveryTime = performance.now() - startTime;
 
     // Process remaining frames
@@ -426,9 +438,9 @@ export class BrowserStreamingTester {
     dropRate: number;
   } {
     return {
-      latency: this.networkSim['latency'],
+      latency: this.networkSim["latency"],
       isOnline: this.networkSim.isOnline(),
-      dropRate: this.networkSim['dropRate'],
+      dropRate: this.networkSim["dropRate"],
     };
   }
 

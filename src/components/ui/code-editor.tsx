@@ -3,7 +3,12 @@
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { CopyButton } from "./copy-button";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./tooltip";
 import { Badge } from "./badge";
 import { Button } from "./button";
 import { SPEC_TEMPLATES, type SpecTemplateKey } from "@/lib/spec-templates";
@@ -87,7 +92,9 @@ export function CodeEditor({
                     {Object.entries(SPEC_TEMPLATES).map(([key, template]) => (
                       <button
                         key={key}
-                        onClick={() => handleTemplateSelect(key as SpecTemplateKey)}
+                        onClick={() =>
+                          handleTemplateSelect(key as SpecTemplateKey)
+                        }
                         className="w-full text-left px-3 py-2 text-sm hover:bg-gray-100 first:rounded-t-md last:rounded-b-md"
                       >
                         {template.name}
@@ -98,8 +105,8 @@ export function CodeEditor({
               </div>
             )}
             {copyButton && value && (
-              <CopyButton 
-                text={value} 
+              <CopyButton
+                text={value}
                 className="h-8"
                 onCopy={() => {
                   console.log("Spec copied to clipboard");
@@ -114,7 +121,7 @@ export function CodeEditor({
           <textarea
             ref={textareaRef}
             value={value}
-            onChange={(e) => onChange(e.target.value)}
+            onChange={e => onChange(e.target.value)}
             placeholder={placeholder}
             rows={rows}
             className={cn(
@@ -137,8 +144,8 @@ export function CodeEditor({
             {showWordCount && (
               <Tooltip>
                 <TooltipTrigger>
-                  <Badge 
-                    variant={isOverLimit ? "destructive" : "secondary"} 
+                  <Badge
+                    variant={isOverLimit ? "destructive" : "secondary"}
                     className="text-xs"
                   >
                     {wordCount} words
@@ -146,7 +153,9 @@ export function CodeEditor({
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>
-                    {maxWords ? `${wordCount}/${maxWords} words` : `${wordCount} words`}
+                    {maxWords
+                      ? `${wordCount}/${maxWords} words`
+                      : `${wordCount} words`}
                     {isOverLimit && " (over limit)"}
                   </p>
                 </TooltipContent>

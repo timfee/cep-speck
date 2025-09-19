@@ -36,7 +36,7 @@ function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
         });
       }
 
-      const vendorMentions = params.vendors.filter((vendor) =>
+      const vendorMentions = params.vendors.filter(vendor =>
         tldrContent.toLowerCase().includes(vendor.toLowerCase())
       );
 
@@ -63,7 +63,7 @@ function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
     }
 
     const pmInputMatches = draft.match(/\[PM_INPUT_NEEDED:[^\]]+\]/g) || [];
-    const researchableTopics = pmInputMatches.filter((match) =>
+    const researchableTopics = pmInputMatches.filter(match =>
       /competitor|research|analysis|snapshot/i.test(match)
     );
 

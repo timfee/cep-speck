@@ -22,13 +22,13 @@ function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
   voidUnused(_pack);
   const count = countSections(draft, params.headerRegex);
   const issues: Issue[] = [];
-  
+
   const ok =
     (params.exact != null && count === params.exact) ||
     (params.exact == null &&
       (params.min == null || count >= params.min) &&
       (params.max == null || count <= params.max));
-      
+
   if (!ok) {
     issues.push({
       id: "section-count-mismatch",
@@ -46,12 +46,12 @@ function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
 function heal(issues: Issue[], params: Params, _pack?: unknown): string | null {
   voidUnused(_pack);
   if (!issues.length) return null;
-  
+
   const range =
     params.exact != null
       ? `exactly ${params.exact}`
       : `${params.min ?? "?"}..${params.max ?? "?"}`;
-      
+
   return HEALING_TEMPLATES.SECTION_COUNT(range, params.headerRegex);
 }
 

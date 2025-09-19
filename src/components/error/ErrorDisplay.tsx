@@ -5,9 +5,23 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Status, StatusIndicator, StatusLabel } from "@/components/ui/status";
 import { CopyButton } from "@/components/ui/copy-button";
-import { AlertTriangle, AlertCircle, Info, Settings, RefreshCw, Clock } from "lucide-react";
-import { formatErrorForSupport, ERROR_CLASSIFICATIONS } from "@/lib/error/classification";
-import type { ErrorDetails, ErrorSeverityLevels, EnvironmentInfo } from "@/lib/error/types";
+import {
+  AlertTriangle,
+  AlertCircle,
+  Info,
+  Settings,
+  RefreshCw,
+  Clock,
+} from "lucide-react";
+import {
+  formatErrorForSupport,
+  ERROR_CLASSIFICATIONS,
+} from "@/lib/error/classification";
+import type {
+  ErrorDetails,
+  ErrorSeverityLevels,
+  EnvironmentInfo,
+} from "@/lib/error/types";
 
 interface ErrorDisplayProps {
   error: ErrorDetails;
@@ -17,37 +31,44 @@ interface ErrorDisplayProps {
 
 const ERROR_SEVERITY_STYLES = {
   critical: {
-    border: 'border-red-500',
-    background: 'bg-red-50 dark:bg-red-950/20',
-    text: 'text-red-700 dark:text-red-300',
-    icon: AlertTriangle
+    border: "border-red-500",
+    background: "bg-red-50 dark:bg-red-950/20",
+    text: "text-red-700 dark:text-red-300",
+    icon: AlertTriangle,
   },
   warning: {
-    border: 'border-amber-500', 
-    background: 'bg-amber-50 dark:bg-amber-950/20',
-    text: 'text-amber-700 dark:text-amber-300',
-    icon: AlertCircle
+    border: "border-amber-500",
+    background: "bg-amber-50 dark:bg-amber-950/20",
+    text: "text-amber-700 dark:text-amber-300",
+    icon: AlertCircle,
   },
   info: {
-    border: 'border-blue-500',
-    background: 'bg-blue-50 dark:bg-blue-950/20', 
-    text: 'text-blue-700 dark:text-blue-300',
-    icon: Info
-  }
+    border: "border-blue-500",
+    background: "bg-blue-50 dark:bg-blue-950/20",
+    text: "text-blue-700 dark:text-blue-300",
+    icon: Info,
+  },
 } as const;
 
-export function ErrorDisplay({ error, onRetry, onConfigureApi }: ErrorDisplayProps) {
-  const [viewLevel, setViewLevel] = useState<'user' | 'technical' | 'support'>('user');
-  
-  const classification = ERROR_CLASSIFICATIONS[error.code] || ERROR_CLASSIFICATIONS.UNEXPECTED_ERROR;
+export function ErrorDisplay({
+  error,
+  onRetry,
+  onConfigureApi,
+}: ErrorDisplayProps) {
+  const [viewLevel, setViewLevel] = useState<"user" | "technical" | "support">(
+    "user"
+  );
+
+  const classification =
+    ERROR_CLASSIFICATIONS[error.code] || ERROR_CLASSIFICATIONS.UNEXPECTED_ERROR;
   const severityStyle = ERROR_SEVERITY_STYLES[classification.severity];
-  
+
   // Build error details for progressive disclosure
   const errorLevels: ErrorSeverityLevels = {
     user: {
       title: classification.title,
       message: classification.message,
-      icon: severityStyle.icon
+      icon: severityStyle.icon,
     },
     technical: {
       code: error.code,
@@ -57,8 +78,8 @@ export function ErrorDisplay({ error, onRetry, onConfigureApi }: ErrorDisplayPro
         attempt: error.attempt,
         maxAttempts: error.maxAttempts,
         timestamp: new Date(error.timestamp).toISOString(),
-        ...error.context
-      }
+        ...error.context,
+      },
     },
     support: {
       reportId: `ERR-${Date.now().toString(36).toUpperCase()}`,
@@ -66,62 +87,63 @@ export function ErrorDisplay({ error, onRetry, onConfigureApi }: ErrorDisplayPro
         "1. Navigate to the PRD generation page",
         "2. Enter specification text",
         "3. Click 'Run' button",
-        `4. Error occurred during ${error.phase || 'unknown'} phase`
+        `4. Error occurred during ${error.phase || "unknown"} phase`,
       ],
       environment: {
-        userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'Unknown',
+        userAgent:
+          typeof navigator !== "undefined" ? navigator.userAgent : "Unknown",
         timestamp: new Date().toISOString(),
-        url: typeof window !== 'undefined' ? window.location.href : 'Unknown',
-        apiKeyPresent: !error.code.includes('MISSING_API_KEY')
-      }
-    }
+        url: typeof window !== "undefined" ? window.location.href : "Unknown",
+        apiKeyPresent: !error.code.includes("MISSING_API_KEY"),
+      },
+    },
   };
 
   const getRecoveryActions = () => {
     const actions = [];
-    
+
     switch (error.code) {
-      case 'MISSING_API_KEY':
+      case "MISSING_API_KEY":
         if (onConfigureApi) {
           actions.push({
-            id: 'configure-api',
-            label: 'Configure API Key',
-            description: 'Add your Google Generative AI API key',
+            id: "configure-api",
+            label: "Configure API Key",
+            description: "Add your Google Generative AI API key",
             icon: Settings,
             primary: true,
-            handler: onConfigureApi
+            handler: onConfigureApi,
           });
         }
         break;
-      case 'NETWORK_TIMEOUT':
-      case 'SERVICE_UNAVAILABLE':
+      case "NETWORK_TIMEOUT":
+      case "SERVICE_UNAVAILABLE":
         if (onRetry) {
           actions.push({
-            id: 'retry-now',
-            label: 'Retry Now',
-            description: 'Attempt the operation again',
+            id: "retry-now",
+            label: "Retry Now",
+            description: "Attempt the operation again",
             icon: RefreshCw,
             primary: true,
-            handler: onRetry
+            handler: onRetry,
           });
         }
         break;
-      case 'RATE_LIMITED':
+      case "RATE_LIMITED":
         if (onRetry) {
           actions.push({
-            id: 'wait-and-retry',
-            label: 'Wait & Retry',
-            description: 'Automatically retry after delay',
+            id: "wait-and-retry",
+            label: "Wait & Retry",
+            description: "Automatically retry after delay",
             icon: Clock,
             primary: true,
             handler: () => {
               setTimeout(() => onRetry(), 5000);
-            }
+            },
           });
         }
         break;
     }
-    
+
     return actions;
   };
 
@@ -148,10 +170,10 @@ export function ErrorDisplay({ error, onRetry, onConfigureApi }: ErrorDisplayPro
       {/* Recovery Actions */}
       {recoveryActions.length > 0 && (
         <div className="flex flex-wrap gap-2">
-          {recoveryActions.map((action) => (
+          {recoveryActions.map(action => (
             <Button
               key={action.id}
-              variant={action.primary ? 'default' : 'outline'}
+              variant={action.primary ? "default" : "outline"}
               size="sm"
               onClick={action.handler}
               className="flex items-center gap-2"
@@ -165,10 +187,10 @@ export function ErrorDisplay({ error, onRetry, onConfigureApi }: ErrorDisplayPro
 
       {/* Progressive Disclosure Tabs */}
       <div className="flex gap-2">
-        {(['user', 'technical', 'support'] as const).map((level) => (
+        {(["user", "technical", "support"] as const).map(level => (
           <Button
             key={level}
-            variant={viewLevel === level ? 'default' : 'outline'}
+            variant={viewLevel === level ? "default" : "outline"}
             size="sm"
             onClick={() => setViewLevel(level)}
           >
@@ -178,21 +200,27 @@ export function ErrorDisplay({ error, onRetry, onConfigureApi }: ErrorDisplayPro
       </div>
 
       {/* Technical Details */}
-      {viewLevel === 'technical' && (
+      {viewLevel === "technical" && (
         <Card className="border-muted">
           <CardHeader className="pb-3">
             <CardTitle className="text-lg">Technical Details</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-2 text-sm">
-              <div><strong>Code:</strong> {errorLevels.technical.code}</div>
-              <div><strong>Context:</strong></div>
+              <div>
+                <strong>Code:</strong> {errorLevels.technical.code}
+              </div>
+              <div>
+                <strong>Context:</strong>
+              </div>
               <pre className="mt-2 p-3 bg-muted rounded text-xs overflow-auto whitespace-pre-wrap">
                 {JSON.stringify(errorLevels.technical.context, null, 2)}
               </pre>
               {errorLevels.technical.stack && (
                 <>
-                  <div><strong>Stack Trace:</strong></div>
+                  <div>
+                    <strong>Stack Trace:</strong>
+                  </div>
                   <pre className="mt-2 p-3 bg-muted rounded text-xs overflow-auto whitespace-pre-wrap">
                     {errorLevels.technical.stack}
                   </pre>
@@ -204,7 +232,7 @@ export function ErrorDisplay({ error, onRetry, onConfigureApi }: ErrorDisplayPro
       )}
 
       {/* Support Information */}
-      {viewLevel === 'support' && (
+      {viewLevel === "support" && (
         <Card className="border-muted">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
@@ -215,7 +243,7 @@ export function ErrorDisplay({ error, onRetry, onConfigureApi }: ErrorDisplayPro
                   message: error.message,
                   timestamp: error.timestamp,
                   context: errorLevels.technical.context,
-                  stack: error.stack
+                  stack: error.stack,
                 })}
                 className="h-8"
                 onCopy={() => {
@@ -241,10 +269,17 @@ export function ErrorDisplay({ error, onRetry, onConfigureApi }: ErrorDisplayPro
               <div>
                 <strong>Environment:</strong>
                 <div className="mt-1 p-2 bg-muted rounded text-xs">
-                  <div>Browser: {errorLevels.support.environment.userAgent}</div>
+                  <div>
+                    Browser: {errorLevels.support.environment.userAgent}
+                  </div>
                   <div>URL: {errorLevels.support.environment.url}</div>
                   <div>Time: {errorLevels.support.environment.timestamp}</div>
-                  <div>API Key Present: {errorLevels.support.environment.apiKeyPresent ? 'Yes' : 'No'}</div>
+                  <div>
+                    API Key Present:{" "}
+                    {errorLevels.support.environment.apiKeyPresent
+                      ? "Yes"
+                      : "No"}
+                  </div>
                 </div>
               </div>
             </div>

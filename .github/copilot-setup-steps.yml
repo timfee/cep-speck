@@ -1,0 +1,52 @@
+# Copilot Environment Setup Steps
+# This file configures the GitHub Copilot agent environment for optimal development
+
+name: CEP Spec App Environment Setup
+
+# Install dependencies and set up development tools
+setup:
+  - name: Install pnpm globally
+    run: npm install -g pnpm
+
+  - name: Install project dependencies
+    run: pnpm install --frozen-lockfile
+
+  - name: Verify build configuration
+    run: pnpm build
+
+  - name: Run linting
+    run: pnpm lint
+
+  - name: Format code
+    run: pnpm format
+
+  - name: Sort package.json
+    run: pnpm sort-package-json
+
+  - name: Verify TypeScript compilation
+    run: pnpm type-check
+
+# Environment variables needed for development
+environment:
+  NODE_ENV: development
+
+# Pre-installed tools and their purposes
+tools:
+  - name: pnpm
+    purpose: Package manager (enforced via only-allow)
+  - name: prettier
+    purpose: Code formatting for consistent style
+  - name: sort-package-json
+    purpose: Maintain organized package.json structure
+  - name: eslint
+    purpose: Code quality and style enforcement
+  - name: typescript
+    purpose: Type checking and compilation
+
+# Development workflow commands
+workflows:
+  dev: pnpm dev
+  build: pnpm build
+  lint: pnpm lint
+  format: pnpm format
+  test: pnpm test

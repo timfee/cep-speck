@@ -201,7 +201,7 @@ This repository implements **cascading directory-specific copilot instructions**
 - **Root** (`.github/copilot-instructions.md`) - Project setup, development philosophy, pnpm usage
 - **Core Spec** (`src/lib/spec/.github/copilot-instructions.md`) - Validation system architecture
 - **Validation Items** (`src/lib/spec/items/.github/copilot-instructions.md`) - Validation module patterns
-- **API Layer** (`src/app/.github/copilot-instructions.md`) - Next.js streaming and error handling  
+- **API Layer** (`src/app/.github/copilot-instructions.md`) - Next.js streaming and error handling
 - **UI Components** (`src/components/.github/copilot-instructions.md`) - React and shadcn/ui patterns
 
 ### Development Philosophy

@@ -23,7 +23,7 @@ function validate(draft: string, params: Params, pack?: SpecPack): Issue[] {
 
   // Extract feature names using pattern ## F\d+ — <Name>
   const names = [...featuresBlock.matchAll(/## F\d+ — ([^\n]+)/g)].map(
-    (m) => m[1]
+    m => m[1]
   );
 
   if (!names.length) {
@@ -61,7 +61,7 @@ function heal(issues: Issue[], params: Params, pack?: SpecPack): string | null {
   void pack;
   if (!issues.length) return null;
 
-  if (issues.some((i) => i.id === "tldr-feature-mismatch")) {
+  if (issues.some(i => i.id === "tldr-feature-mismatch")) {
     return "Ensure the TL;DR section mentions the key features from the Functional Requirements section to provide executives with a complete overview of deliverables.";
   }
 

@@ -12,33 +12,40 @@ export interface SpinnerProps {
 const spinnerVariants = {
   default: {
     animate: { rotate: 360 },
-    transition: { duration: 1, repeat: Infinity, ease: "linear" as const }
+    transition: { duration: 1, repeat: Infinity, ease: "linear" as const },
   },
   ring: {
     animate: { rotate: 360 },
-    transition: { duration: 1.5, repeat: Infinity, ease: "linear" as const }
+    transition: { duration: 1.5, repeat: Infinity, ease: "linear" as const },
   },
   ellipsis: {
     animate: { x: [0, 10, 0] },
-    transition: { duration: 1.2, repeat: Infinity, ease: "easeInOut" as const }
+    transition: { duration: 1.2, repeat: Infinity, ease: "easeInOut" as const },
   },
   bars: {
     animate: { scaleY: [1, 1.5, 1] },
-    transition: { duration: 0.8, repeat: Infinity, ease: "easeInOut" as const }
+    transition: { duration: 0.8, repeat: Infinity, ease: "easeInOut" as const },
   },
   infinite: {
     animate: { rotate: 360, scale: [1, 1.1, 1] },
-    transition: { duration: 2, repeat: Infinity, ease: "linear" as const }
-  }
+    transition: { duration: 2, repeat: Infinity, ease: "linear" as const },
+  },
 };
 
-export function Spinner({ variant = "default", size = 16, className }: SpinnerProps) {
+export function Spinner({
+  variant = "default",
+  size = 16,
+  className,
+}: SpinnerProps) {
   const baseClass = "text-current";
-  
+
   if (variant === "ellipsis") {
     return (
-      <div className={cn("flex space-x-1", className)} style={{ width: size * 2, height: size }}>
-        {[0, 1, 2].map((i) => (
+      <div
+        className={cn("flex space-x-1", className)}
+        style={{ width: size * 2, height: size }}
+      >
+        {[0, 1, 2].map(i => (
           <motion.div
             key={i}
             className={cn("rounded-full bg-current", baseClass)}
@@ -48,7 +55,7 @@ export function Spinner({ variant = "default", size = 16, className }: SpinnerPr
               duration: 1.2,
               repeat: Infinity,
               delay: i * 0.2,
-              ease: "easeInOut"
+              ease: "easeInOut",
             }}
           />
         ))}
@@ -58,8 +65,11 @@ export function Spinner({ variant = "default", size = 16, className }: SpinnerPr
 
   if (variant === "bars") {
     return (
-      <div className={cn("flex space-x-1 items-end", className)} style={{ width: size, height: size }}>
-        {[0, 1, 2].map((i) => (
+      <div
+        className={cn("flex space-x-1 items-end", className)}
+        style={{ width: size, height: size }}
+      >
+        {[0, 1, 2].map(i => (
           <motion.div
             key={i}
             className={cn("bg-current", baseClass)}
@@ -69,7 +79,7 @@ export function Spinner({ variant = "default", size = 16, className }: SpinnerPr
               duration: 0.8,
               repeat: Infinity,
               delay: i * 0.1,
-              ease: "easeInOut"
+              ease: "easeInOut",
             }}
           />
         ))}
@@ -81,7 +91,7 @@ export function Spinner({ variant = "default", size = 16, className }: SpinnerPr
   const isRing = variant === "ring";
   const strokeWidth = isRing ? 2 : 3;
   const config = spinnerVariants[variant];
-  
+
   return (
     <motion.svg
       className={cn(baseClass, className)}
