@@ -39,7 +39,10 @@ export function validateSpecPack(pack: SpecPack): PackValidationError[] {
   const regexList = pack.globals?.bannedText?.regex || [];
   for (const r of regexList) {
     try {
-      new RegExp(r);
+      // Handle (?i) syntax like the bannedText validator does
+      const hasInlineI = /^\(\?i\)/.test(r);
+      const source = r.replace(/^\(\?i\)/, "");
+      new RegExp(source, hasInlineI ? "gi" : "g");
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
