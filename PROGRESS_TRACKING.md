@@ -19,7 +19,7 @@ Last updated: 2025-09-18
 #### Phase 1: Registry & Validation System ✅
 
 - **Generic ValidatorModule registry** with complete type safety
-- **14+ validation items standardized** to uniform (params, pack?) signatures  
+- **14+ validation items standardized** to uniform (params, pack?) signatures
 - **Zero unsafe casts** eliminated from items/index.ts (reduced from 20+)
 - **Consistent itemModule pattern** across all validators
 
