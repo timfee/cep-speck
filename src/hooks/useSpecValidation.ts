@@ -1,5 +1,23 @@
 import { useMemo } from "react";
 
+// Regex patterns for field validation - extracted for maintainability and testing
+const VALIDATION_PATTERNS = {
+  // Flexible project pattern: matches "Project:", "project name:", "Project Name:", etc.
+  PROJECT: /^(?:project(?:\s+name)?|name|title)\s*[:=]\s*.+/im,
+  
+  // Flexible target SKU pattern: matches various SKU formats
+  TARGET_SKU: /^(?:target\s*)?(?:sku|tier|plan|edition)\s*[:=]\s*.+/im,
+  
+  // Objective patterns with common variations
+  OBJECTIVE: /^(?:objective|goal|purpose|aim|intent)\s*[:=]/im,
+  
+  // Target users/audience patterns
+  TARGET_USERS: /^(?:target\s*)?(?:audience|users?|customers?|personas?)\s*[:=]/im,
+  
+  // Structured format detection (key: value or key = value)
+  STRUCTURED_LINE: /^\s*[a-z][a-z\s]*\s*[:=]\s*.+/i,
+} as const;
+
 export interface SpecValidation {
   hasProject: boolean;
   hasTargetSKU: boolean;
@@ -31,14 +49,14 @@ export function useSpecValidation(content: string): SpecValidation {
     const lines = trimmedContent.split('\n');
     const words = trimmedContent.split(/\s+/);
     
-    // Check for required fields
-    const hasProject = /^project\s*:\s*.+/im.test(trimmedContent);
-    const hasTargetSKU = /^target\s*sku\s*:\s*.+/im.test(trimmedContent);
+    // Check for required fields using flexible patterns
+    const hasProject = VALIDATION_PATTERNS.PROJECT.test(trimmedContent);
+    const hasTargetSKU = VALIDATION_PATTERNS.TARGET_SKU.test(trimmedContent);
     const hasDescription = words.length > 10; // Basic heuristic
     
     // Check for structured format (colon-separated key-value pairs)
     const structuredLines = lines.filter(line => 
-      /^\s*[a-z\s]+\s*:\s*.+/i.test(line)
+      VALIDATION_PATTERNS.STRUCTURED_LINE.test(line)
     ).length;
     const isStructuredFormat = structuredLines >= 2;
     
@@ -46,10 +64,10 @@ export function useSpecValidation(content: string): SpecValidation {
     const suggestedSections = [];
     if (!hasProject) suggestedSections.push("Project: [Your project name]");
     if (!hasTargetSKU) suggestedSections.push("Target SKU: [premium|standard|enterprise]");
-    if (!/objectives?\s*:/im.test(trimmedContent)) {
+    if (!VALIDATION_PATTERNS.OBJECTIVE.test(trimmedContent)) {
       suggestedSections.push("Objective: [Primary goal]");
     }
-    if (!/target\s*(audience|users?)\s*:/im.test(trimmedContent)) {
+    if (!VALIDATION_PATTERNS.TARGET_USERS.test(trimmedContent)) {
       suggestedSections.push("Target Users: [User personas]");
     }
     
