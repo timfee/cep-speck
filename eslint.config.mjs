@@ -120,7 +120,7 @@ const eslintConfig = [
       }],
 
       // ============ RULE 7: No Magic Numbers & Prefer Const ============
-      "no-magic-numbers": ["warn", {
+      "no-magic-numbers": ["error", {
         ignore: [0, 1, -1, 2, 100, 1000],
         ignoreArrayIndexes: true,
         enforceConst: true,
@@ -201,10 +201,10 @@ const eslintConfig = [
       "custom/stream-frame-factory-usage": "error",
 
       // ============ RULE 13: Consistent Error Handling Pattern ============
-      "custom/consistent-error-handling-pattern": "warn",
+      "custom/consistent-error-handling-pattern": "error",
 
       // ============ RULE 14: Enforce Helper Usage ============
-      "custom/enforce-helper-usage": "warn",
+      "custom/enforce-helper-usage": "error",
 
       // ============ RULE 15: Spec Pack JSON Validation ============
       "custom/spec-pack-json-validation": "error",
@@ -228,6 +228,19 @@ const eslintConfig = [
       "promise/prefer-await-to-then": "error",
       "unicorn/no-array-reduce": "error",
       "unicorn/no-array-for-each": "error",
+      
+      // ============ ADDITIONAL STRICT RULES ============
+      "@typescript-eslint/no-unsafe-assignment": "error",
+      "@typescript-eslint/no-unsafe-argument": "error",
+      "@typescript-eslint/no-unsafe-member-access": "error",
+      "@typescript-eslint/no-unsafe-call": "error",
+      "@typescript-eslint/restrict-template-expressions": "error",
+      "@typescript-eslint/strict-boolean-expressions": "error",
+      "@typescript-eslint/switch-exhaustiveness-check": "error",
+      "no-case-declarations": "error",
+      "@typescript-eslint/no-unnecessary-boolean-literal-compare": "error",
+      "@typescript-eslint/prefer-readonly": "error",
+      "@typescript-eslint/prefer-for-of": "error",
     },
   },
   {
@@ -240,10 +253,29 @@ const eslintConfig = [
     },
   },
   {
-    files: ["**/page.tsx", "**/layout.tsx", "**/route.ts", "**/hooks/**", "**/components/**"],
+    files: ["**/page.tsx", "**/layout.tsx", "**/route.ts"],
     rules: {
       "custom/consistent-error-handling-pattern": "off",
-      "no-magic-numbers": "off", // UI components often need specific numeric values
+      // Allow magic numbers in route handlers for HTTP status codes, timeouts, etc.
+      "no-magic-numbers": ["error", {
+        ignore: [0, 1, -1, 2, 3, 5, 10, 100, 200, 201, 400, 401, 403, 404, 500, 1000, 2000, 3000, 5000, 8000, 10000],
+        ignoreArrayIndexes: true,
+        enforceConst: true,
+        detectObjects: false,
+      }],
+    },
+  },
+  {
+    files: ["**/hooks/**", "**/components/**"],
+    rules: {
+      "custom/consistent-error-handling-pattern": "off",
+      // Stricter rules for components but allow UI-specific numeric values
+      "no-magic-numbers": ["error", {
+        ignore: [0, 1, -1, 2, 4, 8, 10, 12, 16, 20, 24, 32, 48, 64, 100, 200, 300, 400, 500, 1000, 1200, 1400, 1800],
+        ignoreArrayIndexes: true,
+        enforceConst: true,
+        detectObjects: false,
+      }],
     },
   },
   {

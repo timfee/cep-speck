@@ -26,16 +26,47 @@ import type { NextRequest } from "next/server";
 
 export const runtime = "nodejs";
 
+// Define proper types for request body
+interface RunRequestBody {
+  specText: string;
+  maxAttempts?: number;
+}
+
+// Validate request body structure
+function isValidRunRequest(body: unknown): body is RunRequestBody {
+  return (
+    typeof body === "object" &&
+    body !== null &&
+    "specText" in body &&
+    typeof (body as RunRequestBody).specText === "string" &&
+    ((body as RunRequestBody).maxAttempts === undefined ||
+      typeof (body as RunRequestBody).maxAttempts === "number")
+  );
+}
+
 // Type-cast the imported JSON to SpecPack once at module level
 // TODO: This `as` cast is necessary due to TypeScript's JSON import limitations
 // The pack is validated at runtime via assertValidSpecPack()
 const pack: SpecPack = packData as SpecPack;
 
+// Constants for magic numbers
+const DEFAULT_MAX_ATTEMPTS = 3;
+const MAX_ALLOWED_ATTEMPTS = 5;
+
 export async function POST(req: NextRequest) {
-  const { specText, maxAttempts: maxOverride } = await req.json();
+  const requestBody: unknown = await req.json();
+  
+  if (!isValidRunRequest(requestBody)) {
+    return new Response(
+      JSON.stringify({ error: "Invalid request body" }),
+      { status: 400, headers: { "Content-Type": "application/json" } }
+    );
+  }
+  
+  const { specText, maxAttempts: maxOverride } = requestBody;
   const maxAttempts = Math.min(
-    maxOverride ?? pack.healPolicy.maxAttempts ?? 3,
-    5
+    maxOverride ?? pack.healPolicy.maxAttempts,
+    MAX_ALLOWED_ATTEMPTS
   );
 
   const startTime = Date.now();
@@ -59,7 +90,8 @@ export async function POST(req: NextRequest) {
       
       try {
         // API key check
-        if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
+        const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+        if (!apiKey || apiKey.trim() === "") {
           const errorFrame = createErrorFrame(
             "Missing GOOGLE_GENERATIVE_AI_API_KEY on server. Add it to .env.local and restart.",
             false, // Not recoverable without restart
@@ -72,8 +104,9 @@ export async function POST(req: NextRequest) {
 
         // Validate pack structure
         try {
-          await withErrorRecovery(async () => {
+          await withErrorRecovery(() => {
             assertValidSpecPack(pack);
+            return Promise.resolve();
           }, "SpecPack validation");
         } catch (error) {
           if (error instanceof StreamingError) {
