@@ -69,6 +69,7 @@ pnpm --version  # Should be 10.x or higher
   - Requires API key for full functionality
 
 - **Run production server** (KNOWN ISSUE):
+
   ```bash
   pnpm start
   ```
