@@ -1,7 +1,6 @@
-import { generateObject } from "ai";
 import { z } from "zod";
 
-import { geminiModel } from "@/lib/ai/provider"; // TODO: Use resilient provider
+import { getResilientAI } from "@/lib/ai/resilient";
 
 import { PATTERNS, extractSection, voidUnused } from "../helpers";
 
@@ -96,8 +95,8 @@ ${metrics}
 Validate all coherence, quality, and realism rules in one pass.`;
 
   try {
-    const { object } = await generateObject({
-      model: geminiModel(), // TODO: Use resilient provider
+    const resilientAI = getResilientAI();
+    const { object } = await resilientAI.generateObjectWithFallback({
       prompt,
       schema: MegaValidationSchema,
     });
