@@ -92,7 +92,7 @@ class GeminiProvider implements AIProvider {
     return await this.circuitBreaker.execute(async () => {
       return Promise.resolve(
         streamText({
-          model: google("gemini-2.5-pro"),
+          model: google("gemini-1.5-pro"),
           messages,
         })
       );
@@ -108,7 +108,7 @@ class GeminiProvider implements AIProvider {
       // Simple health check
       await this.circuitBreaker.execute(async () => {
         const result = streamText({
-          model: google("gemini-2.5-pro"),
+          model: google("gemini-1.5-pro"),
           messages: [{ role: "user", content: "Hi" }],
         });
         // We don't need to wait for the stream, just creating it tests the API
@@ -218,7 +218,7 @@ export class ResilientAI {
           // Use generateObject with the provider's model
           const { generateObject } = await import("ai");
           return await generateObject({
-            model: google("gemini-2.5-pro"), // Use the provider's model
+            model: google("gemini-1.5-pro"), // Use correct model name
             prompt,
             schema,
           });

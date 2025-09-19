@@ -91,9 +91,9 @@ export function StructuredPrdWizard({
               } else if (frame.type === "error") {
                 throw new Error(frame.data?.message ?? "Generation failed");
               }
-            } catch {
-              // Skip invalid JSON lines - removed unused parseError variable
-              console.warn("Failed to parse streaming line:", line);
+            } catch (parseError) {
+              // Skip invalid JSON lines, but log the error details for debugging
+              console.warn("Failed to parse streaming line:", line, "Error:", parseError);
             }
           }
         }

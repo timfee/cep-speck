@@ -97,6 +97,14 @@ export const FEASIBILITY_THRESHOLDS = {
   MINIMUM_ADOPTION_DAYS: 30,
 } as const;
 
+// Validation constants for form input
+export const INPUT_VALIDATION = {
+  MIN_WORDS: 10,
+  MIN_SUBSTANTIAL_WORDS: 20,
+  SCORE_INCREMENT: 25,
+  MAX_SCORE: 100,
+} as const;
+
 export default {
   TIMEOUTS,
   RETRY_LIMITS,
@@ -107,4 +115,5 @@ export default {
   UI_CONSTANTS,
   TIMING,
   FEASIBILITY_THRESHOLDS,
+  INPUT_VALIDATION,
 } as const;
