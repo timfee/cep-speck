@@ -5,6 +5,7 @@
 import { 
   extractSection, 
   extractBulletPoints, 
+  extractMetrics,
   extractFeatureKeywords,
   doesMetricReferenceFeature,
   countSections,
@@ -36,6 +37,42 @@ Goal content here.
       const draft = 'No matching content';
       const section = extractSection(draft, PATTERNS.TLDR_SECTION);
       expect(section).toBe('');
+    });
+  });
+
+  describe('extractMetrics', () => {
+    it('should extract metrics from bullet points with default pattern', () => {
+      const text = `
+Some intro text
+- Load time: 2 seconds # with comment
+* Response rate: 95%
+- Memory usage: 512 MB
+More text
+      `;
+      
+      const metrics = extractMetrics(text, {});
+      expect(metrics.size).toBe(3);
+      expect(metrics.get('load time')).toBe('2 seconds');
+      expect(metrics.get('response rate')).toBe('95%');
+      expect(metrics.get('memory usage')).toBe('512 MB');
+    });
+
+    it('should handle custom regex patterns', () => {
+      const text = `
+Custom format: metric1=value1
+Another: metric2=value2
+      `;
+      
+      const metrics = extractMetrics(text, { 
+        metricRegex: '^(.+):\\s*(.+)=(.+)$' 
+      });
+      expect(metrics.size).toBeGreaterThanOrEqual(0);
+    });
+
+    it('should return empty map for no matches', () => {
+      const text = 'No metrics here';
+      const metrics = extractMetrics(text, {});
+      expect(metrics.size).toBe(0);
     });
   });
 

@@ -25,22 +25,35 @@ export function extractBulletPoints(block: string): string[] {
 
 /**
  * Extract metrics from a text block using configurable patterns
+ * Handles bullet point format: "- metric: value" and custom regex patterns
  */
 export function extractMetrics(block: string, params: { metricRegex?: string }): Map<string, string> {
-  const pattern = params.metricRegex || '\\b\\d+[%]?\\b';
-  const regex = new RegExp(pattern, 'gi');
-  const metrics = new Map<string, string>();
-  
-  const matches = block.match(regex) || [];
-  matches.forEach(match => {
-    // Extract metric name and value - this is a simplified approach
-    const parts = match.split(/[:=]/);
-    if (parts.length >= 2) {
-      metrics.set(parts[0].trim(), parts[1].trim());
+  // Extract metrics using pattern: - <metric>: <value> or * <metric>: <value>
+  // Handles inline comments after # character
+  const map = new Map<string, string>();
+  const defaultPattern = /^[-*]\s+([^:]+):\s+([^#]+)(?:#.*)?$/;
+  const customPattern = params.metricRegex
+    ? new RegExp(params.metricRegex)
+    : null;
+
+  for (const line of block.split("\n")) {
+    if (customPattern) {
+      // Use custom regex if provided
+      const matches = line.match(customPattern);
+      if (matches && matches.length >= 3) {
+        const key = matches[1]?.trim().toLowerCase();
+        const value = matches[2]?.trim();
+        if (key && value) {
+          map.set(key, value);
+        }
+      }
+    } else {
+      // Use default pattern
+      const m = line.match(defaultPattern);
+      if (m) map.set(m[1].trim().toLowerCase(), m[2].trim());
     }
-  });
-  
-  return metrics;
+  }
+  return map;
 }
 
 /**
