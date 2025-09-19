@@ -1,5 +1,6 @@
+import { PATTERNS, createHealingBuilder, HEALING_TEMPLATES, voidUnused, createWordBoundaryRegex } from "../helpers";
+
 import type { Issue } from "../types";
-import { PATTERNS, createHealingBuilder, HEALING_TEMPLATES, voidUnused } from "../helpers";
 
 export const itemId = "executive-quality";
 export type Params = {
@@ -7,6 +8,10 @@ export type Params = {
   requireSpecificMetrics: boolean;
   banOverExplanation: boolean;
 };
+
+// Constants for quality thresholds
+const MAX_VAGUE_QUANTIFIERS = 3;
+const MAX_OVER_EXPLANATION_INSTANCES = 5;
 
 function toPrompt(_params: Params, _pack?: unknown): string {
   voidUnused(_params, _pack);
@@ -19,7 +24,7 @@ function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
 
   if (params.enforceFactualTone) {
     const vagueQuantifiers = draft.match(PATTERNS.VAGUE_QUANTIFIERS);
-    if (vagueQuantifiers && vagueQuantifiers.length > 3) {
+    if (vagueQuantifiers && vagueQuantifiers.length > MAX_VAGUE_QUANTIFIERS) {
       issues.push({
         id: "vague-quantifiers",
         itemId,
@@ -28,12 +33,12 @@ function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
           "Too many vague quantifiers - use specific numbers where possible",
         evidence: `Found ${
           vagueQuantifiers.length
-        } instances: ${vagueQuantifiers.slice(0, 3).join(", ")}...`,
+        } instances: ${vagueQuantifiers.slice(0, MAX_VAGUE_QUANTIFIERS).join(", ")}...`,
       });
     }
 
     const hedgingLanguage = draft.match(PATTERNS.HEDGING_LANGUAGE);
-    if (hedgingLanguage && hedgingLanguage.length > 5) {
+    if (hedgingLanguage && hedgingLanguage.length > MAX_OVER_EXPLANATION_INSTANCES) {
       issues.push({
         id: "excessive-hedging",
         itemId,
@@ -43,10 +48,13 @@ function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
       });
     }
 
-    const inventedMetrics = draft.match(
-      /\b(NPS|Net Promoter Score|satisfaction score|happiness index|engagement score)\b/gi
-    );
-    if (inventedMetrics && inventedMetrics.length > 0) {
+    const qualityTheaterTerms = ["NPS", "Net Promoter Score", "satisfaction score", "happiness index", "engagement score"];
+    // Pre-compile regexes for efficiency
+    const qualityTheaterRegexes = qualityTheaterTerms.map(term => createWordBoundaryRegex(term, 'gi'));
+    const inventedMetrics = qualityTheaterTerms.filter((_term, index) => {
+      return qualityTheaterRegexes[index].test(draft);
+    });
+    if (inventedMetrics.length > 0) {
       issues.push({
         id: "quality-theater-metrics",
         itemId,
@@ -57,10 +65,12 @@ function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
       });
     }
 
-    const solidifyFuture = draft.match(
-      /\b(solidify our future|strengthen our position|position ourselves|future-proof)\b/gi
-    );
-    if (solidifyFuture && solidifyFuture.length > 0) {
+    const businessSpeakTerms = ["solidify our future", "strengthen our position", "position ourselves", "future-proof"];
+    const solidifyFuture = businessSpeakTerms.filter(term => {
+      const regex = createWordBoundaryRegex(term, 'gi');
+      return regex.test(draft);
+    });
+    if (solidifyFuture.length > 0) {
       issues.push({
         id: "empty-business-speak",
         itemId,
@@ -77,7 +87,9 @@ function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
     );
     if (metricSections) {
       const metricsContent = metricSections[0];
+      // Complex regex for numbers without units - not suitable for helper
       const numbersWithoutUnits = metricsContent.match(
+        // eslint-disable-next-line custom/enforce-helper-usage
         /\b\d+(?!\s*(?:%|ms|s|sec|seconds|minutes|hours|days|weeks|months|years|qps|rps|rpm|req\/s|MB|GB|TB|requests|users|tenants|releases))\b/g
       );
       if (numbersWithoutUnits && numbersWithoutUnits.length > 2) {
@@ -90,7 +102,9 @@ function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
         });
       }
 
+      // Complex regex for heuristic masking - not suitable for simple word boundary helper
       const heuristicMasking = draft.match(
+        // eslint-disable-next-line custom/enforce-helper-usage
         /\b(because|due to|in order to|to ensure|for the purpose of)\s+[^.]*\b(metric|measure|track|monitor)\b/gi
       );
       if (heuristicMasking && heuristicMasking.length > 0) {

@@ -1,4 +1,3 @@
-import type { Issue } from "../types";
 import { 
   extractSection, 
   extractBulletPoints, 
@@ -6,6 +5,8 @@ import {
   buildTraceabilityHealing,
   voidUnused 
 } from "../helpers";
+
+import type { Issue } from "../types";
 
 export const itemId = "traceability-complete";
 // No Params type required

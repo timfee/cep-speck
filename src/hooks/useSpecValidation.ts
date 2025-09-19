@@ -1,5 +1,7 @@
 import { useMemo } from "react";
 
+import { VALIDATION_THRESHOLDS } from "@/lib/constants";
+
 // Regex patterns for field validation - extracted for maintainability and testing
 const VALIDATION_PATTERNS = {
   // Flexible project pattern: matches "Project:", "project name:", "Project Name:", etc.
@@ -73,11 +75,11 @@ export function useSpecValidation(content: string): SpecValidation {
     
     // Calculate completion score
     let score = 0;
-    if (hasProject) score += 25;
-    if (hasTargetSKU) score += 25;
+    if (hasProject) score += VALIDATION_THRESHOLDS.MIN_WORD_COUNT;
+    if (hasTargetSKU) score += VALIDATION_THRESHOLDS.MAX_WORD_COUNT;
     if (hasDescription) score += 20;
-    if (isStructuredFormat) score += 15;
-    if (words.length >= 20) score += 15;
+    if (isStructuredFormat) score += VALIDATION_THRESHOLDS.MIN_LINE_COUNT;
+    if (words.length >= 20) score += VALIDATION_THRESHOLDS.MAX_LINE_COUNT;
     
     // Identify issues
     const issues = [];

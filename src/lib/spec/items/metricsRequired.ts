@@ -1,5 +1,6 @@
-import type { Issue } from "../types";
 import { PATTERNS, buildMetricHealing, voidUnused } from "../helpers";
+
+import type { Issue } from "../types";
 
 export const itemId = "metrics-required";
 export type Params = {

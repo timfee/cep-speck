@@ -1,5 +1,6 @@
-import type { Issue } from "../types";
 import { PATTERNS, LIMITS, HEALING_TEMPLATES, voidUnused } from "../helpers";
+
+import type { Issue } from "../types";
 
 export const itemId = "placeholder-quality";
 // No Params type required
@@ -16,10 +17,10 @@ function validate(
 ): Issue[] {
   voidUnused(_params, _pack);
   const issues: Issue[] = [];
-  const placeholders = draft.match(PATTERNS.PLACEHOLDER) || [];
+  const placeholders = draft.match(PATTERNS.PLACEHOLDER) ?? [];
 
   for (const ph of placeholders) {
-    const content = ph.match(PATTERNS.PLACEHOLDER_CONTENT)?.[1] || "";
+    const content = ph.match(PATTERNS.PLACEHOLDER_CONTENT)?.[1] ?? "";
 
     // Check for vague placeholders (< 3 words)
     if (content.trim().split(/\s+/).length < LIMITS.PLACEHOLDER_MIN_WORDS) {

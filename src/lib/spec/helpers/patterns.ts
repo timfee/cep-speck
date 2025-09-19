@@ -39,7 +39,7 @@ export function testAnyPattern(text: string, patterns: string[]): boolean {
 export function findAllMatches(text: string, patterns: string[]): string[] {
   const matches: string[] = [];
   
-  patterns.forEach(pattern => {
+  for (const pattern of patterns) {
     try {
       const regex = createFlexibleRegex(pattern);
       const found = text.match(regex);
@@ -49,7 +49,7 @@ export function findAllMatches(text: string, patterns: string[]): string[] {
     } catch {
       // Invalid regex patterns are silently ignored
     }
-  });
+  }
   
   return matches;
 }

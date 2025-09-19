@@ -47,9 +47,9 @@ export function mockBrowserEnvironment(): {
  * Network condition simulator
  */
 export class NetworkSimulator {
-  private latency: number = 0;
-  private bandwidthLimit: number = Infinity;
-  private dropRate: number = 0;
+  private readonly latency: number = 0;
+  private readonly bandwidthLimit: number = Infinity;
+  private readonly dropRate: number = 0;
   private isConnected: boolean = true;
 
   constructor(options: {
@@ -296,8 +296,8 @@ export class FramePerformanceMonitor {
  * Streaming protocol test runner for browsers
  */
 export class BrowserStreamingTester {
-  private networkSim: NetworkSimulator;
-  private perfMonitor: FramePerformanceMonitor;
+  private readonly networkSim: NetworkSimulator;
+  private readonly perfMonitor: FramePerformanceMonitor;
 
   constructor(networkConditions?: {
     latency?: number;
@@ -355,13 +355,13 @@ export class BrowserStreamingTester {
           JSON.parse(text.trim());
           framesProcessed++;
         } catch (parseError) {
-          errors.push(`Frame parsing error: ${parseError}`);
+          errors.push(`Frame parsing error: ${parseError instanceof Error ? parseError.message : String(parseError)}`);
         }
 
         this.perfMonitor.endFrameProcessing(startTime);
       }
     } catch (error) {
-      errors.push(`Streaming test error: ${error}`);
+      errors.push(`Streaming test error: ${error instanceof Error ? error.message : String(error)}`);
     }
 
     return {

@@ -1,9 +1,5 @@
 "use client";
 
-import React from 'react';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
 import { 
   FileText, 
   TrendingUp, 
@@ -12,10 +8,18 @@ import {
   BarChart, 
   Calendar, 
   Shield, 
-  Users,
+  Users
+} from 'lucide-react';
+import React from 'react';
+
+import { Badge } from '@/components/ui/badge';
+import { Card } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
+
+import type { SectionDefinition } from '@/types/workflow';
+import type {
   LucideIcon
 } from 'lucide-react';
-import type { SectionDefinition } from '@/types/workflow';
 
 const iconMap: Record<string, LucideIcon> = {
   FileText,
@@ -66,7 +70,7 @@ export function SectionTypeSelector({
       
       <div className="grid gap-3 md:grid-cols-2">
         {sections.map((section) => {
-          const Icon = iconMap[section.icon] || FileText;
+          const Icon = iconMap[section.icon] ?? FileText;
           const isSelected = selectedSections.includes(section.id);
           
           return (

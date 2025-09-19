@@ -1,13 +1,17 @@
 "use client";
 
+import { AlertTriangle, AlertCircle, Info, Settings, RefreshCw, Clock } from "lucide-react";
 import React, { useState } from "react";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Status, StatusIndicator, StatusLabel } from "@/components/ui/status";
 import { CopyButton } from "@/components/ui/copy-button";
-import { AlertTriangle, AlertCircle, Info, Settings, RefreshCw, Clock } from "lucide-react";
+import { Status, StatusIndicator, StatusLabel } from "@/components/ui/status";
+// Import existing timeout constants
+import { TIMEOUTS, UI_CONSTANTS } from "@/lib/constants";
 import { formatErrorForSupport, ERROR_CLASSIFICATIONS } from "@/lib/error/classification";
-import type { ErrorDetails, ErrorSeverityLevels, EnvironmentInfo } from "@/lib/error/types";
+
+import type { ErrorDetails, ErrorSeverityLevels } from "@/lib/error/types";
 
 interface ErrorDisplayProps {
   error: ErrorDetails;
@@ -39,7 +43,7 @@ const ERROR_SEVERITY_STYLES = {
 export function ErrorDisplay({ error, onRetry, onConfigureApi }: ErrorDisplayProps) {
   const [viewLevel, setViewLevel] = useState<'user' | 'technical' | 'support'>('user');
   
-  const classification = ERROR_CLASSIFICATIONS[error.code] || ERROR_CLASSIFICATIONS.UNEXPECTED_ERROR;
+  const classification = ERROR_CLASSIFICATIONS[error.code];
   const severityStyle = ERROR_SEVERITY_STYLES[classification.severity];
   
   // Build error details for progressive disclosure
@@ -61,12 +65,12 @@ export function ErrorDisplay({ error, onRetry, onConfigureApi }: ErrorDisplayPro
       }
     },
     support: {
-      reportId: `ERR-${Date.now().toString(36).toUpperCase()}`,
+      reportId: `ERR-${Date.now().toString(UI_CONSTANTS.HEX_RADIX).toUpperCase()}`,
       reproduction: [
         "1. Navigate to the PRD generation page",
         "2. Enter specification text",
         "3. Click 'Run' button",
-        `4. Error occurred during ${error.phase || 'unknown'} phase`
+        `4. Error occurred during ${error.phase ?? 'unknown'} phase`
       ],
       environment: {
         userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'Unknown',
@@ -115,10 +119,28 @@ export function ErrorDisplay({ error, onRetry, onConfigureApi }: ErrorDisplayPro
             icon: Clock,
             primary: true,
             handler: () => {
-              setTimeout(() => onRetry(), 5000);
+              setTimeout(() => onRetry(), TIMEOUTS.MEDIUM_DELAY);
             }
           });
         }
+        break;
+      case 'VALIDATION_FAILED':
+        // No specific recovery actions for validation failures
+        break;
+      case 'UNEXPECTED_ERROR':
+        if (onRetry) {
+          actions.push({
+            id: 'retry-operation',
+            label: 'Try Again',
+            description: 'Retry the failed operation',
+            icon: RefreshCw,
+            primary: true,
+            handler: onRetry
+          });
+        }
+        break;
+      case 'INVALID_INPUT':
+        // User needs to correct their input - no automatic recovery
         break;
     }
     
@@ -137,7 +159,7 @@ export function ErrorDisplay({ error, onRetry, onConfigureApi }: ErrorDisplayPro
           <p className="text-sm text-muted-foreground mt-1">
             {classification.message}
           </p>
-          {error.attempt && error.maxAttempts && (
+          {(error.attempt ?? 0) > 0 && (error.maxAttempts ?? 0) > 0 && (
             <p className="text-xs text-muted-foreground mt-1">
               Attempt {error.attempt} of {error.maxAttempts}
             </p>
@@ -190,7 +212,7 @@ export function ErrorDisplay({ error, onRetry, onConfigureApi }: ErrorDisplayPro
               <pre className="mt-2 p-3 bg-muted rounded text-xs overflow-auto whitespace-pre-wrap">
                 {JSON.stringify(errorLevels.technical.context, null, 2)}
               </pre>
-              {errorLevels.technical.stack && (
+              {(errorLevels.technical.stack ?? "").length > 0 && (
                 <>
                   <div><strong>Stack Trace:</strong></div>
                   <pre className="mt-2 p-3 bg-muted rounded text-xs overflow-auto whitespace-pre-wrap">

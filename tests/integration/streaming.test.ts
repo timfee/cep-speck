@@ -3,8 +3,8 @@
  */
 
 import { EndToEndTestRunner, IntegrationTestScenarios, ClientFrameProcessor, StreamingAPISimulator } from './end-to-end';
-import { BrowserCompatibilityChecker, BrowserStreamingTester } from '../browser/compatibility';
 import { encodeStreamFrame } from '../../src/lib/spec/streaming';
+import { BrowserCompatibilityChecker, BrowserStreamingTester } from '../browser/compatibility';
 
 describe('Streaming Protocol Integration', () => {
   describe('End-to-End Workflows', () => {
@@ -151,7 +151,7 @@ describe('Streaming Protocol Integration', () => {
       const processor = new ClientFrameProcessor();
 
       // Create stream with some malformed data
-      const readableStream = new ReadableStream({
+      const readableStream = new ReadableStream<Uint8Array>({
         async start(controller) {
           const validFrame = encodeStreamFrame(frames[0]);
           controller.enqueue(validFrame);
@@ -199,7 +199,7 @@ describe('Streaming Protocol Integration', () => {
     test('should handle stream interruption', async () => {
       const frames = IntegrationTestScenarios.createSuccessfulWorkflow();
       
-      const readableStream = new ReadableStream({
+      const readableStream = new ReadableStream<Uint8Array>({
         async start(controller) {
           // Send first few frames
           for (let i = 0; i < 3; i++) {
@@ -264,9 +264,9 @@ describe('Streaming Protocol Integration', () => {
       const results = await Promise.all(promises);
 
       // All should succeed
-      results.forEach(result => {
+      for (const result of results) {
         expect(result.success).toBe(true);
-      });
+      }
     });
   });
 });

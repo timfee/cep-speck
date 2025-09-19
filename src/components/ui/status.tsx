@@ -1,8 +1,9 @@
 "use client";
 
-import React from "react";
-import { Badge } from "@/components/ui/badge";
 import { CheckCircle, AlertCircle, XCircle, Clock } from "lucide-react";
+import React from "react";
+
+import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 interface StatusProps {

@@ -1,4 +1,7 @@
 import { useState, useCallback, useMemo } from 'react';
+
+import { WORKFLOW_STEPS, DEFAULT_ENTERPRISE_PARAMETERS } from '@/types/workflow';
+
 import type { 
   StructuredWorkflowState, 
   WorkflowStep, 
@@ -6,7 +9,6 @@ import type {
   EnterpriseParameters,
   WorkflowProgress 
 } from '@/types/workflow';
-import { WORKFLOW_STEPS, DEFAULT_ENTERPRISE_PARAMETERS } from '@/types/workflow';
 
 // Validation constants
 export const MIN_PROMPT_LENGTH = 10;
@@ -81,7 +83,7 @@ const generateContentOutline = (prompt: string): ContentOutline => {
       id: 'sm-business-impact',
       name: 'Business Impact',
       description: 'Measurable business value and ROI from product adoption',
-      type: 'business' as const,
+      type: 'adoption' as const,
       target: '15% productivity improvement',
       measurement: 'Time saved per user per week',
       frequency: 'Quarterly'
@@ -181,6 +183,19 @@ export const useStructuredWorkflow = () => {
   // Calculate current progress
   const progress = useMemo((): WorkflowProgress => {
     const stepIndex = WORKFLOW_STEPS.findIndex(s => s.id === state.currentStep);
+    
+    // Ensure valid step index
+    if (stepIndex === -1) {
+      return {
+        step: 1,
+        totalSteps: WORKFLOW_STEPS.length,
+        stepName: 'Unknown',
+        completion: 0,
+        canGoBack: false,
+        canGoNext: false
+      };
+    }
+    
     const stepInfo = WORKFLOW_STEPS[stepIndex];
     
     let canGoNext = false;
@@ -191,13 +206,14 @@ export const useStructuredWorkflow = () => {
         canGoNext = state.initialPrompt.trim().length > MIN_PROMPT_LENGTH;
         completion = Math.min(100, (state.initialPrompt.length / PROMPT_COMPLETION_TARGET) * 100);
         break;
-      case 'outline':
+      case 'outline': {
         const totalItems = state.contentOutline.functionalRequirements.length + 
                           state.contentOutline.successMetrics.length + 
                           state.contentOutline.milestones.length;
         canGoNext = totalItems > 0;
         completion = totalItems > 0 ? 100 : 0;
         break;
+      }
       case 'parameters':
         canGoNext = true; // Enterprise parameters are optional
         completion = 100;
@@ -215,7 +231,7 @@ export const useStructuredWorkflow = () => {
     return {
       step: stepIndex + 1,
       totalSteps: WORKFLOW_STEPS.length,
-      stepName: stepInfo?.name || 'Unknown',
+      stepName: stepInfo.name,
       completion,
       canGoBack: stepIndex > 0,
       canGoNext

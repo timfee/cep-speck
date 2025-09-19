@@ -1,5 +1,6 @@
-import type { Issue } from "../types";
 import { PATTERNS, buildPersonaHealing, voidUnused } from "../helpers";
+
+import type { Issue } from "../types";
 
 export const itemId = "persona-coverage";
 export type Params = { personas: string[] };
@@ -20,7 +21,7 @@ function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
 
   for (const persona of params.personas) {
     for (const def of defs) {
-      const block = draft.match(def.rx)?.[0] || "";
+      const block = draft.match(def.rx)?.[0] ?? "";
       if (!block.toLowerCase().includes(persona.toLowerCase())) {
         issues.push({
           id: "missing-persona-coverage",

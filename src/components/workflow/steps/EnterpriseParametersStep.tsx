@@ -1,10 +1,5 @@
 "use client";
 
-import React from 'react';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { cn } from '@/lib/utils';
 import { 
   Building2, 
   Shield, 
@@ -13,6 +8,13 @@ import {
   Zap,
   CheckCircle
 } from 'lucide-react';
+import React from 'react';
+
+import { Badge } from '@/components/ui/badge';
+import { Card } from '@/components/ui/card';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { cn } from '@/lib/utils';
+
 import type { EnterpriseParameters } from '@/types/workflow';
 
 interface EnterpriseParametersStepProps {

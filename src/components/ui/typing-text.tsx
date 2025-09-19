@@ -1,7 +1,9 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
+import { useState, useEffect, useRef } from "react";
+
+import { UI_CONSTANTS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 export interface TypingTextProps {
@@ -16,7 +18,7 @@ export interface TypingTextProps {
 
 export function TypingText({
   text,
-  typingSpeed = 30,
+  typingSpeed = UI_CONSTANTS.DISPLAY_DELAY,
   showCursor = true,
   cursorCharacter = "|",
   className,
@@ -116,7 +118,7 @@ export function TerminalDisplay({
           <div className="flex items-center gap-2 text-xs text-gray-400">
             <motion.div
               className="w-2 h-2 bg-green-400 rounded-full"
-              animate={{ opacity: [0.4, 1, 0.4] }}
+              animate={{ opacity: [UI_CONSTANTS.ANIMATION_SCALE_SMALL, 1, UI_CONSTANTS.ANIMATION_SCALE_SMALL] }}
               transition={{ duration: 1.5, repeat: Infinity }}
             />
             <span>Live</span>

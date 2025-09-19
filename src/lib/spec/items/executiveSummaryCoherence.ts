@@ -15,11 +15,11 @@ function validate(draft: string, params: Params, pack?: SpecPack): Issue[] {
   const issues: Issue[] = [];
 
   // Extract TL;DR section
-  const tldr = draft.match(/# 1\. TL;DR[\s\S]*?(?=# 2\.|$)/)?.[0] || "";
+  const tldr = draft.match(/# 1\. TL;DR[\s\S]*?(?=# 2\.|$)/)?.[0] ?? "";
 
   // Extract Functional Requirements section
   const featuresBlock =
-    draft.match(/# 6\. Functional Requirements[\s\S]*?(?=# 7\.|$)/)?.[0] || "";
+    draft.match(/# 6\. Functional Requirements[\s\S]*?(?=# 7\.|$)/)?.[0] ?? "";
 
   // Extract feature names using pattern ## F\d+ — <Name>
   const names = [...featuresBlock.matchAll(/## F\d+ — ([^\n]+)/g)].map(

@@ -1,14 +1,17 @@
+import { TIMING, FEASIBILITY_THRESHOLDS } from "@/lib/constants";
+
 import type { Issue } from "../types";
+
 
 export const itemId = "technical-feasibility";
 export type Params = Record<string, never>;
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+ 
 function toPrompt(_params: Params, _pack?: unknown): string {
   return "Reject impossible percentages (>100%) and flag unrealistic rapid adoption claims.";
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+ 
 function validate(draft: string, _params: Params, _pack?: unknown): Issue[] {
   const issues: Issue[] = [];
 
@@ -67,12 +70,12 @@ function validate(draft: string, _params: Params, _pack?: unknown): Issue[] {
       // Convert time to days for comparison
       let timeInDays = timeValue;
       if (timeUnit.startsWith("week")) {
-        timeInDays = timeValue * 7;
+        timeInDays = timeValue * TIMING.DAYS_PER_WEEK;
       } else if (timeUnit.startsWith("month")) {
-        timeInDays = timeValue * 30;
+        timeInDays = timeValue * TIMING.DAYS_PER_MONTH;
       }
 
-      if (percentageValue > 80 && timeInDays < 30) {
+      if (percentageValue > FEASIBILITY_THRESHOLDS.HIGH_ADOPTION_PERCENTAGE && timeInDays < FEASIBILITY_THRESHOLDS.MINIMUM_ADOPTION_DAYS) {
         issues.push({
           id: "unrealistic-adoption",
           itemId,

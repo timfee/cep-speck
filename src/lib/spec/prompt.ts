@@ -1,6 +1,7 @@
 import { CRITICAL_VALIDATION_REQUIREMENTS } from "./config/criticalValidationRules";
 import { invokeItemToPrompt } from "./registry";
-import { SpecPack } from "./types";
+
+import type { SpecPack } from "./types";
 
 export function buildSystemPrompt(pack: SpecPack): string {
   const lines: string[] = [];
@@ -8,12 +9,12 @@ export function buildSystemPrompt(pack: SpecPack): string {
     const p = invokeItemToPrompt(def, pack);
     if (p) lines.push(`- [${def.kind}] ${p}`);
   }
-  if (pack.composition?.labelPattern) {
+  if ((pack.composition?.labelPattern ?? "").length > 0) {
     lines.push(
       `- [structure] Header label pattern: ${pack.composition.labelPattern}`
     );
   }
-  if (pack.composition?.headerRegex) {
+  if ((pack.composition?.headerRegex ?? "").length > 0) {
     lines.push(
       `- [structure] Header detection regex: ${pack.composition.headerRegex}`
     );

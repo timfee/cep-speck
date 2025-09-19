@@ -2,14 +2,17 @@
  * Common validation utility functions
  */
 
-import type { Issue } from '../types';
+import { VALIDATION_THRESHOLDS } from '@/lib/constants';
+
 import { PATTERNS } from './constants';
+
+import type { Issue } from '../types';
 
 /**
  * Extract section content using a regex pattern
  */
 export function extractSection(draft: string, regex: RegExp): string {
-  return draft.match(regex)?.[0] || '';
+  return draft.match(regex)?.[0] ?? '';
 }
 
 /**
@@ -32,7 +35,7 @@ export function extractMetrics(block: string, params: { metricRegex?: string }):
   // Handles inline comments after # character
   const map = new Map<string, string>();
   const defaultPattern = /^[-*]\s+([^:]+):\s+([^#]+)(?:#.*)?$/;
-  const customPattern = params.metricRegex
+  const customPattern = (params.metricRegex ?? "").length > 0
     ? new RegExp(params.metricRegex)
     : null;
 
@@ -40,9 +43,14 @@ export function extractMetrics(block: string, params: { metricRegex?: string }):
     if (customPattern) {
       // Use custom regex if provided
       const matches = line.match(customPattern);
-      if (matches && matches.length >= 3) {
-        const key = matches[1]?.trim().toLowerCase();
-        const value = matches[2]?.trim();
+      if (
+        matches &&
+        matches.length >= VALIDATION_THRESHOLDS.MIN_CAPTURE_GROUPS &&
+        typeof matches[1] === "string" &&
+        typeof matches[2] === "string"
+      ) {
+        const key = matches[1].trim().toLowerCase();
+        const value = matches[2].trim();
         if (key && value) {
           map.set(key, value);
         }
@@ -69,7 +77,7 @@ export function extractFeatureKeywords(featureName: string): string[] {
     .replace(/[^\w\s]/g, " ") // Replace punctuation with spaces
     .split(/\s+/)
     .filter((word) => word.length > 2 && !stopWords.has(word))
-    .slice(0, 3); // Take up to 3 most significant words
+    .slice(0, VALIDATION_THRESHOLDS.MIN_CAPTURE_GROUPS); // Take up to 3 most significant words
 }
 
 /**
@@ -93,7 +101,7 @@ export function doesMetricReferenceFeature(metric: string, featureName: string):
  */
 export function countSections(draft: string, headerRegex: string): number {
   const regex = new RegExp(headerRegex, 'gm');
-  return (draft.match(regex) || []).length;
+  return (draft.match(regex) ?? []).length;
 }
 
 /**
@@ -105,7 +113,7 @@ export function validateHeaderPattern(
   itemId: string
 ): Issue[] {
   const lines = draft.split('\n').filter(Boolean);
-  const headerRegex = params.headerRegex ? new RegExp(params.headerRegex) : PATTERNS.NUMBERED_HEADER;
+  const headerRegex = (params.headerRegex ?? "").length > 0 ? new RegExp(params.headerRegex) : PATTERNS.NUMBERED_HEADER;
   const issues: Issue[] = [];
   
   for (const line of lines) {

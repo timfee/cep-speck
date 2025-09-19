@@ -1,5 +1,6 @@
-import type { Issue, SpecPack } from "../types";
 import { createWordBoundaryRegex, createFlexibleRegex, HEALING_TEMPLATES, voidUnused } from "../helpers";
+
+import type { Issue, SpecPack } from "../types";
 
 export const itemId = "banned-text";
 export type Params = {
@@ -10,14 +11,14 @@ export type Params = {
 function collectExact(params: Params, pack?: SpecPack): string[] {
   return [
     ...(params.extra?.exact ?? []),
-    ...(params.listsFromPack ? pack?.globals?.bannedText?.exact ?? [] : []),
+    ...(params.listsFromPack === true ? pack?.globals?.bannedText?.exact ?? [] : []),
   ];
 }
 
 function collectRegex(params: Params, pack?: SpecPack): string[] {
   return [
     ...(params.extra?.regex ?? []),
-    ...(params.listsFromPack ? pack?.globals?.bannedText?.regex ?? [] : []),
+    ...(params.listsFromPack === true ? pack?.globals?.bannedText?.regex ?? [] : []),
   ];
 }
 

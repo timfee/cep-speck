@@ -32,8 +32,8 @@ export function registerItem<P>(mod: ValidatorModule<P>): void {
 }
 
 export function getItem<P = unknown>(id: string): ValidatorModule<P> {
-  const mod = modules[id];
-  if (!mod) throw new Error(`Unknown itemId: ${id}`);
+  const mod = modules[id] as ValidatorModule<P> | undefined;
+  if (mod === undefined) throw new Error(`Unknown itemId: ${id}`);
   return mod;
 }
 

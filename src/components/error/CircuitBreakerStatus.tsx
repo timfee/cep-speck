@@ -1,8 +1,10 @@
 "use client";
 
 import React from "react";
-import { Status, StatusIndicator, StatusLabel } from "@/components/ui/status";
+
 import { Spinner } from "@/components/ui/spinner";
+import { Status, StatusIndicator, StatusLabel } from "@/components/ui/status";
+
 import type { CircuitBreakerState } from "@/lib/error/types";
 
 interface CircuitBreakerStatusProps {
@@ -10,13 +12,17 @@ interface CircuitBreakerStatusProps {
   className?: string;
 }
 
+// Time conversion constants
+const MILLISECONDS_PER_SECOND = 1000;
+const SECONDS_PER_MINUTE = 60;
+
 function formatTime(milliseconds: number): string {
-  const seconds = Math.ceil(milliseconds / 1000);
-  if (seconds < 60) {
+  const seconds = Math.ceil(milliseconds / MILLISECONDS_PER_SECOND);
+  if (seconds < SECONDS_PER_MINUTE) {
     return `${seconds}s`;
   }
-  const minutes = Math.floor(seconds / 60);
-  const remainingSeconds = seconds % 60;
+  const minutes = Math.floor(seconds / SECONDS_PER_MINUTE);
+  const remainingSeconds = seconds % SECONDS_PER_MINUTE;
   return `${minutes}m ${remainingSeconds}s`;
 }
 
@@ -64,7 +70,7 @@ export function CircuitBreakerStatus({ state, className }: CircuitBreakerStatusP
           </div>
 
           <div className="flex items-center gap-2">
-            {state.current === 'open' && state.recoveryTime && (
+            {state.current === 'open' && (state.recoveryTime ?? 0) > 0 && (
               <div className="text-sm text-muted-foreground text-right">
                 <div>Recovery in</div>
                 <div className="font-mono">

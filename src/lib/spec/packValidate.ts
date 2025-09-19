@@ -1,4 +1,5 @@
 import { getItem } from "./registry";
+
 import type { SpecPack } from "./types";
 
 export interface PackValidationError {
@@ -36,7 +37,7 @@ export function validateSpecPack(pack: SpecPack): PackValidationError[] {
     }
   }
   // Validate bannedText regex compilation
-  const regexList = pack.globals?.bannedText?.regex || [];
+  const regexList = pack.globals?.bannedText?.regex ?? [];
   for (const r of regexList) {
     try {
       // Handle (?i) syntax like the bannedText validator does
@@ -54,7 +55,7 @@ export function validateSpecPack(pack: SpecPack): PackValidationError[] {
     }
   }
   // header regex
-  if (pack.composition?.headerRegex) {
+  if ((pack.composition?.headerRegex ?? "").length > 0) {
     try {
       new RegExp(pack.composition.headerRegex);
     } catch (error) {
@@ -75,7 +76,7 @@ export function assertValidSpecPack(pack: SpecPack): void {
   if (errs.length) {
     const detail = errs
       .map(
-        (e) => `${e.code}: ${e.message}${e.evidence ? " -> " + e.evidence : ""}`
+        (e) => `${e.code}: ${e.message}${e.evidence !== "" ? " -> " + e.evidence : ""}`
       )
       .join("\n");
     throw new Error("SpecPack validation failed:\n" + detail);

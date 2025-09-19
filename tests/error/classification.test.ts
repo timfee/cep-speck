@@ -3,6 +3,7 @@
  */
 
 import { classifyError, formatErrorForSupport, ERROR_CLASSIFICATIONS } from '../../src/lib/error/classification';
+
 import type { ErrorCode } from '../../src/lib/error/types';
 
 describe('Error Classification System', () => {
@@ -90,14 +91,14 @@ describe('Error Classification System', () => {
       'UNEXPECTED_ERROR'
     ];
 
-    errorTypes.forEach(errorCode => {
+    for (const errorCode of errorTypes) {
       const classification = ERROR_CLASSIFICATIONS[errorCode];
       expect(classification).toBeDefined();
       expect(classification.actions).toBeDefined();
       expect(classification.actions.length).toBeGreaterThan(0);
       expect(typeof classification.title).toBe('string');
       expect(typeof classification.message).toBe('string');
-    });
+    }
   });
 
   test('should have consistent severity and status mapping', () => {

@@ -102,11 +102,13 @@ export class StreamingError extends Error {
   }
 }
 
-export function withErrorRecovery<T>(
+export async function withErrorRecovery<T>(
   operation: () => Promise<T>,
   operationName: string
 ): Promise<T> {
-  return operation().catch((error) => {
+  try {
+    return await operation();
+  } catch (error) {
     if (error instanceof StreamingError) {
       throw error;
     }
@@ -119,5 +121,5 @@ export function withErrorRecovery<T>(
       error instanceof Error ? error.name : "UnknownError",
       error
     );
-  });
+  }
 }

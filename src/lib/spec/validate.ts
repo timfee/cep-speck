@@ -1,4 +1,5 @@
 import { invokeItemValidate } from "./registry";
+
 import type { Issue, SpecPack, ValidationReport } from "./types";
 
 export function validateAll(draft: string, pack: SpecPack): ValidationReport {
@@ -9,12 +10,14 @@ export function validateAll(draft: string, pack: SpecPack): ValidationReport {
   for (const def of pack.items) {
     const found = invokeItemValidate(draft, def, pack);
     let hasError = false;
-    for (const it of found) {
-      if (!it.severity) it.severity = def.severity;
-      if (it.severity === "error") hasError = true;
+    for (const issue of found) {
+      if (issue.severity === "error") {
+        hasError = true;
+      }
     }
     coverage[def.id] = true;
     issues.push(...found);
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (failFast && hasError) {
       break;
     }

@@ -1,12 +1,15 @@
 "use client";
 
-import React from 'react';
-import { Progress } from '@/components/ui/progress';
-import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
 import { Check, Circle } from 'lucide-react';
-import type { WorkflowProgress } from '@/types/workflow';
+import React from 'react';
+
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import { cn } from '@/lib/utils';
 import { WORKFLOW_STEPS } from '@/types/workflow';
+
+import type { WorkflowProgress } from '@/types/workflow';
+
 
 interface ProgressTimelineProps {
   progress: WorkflowProgress;
@@ -95,7 +98,7 @@ export function ProgressTimeline({ progress, className }: ProgressTimelineProps)
       </div>
 
       {/* Time estimates */}
-      {progress.timeEstimate && (
+      {(progress.timeEstimate ?? 0) > 0 && (
         <div className="text-xs text-muted-foreground text-center">
           Estimated time remaining: ~{progress.timeEstimate} minutes
         </div>
