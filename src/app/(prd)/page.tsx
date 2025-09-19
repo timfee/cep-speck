@@ -9,8 +9,10 @@ import { Status } from "@/components/ui/status";
 import { WorkflowStatus, ProgressTimeline } from "@/components/ui/workflow-status";
 import { TerminalDisplay } from "@/components/ui/typing-text";
 import { MetricsDashboard, type WorkflowMetrics } from "@/components/ui/metrics-dashboard";
+import { ErrorDisplay, ApiKeyDialog } from "@/components/error";
 import { useSpecValidation } from "@/hooks/useSpecValidation";
 import type { Issue, StreamFrame } from "@/lib/spec/types";
+import type { ErrorDetails, ErrorCode } from "@/lib/error/types";
 import { useCallback, useRef, useState, useEffect, useMemo } from "react";
 
 export default function Page() {
@@ -24,6 +26,8 @@ export default function Page() {
   const [issues, setIssues] = useState<Issue[]>([]);
   const [startTime, setStartTime] = useState<number>(0);
   const [elapsedTime, setElapsedTime] = useState<number>(0);
+  const [errorDetails, setErrorDetails] = useState<ErrorDetails | null>(null);
+  const [showApiKeyDialog, setShowApiKeyDialog] = useState(false);
   const textRef = useRef<string>("");
 
   // Real-time spec validation
@@ -65,6 +69,7 @@ export default function Page() {
     setDraft("");
     textRef.current = "";
     setIssues([]);
+    setErrorDetails(null);
     setPhase("starting");
     setAttempt(1);
     setStartTime(Date.now());
@@ -110,14 +115,30 @@ export default function Page() {
         }
         if (obj.type === "error") {
           setPhase("error");
-          setDraft(`Error: ${obj.data.message}`);
+          
+          // Create enhanced error details
+          const errorDetails: ErrorDetails = {
+            code: (obj.data.code as ErrorCode) || "UNEXPECTED_ERROR",
+            message: obj.data.message,
+            timestamp: Date.now(),
+            phase,
+            attempt,
+            maxAttempts: 3,
+            context: {
+              specLength: spec.length,
+              streaming: true
+            },
+            details: obj.data.details
+          };
+          
+          setErrorDetails(errorDetails);
           setStreaming(false);
           break;
         }
       }
     }
     setStreaming(false);
-  }, [spec]);
+  }, [spec, phase, attempt]);
 
   return (
     <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -214,7 +235,17 @@ export default function Page() {
 
       <Card className="p-4 space-y-3">
         <h2 className="text-lg font-semibold">Draft</h2>
-        {draft ? (
+        
+        {/* Enhanced Error Display */}
+        {errorDetails ? (
+          <ErrorDisplay 
+            error={errorDetails}
+            onRetry={run}
+            onConfigureApi={() => {
+              setShowApiKeyDialog(true);
+            }}
+          />
+        ) : draft ? (
           <TerminalDisplay 
             content={draft}
             title="PRD Generation Output"
@@ -225,6 +256,7 @@ export default function Page() {
             {streaming ? "Generating content..." : "Click 'Run' to generate your PRD"}
           </div>
         )}
+        
         <Separator />
         <h3 className="text-md font-medium">Issues</h3>
         <div className="space-y-2">
@@ -240,6 +272,12 @@ export default function Page() {
           )}
         </div>
       </Card>
+      
+      {/* API Key Configuration Dialog */}
+      <ApiKeyDialog 
+        isOpen={showApiKeyDialog}
+        onClose={() => setShowApiKeyDialog(false)}
+      />
     </div>
   );
 }
