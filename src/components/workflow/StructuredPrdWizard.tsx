@@ -70,6 +70,7 @@ export function StructuredPrdWizard({
       const decoder = new TextDecoder();
 
       try {
+        // Stream reading pattern: continue until reader signals done
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         while (true) {
           const { done, value } = await reader.read();

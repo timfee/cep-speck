@@ -184,12 +184,11 @@ export default function Page() {
     const reader = res.body.getReader();
     const decoder = new TextDecoder();
 
+    // Stream reading pattern: continue until reader signals done
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     while (true) {
       const { value, done } = await reader.read();
-      if (done) {
-        break;
-      }
+      if (done) break;
       const chunk = decoder.decode(value);
       for (const line of chunk.split("\n")) {
         if (!line.trim()) continue;

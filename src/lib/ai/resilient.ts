@@ -141,13 +141,8 @@ export class ResilientAI {
   ): Promise<StreamTextResult<Record<string, never>, never>> {
     let lastError: Error | null = null;
 
-    // Try each provider - need index for provider rotation
-    // eslint-disable-next-line @typescript-eslint/prefer-for-of
-    for (
-      let providerAttempt = 0;
-      providerAttempt < this.providers.length;
-      providerAttempt++
-    ) {
+    // Try each provider with explicit indexing for provider rotation
+    for (const [_providerAttempt] of this.providers.entries()) {
       const provider = this.providers[this.currentProviderIndex];
 
       // Try with retries for current provider
@@ -202,13 +197,8 @@ export class ResilientAI {
     const { prompt, schema, maxRetries = RETRY_LIMITS.DEFAULT_MAX_ATTEMPTS, retryDelay = 1000 } = options;
     let lastError: Error | null = null;
 
-    // Try each provider with retries
-    // eslint-disable-next-line @typescript-eslint/prefer-for-of
-    for (
-      let providerAttempt = 0;
-      providerAttempt < this.providers.length;
-      providerAttempt++
-    ) {
+    // Try each provider with retries using explicit indexing for provider rotation
+    for (const [_providerAttempt] of this.providers.entries()) {
       const provider = this.providers[this.currentProviderIndex];
 
       // Try with retries for current provider

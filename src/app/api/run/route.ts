@@ -44,8 +44,8 @@ function isValidRunRequest(body: unknown): body is RunRequestBody {
 }
 
 // Type-cast the imported JSON to SpecPack once at module level
-// TODO: This `as` cast is necessary due to TypeScript's JSON import limitations
-// The pack is validated at runtime via assertValidSpecPack()
+// This cast is necessary due to TypeScript's JSON import limitations
+// The pack is validated at runtime via assertValidSpecPack() to ensure type safety
 const pack: SpecPack = packData as SpecPack;
 
 // Constants for magic numbers
