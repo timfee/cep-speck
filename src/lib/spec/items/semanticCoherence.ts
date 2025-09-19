@@ -120,7 +120,7 @@ Based on the sections above, validate the following rules and provide your reaso
         itemId,
         severity: "warn",
         message: "Semantic coherence check could not be performed.",
-        evidence: (error as Error).message
+        evidence: error instanceof Error ? error.message : String(error)
     }];
   }
 }

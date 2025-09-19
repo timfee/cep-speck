@@ -107,7 +107,7 @@
       "severity": "error",
       "params": {
         "require": ["units", "timeframe", "SoT"],
-        "metricRegex": "^M-d+s*|"
+        "metricRegex": "^M-\\d+\\s*"
       }
     },
     {

@@ -61,7 +61,13 @@ ${textToAnalyze}
 
   } catch (error) {
     console.warn("AdoptionRealism AI validation failed:", error);
-    return [];
+    return [{
+      id: "adoption-realism-ai-validation-failed",
+      itemId,
+      severity: "warn",
+      message: `AI validation failed: ${error instanceof Error ? error.message : String(error)}`,
+      evidence: "",
+    }];
   }
 }
 
