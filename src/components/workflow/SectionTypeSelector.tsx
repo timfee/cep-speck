@@ -70,7 +70,7 @@ export function SectionTypeSelector({
       
       <div className="grid gap-3 md:grid-cols-2">
         {sections.map((section) => {
-          const Icon = iconMap[section.icon] || FileText;
+          const Icon = iconMap[section.icon] ?? FileText;
           const isSelected = selectedSections.includes(section.id);
           
           return (

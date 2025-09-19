@@ -21,6 +21,13 @@ export const RETRY_LIMITS = {
   EXTENDED_RETRIES: 12,
 } as const;
 
+// Circuit breaker constants
+export const CIRCUIT_BREAKER = {
+  FAILURE_THRESHOLD: 5,
+  RECOVERY_TIMEOUT: 60000, // 1 minute
+  SUCCESS_THRESHOLD: 2,
+} as const;
+
 // Size limits and thresholds
 export const SIZE_LIMITS = {
   BUFFER_SIZE: 1024,
@@ -30,6 +37,12 @@ export const SIZE_LIMITS = {
   TEXTAREA_LINES: 16,
   COMPACT_LINES: 10,
   EXPANDED_LINES: 30,
+} as const;
+
+// Word budget constants  
+export const WORD_BUDGET = {
+  MINIMUM_BUDGET: 1400,
+  TARGET_BUDGET: 1800,
 } as const;
 
 // Validation thresholds
@@ -72,13 +85,25 @@ export const UI_CONSTANTS = {
 // Timing constants (in seconds)
 export const TIMING = {
   MINUTE_IN_SECONDS: 60,
+  ISO_DATE_SLICE_LENGTH: 7, // For YYYY-MM format
+  DAYS_PER_WEEK: 7,
+  DAYS_PER_MONTH: 30, // Approximate
+} as const;
+
+// Feasibility thresholds
+export const FEASIBILITY_THRESHOLDS = {
+  HIGH_ADOPTION_PERCENTAGE: 80,
+  MINIMUM_ADOPTION_DAYS: 30,
 } as const;
 
 export default {
   TIMEOUTS,
   RETRY_LIMITS,
+  CIRCUIT_BREAKER,
   SIZE_LIMITS,
+  WORD_BUDGET,
   VALIDATION_THRESHOLDS,
   UI_CONSTANTS,
   TIMING,
+  FEASIBILITY_THRESHOLDS,
 } as const;

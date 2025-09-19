@@ -1,6 +1,8 @@
 import { google } from "@ai-sdk/google";
 import { streamText, type CoreMessage, type StreamTextResult } from "ai";
 
+import { CIRCUIT_BREAKER, RETRY_LIMITS } from "@/lib/constants";
+
 /**
  * Abstract AI provider interface for multi-provider architecture
  */
@@ -30,9 +32,9 @@ class CircuitBreaker {
   private nextAttempt = Date.now();
 
   constructor(
-    private readonly failureThreshold: number = 5,
-    private readonly recoveryTimeout: number = 60000, // 1 minute
-    private readonly successThreshold: number = 2
+    private readonly failureThreshold: number = CIRCUIT_BREAKER.FAILURE_THRESHOLD,
+    private readonly recoveryTimeout: number = CIRCUIT_BREAKER.RECOVERY_TIMEOUT,
+    private readonly successThreshold: number = CIRCUIT_BREAKER.SUCCESS_THRESHOLD
   ) {}
 
   async execute<T>(operation: () => Promise<T>): Promise<T> {
@@ -85,7 +87,7 @@ class GeminiProvider implements AIProvider {
   async generate(
     messages: CoreMessage[]
   ): Promise<StreamTextResult<Record<string, never>, never>> {
-    return this.circuitBreaker.execute(async () => {
+    return this.circuitBreaker.execute(() => {
       return streamText({
         model: google("gemini-2.5-pro"),
         messages,
@@ -100,7 +102,7 @@ class GeminiProvider implements AIProvider {
 
     try {
       // Simple health check
-      await this.circuitBreaker.execute(async () => {
+      await this.circuitBreaker.execute(() => {
         return streamText({
           model: google("gemini-2.5-pro"),
           messages: [{ role: "user", content: "Hi" }],
@@ -128,17 +130,13 @@ export class ResilientAI {
 
   async generateWithFallback(
     messages: CoreMessage[],
-    maxRetries: number = 3,
+    maxRetries: number = RETRY_LIMITS.DEFAULT_MAX_ATTEMPTS,
     retryDelay: number = 1000
   ): Promise<StreamTextResult<Record<string, never>, never>> {
     let lastError: Error | null = null;
 
     // Try each provider
-    for (
-      let providerAttempt = 0;
-      providerAttempt < this.providers.length;
-      providerAttempt++
-    ) {
+    for (let providerAttempt = 0; providerAttempt < this.providers.length; providerAttempt++) {
       const provider = this.providers[this.currentProviderIndex];
 
       // Try with retries for current provider
@@ -200,9 +198,7 @@ export class ResilientAI {
 let resilientAI: ResilientAI | null = null;
 
 export function getResilientAI(): ResilientAI {
-  if (!resilientAI) {
-    resilientAI = new ResilientAI();
-  }
+  resilientAI ??= new ResilientAI();
   return resilientAI;
 }
 

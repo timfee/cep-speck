@@ -1,3 +1,5 @@
+import { TIMING } from "@/lib/constants";
+
 export interface CompetitorInfo {
   vendor: string;
   onboardingDefaults?: string;
@@ -26,7 +28,7 @@ export async function performCompetitorResearch(
   
   for (const vendor of vendors) {
     try {
-      const competitorInfo = await searchCompetitorInfo(vendor);
+      const competitorInfo = searchCompetitorInfo(vendor);
       result.competitors.push(competitorInfo);
       
       if (competitorInfo.source) {
@@ -65,8 +67,8 @@ export function synthesizeCompetitiveSnapshot(competitors: CompetitorInfo[]): st
   return `A brief competitive snapshot indicates that enterprise browsers such as ${vendorNames} focus on different approaches to enterprise management and security controls.`;
 }
 
-export async function searchCompetitorInfo(vendor: string): Promise<CompetitorInfo> {
-  const timestamp = new Date().toISOString().slice(0, 7);
+export function searchCompetitorInfo(vendor: string): CompetitorInfo {
+  const timestamp = new Date().toISOString().slice(0, TIMING.ISO_DATE_SLICE_LENGTH);
   
   return {
     vendor,

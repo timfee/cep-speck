@@ -37,7 +37,7 @@ export function StructuredPrdWizard({ onTraditionalMode }: StructuredPrdWizardPr
         state.contentOutline.functionalRequirements.length === 0) {
       generateContentOutlineForPrompt(state.initialPrompt);
     }
-  }, [state.currentStep, state.initialPrompt, state.contentOutline.functionalRequirements.length]);
+  }, [state.currentStep, state.initialPrompt, state.contentOutline.functionalRequirements.length, generateContentOutlineForPrompt]);
 
   const handleNext = () => {
     if (state.currentStep === 'idea' && state.progress.canGoNext) {

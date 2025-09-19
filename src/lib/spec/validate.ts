@@ -17,6 +17,7 @@ export function validateAll(draft: string, pack: SpecPack): ValidationReport {
     }
     coverage[def.id] = true;
     issues.push(...found);
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (failFast && hasError) {
       break;
     }

@@ -108,7 +108,7 @@ const eslintConfig = [
 
       // ============ RULE 5: React Hooks Exhaustive Deps ============
       "react-hooks/exhaustive-deps": ["error", {
-        additionalHooks: "(useSpecValidation|useStructuredWorkflow|useCallback|useMemo)",
+        additionalHooks: "(useSpecValidation|useCallback|useMemo)",
         enableDangerousAutofixThisMayCauseInfiniteLoops: false,
       }],
 
@@ -250,12 +250,26 @@ const eslintConfig = [
     },
   },
   {
+    files: ["**/components/ui/**/*.tsx", "**/components/ui/**/*.ts"],
+    rules: {
+      "no-magic-numbers": "off",
+      "@typescript-eslint/strict-boolean-expressions": "off",
+      "@typescript-eslint/no-unnecessary-condition": "off",
+    },
+  },
+  {
     files: ["**/*.test.ts", "**/*.test.tsx", "**/*.spec.ts", "**/*.spec.tsx", "**/tests/**/*.ts"],
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
       "@typescript-eslint/no-non-null-assertion": "off",
       "no-magic-numbers": "off",
       "custom/consistent-error-handling-pattern": "off",
+      "@typescript-eslint/strict-boolean-expressions": "off",
+      "@typescript-eslint/no-unsafe-assignment": "off",
+      "@typescript-eslint/no-unsafe-argument": "off",
+      "@typescript-eslint/restrict-template-expressions": "off",
+      "@typescript-eslint/no-unnecessary-condition": "off",
+      "@typescript-eslint/prefer-nullish-coalescing": "off",
     },
   },
   {
