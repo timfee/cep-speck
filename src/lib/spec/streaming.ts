@@ -4,15 +4,15 @@ import type { StreamFrame, StreamPhase, ValidationReport } from "./types";
  * Utility functions for structured streaming protocol
  */
 
-export function createStreamFrame<T extends StreamFrame['type']>(
+export function createStreamFrame<T extends StreamFrame["type"]>(
   type: T,
-  data: Extract<StreamFrame, { type: T }>['data']
+  data: Extract<StreamFrame, { type: T }>["data"]
 ): StreamFrame {
   return { type, data } as StreamFrame;
 }
 
 export function encodeStreamFrame(frame: StreamFrame): Uint8Array {
-  return new TextEncoder().encode(JSON.stringify(frame) + '\n');
+  return new TextEncoder().encode(JSON.stringify(frame) + "\n");
 }
 
 export function createPhaseFrame(
@@ -20,11 +20,11 @@ export function createPhaseFrame(
   attempt: number,
   message?: string
 ): StreamFrame {
-  return createStreamFrame('phase', {
+  return createStreamFrame("phase", {
     phase,
     attempt,
     timestamp: Date.now(),
-    message
+    message,
   });
 }
 
@@ -33,10 +33,10 @@ export function createGenerationFrame(
   total: string,
   tokenCount?: number
 ): StreamFrame {
-  return createStreamFrame('generation', {
+  return createStreamFrame("generation", {
     delta,
     total,
-    tokenCount
+    tokenCount,
   });
 }
 
@@ -44,9 +44,9 @@ export function createValidationFrame(
   report: ValidationReport,
   duration?: number
 ): StreamFrame {
-  return createStreamFrame('validation', {
+  return createStreamFrame("validation", {
     report,
-    duration
+    duration,
   });
 }
 
@@ -56,11 +56,11 @@ export function createErrorFrame(
   code?: string,
   details?: unknown
 ): StreamFrame {
-  return createStreamFrame('error', {
+  return createStreamFrame("error", {
     message,
     recoverable,
     code,
-    details
+    details,
   });
 }
 
@@ -70,11 +70,11 @@ export function createResultFrame(
   totalAttempts: number,
   totalDuration: number
 ): StreamFrame {
-  return createStreamFrame('result', {
+  return createStreamFrame("result", {
     success,
     finalDraft,
     totalAttempts,
-    totalDuration
+    totalDuration,
   });
 }
 
@@ -89,11 +89,16 @@ export class StreamingError extends Error {
     public details?: unknown
   ) {
     super(message);
-    this.name = 'StreamingError';
+    this.name = "StreamingError";
   }
 
   toStreamFrame(): StreamFrame {
-    return createErrorFrame(this.message, this.recoverable, this.code, this.details);
+    return createErrorFrame(
+      this.message,
+      this.recoverable,
+      this.code,
+      this.details
+    );
   }
 }
 
@@ -105,13 +110,13 @@ export function withErrorRecovery<T>(
     if (error instanceof StreamingError) {
       throw error;
     }
-    
+
     // Convert unknown errors to StreamingError
     const message = error instanceof Error ? error.message : String(error);
     throw new StreamingError(
       `${operationName} failed: ${message}`,
       true, // Most errors are recoverable by default
-      error instanceof Error ? error.name : 'UnknownError',
+      error instanceof Error ? error.name : "UnknownError",
       error
     );
   });

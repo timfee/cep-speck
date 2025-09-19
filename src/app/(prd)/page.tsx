@@ -1,32 +1,34 @@
-'use client';
+"use client";
 
-import { useCallback, useRef, useState } from 'react';
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
 import type { Issue, StreamFrame } from "@/lib/spec/types";
+import { useCallback, useRef, useState } from "react";
 
 export default function Page() {
-  const [spec, setSpec] = useState<string>('Project: Example\nTarget SKU: premium\n\n');
+  const [spec, setSpec] = useState<string>(
+    "Project: Example\nTarget SKU: premium\n\n"
+  );
   const [streaming, setStreaming] = useState(false);
-  const [phase, setPhase] = useState<string>('');
+  const [phase, setPhase] = useState<string>("");
   const [attempt, setAttempt] = useState<number>(0);
-  const [draft, setDraft] = useState<string>('');
+  const [draft, setDraft] = useState<string>("");
   const [issues, setIssues] = useState<Issue[]>([]);
-  const textRef = useRef<string>('');
+  const textRef = useRef<string>("");
 
   const run = useCallback(async () => {
     setStreaming(true);
-    setDraft('');
-    textRef.current = '';
+    setDraft("");
+    textRef.current = "";
     setIssues([]);
-    setPhase('starting');
+    setPhase("starting");
     setAttempt(1);
 
-    const res = await fetch('/api/run', {
-      method: 'POST',
+    const res = await fetch("/api/run", {
+      method: "POST",
       body: JSON.stringify({ specText: spec }),
     });
 
@@ -41,15 +43,34 @@ export default function Page() {
       const { value, done } = await reader.read();
       if (done) break;
       const chunk = decoder.decode(value);
-      for (const line of chunk.split('\n')) {
+      for (const line of chunk.split("\n")) {
         if (!line.trim()) continue;
         let obj: StreamFrame;
-        try { obj = JSON.parse(line); } catch { continue; }
-        if (obj.type === 'phase') { setPhase(obj.data.phase); setAttempt(obj.data.attempt); }
-        if (obj.type === 'generation') { textRef.current += obj.data.delta; setDraft(textRef.current); }
-        if (obj.type === 'validation') { setIssues(obj.data.report.issues ?? []); }
-        if (obj.type === 'result') { setDraft(obj.data.finalDraft); }
-        if (obj.type === 'error') { setPhase('error'); setDraft(`Error: ${obj.data.message}`); setStreaming(false); break; }
+        try {
+          obj = JSON.parse(line);
+        } catch {
+          continue;
+        }
+        if (obj.type === "phase") {
+          setPhase(obj.data.phase);
+          setAttempt(obj.data.attempt);
+        }
+        if (obj.type === "generation") {
+          textRef.current += obj.data.delta;
+          setDraft(textRef.current);
+        }
+        if (obj.type === "validation") {
+          setIssues(obj.data.report.issues ?? []);
+        }
+        if (obj.type === "result") {
+          setDraft(obj.data.finalDraft);
+        }
+        if (obj.type === "error") {
+          setPhase("error");
+          setDraft(`Error: ${obj.data.message}`);
+          setStreaming(false);
+          break;
+        }
       }
     }
     setStreaming(false);
@@ -59,26 +80,37 @@ export default function Page() {
     <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
       <Card className="p-4 space-y-3">
         <h2 className="text-lg font-semibold">Spec</h2>
-        <Textarea value={spec} onChange={(e) => setSpec(e.target.value)} rows={16} />
-        <Button onClick={run} disabled={streaming}>Run</Button>
+        <Textarea
+          value={spec}
+          onChange={(e) => setSpec(e.target.value)}
+          rows={16}
+        />
+        <Button onClick={run} disabled={streaming}>
+          Run
+        </Button>
         <div className="flex items-center gap-3">
-          <Badge 
+          <Badge
             variant={
-              phase === 'generating' ? 'default' : 
-              phase === 'validating' ? 'secondary' : 
-              phase === 'healing' ? 'outline' : 
-              phase === 'done' ? 'default' : 
-              phase === 'error' ? 'destructive' : 
-              'secondary'
-            } 
+              phase === "generating"
+                ? "default"
+                : phase === "validating"
+                ? "secondary"
+                : phase === "healing"
+                ? "outline"
+                : phase === "done"
+                ? "default"
+                : phase === "error"
+                ? "destructive"
+                : "secondary"
+            }
             className="text-base px-4 py-2 font-medium"
           >
-            {phase === 'generating' && '🔄 Generating'}
-            {phase === 'validating' && '🔍 Validating'}
-            {phase === 'healing' && '🩹 Healing'}
-            {phase === 'done' && '✅ Complete'}
-            {phase === 'error' && '❌ Error'}
-            {!phase && '⏸️ Ready'}
+            {phase === "generating" && "🔄 Generating"}
+            {phase === "validating" && "🔍 Validating"}
+            {phase === "healing" && "🩹 Healing"}
+            {phase === "done" && "✅ Complete"}
+            {phase === "error" && "❌ Error"}
+            {!phase && "⏸️ Ready"}
           </Badge>
           <Badge variant="outline" className="text-sm px-3 py-1">
             Attempt: {attempt || 0}
@@ -92,13 +124,16 @@ export default function Page() {
         <Separator />
         <h3 className="text-md font-medium">Issues</h3>
         <div className="space-y-2">
-          {issues.length === 0 ? <div className="text-sm text-muted-foreground">None</div> :
+          {issues.length === 0 ? (
+            <div className="text-sm text-muted-foreground">None</div>
+          ) : (
             issues.map((it, idx) => (
               <div key={idx} className="text-sm">
                 <Badge className="mr-2">{it.itemId}</Badge>
                 {it.message}
               </div>
-            ))}
+            ))
+          )}
         </div>
       </Card>
     </div>

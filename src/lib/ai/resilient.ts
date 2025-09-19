@@ -1,12 +1,14 @@
-import { google } from '@ai-sdk/google';
-import { streamText, type StreamTextResult, type CoreMessage } from 'ai';
+import { google } from "@ai-sdk/google";
+import { streamText, type CoreMessage, type StreamTextResult } from "ai";
 
 /**
  * Abstract AI provider interface for multi-provider architecture
  */
 export interface AIProvider {
   name: string;
-  generate(messages: CoreMessage[]): Promise<StreamTextResult<Record<string, never>, never>>;
+  generate(
+    messages: CoreMessage[]
+  ): Promise<StreamTextResult<Record<string, never>, never>>;
   isAvailable(): Promise<boolean>;
 }
 
@@ -14,9 +16,9 @@ export interface AIProvider {
  * Circuit breaker states
  */
 enum CircuitState {
-  CLOSED = 'closed',
-  OPEN = 'open', 
-  HALF_OPEN = 'half-open'
+  CLOSED = "closed",
+  OPEN = "open",
+  HALF_OPEN = "half-open",
 }
 
 /**
@@ -26,7 +28,7 @@ class CircuitBreaker {
   private state = CircuitState.CLOSED;
   private failureCount = 0;
   private nextAttempt = Date.now();
-  
+
   constructor(
     private readonly failureThreshold: number = 5,
     private readonly recoveryTimeout: number = 60000, // 1 minute
@@ -36,7 +38,11 @@ class CircuitBreaker {
   async execute<T>(operation: () => Promise<T>): Promise<T> {
     if (this.state === CircuitState.OPEN) {
       if (Date.now() < this.nextAttempt) {
-        throw new Error(`Circuit breaker is OPEN. Next attempt at ${new Date(this.nextAttempt).toISOString()}`);
+        throw new Error(
+          `Circuit breaker is OPEN. Next attempt at ${new Date(
+            this.nextAttempt
+          ).toISOString()}`
+        );
       }
       this.state = CircuitState.HALF_OPEN;
     }
@@ -73,13 +79,15 @@ class CircuitBreaker {
  * Gemini AI provider implementation
  */
 class GeminiProvider implements AIProvider {
-  name = 'gemini';
+  name = "gemini";
   private circuitBreaker = new CircuitBreaker();
 
-  async generate(messages: CoreMessage[]): Promise<StreamTextResult<Record<string, never>, never>> {
+  async generate(
+    messages: CoreMessage[]
+  ): Promise<StreamTextResult<Record<string, never>, never>> {
     return this.circuitBreaker.execute(async () => {
       return streamText({
-        model: google('gemini-2.5-pro'),
+        model: google("gemini-2.5-pro"),
         messages,
       });
     });
@@ -89,13 +97,13 @@ class GeminiProvider implements AIProvider {
     if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
       return false;
     }
-    
+
     try {
       // Simple health check
       await this.circuitBreaker.execute(async () => {
         return streamText({
-          model: google('gemini-2.5-pro'),
-          messages: [{ role: 'user', content: 'Hi' }],
+          model: google("gemini-2.5-pro"),
+          messages: [{ role: "user", content: "Hi" }],
         });
       });
       return true;
@@ -126,9 +134,13 @@ export class ResilientAI {
     let lastError: Error | null = null;
 
     // Try each provider
-    for (let providerAttempt = 0; providerAttempt < this.providers.length; providerAttempt++) {
+    for (
+      let providerAttempt = 0;
+      providerAttempt < this.providers.length;
+      providerAttempt++
+    ) {
       const provider = this.providers[this.currentProviderIndex];
-      
+
       // Try with retries for current provider
       for (let retry = 0; retry < maxRetries; retry++) {
         try {
@@ -137,13 +149,21 @@ export class ResilientAI {
             throw new Error(`Provider ${provider.name} is not available`);
           }
 
-          console.log(`Generating with ${provider.name} (attempt ${retry + 1}/${maxRetries})`);
+          console.log(
+            `Generating with ${provider.name} (attempt ${
+              retry + 1
+            }/${maxRetries})`
+          );
           return await provider.generate(messages);
-          
         } catch (error) {
           lastError = error instanceof Error ? error : new Error(String(error));
-          console.warn(`Provider ${provider.name} failed (attempt ${retry + 1}/${maxRetries}):`, lastError.message);
-          
+          console.warn(
+            `Provider ${provider.name} failed (attempt ${
+              retry + 1
+            }/${maxRetries}):`,
+            lastError.message
+          );
+
           // Wait before retry (exponential backoff)
           if (retry < maxRetries - 1) {
             await this.delay(retryDelay * Math.pow(2, retry));
@@ -152,21 +172,24 @@ export class ResilientAI {
       }
 
       // Move to next provider
-      this.currentProviderIndex = (this.currentProviderIndex + 1) % this.providers.length;
+      this.currentProviderIndex =
+        (this.currentProviderIndex + 1) % this.providers.length;
     }
 
     // All providers failed
-    throw new Error(`All AI providers failed. Last error: ${lastError?.message}`);
+    throw new Error(
+      `All AI providers failed. Last error: ${lastError?.message}`
+    );
   }
 
   private delay(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   getProviderStatus(): { name: string; available: boolean }[] {
-    return this.providers.map(provider => ({
+    return this.providers.map((provider) => ({
       name: provider.name,
-      available: false // Would need async check
+      available: false, // Would need async check
     }));
   }
 }
@@ -187,5 +210,5 @@ export function getResilientAI(): ResilientAI {
  * Legacy function for backward compatibility
  */
 export function geminiModel() {
-  return google('gemini-2.5-pro');
+  return google("gemini-2.5-pro");
 }

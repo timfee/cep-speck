@@ -7,16 +7,16 @@ import packData from "@/lib/spec/packs/prd-v1.json";
 import { assertValidSpecPack } from "@/lib/spec/packValidate";
 import { buildSystemPrompt, buildUserPrompt } from "@/lib/spec/prompt";
 import { performSelfReview } from "@/lib/spec/selfReview";
-import { 
-  createPhaseFrame, 
-  createGenerationFrame, 
-  createValidationFrame, 
-  createErrorFrame, 
+import {
+  createErrorFrame,
+  createGenerationFrame,
+  createPhaseFrame,
   createResultFrame,
   createStreamFrame,
+  createValidationFrame,
   encodeStreamFrame,
   StreamingError,
-  withErrorRecovery
+  withErrorRecovery,
 } from "@/lib/spec/streaming";
 import type { SpecPack } from "@/lib/spec/types";
 import { validateAll } from "@/lib/spec/validate";
@@ -68,9 +68,11 @@ export async function POST(req: NextRequest) {
 
         // Phase 1: Load knowledge
         controller.enqueue(
-          encodeStreamFrame(createPhaseFrame("loading-knowledge", 0, "Loading knowledge base"))
+          encodeStreamFrame(
+            createPhaseFrame("loading-knowledge", 0, "Loading knowledge base")
+          )
         );
-        
+
         const knowledgeFiles = await withErrorRecovery(
           () => readKnowledgeDirectory("./knowledge"),
           "Knowledge loading"
@@ -78,16 +80,23 @@ export async function POST(req: NextRequest) {
 
         // Phase 2: Perform research
         controller.enqueue(
-          encodeStreamFrame(createPhaseFrame("performing-research", 0, "Researching competitors"))
+          encodeStreamFrame(
+            createPhaseFrame(
+              "performing-research",
+              0,
+              "Researching competitors"
+            )
+          )
         );
-        
+
         const researchResult = await withErrorRecovery(
-          () => performCompetitorResearch([
-            "Zscaler",
-            "Island", 
-            "Talon",
-            "Microsoft Edge for Business",
-          ]),
+          () =>
+            performCompetitorResearch([
+              "Zscaler",
+              "Island",
+              "Talon",
+              "Microsoft Edge for Business",
+            ]),
           "Competitor research"
         );
 
@@ -127,13 +136,19 @@ export async function POST(req: NextRequest) {
         let attempt = 0;
         let finalDraft = "";
         let totalTokens = 0;
-        
+
         while (attempt < maxAttempts) {
           attempt++;
-          
+
           // Phase 3: Generate content
           controller.enqueue(
-            encodeStreamFrame(createPhaseFrame("generating", attempt, `Generating content (attempt ${attempt}/${maxAttempts})`))
+            encodeStreamFrame(
+              createPhaseFrame(
+                "generating",
+                attempt,
+                `Generating content (attempt ${attempt}/${maxAttempts})`
+              )
+            )
           );
 
           const result = await ai.generateWithFallback(messages);
@@ -142,7 +157,9 @@ export async function POST(req: NextRequest) {
           for await (const delta of result.textStream) {
             draftContent += delta;
             controller.enqueue(
-              encodeStreamFrame(createGenerationFrame(delta, draftContent, ++totalTokens))
+              encodeStreamFrame(
+                createGenerationFrame(delta, draftContent, ++totalTokens)
+              )
             );
           }
 
@@ -152,11 +169,17 @@ export async function POST(req: NextRequest) {
           // Phase 4: Validate content
           const validationStartTime = Date.now();
           controller.enqueue(
-            encodeStreamFrame(createPhaseFrame("validating", attempt, "Running validation checks"))
+            encodeStreamFrame(
+              createPhaseFrame(
+                "validating",
+                attempt,
+                "Running validation checks"
+              )
+            )
           );
-          
+
           const report = validateAll(draft, pack);
-          
+
           const validationDuration = Date.now() - validationStartTime;
           controller.enqueue(
             encodeStreamFrame(createValidationFrame(report, validationDuration))
@@ -165,12 +188,16 @@ export async function POST(req: NextRequest) {
           if (report.ok) {
             finalDraft = draft;
             const totalDuration = Date.now() - startTime;
-            
+
             controller.enqueue(
-              encodeStreamFrame(createPhaseFrame("done", attempt, "Content generation complete"))
+              encodeStreamFrame(
+                createPhaseFrame("done", attempt, "Content generation complete")
+              )
             );
             controller.enqueue(
-              encodeStreamFrame(createResultFrame(true, finalDraft, attempt, totalDuration))
+              encodeStreamFrame(
+                createResultFrame(true, finalDraft, attempt, totalDuration)
+              )
             );
             break;
           }
@@ -178,7 +205,13 @@ export async function POST(req: NextRequest) {
           // Phase 5: AI self-review phase for filtering false positives
           const selfReviewStartTime = Date.now();
           controller.enqueue(
-            encodeStreamFrame(createPhaseFrame("self-reviewing", attempt, "Filtering validation issues"))
+            encodeStreamFrame(
+              createPhaseFrame(
+                "self-reviewing",
+                attempt,
+                "Filtering validation issues"
+              )
+            )
           );
 
           let issuesToHeal = report.issues;
@@ -187,26 +220,36 @@ export async function POST(req: NextRequest) {
               draft,
               report.issues
             );
-            
+
             const selfReviewDuration = Date.now() - selfReviewStartTime;
             controller.enqueue(
-              encodeStreamFrame(createStreamFrame('self-review', {
-                confirmed,
-                filtered,
-                duration: selfReviewDuration
-              }))
+              encodeStreamFrame(
+                createStreamFrame("self-review", {
+                  confirmed,
+                  filtered,
+                  duration: selfReviewDuration,
+                })
+              )
             );
 
             // Use confirmed issues for healing
             if (confirmed.length === 0) {
               finalDraft = draft;
               const totalDuration = Date.now() - startTime;
-              
+
               controller.enqueue(
-                encodeStreamFrame(createPhaseFrame("done", attempt, "Content approved after self-review"))
+                encodeStreamFrame(
+                  createPhaseFrame(
+                    "done",
+                    attempt,
+                    "Content approved after self-review"
+                  )
+                )
               );
               controller.enqueue(
-                encodeStreamFrame(createResultFrame(true, finalDraft, attempt, totalDuration))
+                encodeStreamFrame(
+                  createResultFrame(true, finalDraft, attempt, totalDuration)
+                )
               );
               break;
             }
@@ -222,18 +265,26 @@ export async function POST(req: NextRequest) {
 
           // Phase 6: Healing phase
           controller.enqueue(
-            encodeStreamFrame(createPhaseFrame("healing", attempt, `Preparing healing instructions for ${issuesToHeal.length} issues`))
+            encodeStreamFrame(
+              createPhaseFrame(
+                "healing",
+                attempt,
+                `Preparing healing instructions for ${issuesToHeal.length} issues`
+              )
+            )
           );
           const followup = aggregateHealing(issuesToHeal, pack);
-          
+
           controller.enqueue(
-            encodeStreamFrame(createStreamFrame('healing', {
-              instruction: followup,
-              issueCount: issuesToHeal.length,
-              attempt
-            }))
+            encodeStreamFrame(
+              createStreamFrame("healing", {
+                instruction: followup,
+                issueCount: issuesToHeal.length,
+                attempt,
+              })
+            )
           );
-          
+
           messages.push({ role: "assistant", content: draft });
           messages.push({ role: "user", content: followup });
           finalDraft = draft;
@@ -241,10 +292,18 @@ export async function POST(req: NextRequest) {
           if (attempt === maxAttempts) {
             const totalDuration = Date.now() - startTime;
             controller.enqueue(
-              encodeStreamFrame(createPhaseFrame("failed", attempt, `Max attempts reached (${maxAttempts})`))
+              encodeStreamFrame(
+                createPhaseFrame(
+                  "failed",
+                  attempt,
+                  `Max attempts reached (${maxAttempts})`
+                )
+              )
             );
             controller.enqueue(
-              encodeStreamFrame(createResultFrame(false, finalDraft, attempt, totalDuration))
+              encodeStreamFrame(
+                createResultFrame(false, finalDraft, attempt, totalDuration)
+              )
             );
             break;
           }
@@ -252,13 +311,16 @@ export async function POST(req: NextRequest) {
 
         controller.close();
       } catch (e: unknown) {
-        const error = e instanceof StreamingError ? e : new StreamingError(
-          e instanceof Error ? e.message : String(e),
-          false, // Unexpected errors are not recoverable
-          "UNEXPECTED_ERROR",
-          e
-        );
-        
+        const error =
+          e instanceof StreamingError
+            ? e
+            : new StreamingError(
+                e instanceof Error ? e.message : String(e),
+                false, // Unexpected errors are not recoverable
+                "UNEXPECTED_ERROR",
+                e
+              );
+
         controller.enqueue(encodeStreamFrame(error.toStreamFrame()));
         controller.close();
       }

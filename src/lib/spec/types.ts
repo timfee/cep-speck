@@ -1,5 +1,5 @@
-export type Severity = 'error' | 'warn';
-export type ItemKind = 'structure' | 'style' | 'linter' | 'policy';
+export type Severity = "error" | "warn";
+export type ItemKind = "structure" | "style" | "linter" | "policy";
 
 export interface Issue {
   id: string;
@@ -27,11 +27,11 @@ export interface SpecItemDef<P = unknown> {
 
 export interface HealPolicy {
   maxAttempts: number;
-  order: 'by-priority' | 'by-severity-then-priority';
-  groupBy: 'item' | 'theme';
+  order: "by-priority" | "by-severity-then-priority";
+  groupBy: "item" | "theme";
   maxChars?: number;
   includeExamples?: boolean;
-  style?: 'bullets' | 'numbered';
+  style?: "bullets" | "numbered";
 }
 
 export interface CompositionSpec {
@@ -53,73 +53,73 @@ export interface SpecPack {
 }
 
 // Structured streaming protocol types
-export type StreamPhase = 
-  | 'loading-knowledge' 
-  | 'performing-research' 
-  | 'generating' 
-  | 'validating' 
-  | 'self-reviewing' 
-  | 'healing' 
-  | 'done' 
-  | 'failed' 
-  | 'error';
+export type StreamPhase =
+  | "loading-knowledge"
+  | "performing-research"
+  | "generating"
+  | "validating"
+  | "self-reviewing"
+  | "healing"
+  | "done"
+  | "failed"
+  | "error";
 
 export type StreamFrame =
   | {
-      type: 'phase';
-      data: { 
-        phase: StreamPhase; 
-        attempt: number; 
+      type: "phase";
+      data: {
+        phase: StreamPhase;
+        attempt: number;
         timestamp: number;
         message?: string;
       };
     }
-  | { 
-      type: 'generation'; 
-      data: { 
-        delta: string; 
+  | {
+      type: "generation";
+      data: {
+        delta: string;
         total: string;
         tokenCount?: number;
-      }; 
+      };
     }
-  | { 
-      type: 'validation'; 
-      data: { 
+  | {
+      type: "validation";
+      data: {
         report: ValidationReport;
         duration?: number;
-      }; 
+      };
     }
-  | { 
-      type: 'self-review'; 
-      data: { 
-        confirmed: Issue[]; 
+  | {
+      type: "self-review";
+      data: {
+        confirmed: Issue[];
         filtered: Issue[];
         duration?: number;
-      }; 
+      };
     }
-  | { 
-      type: 'healing'; 
-      data: { 
+  | {
+      type: "healing";
+      data: {
         instruction: string;
         issueCount: number;
         attempt: number;
-      }; 
+      };
     }
-  | { 
-      type: 'result'; 
-      data: { 
+  | {
+      type: "result";
+      data: {
         success: boolean;
         finalDraft: string;
         totalAttempts: number;
         totalDuration: number;
-      }; 
+      };
     }
-  | { 
-      type: 'error'; 
-      data: { 
-        message: string; 
+  | {
+      type: "error";
+      data: {
+        message: string;
         recoverable: boolean;
         code?: string;
         details?: unknown;
-      }; 
+      };
     };
