@@ -1,4 +1,5 @@
 import type { Issue } from "../types";
+import { PATTERNS, createHealingBuilder, HEALING_TEMPLATES, voidUnused } from "../helpers";
 
 export const itemId = "executive-quality";
 export type Params = {
@@ -7,19 +8,17 @@ export type Params = {
   banOverExplanation: boolean;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function toPrompt(_params: Params, _pack?: unknown): string {
+  voidUnused(_params, _pack);
   return `Write with executive precision: factual statements, specific metrics with units and timeframes, direct language without over-explanation. Avoid sensationalist claims, empty business speak, or cutesy headings. Each statement should add concrete value.`;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
+  voidUnused(_pack);
   const issues: Issue[] = [];
 
   if (params.enforceFactualTone) {
-    const vagueQuantifiers = draft.match(
-      /\b(many|several|numerous|various|multiple|some|most|few)\s+(?!days|weeks|months|years|minutes|seconds|hours)\w+/gi
-    );
+    const vagueQuantifiers = draft.match(PATTERNS.VAGUE_QUANTIFIERS);
     if (vagueQuantifiers && vagueQuantifiers.length > 3) {
       issues.push({
         id: "vague-quantifiers",
@@ -33,9 +32,7 @@ function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
       });
     }
 
-    const hedgingLanguage = draft.match(
-      /\b(potentially|possibly|might|could|may|perhaps|likely|probably)\s+\w+/gi
-    );
+    const hedgingLanguage = draft.match(PATTERNS.HEDGING_LANGUAGE);
     if (hedgingLanguage && hedgingLanguage.length > 5) {
       issues.push({
         id: "excessive-hedging",
@@ -112,24 +109,15 @@ function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
   }
 
   if (params.banOverExplanation) {
-    const overExplanationPatterns = [
-      /\b(as mentioned|as stated|as discussed|as noted|it should be noted|it is important to note|it is worth noting)\b/gi,
-      /\b(in other words|to put it simply|simply put|to clarify|to elaborate)\b/gi,
-      /\b(this means that|what this means is|the implication is|this implies)\b/gi,
-    ];
-
-    for (const pattern of overExplanationPatterns) {
+    for (const pattern of PATTERNS.OVER_EXPLANATION) {
       const matches = draft.match(pattern);
       if (matches && matches.length > 2) {
         issues.push({
           id: "over-explanation",
           itemId,
           severity: "warn",
-          message:
-            "Over-explanation detected - state facts directly without meta-commentary",
-          evidence: `Found ${matches.length} instances: ${matches
-            .slice(0, 2)
-            .join(", ")}`,
+          message: "Remove explanatory phrases - state facts directly",
+          evidence: `Over-explanation detected: ${matches.slice(0, 2).join(", ")}`,
         });
       }
     }
@@ -143,39 +131,15 @@ function heal(
   _params: Params,
   _pack?: unknown
 ): string | null {
-  void _params;
-  void _pack;
+  voidUnused(_params, _pack);
   if (!issues.length) return null;
 
-  const healingInstructions: string[] = [];
-
-  if (issues.some((i) => i.id === "vague-quantifiers")) {
-    healingInstructions.push(
-      "Replace vague quantifiers with specific numbers, percentages, or ranges"
-    );
-  }
-
-  if (issues.some((i) => i.id === "excessive-hedging")) {
-    healingInstructions.push(
-      "State facts directly; use hedging only for genuine uncertainty"
-    );
-  }
-
-  if (issues.some((i) => i.id === "metrics-missing-units")) {
-    healingInstructions.push(
-      "Add units and timeframes to all metrics (%, ms, minutes, # users, etc.)"
-    );
-  }
-
-  if (issues.some((i) => i.id === "over-explanation")) {
-    healingInstructions.push(
-      "Remove meta-commentary and explanatory phrases; state facts directly"
-    );
-  }
-
-  return healingInstructions.length > 0
-    ? `Enhance executive precision: ${healingInstructions.join("; ")}.`
-    : null;
+  return createHealingBuilder()
+    .addForIssue(issues, "vague-quantifiers", HEALING_TEMPLATES.METRIC_SPECIFICITY)
+    .addForIssue(issues, "excessive-hedging", HEALING_TEMPLATES.REDUCE_HEDGING)
+    .addForIssue(issues, "metrics-missing-units", HEALING_TEMPLATES.METRIC_UNITS)
+    .addForIssue(issues, "over-explanation", HEALING_TEMPLATES.REMOVE_META_COMMENTARY)
+    .build(HEALING_TEMPLATES.EXECUTIVE_PRECISION);
 }
 
 export const itemModule = { itemId, toPrompt, validate, heal };

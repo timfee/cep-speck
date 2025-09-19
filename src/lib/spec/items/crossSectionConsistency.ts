@@ -1,4 +1,5 @@
 import type { Issue } from "../types";
+import { extractSection, PATTERNS, buildConsistencyHealing, voidUnused } from "../helpers";
 
 export const itemId = "cross-section-consistency";
 export type Params = { metricRegex?: string };
@@ -32,19 +33,20 @@ function extractMetrics(block: string, params: Params): Map<string, string> {
   return map;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function toPrompt(_params: Params, _pack?: unknown): string {
+  voidUnused(_params, _pack);
   return "Metrics in TL;DR must exactly match values in Success Metrics section.";
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
+  voidUnused(_pack);
   const issues: Issue[] = [];
-  const tldr = draft.match(/# 1\. TL;DR[\s\S]*?(?=# \d+\.|$)/)?.[0] || "";
-  const success =
-    draft.match(/# 8\. Success Metrics[\s\S]*?(?=# \d+\.|$)/)?.[0] || "";
+  const tldr = extractSection(draft, PATTERNS.TLDR_SECTION);
+  const success = extractSection(draft, PATTERNS.SUCCESS_METRICS_SECTION);
+  
   const a = extractMetrics(tldr, params);
   const b = extractMetrics(success, params);
+  
   for (const [k, v] of a) {
     if (b.has(k) && b.get(k) !== v) {
       issues.push({
@@ -66,14 +68,8 @@ function heal(
   _params?: Params,
   _pack?: unknown
 ): string | null {
-  void _issues;
-  void _params;
-  void _pack;
-  return `Align metric values:
-1. List each metric appearing in both TL;DR and Success Metrics.
-2. For any differing value, prefer the more specific or numerically justified one.
-3. Update the TL;DR for narrative brevity but keep numbers identical to Success Metrics.
-4. Do NOT add new metrics just to force alignment; remove from TL;DR if not a tracked success metric.`;
+  voidUnused(_issues, _params, _pack);
+  return buildConsistencyHealing();
 }
 
 export const itemModule = { itemId, toPrompt, validate, heal };

@@ -1,4 +1,5 @@
 import type { Issue } from "../types";
+import { countSections, HEALING_TEMPLATES, voidUnused } from "../helpers";
 
 export const itemId = "section-count";
 export type Params = {
@@ -8,8 +9,8 @@ export type Params = {
   headerRegex: string;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function toPrompt(params: Params, _pack?: unknown): string {
+  voidUnused(_pack);
   const range =
     params.exact != null
       ? `exactly ${params.exact}`
@@ -17,17 +18,17 @@ function toPrompt(params: Params, _pack?: unknown): string {
   return `Ensure the document has ${range} top-level sections; detect sections using headerRegex: ${params.headerRegex}`;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
-  const rx = new RegExp(params.headerRegex, "gm");
-  const matches = draft.match(rx) ?? [];
-  const count = matches.length;
+  voidUnused(_pack);
+  const count = countSections(draft, params.headerRegex);
   const issues: Issue[] = [];
+  
   const ok =
     (params.exact != null && count === params.exact) ||
     (params.exact == null &&
       (params.min == null || count >= params.min) &&
       (params.max == null || count <= params.max));
+      
   if (!ok) {
     issues.push({
       id: "section-count-mismatch",
@@ -42,14 +43,16 @@ function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
   return issues;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function heal(issues: Issue[], params: Params, _pack?: unknown): string | null {
+  voidUnused(_pack);
   if (!issues.length) return null;
+  
   const range =
     params.exact != null
       ? `exactly ${params.exact}`
       : `${params.min ?? "?"}..${params.max ?? "?"}`;
-  return `Adjust the number of top-level sections to ${range}. Keep compliant sections; add or trim minimally. Maintain header pattern ${params.headerRegex}.`;
+      
+  return HEALING_TEMPLATES.SECTION_COUNT(range, params.headerRegex);
 }
 
 export const itemModule = { itemId, toPrompt, validate, heal };

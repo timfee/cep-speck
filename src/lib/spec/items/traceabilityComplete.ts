@@ -1,4 +1,11 @@
 import type { Issue } from "../types";
+import { 
+  extractSection, 
+  extractBulletPoints, 
+  doesMetricReferenceFeature,
+  buildTraceabilityHealing,
+  voidUnused 
+} from "../helpers";
 
 export const itemId = "traceability-complete";
 // No Params type required
@@ -7,72 +14,15 @@ export const itemId = "traceability-complete";
 const PROBLEM_SUBSTRING_LENGTH = 30;
 
 function section(draft: string, rx: RegExp): string {
-  return draft.match(rx)?.[0] || "";
+  return extractSection(draft, rx);
 }
 
 function bullets(block: string): string[] {
-  return block
-    .split("\n")
-    .map((l) => l.trim())
-    .filter((l) => /^[-*]\s+/.test(l))
-    .map((l) => l.replace(/^[-*]\s+/, ""));
-}
-
-/**
- * Extract meaningful keywords from a feature name for better matching
- */
-function extractFeatureKeywords(featureName: string): string[] {
-  // Remove common words and extract meaningful terms
-  const stopWords = new Set([
-    "the",
-    "a",
-    "an",
-    "and",
-    "or",
-    "but",
-    "in",
-    "on",
-    "at",
-    "to",
-    "for",
-    "of",
-    "with",
-    "by",
-  ]);
-  return featureName
-    .toLowerCase()
-    .replace(/[^\w\s]/g, " ") // Replace punctuation with spaces
-    .split(/\s+/)
-    .filter((word) => word.length > 2 && !stopWords.has(word))
-    .slice(0, 3); // Take up to 3 most significant words
-}
-
-/**
- * Check if a metric references a feature using multiple matching strategies
- */
-function doesMetricReferenceFeature(
-  metric: string,
-  featureName: string
-): boolean {
-  const metricLower = metric.toLowerCase();
-  const featureKeywords = extractFeatureKeywords(featureName);
-
-  // Strategy 1: Check if any significant keyword from feature name appears in metric
-  const keywordMatch = featureKeywords.some((keyword) =>
-    metricLower.includes(keyword)
-  );
-
-  // Strategy 2: Check if first word of feature name appears (original logic as fallback)
-  const firstWordMatch = metricLower.includes(
-    featureName.toLowerCase().split(" ")[0]
-  );
-
-  return keywordMatch || firstWordMatch;
+  return extractBulletPoints(block);
 }
 
 function toPrompt(_params: Record<string, never>, _pack?: unknown): string {
-  void _params;
-  void _pack;
+  voidUnused(_params, _pack);
   return "Ensure every problem maps to a feature and every feature has at least one success metric.";
 }
 
@@ -81,8 +31,7 @@ function validate(
   _params: Record<string, never>,
   _pack?: unknown
 ): Issue[] {
-  void _params;
-  void _pack;
+  voidUnused(_params, _pack);
   const issues: Issue[] = [];
   const problemBlock = section(
     draft,
@@ -144,14 +93,8 @@ function heal(
   _params: Record<string, never>,
   _pack?: unknown
 ): string | null {
-  void _issues;
-  void _params;
-  void _pack;
-  return `Restore problem→feature→metric chain:
-1. For each People Problem bullet, cite it explicitly in at least one feature intro sentence.
-2. For each feature, add at least one Success Metric referencing a distinctive keyword from the feature name.
-3. If a problem is too broad for a single feature, split it and map each part.
-4. If a feature is unmeasured, add a metric describing an observable behavioral or system outcome (latency, error rate, admin hours, security coverage).`;
+  voidUnused(_issues, _params, _pack);
+  return buildTraceabilityHealing();
 }
 
 export type Params = Record<string, never>;
