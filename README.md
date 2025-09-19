@@ -7,7 +7,7 @@ A Next.js application that uses AI to generate and validate Chrome Enterprise Pr
 This application implements the original vision of **modular spec components** where each validation rule is a self-contained module with three key functions:
 
 - **`toPrompt(params, pack)`** - Contributes to the initial AI prompt
-- **`validate(draft, params, pack)`** - Validates the generated content  
+- **`validate(draft, params, pack)`** - Validates the generated content
 - **`heal(issues, params, pack)`** - Provides healing instructions when validation fails
 
 The core concept is to **define validation logic once** so you don't need to adjust AI prompts, code, and linters separately every time you make a change. Each validation item is completely modular and self-contained.
@@ -26,25 +26,31 @@ This ensures high-quality output through deterministic validation with AI-powere
 ## Quick Start
 
 ### Prerequisites
+
 - Node.js (via nvm recommended)
 - npm or pnpm package manager
 
 ### Setup
+
 ```bash
 npm install
 ```
 
 ### Environment
+
 Create `.env.local`:
-```
+
+```env
 GOOGLE_GENERATIVE_AI_API_KEY=your_gemini_api_key_here
 ```
 
 ### Run
+
 ```bash
 npm run dev
 ```
-Open http://localhost:3000
+
+Open `http://localhost:3000`
 
 ## Usage
 
@@ -76,7 +82,7 @@ export function toPrompt(params: Params, pack?: SpecPack): string {
 export function validate(draft: string, params: Params, pack?: SpecPack): Issue[] {
   // Check the generated content and return issues
   const issues: Issue[] = [];
-  
+
   if (/* some condition fails */) {
     issues.push({
       id: 'your-issue-id',
@@ -86,7 +92,7 @@ export function validate(draft: string, params: Params, pack?: SpecPack): Issue[
       evidence: 'Specific text that caused the issue'
     });
   }
-  
+
   return issues;
 }
 
@@ -114,7 +120,9 @@ Finally, add it to your SpecPack configuration in `src/lib/spec/packs/prd-v1.jso
   "kind": "policy",
   "priority": 50,
   "severity": "error",
-  "params": { /* your parameters */ }
+  "params": {
+    /* your parameters */
+  }
 }
 ```
 
@@ -133,7 +141,7 @@ The `src/lib/spec/packs/prd-v1.json` file defines:
 
 - **Validation items** - Which rules to apply and their parameters
 - **Heal policy** - Max attempts, ordering, grouping strategy
-- **Composition** - Section structure and labeling patterns  
+- **Composition** - Section structure and labeling patterns
 - **Globals** - Shared data like banned terms and lexicon
 
 ## Web Research & Knowledge Integration
@@ -141,18 +149,21 @@ The `src/lib/spec/packs/prd-v1.json` file defines:
 The application now supports:
 
 ### Web Research Capabilities
+
 - **Competitor Analysis** - Automated research on enterprise browser vendors
 - **Substantiated Claims** - Web-sourced facts with citations
 - **Fresh Sources** - Configurable recency requirements (default: 365 days)
 - **Citation Management** - Automatic footnote generation
 
 ### Knowledge Directory Integration
+
 - **Hierarchical Structure** - Recursive reading of `./knowledge/*` directories
 - **Multiple Formats** - Support for `.md` and `.txt` files
 - **Search Capabilities** - Content and path-based knowledge search
 - **Graceful Degradation** - Works without knowledge directory present
 
 ### Research Workflow
+
 1. **Knowledge Loading** - Reads local knowledge files if available
 2. **Web Research** - Performs competitor analysis using browser tools
 3. **Context Integration** - Combines knowledge and research into system prompt
@@ -162,18 +173,21 @@ The application now supports:
 ## Key Files
 
 ### Core Architecture
+
 - `src/lib/spec/types.ts` - TypeScript interfaces
 - `src/lib/spec/registry.ts` - Item registration system
 - `src/lib/spec/items/` - Individual validation modules
 - `src/lib/spec/packs/prd-v1.json` - SpecPack configuration
 
-### AI Integration  
+### AI Integration
+
 - `src/lib/ai/provider.ts` - Gemini model configuration
 - `src/lib/spec/prompt.ts` - Prompt building from modular items
 - `src/lib/spec/validate.ts` - Validation orchestration
 - `src/lib/spec/healing/aggregate.ts` - Healing instruction aggregation
 
 ### API & UI
+
 - `src/app/api/run/route.ts` - Main API endpoint with streaming NDJSON
 - `src/app/(prd)/page.tsx` - Main UI component with real-time updates
 
@@ -188,16 +202,19 @@ The application now supports:
 ## Development
 
 ### Linting
+
 ```bash
 npm run lint
 ```
 
 ### Building
+
 ```bash
 npm run build
 ```
 
 ### Testing Changes
+
 1. Start the dev server: `npm run dev`
 2. Test the complete generate-validate-heal workflow
 3. Verify new validation items work as expected
@@ -210,8 +227,9 @@ This application fulfills the original vision of:
 > "I want to define these concepts in code one single time, so I don't need to adjust the AI text prompt, then code, then linter, etc., every time I make a change."
 
 The modular architecture with `toPrompt()`, `validate()`, and `heal()` functions ensures that each validation rule is defined once and automatically contributes to:
+
 - Initial AI prompts
-- Content validation  
+- Content validation
 - Healing instructions
 - Streaming progress updates
 
