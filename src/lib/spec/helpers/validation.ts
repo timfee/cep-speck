@@ -43,7 +43,12 @@ export function extractMetrics(block: string, params: { metricRegex?: string }):
     if (customPattern) {
       // Use custom regex if provided
       const matches = line.match(customPattern);
-      if (matches && matches.length >= VALIDATION_THRESHOLDS.MIN_CAPTURE_GROUPS) {
+      if (
+        matches &&
+        matches.length >= VALIDATION_THRESHOLDS.MIN_CAPTURE_GROUPS &&
+        typeof matches[1] === "string" &&
+        typeof matches[2] === "string"
+      ) {
         const key = matches[1].trim().toLowerCase();
         const value = matches[2].trim();
         if (key && value) {

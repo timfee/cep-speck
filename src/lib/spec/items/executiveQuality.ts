@@ -49,9 +49,10 @@ function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
     }
 
     const qualityTheaterTerms = ["NPS", "Net Promoter Score", "satisfaction score", "happiness index", "engagement score"];
-    const inventedMetrics = qualityTheaterTerms.filter(term => {
-      const regex = createWordBoundaryRegex(term, 'gi');
-      return regex.test(draft);
+    // Pre-compile regexes for efficiency
+    const qualityTheaterRegexes = qualityTheaterTerms.map(term => createWordBoundaryRegex(term, 'gi'));
+    const inventedMetrics = qualityTheaterTerms.filter((_term, index) => {
+      return qualityTheaterRegexes[index].test(draft);
     });
     if (inventedMetrics.length > 0) {
       issues.push({

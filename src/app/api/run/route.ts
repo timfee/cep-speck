@@ -103,10 +103,7 @@ export async function POST(req: NextRequest) {
 
         // Validate pack structure
         try {
-          await withErrorRecovery(() => {
-            assertValidSpecPack(pack);
-            return Promise.resolve();
-          }, "SpecPack validation");
+          assertValidSpecPack(pack);
         } catch (error) {
           if (error instanceof StreamingError) {
             safeEnqueue(encodeStreamFrame(error.toStreamFrame()));
