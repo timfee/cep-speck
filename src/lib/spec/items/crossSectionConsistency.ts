@@ -16,7 +16,7 @@ function toPrompt(_params: Params, _pack?: unknown): string {
   return "Metrics in TL;DR must exactly match values in Success Metrics section.";
 }
 
-function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
+async function validate(draft: string, params: Params, _pack?: unknown): Promise<Issue[]> {
   voidUnused(_pack);
   const issues: Issue[] = [];
   const tldr = extractSection(draft, PATTERNS.TLDR_SECTION);
@@ -41,11 +41,11 @@ function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
   return issues;
 }
 
-function heal(
+async function heal(
   _issues?: Issue[],
   _params?: Params,
   _pack?: unknown
-): string | null {
+): Promise<string | null> {
   voidUnused(_issues, _params, _pack);
   return buildConsistencyHealing();
 }

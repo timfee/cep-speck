@@ -19,7 +19,7 @@ function toPrompt(params: Params, _pack?: unknown): string {
   return `Ensure the document has ${range} top-level sections; detect sections using headerRegex: ${params.headerRegex}`;
 }
 
-function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
+async function validate(draft: string, params: Params, _pack?: unknown): Promise<Issue[]> {
   voidUnused(_pack);
   const count = countSections(draft, params.headerRegex);
   const issues: Issue[] = [];
@@ -44,7 +44,7 @@ function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
   return issues;
 }
 
-function heal(issues: Issue[], params: Params, _pack?: unknown): string | null {
+async function heal(issues: Issue[], params: Params, _pack?: unknown): Promise<string | null> {
   voidUnused(_pack);
   if (!issues.length) return null;
 

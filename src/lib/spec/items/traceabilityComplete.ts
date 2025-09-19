@@ -27,11 +27,11 @@ function toPrompt(_params: Record<string, never>, _pack?: unknown): string {
   return "Ensure every problem maps to a feature and every feature has at least one success metric.";
 }
 
-function validate(
+async function validate(
   draft: string,
   _params: Record<string, never>,
   _pack?: unknown
-): Issue[] {
+): Promise<Issue[]> {
   voidUnused(_params, _pack);
   const issues: Issue[] = [];
   const problemBlock = section(
@@ -89,11 +89,11 @@ function validate(
   return issues;
 }
 
-function heal(
+async function heal(
   _issues: Issue[],
   _params: Record<string, never>,
   _pack?: unknown
-): string | null {
+): Promise<string | null> {
   voidUnused(_issues, _params, _pack);
   return buildTraceabilityHealing();
 }

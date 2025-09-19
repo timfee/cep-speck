@@ -9,7 +9,7 @@ function toPrompt(params: Params, pack?: SpecPack): string {
   return "TL;DR must highlight at least half of the core feature set.";
 }
 
-function validate(draft: string, params: Params, pack?: SpecPack): Issue[] {
+async function validate(draft: string, params: Params, pack?: SpecPack): Promise<Issue[]> {
   void params;
   void pack;
   const issues: Issue[] = [];
@@ -56,7 +56,7 @@ function validate(draft: string, params: Params, pack?: SpecPack): Issue[] {
   return issues;
 }
 
-function heal(issues: Issue[], params: Params, pack?: SpecPack): string | null {
+async function heal(issues: Issue[], params: Params, pack?: SpecPack): Promise<string | null> {
   void params;
   void pack;
   if (!issues.length) return null;

@@ -15,7 +15,7 @@ function toPrompt(params: Params, _pack?: unknown): string {
   )}. Identify metric lines by regex: ${params.metricRegex}`;
 }
 
-function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
+async function validate(draft: string, params: Params, _pack?: unknown): Promise<Issue[]> {
   voidUnused(_pack);
   const rx = new RegExp(params.metricRegex, "gm");
   const metricLines = draft.split("\n").filter((l) => rx.test(l));
@@ -48,7 +48,7 @@ function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
   return issues;
 }
 
-function heal(issues: Issue[], params: Params, _pack?: unknown): string | null {
+async function heal(issues: Issue[], params: Params, _pack?: unknown): Promise<string | null> {
   voidUnused(_pack);
   return buildMetricHealing(issues, params);
 }

@@ -7,7 +7,7 @@ function toPrompt(_params: Params, _pack?: unknown): string {
   return "Each feature must state Target SKU (Core | Premium | Both) and premium differentiation rationale.";
 }
 
-function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
+async function validate(draft: string, params: Params, _pack?: unknown): Promise<Issue[]> {
   const issues: Issue[] = [];
   const section =
     draft.match(/# 6\. Functional Requirements[\s\S]*?(?=# 7\.|$)/)?.[0] ?? "";
@@ -46,11 +46,11 @@ function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
   return issues;
 }
 
-function heal(
+async function heal(
   _issues: Issue[],
   _params: Params,
   _pack?: unknown
-): string | null {
+): Promise<string | null> {
   void _issues;
   void _params;
   void _pack;

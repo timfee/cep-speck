@@ -4,7 +4,7 @@ import { invokeItemHeal } from "../registry";
 
 import type { Issue, SpecPack } from "../types";
 
-export function aggregateHealing(draftIssues: Issue[], pack: SpecPack): string {
+export async function aggregateHealing(draftIssues: Issue[], pack: SpecPack): Promise<string> {
   if (!draftIssues.length) return "";
   const key = (i: Issue) => `${i.itemId}::${i.message}`;
   const map = new Map<string, Issue>();
@@ -46,7 +46,7 @@ export function aggregateHealing(draftIssues: Issue[], pack: SpecPack): string {
     const issues = byItem.get(id);
     if (!def || !issues) continue; // Should not happen, but handle gracefully
 
-    const msg = invokeItemHeal(issues, def, pack);
+    const msg = await invokeItemHeal(issues, def, pack);
     if ((msg ?? "").length > 0) chunks.push(`${id}: ${msg}`);
   }
 
