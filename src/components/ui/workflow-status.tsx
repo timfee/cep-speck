@@ -14,72 +14,91 @@ export interface WorkflowStatusProps {
   showAttempt?: boolean;
 }
 
-// Comprehensive phase configuration
-const PHASE_CONFIG = {
+// Define valid phase types
+type WorkflowPhase = 'starting' | 'generating' | 'validating' | 'healing' | 'done' | 'error' | '';
+
+// Comprehensive phase configuration with explicit class mappings
+const PHASE_CONFIG: Record<WorkflowPhase, {
+  status: 'maintenance' | 'degraded' | 'online' | 'offline';
+  spinner: 'ring' | 'infinite' | 'ellipsis' | 'bars' | null;
+  bgColor: string;
+  borderClasses: string;
+  progressClasses: string;
+  label: string;
+  description: string;
+  icon: typeof Loader2;
+}> = {
   'starting': {
-    status: 'maintenance' as const,
-    spinner: 'ring' as const,
-    color: 'blue',
+    status: 'maintenance',
+    spinner: 'ring',
     bgColor: 'bg-blue-50 border-blue-200 text-blue-700',
+    borderClasses: 'border-blue-500',
+    progressClasses: 'bg-blue-100',
     label: 'Initializing',
     description: 'Setting up PRD generation',
     icon: Loader2
   },
   'generating': {
-    status: 'maintenance' as const,
-    spinner: 'infinite' as const,
-    color: 'blue',
+    status: 'maintenance',
+    spinner: 'infinite',
     bgColor: 'bg-blue-50 border-blue-200 text-blue-700',
+    borderClasses: 'border-blue-500',
+    progressClasses: 'bg-blue-100',
     label: 'Generating Content',
     description: 'AI is creating your PRD document',
     icon: Loader2
   },
   'validating': {
-    status: 'degraded' as const,
-    spinner: 'ellipsis' as const,
-    color: 'amber',
+    status: 'degraded',
+    spinner: 'ellipsis',
     bgColor: 'bg-amber-50 border-amber-200 text-amber-700',
+    borderClasses: 'border-amber-500',
+    progressClasses: 'bg-amber-100',
     label: 'Validating Output',
     description: 'Checking against validation rules',
     icon: Clock
   },
   'healing': {
-    status: 'degraded' as const,
-    spinner: 'bars' as const,
-    color: 'amber',
+    status: 'degraded',
+    spinner: 'bars',
     bgColor: 'bg-amber-50 border-amber-200 text-amber-700',
+    borderClasses: 'border-amber-500',
+    progressClasses: 'bg-amber-100',
     label: 'Self-Healing',
     description: 'Correcting identified issues',
     icon: AlertCircle
   },
   'done': {
-    status: 'online' as const,
+    status: 'online',
     spinner: null,
-    color: 'green',
     bgColor: 'bg-green-50 border-green-200 text-green-700',
+    borderClasses: 'border-green-500',
+    progressClasses: 'bg-green-100',
     label: 'Generation Complete',
     description: 'PRD successfully generated and validated',
     icon: CheckCircle
   },
   'error': {
-    status: 'offline' as const,
+    status: 'offline',
     spinner: null,
-    color: 'red',
     bgColor: 'bg-red-50 border-red-200 text-red-700',
+    borderClasses: 'border-red-500',
+    progressClasses: 'bg-red-100',
     label: 'Generation Failed',
     description: 'An error occurred during generation',
     icon: XCircle
   },
   '': {
-    status: 'offline' as const,
+    status: 'offline',
     spinner: null,
-    color: 'gray',
     bgColor: 'bg-gray-50 border-gray-200 text-gray-700',
+    borderClasses: 'border-gray-500',
+    progressClasses: 'bg-gray-100',
     label: 'Ready',
     description: 'Ready to start PRD generation',
     icon: Clock
   }
-} as const;
+};
 
 export function WorkflowStatus({ 
   phase, 
@@ -88,7 +107,7 @@ export function WorkflowStatus({
   className,
   showAttempt = true 
 }: WorkflowStatusProps) {
-  const config = PHASE_CONFIG[phase as keyof typeof PHASE_CONFIG] || PHASE_CONFIG[''];
+  const config = PHASE_CONFIG[phase as WorkflowPhase] || PHASE_CONFIG[''];
   const { spinner, bgColor, label, description, icon: Icon } = config;
 
   return (
@@ -158,7 +177,7 @@ export interface ProgressTimelineProps {
   className?: string;
 }
 
-const TIMELINE_PHASES = ['starting', 'generating', 'validating', 'healing', 'done'];
+const TIMELINE_PHASES: WorkflowPhase[] = ['starting', 'generating', 'validating', 'healing', 'done'];
 
 export function ProgressTimeline({ 
   currentPhase, 
@@ -166,7 +185,7 @@ export function ProgressTimeline({
   maxAttempts = 3, 
   className 
 }: ProgressTimelineProps) {
-  const currentIndex = TIMELINE_PHASES.indexOf(currentPhase);
+  const currentIndex = TIMELINE_PHASES.indexOf(currentPhase as WorkflowPhase);
   
   return (
     <div className={cn("space-y-3", className)}>
@@ -182,7 +201,7 @@ export function ProgressTimeline({
         {TIMELINE_PHASES.map((phase, index) => {
           const isActive = index === currentIndex;
           const isCompleted = index < currentIndex;
-          const config = PHASE_CONFIG[phase as keyof typeof PHASE_CONFIG];
+          const config = PHASE_CONFIG[phase];
           
           return (
             <div key={phase} className="flex items-center">
@@ -192,7 +211,7 @@ export function ProgressTimeline({
                   isCompleted
                     ? "bg-green-500 border-green-500"
                     : isActive
-                    ? `border-${config.color}-500 bg-${config.color}-100`
+                    ? cn(config.borderClasses, config.progressClasses)
                     : "border-gray-300 bg-white"
                 )}
                 animate={isActive ? { scale: [1, 1.2, 1] } : {}}

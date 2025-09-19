@@ -11,7 +11,7 @@ import { TerminalDisplay } from "@/components/ui/typing-text";
 import { MetricsDashboard, type WorkflowMetrics } from "@/components/ui/metrics-dashboard";
 import { useSpecValidation } from "@/hooks/useSpecValidation";
 import type { Issue, StreamFrame } from "@/lib/spec/types";
-import { useCallback, useRef, useState, useEffect } from "react";
+import { useCallback, useRef, useState, useEffect, useMemo } from "react";
 
 export default function Page() {
   const [spec, setSpec] = useState<string>(
@@ -42,16 +42,23 @@ export default function Page() {
     };
   }, [streaming, startTime]);
 
-  // Calculate workflow metrics
-  const workflowMetrics: WorkflowMetrics = {
-    wordCount: draft.split(/\s+/).filter(word => word.length > 0).length,
-    validationScore: issues.length === 0 ? 100 : Math.max(0, 100 - (issues.length * 10)),
-    healingAttempts: Math.max(0, attempt - 1),
-    elapsedTime,
-    issuesFound: issues.length,
-    phase,
-    estimatedCompletion: phase === "generating" ? 30 : phase === "validating" ? 10 : undefined
-  };
+  // Calculate workflow metrics with memoization to avoid expensive recalculations
+  const workflowMetrics: WorkflowMetrics = useMemo(() => {
+    const wordCount = draft ? draft.split(/\s+/).filter(word => word.length > 0).length : 0;
+    const validationScore = issues.length === 0 ? 100 : Math.max(0, 100 - (issues.length * 10));
+    const healingAttempts = Math.max(0, attempt - 1);
+    const estimatedCompletion = phase === "generating" ? 30 : phase === "validating" ? 10 : undefined;
+
+    return {
+      wordCount,
+      validationScore,
+      healingAttempts,
+      elapsedTime,
+      issuesFound: issues.length,
+      phase,
+      estimatedCompletion
+    };
+  }, [draft, issues, attempt, elapsedTime, phase]);
 
   const run = useCallback(async () => {
     setStreaming(true);
