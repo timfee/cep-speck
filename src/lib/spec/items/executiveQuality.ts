@@ -1,5 +1,6 @@
-import type { Issue } from "../types";
 import { PATTERNS, createHealingBuilder, HEALING_TEMPLATES, voidUnused } from "../helpers";
+
+import type { Issue } from "../types";
 
 export const itemId = "executive-quality";
 export type Params = {

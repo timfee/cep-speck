@@ -2,14 +2,15 @@
  * Performance tests for streaming protocol
  */
 
+import { FrameRateTracker, measureMemoryUsage } from '../../src/lib/spec/__tests__/test-utils';
 import {
   createPhaseFrame,
   createGenerationFrame,
   createErrorFrame,
   encodeStreamFrame,
 } from '../../src/lib/spec/streaming';
-import { FrameRateTracker, measureMemoryUsage } from '../../src/lib/spec/__tests__/test-utils';
 import { BrowserCompatibilityChecker, FramePerformanceMonitor } from '../browser/compatibility';
+
 import type { StreamFrame, StreamPhase } from '../../src/lib/spec/types';
 
 describe('Streaming Protocol Performance', () => {
@@ -122,7 +123,7 @@ describe('Streaming Protocol Performance', () => {
       
       // Encode multiple times to simulate sustained load
       for (let round = 0; round < 10; round++) {
-        frames.forEach(frame => encodeStreamFrame(frame));
+        for (const frame of frames) encodeStreamFrame(frame);
       }
 
       const endTime = performance.now();
@@ -145,11 +146,11 @@ describe('Streaming Protocol Performance', () => {
       const afterCreation = measureMemoryUsage();
 
       // Process frames (simulate encoding/decoding)
-      frames.forEach(frame => {
+      for (const frame of frames) {
         const encoded = encodeStreamFrame(frame);
         const decoded = new TextDecoder().decode(encoded);
         JSON.parse(decoded.trim());
-      });
+      }
 
       // Clear frames to allow garbage collection
       frames.length = 0;

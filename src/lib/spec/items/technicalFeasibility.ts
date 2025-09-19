@@ -3,12 +3,12 @@ import type { Issue } from "../types";
 export const itemId = "technical-feasibility";
 export type Params = Record<string, never>;
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+ 
 function toPrompt(_params: Params, _pack?: unknown): string {
   return "Reject impossible percentages (>100%) and flag unrealistic rapid adoption claims.";
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+ 
 function validate(draft: string, _params: Params, _pack?: unknown): Issue[] {
   const issues: Issue[] = [];
 

@@ -1,5 +1,6 @@
-import type { Issue, SpecPack } from "../types";
 import { createWordBoundaryRegex, createFlexibleRegex, HEALING_TEMPLATES, voidUnused } from "../helpers";
+
+import type { Issue, SpecPack } from "../types";
 
 export const itemId = "banned-text";
 export type Params = {

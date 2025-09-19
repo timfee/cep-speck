@@ -1,10 +1,12 @@
 "use client";
 
+import { motion } from "framer-motion";
+import { CheckCircle, AlertCircle, XCircle, Clock, Loader2 } from "lucide-react";
+
 import { Badge } from "@/components/ui/badge";
 import { Spinner } from "@/components/ui/spinner";
-import { CheckCircle, AlertCircle, XCircle, Clock, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
+
 
 export interface WorkflowStatusProps {
   phase: string;

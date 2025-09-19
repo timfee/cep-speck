@@ -1,6 +1,8 @@
-import { geminiModel } from "@/lib/ai/provider";
 import { generateObject } from "ai";
 import { z } from "zod";
+
+import { geminiModel } from "@/lib/ai/provider";
+
 import type { Issue } from "./types";
 
 const SelfReviewSchema = z.object({
@@ -78,7 +80,7 @@ export async function performSelfReview(
     const confirmed: Issue[] = [];
     const filtered: Issue[] = [];
 
-    issues.forEach((issue, index) => {
+    for (const [index, issue] of issues.entries()) {
       if (reviewableIssues.includes(issue)) {
         if (confirmedIndices.has(index)) {
           confirmed.push(issue);
@@ -92,7 +94,7 @@ export async function performSelfReview(
         // Critical errors always confirmed
         confirmed.push(issue);
       }
-    });
+    }
 
     return { confirmed, filtered, reviewResult };
   } catch (error) {

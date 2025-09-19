@@ -1,13 +1,15 @@
 "use client";
 
+import { ChevronDown, FileText } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+
+import { SPEC_TEMPLATES, type SpecTemplateKey } from "@/lib/spec-templates";
 import { cn } from "@/lib/utils";
-import { CopyButton } from "./copy-button";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./tooltip";
+
 import { Badge } from "./badge";
 import { Button } from "./button";
-import { SPEC_TEMPLATES, type SpecTemplateKey } from "@/lib/spec-templates";
-import { ChevronDown, FileText } from "lucide-react";
+import { CopyButton } from "./copy-button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./tooltip";
 
 interface CodeEditorProps {
   value: string;

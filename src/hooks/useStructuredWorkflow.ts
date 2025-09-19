@@ -1,4 +1,7 @@
 import { useState, useCallback, useMemo } from 'react';
+
+import { WORKFLOW_STEPS, DEFAULT_ENTERPRISE_PARAMETERS } from '@/types/workflow';
+
 import type { 
   StructuredWorkflowState, 
   WorkflowStep, 
@@ -6,7 +9,6 @@ import type {
   EnterpriseParameters,
   WorkflowProgress 
 } from '@/types/workflow';
-import { WORKFLOW_STEPS, DEFAULT_ENTERPRISE_PARAMETERS } from '@/types/workflow';
 
 // Validation constants
 export const MIN_PROMPT_LENGTH = 10;
@@ -81,7 +83,7 @@ const generateContentOutline = (prompt: string): ContentOutline => {
       id: 'sm-business-impact',
       name: 'Business Impact',
       description: 'Measurable business value and ROI from product adoption',
-      type: 'business' as const,
+      type: 'adoption' as const,
       target: '15% productivity improvement',
       measurement: 'Time saved per user per week',
       frequency: 'Quarterly'

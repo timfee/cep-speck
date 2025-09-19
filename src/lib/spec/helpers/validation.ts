@@ -2,8 +2,9 @@
  * Common validation utility functions
  */
 
-import type { Issue } from '../types';
 import { PATTERNS } from './constants';
+
+import type { Issue } from '../types';
 
 /**
  * Extract section content using a regex pattern

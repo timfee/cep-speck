@@ -18,10 +18,11 @@ import {
   StreamingError,
   withErrorRecovery,
 } from "@/lib/spec/streaming";
-import type { SpecPack } from "@/lib/spec/types";
 import { validateAll } from "@/lib/spec/validate";
+
+import type { SpecPack } from "@/lib/spec/types";
 import type { CoreMessage } from "ai";
-import { NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
 
 export const runtime = "nodejs";
 

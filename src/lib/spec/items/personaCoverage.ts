@@ -1,5 +1,6 @@
-import type { Issue } from "../types";
 import { PATTERNS, buildPersonaHealing, voidUnused } from "../helpers";
+
+import type { Issue } from "../types";
 
 export const itemId = "persona-coverage";
 export type Params = { personas: string[] };

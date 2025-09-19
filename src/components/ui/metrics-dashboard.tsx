@@ -1,10 +1,11 @@
 "use client";
 
-import { Card } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { Clock, FileText, Target, Zap } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
+
+import { Card } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 export interface WorkflowMetrics {
   wordCount: number;

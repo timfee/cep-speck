@@ -1,10 +1,11 @@
 "use client";
 
+import { Lightbulb, Target, Users, Clock } from 'lucide-react';
 import React from 'react';
+
+import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { CodeEditor } from '@/components/ui/code-editor';
-import { Badge } from '@/components/ui/badge';
-import { Lightbulb, Target, Users, Clock } from 'lucide-react';
 
 interface IdeaCaptureStepProps {
   prompt: string;

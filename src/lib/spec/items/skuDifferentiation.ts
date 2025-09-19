@@ -3,12 +3,12 @@ import type { Issue } from "../types";
 export const itemId = "sku-differentiation";
 export type Params = { targetSku: string };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+ 
 function toPrompt(_params: Params, _pack?: unknown): string {
   return "Each feature must state Target SKU (Core | Premium | Both) and premium differentiation rationale.";
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+ 
 function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
   const issues: Issue[] = [];
   const section =

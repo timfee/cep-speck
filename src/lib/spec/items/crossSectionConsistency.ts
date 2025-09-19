@@ -1,37 +1,10 @@
+import { extractSection, extractMetrics, PATTERNS, buildConsistencyHealing, voidUnused } from "../helpers";
+
 import type { Issue } from "../types";
-import { extractSection, PATTERNS, buildConsistencyHealing, voidUnused } from "../helpers";
+
 
 export const itemId = "cross-section-consistency";
 export type Params = { metricRegex?: string };
-
-function extractMetrics(block: string, params: Params): Map<string, string> {
-  // Extract metrics using pattern: - <metric>: <value> or * <metric>: <value>
-  // The ([^#].*) pattern captures values up to a # character to handle inline comments
-  const map = new Map<string, string>();
-  const defaultPattern = /^[-*]\s+([^:]+):\s+([^#].*)$/;
-  const customPattern = params.metricRegex
-    ? new RegExp(params.metricRegex)
-    : null;
-
-  for (const line of block.split("\n")) {
-    if (customPattern) {
-      // Use custom regex if provided
-      const matches = line.match(customPattern);
-      if (matches && matches.length >= 3) {
-        const key = matches[1]?.trim().toLowerCase();
-        const value = matches[2]?.trim();
-        if (key && value) {
-          map.set(key, value);
-        }
-      }
-    } else {
-      // Use default pattern
-      const m = line.match(defaultPattern);
-      if (m) map.set(m[1].trim().toLowerCase(), m[2].trim());
-    }
-  }
-  return map;
-}
 
 function toPrompt(_params: Params, _pack?: unknown): string {
   voidUnused(_params, _pack);

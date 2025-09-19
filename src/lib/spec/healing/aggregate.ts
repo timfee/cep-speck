@@ -1,4 +1,5 @@
 import { invokeItemHeal } from "../registry";
+
 import type { Issue, SpecPack } from "../types";
 
 export function aggregateHealing(draftIssues: Issue[], pack: SpecPack): string {

@@ -1,13 +1,15 @@
 "use client";
 
+import { AlertTriangle, AlertCircle, Info, Settings, RefreshCw, Clock } from "lucide-react";
 import React, { useState } from "react";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Status, StatusIndicator, StatusLabel } from "@/components/ui/status";
 import { CopyButton } from "@/components/ui/copy-button";
-import { AlertTriangle, AlertCircle, Info, Settings, RefreshCw, Clock } from "lucide-react";
+import { Status, StatusIndicator, StatusLabel } from "@/components/ui/status";
 import { formatErrorForSupport, ERROR_CLASSIFICATIONS } from "@/lib/error/classification";
-import type { ErrorDetails, ErrorSeverityLevels, EnvironmentInfo } from "@/lib/error/types";
+
+import type { ErrorDetails, ErrorSeverityLevels } from "@/lib/error/types";
 
 interface ErrorDisplayProps {
   error: ErrorDetails;
@@ -39,7 +41,7 @@ const ERROR_SEVERITY_STYLES = {
 export function ErrorDisplay({ error, onRetry, onConfigureApi }: ErrorDisplayProps) {
   const [viewLevel, setViewLevel] = useState<'user' | 'technical' | 'support'>('user');
   
-  const classification = ERROR_CLASSIFICATIONS[error.code] || ERROR_CLASSIFICATIONS.UNEXPECTED_ERROR;
+  const classification = ERROR_CLASSIFICATIONS[error.code];
   const severityStyle = ERROR_SEVERITY_STYLES[classification.severity];
   
   // Build error details for progressive disclosure
@@ -66,7 +68,7 @@ export function ErrorDisplay({ error, onRetry, onConfigureApi }: ErrorDisplayPro
         "1. Navigate to the PRD generation page",
         "2. Enter specification text",
         "3. Click 'Run' button",
-        `4. Error occurred during ${error.phase || 'unknown'} phase`
+        `4. Error occurred during ${error.phase ?? 'unknown'} phase`
       ],
       environment: {
         userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'Unknown',

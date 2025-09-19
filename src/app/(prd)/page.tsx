@@ -1,21 +1,23 @@
 "use client";
 
+import { Wand2, Terminal } from "lucide-react";
+import { useCallback, useRef, useState, useEffect, useMemo } from "react";
+
+import { ErrorDisplay, ApiKeyDialog } from "@/components/error";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import { CodeEditor } from "@/components/ui/code-editor";
-import { Status } from "@/components/ui/status";
-import { WorkflowStatus, ProgressTimeline } from "@/components/ui/workflow-status";
-import { TerminalDisplay } from "@/components/ui/typing-text";
 import { MetricsDashboard, type WorkflowMetrics } from "@/components/ui/metrics-dashboard";
-import { ErrorDisplay, ApiKeyDialog } from "@/components/error";
+import { Separator } from "@/components/ui/separator";
+import { Status } from "@/components/ui/status";
+import { TerminalDisplay } from "@/components/ui/typing-text";
+import { WorkflowStatus, ProgressTimeline } from "@/components/ui/workflow-status";
 import { StructuredPrdWizard } from "@/components/workflow/StructuredPrdWizard";
 import { useSpecValidation } from "@/hooks/useSpecValidation";
-import type { Issue, StreamFrame } from "@/lib/spec/types";
+
 import type { ErrorDetails, ErrorCode } from "@/lib/error/types";
-import { useCallback, useRef, useState, useEffect, useMemo } from "react";
-import { Wand2, Terminal } from "lucide-react";
+import type { Issue, StreamFrame } from "@/lib/spec/types";
 
 type Mode = 'structured' | 'traditional';
 

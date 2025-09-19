@@ -61,24 +61,8 @@ export function parseNDJSONStream(data: string): StreamFrame[] {
  */
 export function createTestFrameSequence(): StreamFrame[] {
   return [
-    {
-      type: "phase",
-      data: {
-        phase: "loading-knowledge",
-        attempt: 1,
-        timestamp: Date.now(),
-        message: "Loading knowledge base",
-      },
-    },
-    {
-      type: "phase", 
-      data: {
-        phase: "generating",
-        attempt: 1,
-        timestamp: Date.now(),
-        message: "Generating content",
-      },
-    },
+    createPhaseFrame(/* phase */, /* attempt */, /* message */),
+    createPhaseFrame(/* phase */, /* attempt */, /* message */),
     {
       type: "generation",
       data: {
@@ -95,15 +79,7 @@ export function createTestFrameSequence(): StreamFrame[] {
         tokenCount: 2,
       },
     },
-    {
-      type: "phase",
-      data: {
-        phase: "validating",
-        attempt: 1,
-        timestamp: Date.now(),
-        message: "Running validation checks",
-      },
-    },
+    createPhaseFrame(/* phase */, /* attempt */, /* message */),
     {
       type: "validation",
       data: {
@@ -111,15 +87,7 @@ export function createTestFrameSequence(): StreamFrame[] {
         duration: 100,
       },
     },
-    {
-      type: "phase",
-      data: {
-        phase: "done",
-        attempt: 1,
-        timestamp: Date.now(),
-        message: "Content generation complete",
-      },
-    },
+    createPhaseFrame(/* phase */, /* attempt */, /* message */),
     {
       type: "result",
       data: {
@@ -140,24 +108,8 @@ export function createErrorFrameSequence(
   recoverable: boolean = true
 ): StreamFrame[] {
   return [
-    {
-      type: "phase",
-      data: {
-        phase: "generating",
-        attempt: 1,
-        timestamp: Date.now(),
-        message: "Generating content",
-      },
-    },
-    {
-      type: "error",
-      data: {
-        message: errorMessage,
-        recoverable,
-        code: "TEST_ERROR",
-        details: { testData: true },
-      },
-    },
+    createPhaseFrame(/* phase */, /* attempt */, /* message */),
+    createErrorFrame(/* message */, /* recoverable */, /* code */),
   ];
 }
 

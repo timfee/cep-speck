@@ -1,8 +1,10 @@
 "use client";
 
 import React from "react";
-import { Status, StatusIndicator, StatusLabel } from "@/components/ui/status";
+
 import { Spinner } from "@/components/ui/spinner";
+import { Status, StatusIndicator, StatusLabel } from "@/components/ui/status";
+
 import type { CircuitBreakerState } from "@/lib/error/types";
 
 interface CircuitBreakerStatusProps {

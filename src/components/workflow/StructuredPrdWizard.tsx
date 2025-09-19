@@ -1,14 +1,15 @@
 "use client";
 
+import { ArrowLeft, ArrowRight, Wand2 } from 'lucide-react';
 import React from 'react';
-import { Card } from '@/components/ui/card';
+
 import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import { ProgressTimeline } from '@/components/workflow/ProgressTimeline';
-import { IdeaCaptureStep } from '@/components/workflow/steps/IdeaCaptureStep';
 import { ContentOutlineStep } from '@/components/workflow/steps/ContentOutlineStep';
 import { EnterpriseParametersStep } from '@/components/workflow/steps/EnterpriseParametersStep';
+import { IdeaCaptureStep } from '@/components/workflow/steps/IdeaCaptureStep';
 import { useStructuredWorkflow, MIN_PROMPT_LENGTH } from '@/hooks/useStructuredWorkflow';
-import { ArrowLeft, ArrowRight, Wand2 } from 'lucide-react';
 
 interface StructuredPrdWizardProps {
   onTraditionalMode: () => void;

@@ -1,5 +1,6 @@
-import type { Issue } from "../types";
 import { countSections, HEALING_TEMPLATES, voidUnused } from "../helpers";
+
+import type { Issue } from "../types";
 
 export const itemId = "section-count";
 export type Params = {

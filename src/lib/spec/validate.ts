@@ -1,4 +1,5 @@
 import { invokeItemValidate } from "./registry";
+
 import type { Issue, SpecPack, ValidationReport } from "./types";
 
 export function validateAll(draft: string, pack: SpecPack): ValidationReport {

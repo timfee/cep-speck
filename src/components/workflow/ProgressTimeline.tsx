@@ -1,12 +1,15 @@
 "use client";
 
-import React from 'react';
-import { Progress } from '@/components/ui/progress';
-import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
 import { Check, Circle } from 'lucide-react';
-import type { WorkflowProgress } from '@/types/workflow';
+import React from 'react';
+
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import { cn } from '@/lib/utils';
 import { WORKFLOW_STEPS } from '@/types/workflow';
+
+import type { WorkflowProgress } from '@/types/workflow';
+
 
 interface ProgressTimelineProps {
   progress: WorkflowProgress;

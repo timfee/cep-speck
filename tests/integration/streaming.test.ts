@@ -3,8 +3,8 @@
  */
 
 import { EndToEndTestRunner, IntegrationTestScenarios, ClientFrameProcessor, StreamingAPISimulator } from './end-to-end';
-import { BrowserCompatibilityChecker, BrowserStreamingTester } from '../browser/compatibility';
 import { encodeStreamFrame } from '../../src/lib/spec/streaming';
+import { BrowserCompatibilityChecker, BrowserStreamingTester } from '../browser/compatibility';
 
 describe('Streaming Protocol Integration', () => {
   describe('End-to-End Workflows', () => {
@@ -264,9 +264,9 @@ describe('Streaming Protocol Integration', () => {
       const results = await Promise.all(promises);
 
       // All should succeed
-      results.forEach(result => {
+      for (const result of results) {
         expect(result.success).toBe(true);
-      });
+      }
     });
   });
 });

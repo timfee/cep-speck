@@ -1,5 +1,6 @@
-import type { Issue } from "../types";
 import { PATTERNS, LIMITS, HEALING_TEMPLATES, voidUnused } from "../helpers";
+
+import type { Issue } from "../types";
 
 export const itemId = "placeholder-quality";
 // No Params type required
