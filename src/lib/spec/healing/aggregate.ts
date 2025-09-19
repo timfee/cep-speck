@@ -1,6 +1,8 @@
+import { WORD_BUDGET, FEASIBILITY_THRESHOLDS } from "@/lib/constants";
+
 import { invokeItemHeal } from "../registry";
 
-import type { Issue, SpecPack } from "../types";
+import type { Issue, SpecPack, SpecItemDef } from "../types";
 
 export function aggregateHealing(draftIssues: Issue[], pack: SpecPack): string {
   if (!draftIssues.length) return "";
@@ -65,7 +67,7 @@ export function aggregateHealing(draftIssues: Issue[], pack: SpecPack): string {
     }
     if (content.length > max) {
       content =
-        content.slice(0, max - 80) +
+        content.slice(0, max - FEASIBILITY_THRESHOLDS.HIGH_ADOPTION_PERCENTAGE) +
         "\n- Remaining items will be fixed in the next iteration.";
     }
   }
