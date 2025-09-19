@@ -38,6 +38,7 @@ class ResilientAIProvider implements AIProvider {
 - **Fallbacks**: Provide graceful degradation when AI unavailable
 - **Cost awareness**: Monitor token usage and implement limits
 - **Streaming**: Use streaming responses for real-time feedback
+- **Resilient provider**: All calls to `generateObject` or `streamText` must use an instance from `getResilientAI()`, not the base `geminiModel()`. Use the resilient AI provider for circuit breaker and retry logic.
 
 ### Circuit Breaker Pattern
 

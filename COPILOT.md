@@ -90,15 +90,44 @@ Healing attempts are deterministic, minimal-diff modifications. Avoid semantic i
 
 ## 5. Adding a New Validation Item
 
+**Architecture Overview**
+
+The validation system is a **two-layer async pipeline**:
+
+1. **Deterministic Layer (`kind: 'linter'` or `'structure'`):** Fast, synchronous logic (e.g., regex, word count) that runs first. If it returns an `error`, the pipeline FAILS FAST.
+2. **Semantic Layer (`kind: 'policy'`):** Slow, `async` AI-driven checks that run second. These use `generateObject` to validate meaning, coherence, and realism.
+
+**Adding a New Validation Item**
+
 1. Create file in `src/lib/spec/items/`:
    - Export `itemId`.
    - Implement `toPrompt(params, pack?)` returning single-line imperative rule.
-   - Implement `validate(draft, params, pack?)` returning `Issue[]`.
-   - Optionally implement `heal(issues, params, pack?)` returning instruction string or `null`.
-2. Register in `src/lib/spec/items/index.ts` via `registerItem` with mapping to each function.
-3. Add a `SpecItemDef` entry in relevant pack JSON (e.g. `prd-v1.json`). Fields: `id`, `kind`, `params`, `priority`, `severity`.
-4. Update documentation (this file) if conceptually new.
-5. (Optional) Provide sample failing + passing snippet in issue description or fixture file.
+   - Your `validate` and `heal` functions **MUST** be `async`:
+     ```typescript
+     // src/lib/spec/items/myNewCheck.ts
+     import type { Issue } from "../types";
+     
+     export const itemId = "my-new-check";
+     
+     export function toPrompt(params: any): string {
+       return "This is the prompt fragment.";
+     }
+     
+     export async function validate(draft: string, params: any): Promise<Issue[]> {
+       // validation logic
+       return [];
+     }
+     
+     export async function heal(issues: Issue[]): Promise<string | null> {
+       if (!issues.length) return null;
+       return "Fix the bad word.";
+     }
+     ```
+2. **IMPORTANT:** If your check is semantic (e.g., "is this section logical?"), do NOT add a new validator. Instead, **add your logic to the central `semantic-policy-validator.ts`** module. Add your check to its `MegaValidationSchema` and its `validate` function. This prevents the N+1 AI call bottleneck.
+3. Register your *new* deterministic item in `src/lib/spec/items/index.ts`.
+4. Add your *new* deterministic item to `src/lib/spec/packs/prd-v1.json` with the correct `kind`.
+5. Update documentation (this file) if conceptually new.
+6. (Optional) Provide sample failing + passing snippet in issue description or fixture file.
 
 ### 5.1 Minimal Template
 

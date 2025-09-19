@@ -127,29 +127,16 @@
       }
     },
     {
-      "id": "executive-quality",
+      "id": "semantic-policy-validator",
       "kind": "policy",
-      "priority": 30,
-      "severity": "warn",
+      "priority": 90,
+      "severity": "error",
       "params": {
+        "personas": ["IT Admin", "End User", "Security Team"],
         "enforceFactualTone": true,
         "requireSpecificMetrics": true,
         "banOverExplanation": true
       }
-    },
-    {
-      "id": "adoption-realism",
-      "kind": "policy",
-      "priority": 85,
-      "severity": "warn",
-      "params": {}
-    },
-    {
-      "id": "semantic-coherence",
-      "kind": "policy",
-      "priority": 92,
-      "severity": "error",
-      "params": { "personas": ["IT Admin", "End User", "Security Team"] }
     }
   ]
 }

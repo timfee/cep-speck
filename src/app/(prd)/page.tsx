@@ -20,7 +20,6 @@ import {
   ProgressTimeline,
 } from "@/components/ui/workflow-status";
 import { StructuredPrdWizard } from "@/components/workflow/StructuredPrdWizard";
-import { useSpecValidation } from "@/hooks/useSpecValidation";
 
 import type { ErrorDetails, ErrorCode } from "@/lib/error/types";
 import type { Issue, StreamFrame } from "@/lib/spec/types";
@@ -74,8 +73,51 @@ export default function Page() {
   const [showApiKeyDialog, setShowApiKeyDialog] = useState(false);
   const textRef = useRef<string>("");
 
-  // Real-time spec validation
-  const validation = useSpecValidation(spec);
+  // Real-time spec validation - simple local validation
+  const validation = useMemo(() => {
+    const trimmedSpec = spec.trim();
+    if (!trimmedSpec) {
+      return {
+        issues: ["Specification is empty"],
+        completionScore: 0,
+        estimatedWordCount: 0,
+        suggestedSections: [],
+      };
+    }
+
+    const words = trimmedSpec.split(/\s+/);
+    const hasProject = /^(?:project(?:\s+name)?|name|title)\s*[:=]\s*.+/im.test(trimmedSpec);
+    const hasTargetSku = /^(?:target\s*)?(?:sku|tier|plan|edition)\s*[:=]\s*.+/im.test(trimmedSpec);
+    const hasObjective = /^(?:objective|goal|purpose|aim|intent)\s*[:=]/im.test(trimmedSpec);
+
+    const issues: string[] = [];
+    const MIN_WORDS = 10;
+    const MIN_SUBSTANTIAL_WORDS = 20;
+    const SCORE_INCREMENT = 25;
+    const MAX_SCORE = 100;
+
+    if (!hasProject) issues.push("Missing project name");
+    if (!hasTargetSku) issues.push("Missing target SKU");
+    if (words.length < MIN_WORDS) issues.push("Specification seems too brief");
+
+    const suggestedSections: string[] = [];
+    if (!hasProject) suggestedSections.push("Project: [Your project name]");
+    if (!hasTargetSku) suggestedSections.push("Target SKU: [premium|standard|enterprise]");
+    if (!hasObjective) suggestedSections.push("Objective: [Primary goal]");
+
+    let score = 0;
+    if (hasProject) score += SCORE_INCREMENT;
+    if (hasTargetSku) score += SCORE_INCREMENT;
+    if (words.length >= MIN_SUBSTANTIAL_WORDS) score += SCORE_INCREMENT;
+    if (words.length >= MIN_WORDS) score += SCORE_INCREMENT;
+
+    return {
+      issues,
+      completionScore: Math.min(score, MAX_SCORE),
+      estimatedWordCount: words.length,
+      suggestedSections,
+    };
+  }, [spec]);
 
   // Track elapsed time during streaming
   useEffect(() => {
