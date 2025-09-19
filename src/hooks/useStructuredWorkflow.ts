@@ -393,6 +393,30 @@ export const useStructuredWorkflow = () => {
     [setContentOutline]
   );
 
+  const serializeToSpecText = useCallback((): string => {
+    const { initialPrompt, contentOutline, enterpriseParameters } = state;
+    
+    let specText = `${initialPrompt}\n\n`;
+    specText += `---Enterprise Parameters---\n`;
+    specText += `Target SKU: ${enterpriseParameters.targetSku}\n`;
+    specText += `Deployment: ${enterpriseParameters.deploymentModel}\n`;
+    specText += `Security: ${enterpriseParameters.securityRequirements.join(', ')}\n`;
+    specText += `Integrations: ${enterpriseParameters.integrations.join(', ')}\n\n`;
+
+    specText += `---Content Outline---\n`;
+    specText += `## Features:\n`;
+    for (const fr of contentOutline.functionalRequirements) {
+      specText += `- ${fr.title} (${fr.priority}): ${fr.description}\n`;
+    }
+    
+    specText += `\n## Metrics:\n`;
+    for (const m of contentOutline.successMetrics) {
+      specText += `- ${m.name}: ${m.target ?? m.description}\n`;
+    }
+
+    return specText;
+  }, [state]);
+
   return {
     state: currentState,
     setInitialPrompt,
@@ -409,5 +433,6 @@ export const useStructuredWorkflow = () => {
     goToStep,
     resetWorkflow,
     generateContentOutlineForPrompt,
+    serializeToSpecText,
   };
 };

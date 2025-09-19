@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowLeft, ArrowRight, Wand2 } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -21,6 +21,10 @@ interface StructuredPrdWizardProps {
 export function StructuredPrdWizard({
   onTraditionalMode,
 }: StructuredPrdWizardProps) {
+  const [generatedPrd, setGeneratedPrd] = useState<string>("");
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   const {
     state,
     setInitialPrompt,
@@ -30,10 +34,80 @@ export function StructuredPrdWizard({
     goToPreviousStep,
     resetWorkflow,
     generateContentOutlineForPrompt,
+    serializeToSpecText,
   } = useStructuredWorkflow();
 
   const handleRegenerateOutline = () => {
     generateContentOutlineForPrompt(state.initialPrompt);
+  };
+
+  const handleGeneratePrd = async () => {
+    setIsGenerating(true);
+    setError(null);
+    
+    try {
+      const specText = serializeToSpecText();
+      
+      const response = await fetch("/api/run", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ specText }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to generate PRD: ${response.statusText}`);
+      }
+
+      if (!response.body) {
+        throw new Error("No response body available");
+      }
+
+      const reader = response.body.getReader();
+
+      let accumulatedContent = "";
+      const decoder = new TextDecoder();
+
+      try {
+        // Stream reading pattern: continue until reader signals done
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          const chunk = decoder.decode(value, { stream: true });
+          const lines = chunk.split("\n").filter(line => line.trim());
+
+          for (const line of lines) {
+            try {
+              const frame = JSON.parse(line) as { type: string; data?: { content?: string; draft?: string; message?: string } };
+              if (frame.type === "generation" && frame.data?.content != null) {
+                accumulatedContent += frame.data.content;
+                setGeneratedPrd(accumulatedContent);
+              } else if (frame.type === "result" && frame.data?.draft != null) {
+                setGeneratedPrd(frame.data.draft);
+                accumulatedContent = frame.data.draft;
+              } else if (frame.type === "error") {
+                throw new Error(frame.data?.message ?? "Generation failed");
+              }
+            } catch (parseError) {
+              // Skip invalid JSON lines, but log the error details for debugging
+              console.warn("Failed to parse streaming line:", line, "Error:", parseError);
+            }
+          }
+        }
+      } finally {
+        reader.releaseLock();
+      }
+
+      // Move to completion step
+      goToNextStep();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to generate PRD");
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   // Auto-generate content outline when prompt is ready and we're on outline step
@@ -93,22 +167,69 @@ export function StructuredPrdWizard({
 
       case "generate":
         return (
-          <div className="text-center py-12">
-            <h2 className="text-2xl font-bold mb-4">Generate PRD</h2>
-            <p className="text-muted-foreground">
-              Final PRD generation with content outline and enterprise
-              parameters.
-            </p>
+          <div className="space-y-6">
+            <div className="text-center">
+              <h2 className="text-2xl font-bold mb-4">Generate PRD</h2>
+              <p className="text-muted-foreground mb-6">
+                Ready to generate your comprehensive PRD using the consolidated validation system.
+              </p>
+            </div>
+            
+            {error != null && (
+              <div className="p-4 border border-red-200 bg-red-50 rounded-lg">
+                <p className="text-red-700 text-sm">{error}</p>
+              </div>
+            )}
+            
+            <div className="flex justify-center">
+              <Button
+                onClick={handleGeneratePrd}
+                disabled={isGenerating}
+                size="lg"
+                className="min-w-48"
+              >
+                <Wand2 className="mr-2 h-4 w-4" />
+                {isGenerating ? "Generating..." : "Generate PRD"}
+              </Button>
+            </div>
+            
+            {isGenerating && generatedPrd.length > 0 && (
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Generated Content Preview:</h3>
+                <div className="p-4 border rounded-lg bg-gray-50 max-h-96 overflow-y-auto">
+                  <pre className="whitespace-pre-wrap text-sm">{generatedPrd}</pre>
+                </div>
+              </div>
+            )}
           </div>
         );
 
       case "complete":
         return (
-          <div className="text-center py-12">
-            <h2 className="text-2xl font-bold mb-4">PRD Complete</h2>
-            <p className="text-muted-foreground">
-              Your PRD has been successfully generated and is ready for review.
-            </p>
+          <div className="space-y-6">
+            <div className="text-center">
+              <h2 className="text-2xl font-bold mb-4">PRD Complete</h2>
+              <p className="text-muted-foreground mb-6">
+                Your PRD has been successfully generated using the consolidated semantic validation system.
+              </p>
+            </div>
+            
+            {generatedPrd.length > 0 && (
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <h3 className="text-lg font-semibold">Final PRD:</h3>
+                  <Button
+                    variant="outline"
+                    onClick={() => navigator.clipboard.writeText(generatedPrd)}
+                  >
+                    Copy to Clipboard
+                  </Button>
+                </div>
+                <div className="p-4 border rounded-lg bg-gray-50 max-h-96 overflow-y-auto">
+                  <pre className="whitespace-pre-wrap text-sm">{generatedPrd}</pre>
+                </div>
+              </div>
+            )}
           </div>
         );
 

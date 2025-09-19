@@ -1,7 +1,10 @@
 import { google } from "@ai-sdk/google";
 import { streamText, type CoreMessage, type StreamTextResult } from "ai";
 
+import { AI_MODEL_PRIMARY } from "@/lib/config";
 import { CIRCUIT_BREAKER, RETRY_LIMITS } from "@/lib/constants";
+
+import type { z } from "zod";
 
 /**
  * Abstract AI provider interface for multi-provider architecture
@@ -90,7 +93,7 @@ class GeminiProvider implements AIProvider {
     return await this.circuitBreaker.execute(async () => {
       return Promise.resolve(
         streamText({
-          model: google("gemini-2.5-pro"),
+          model: google(AI_MODEL_PRIMARY),
           messages,
         })
       );
@@ -106,7 +109,7 @@ class GeminiProvider implements AIProvider {
       // Simple health check
       await this.circuitBreaker.execute(async () => {
         const result = streamText({
-          model: google("gemini-2.5-pro"),
+          model: google(AI_MODEL_PRIMARY),
           messages: [{ role: "user", content: "Hi" }],
         });
         // We don't need to wait for the stream, just creating it tests the API
@@ -139,13 +142,8 @@ export class ResilientAI {
   ): Promise<StreamTextResult<Record<string, never>, never>> {
     let lastError: Error | null = null;
 
-    // Try each provider - need index for provider rotation
-    // eslint-disable-next-line @typescript-eslint/prefer-for-of
-    for (
-      let providerAttempt = 0;
-      providerAttempt < this.providers.length;
-      providerAttempt++
-    ) {
+    // Try each provider with explicit indexing for provider rotation
+    for (const [_providerAttempt] of this.providers.entries()) {
       const provider = this.providers[this.currentProviderIndex];
 
       // Try with retries for current provider
@@ -186,6 +184,69 @@ export class ResilientAI {
     // All providers failed
     throw new Error(
       `All AI providers failed. Last error: ${lastError?.message}`
+    );
+  }
+
+  async generateObjectWithFallback<T>(
+    options: {
+      prompt: string;
+      schema: z.ZodSchema<T>;
+      maxRetries?: number;
+      retryDelay?: number;
+    }
+  ): Promise<{ object: T }> {
+    const { prompt, schema, maxRetries = RETRY_LIMITS.DEFAULT_MAX_ATTEMPTS, retryDelay = 1000 } = options;
+    let lastError: Error | null = null;
+
+    // Try each provider with retries using explicit indexing for provider rotation
+    for (const [_providerAttempt] of this.providers.entries()) {
+      const provider = this.providers[this.currentProviderIndex];
+
+      // Try with retries for current provider
+      for (let retry = 0; retry < maxRetries; retry++) {
+        try {
+          const isAvailable = await provider.isAvailable();
+          if (!isAvailable) {
+            throw new Error(`Provider ${provider.name} is not available`);
+          }
+
+          console.log(
+            `Generating object with ${provider.name} (attempt ${
+              retry + 1
+            }/${maxRetries})`
+          );
+          
+          // Use generateObject with the provider's model
+          const { generateObject } = await import("ai");
+          return await generateObject({
+            model: google(AI_MODEL_PRIMARY), // Use centralized model config
+            prompt,
+            schema,
+          });
+        } catch (error) {
+          lastError = error instanceof Error ? error : new Error(String(error));
+          console.warn(
+            `Provider ${provider.name} generateObject failed (attempt ${
+              retry + 1
+            }/${maxRetries}):`,
+            lastError.message
+          );
+
+          // Wait before retry (exponential backoff)
+          if (retry < maxRetries - 1) {
+            await this.delay(retryDelay * Math.pow(2, retry));
+          }
+        }
+      }
+
+      // Move to next provider
+      this.currentProviderIndex =
+        (this.currentProviderIndex + 1) % this.providers.length;
+    }
+
+    // All providers failed
+    throw new Error(
+      `All AI providers failed for generateObject. Last error: ${lastError?.message}`
     );
   }
 

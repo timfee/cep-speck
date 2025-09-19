@@ -63,22 +63,41 @@ module.exports = {
           });
         }
 
-        const validateMatch = text.match(/function\s+validate\s*\(([^)]*)\)/);
-        if (validateMatch && !validateMatch[1].includes("draft")) {
-          context.report({
-            node,
-            message:
-              "validate function must have signature: (draft: string, params: Params, pack?: SpecPack) => Issue[]",
-          });
+        // Check function signatures and async requirement
+        const validateMatch = text.match(/(async\s+)?function\s+validate\s*\(([^)]*)\)/);
+        if (validateMatch) {
+          if (!validateMatch[1]) {
+            context.report({
+              node,
+              message:
+                "validate function must be async: async function validate(...) => Promise<Issue[]>",
+            });
+          }
+          if (!validateMatch[2].includes("draft")) {
+            context.report({
+              node,
+              message:
+                "validate function must have signature: async (draft: string, params: Params, pack?: SpecPack) => Promise<Issue[]>",
+            });
+          }
         }
 
-        const healMatch = text.match(/function\s+heal\s*\(([^)]*)\)/);
-        if (healMatch && !healMatch[1].includes("issues")) {
-          context.report({
-            node,
-            message:
-              "heal function must have signature: (issues: Issue[], params?: Params, pack?: SpecPack) => string | null",
-          });
+        const healMatch = text.match(/(async\s+)?function\s+heal\s*\(([^)]*)\)/);
+        if (healMatch) {
+          if (!healMatch[1]) {
+            context.report({
+              node,
+              message:
+                "heal function must be async: async function heal(...) => Promise<string | null>",
+            });
+          }
+          if (!healMatch[2].includes("issues")) {
+            context.report({
+              node,
+              message:
+                "heal function must have signature: async (issues: Issue[], params?: Params, pack?: SpecPack) => Promise<string | null>",
+            });
+          }
         }
 
         // Check itemModule structure
