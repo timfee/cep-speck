@@ -369,3 +369,48 @@ This repository enforces a strictly deterministic first-pass validation before a
 
 **Rationale**
 Fail-fast + minimal deterministic surface keeps the system predictable and cheap, while optional model filtering prevents overfitting to brittle regexes.
+
+---
+
+## 23. Cascading Copilot Instructions
+
+This repository implements **cascading directory-specific copilot instructions** to provide contextually relevant guidance for different areas of the codebase:
+
+### Instruction Hierarchy
+
+1. **Root Level** (`.github/copilot-instructions.md`): General project setup, development philosophy, pnpm usage
+2. **Core Spec System** (`src/lib/spec/.github/copilot-instructions.md`): Validation orchestration, prompt building, pack management
+3. **Validation Items** (`src/lib/spec/items/.github/copilot-instructions.md`): Deterministic validation patterns, healing functions
+4. **API Layer** (`src/app/.github/copilot-instructions.md`): Next.js patterns, streaming, error handling
+5. **UI Components** (`src/components/.github/copilot-instructions.md`): React patterns, shadcn/ui, accessibility
+
+### Benefits of Cascading Instructions
+
+- **Contextual Relevance**: Get specific guidance based on the code you're working on
+- **Reduced Cognitive Load**: No need to remember which patterns apply where
+- **Consistency**: Enforces consistent patterns within each domain area
+- **Scalability**: Easy to add new domains or update specific areas
+
+### Writing Effective Directory Instructions
+
+**Do:**
+- Focus on domain-specific patterns and anti-patterns
+- Include concrete code examples for the specific area  
+- Reference shared utilities and patterns from parent directories
+- Maintain consistency with overall project philosophy
+
+**Don't:**
+- Duplicate general guidance that's already in parent directories
+- Create conflicting rules between directory levels
+- Over-specify implementation details that could change
+- Ignore the established conventions from this main COPILOT.md file
+
+### Implementation Guidelines
+
+When adding new directory-specific instructions:
+
+1. Create `.github/copilot-instructions.md` in the target directory
+2. Focus on patterns specific to that domain
+3. Reference but don't duplicate parent-level guidance  
+4. Test the instructions by working on representative tasks in that area
+5. Update this section to document new instruction areas

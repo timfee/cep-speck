@@ -27,7 +27,8 @@ This ensures high-quality output through deterministic validation with AI-powere
 
 ### Prerequisites
 
-- Node.js (via nvm recommended)
+- Node.js 20+ (tested with v20.19.5)
+- **pnpm** (enforced via package.json preinstall script)
 - npm or pnpm package manager
 
 ### Setup
@@ -190,6 +191,27 @@ The application now supports:
 
 - `src/app/api/run/route.ts` - Main API endpoint with streaming NDJSON
 - `src/app/(prd)/page.tsx` - Main UI component with real-time updates
+
+## Copilot Instructions & Development Guidance
+
+This repository implements **cascading directory-specific copilot instructions** to provide contextually relevant AI assistance for different areas of the codebase.
+
+### Instruction Hierarchy
+
+- **Root** (`.github/copilot-instructions.md`) - Project setup, development philosophy, pnpm usage
+- **Core Spec** (`src/lib/spec/.github/copilot-instructions.md`) - Validation system architecture
+- **Validation Items** (`src/lib/spec/items/.github/copilot-instructions.md`) - Validation module patterns
+- **API Layer** (`src/app/.github/copilot-instructions.md`) - Next.js streaming and error handling  
+- **UI Components** (`src/components/.github/copilot-instructions.md`) - React and shadcn/ui patterns
+
+### Development Philosophy
+
+- **Deterministic First** - Primary validation must be reproducible and fast-failing
+- **Probabilistic Enhancement** - AI assists with nuanced judgment calls
+- **Idiomatic Code** - Modern TypeScript/React patterns without over-engineering
+- **Package Manager Enforcement** - pnpm-only via preinstall scripts and .npmrc configuration
+
+See `COPILOT.md` for comprehensive validation system documentation.
 
 ## Technology Stack
 

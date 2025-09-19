@@ -4,6 +4,91 @@ A Next.js application that uses AI to generate and validate Chrome Enterprise Pr
 
 **ALWAYS reference these instructions first and fallback to search or bash commands ONLY when you encounter unexpected information that does not match the info here.**
 
+## Development Philosophy & Code Style
+
+### Core Principles
+
+- **Idiomatic**: Write modern, clean TypeScript/React code that follows established patterns
+- **DRY**: Eliminate duplication through shared utilities and composable modules  
+- **Not Over-engineered**: Prefer simple, readable solutions over complex abstractions
+- **Not Hacked Together**: Proper error handling, TypeScript types, and structured architecture
+- **Deterministic First**: Primary validation logic must be predictable and fast-failing
+- **Progressive Enhancement**: Build resilient UIs that work without JavaScript
+
+### TypeScript Standards
+
+- Use strict mode with explicit types (no `any` in production code)
+- Prefer interfaces over type aliases for object shapes
+- Use discriminated unions for state management
+- Implement proper generic constraints and utility types
+- Document complex types with JSDoc comments
+
+### React Patterns
+
+- Use React 19 features appropriately (useOptimistic, useActionState)
+- Implement custom hooks for reusable stateful logic  
+- Prefer composition over inheritance for component design
+- Use error boundaries for graceful failure recovery
+- Optimize performance with React.memo() and useMemo() when needed
+
+## Deterministic vs Probabilistic Guidance
+
+### Deterministic Layer (Always Applied First)
+
+**All validation items must be deterministic and reproducible:**
+
+- Pure functions with no side effects, network calls, or randomness
+- Consistent results given the same input across all environments
+- Fast-failing on error-severity issues to save computational resources
+- Regex patterns that avoid backtracking and performance issues
+- Clear, actionable error messages with specific evidence
+
+```typescript
+// Example: Deterministic validation
+export function validate(draft: string, params: Params): Issue[] {
+  const issues: Issue[] = [];
+  
+  // Deterministic pattern matching
+  if (!METRIC_PATTERN.test(draft)) {
+    issues.push({
+      id: 'missing-metrics',
+      severity: 'error',
+      message: 'Missing required metric format',
+      evidence: draft.substring(0, 50) + '...'
+    });
+  }
+  
+  return issues;
+}
+```
+
+### Probabilistic Layer (AI-Assisted, Secondary)
+
+**Use AI assistance for nuanced judgment calls:**
+
+- Style and voice consistency evaluation
+- Competitive research accuracy assessment  
+- Feasibility and realism heuristics
+- Executive summary coherence and impact
+- Cross-section consistency and traceability
+
+```typescript
+// Example: AI-assisted evaluation (planned feature)
+export async function aiReview(issues: Issue[], draft: string): Promise<FilteredIssues> {
+  // Use lightweight model to confirm/discard borderline issues
+  // Never introduce new issues - only filter existing ones
+  // Fallback to deterministic issues if AI parsing fails
+}
+```
+
+### Balance Guidelines
+
+- **Start Deterministic**: Always run deterministic validation first
+- **Augment with AI**: Use AI to refine and contextualize findings
+- **Preserve Intent**: AI should enhance, not replace, explicit validation rules
+- **Fail Gracefully**: If AI layer fails, deterministic results remain valid
+- **Stay Auditable**: All decisions should be explainable and debuggable
+
 ## Working Effectively
 
 ### Prerequisites & Environment Setup
@@ -15,36 +100,33 @@ A Next.js application that uses AI to generate and validate Chrome Enterprise Pr
   ```
 
 ### Bootstrap, Build, and Test
+
 **CRITICAL TIMING**: All commands complete quickly. Set appropriate timeouts and NEVER CANCEL.
 
-- **Install dependencies**:
+**ALWAYS USE PNPM**: This project exclusively uses pnpm for package management. Never use npm or yarn.
+
+- **Install pnpm globally first**:
   ```bash
-  # Option 1: npm (13.2s validated) - NEVER CANCEL, set timeout to 5+ minutes
-  npm install
-  
-  # Option 2: pnpm (8.1s validated, preferred) - NEVER CANCEL, set timeout to 5+ minutes  
-  npm install -g pnpm
-  pnpm install
+  npm install -g pnpm  # One-time global install
+  ```
+
+- **Install dependencies** (8.1s validated, preferred):
+  ```bash
+  pnpm install  # NEVER CANCEL, set timeout to 5+ minutes
   ```
 
 - **Lint the code** (2.7s validated) - NEVER CANCEL, set timeout to 2+ minutes:
   ```bash
-  npm run lint
-  # OR
   pnpm lint
   ```
 
 - **Build the application** (26.7s validated) - NEVER CANCEL, set timeout to 10+ minutes:
   ```bash
-  npm run build
-  # OR  
   pnpm build
   ```
 
 - **Run development server**:
   ```bash
-  npm run dev
-  # OR
   pnpm dev
   ```
   - Accesses: http://localhost:3000
@@ -287,3 +369,24 @@ pnpm dev     # Start development server
 # 2. Enter spec: "Project: Test\nTarget SKU: premium"  
 # 3. Click Run and verify complete workflow
 ```
+
+## Cascading Copilot Instructions
+
+This repository uses **cascading directory-specific copilot instructions** for targeted guidance:
+
+- **Root** (`.github/copilot-instructions.md`): General project guidance, development philosophy
+- **`src/lib/spec/`**: Core validation system architecture and patterns  
+- **`src/lib/spec/items/`**: Specific guidance for validation item development
+- **`src/app/`**: Next.js API and routing patterns, streaming implementations
+- **`src/components/`**: React component development with shadcn/ui
+
+**When working in a specific directory, GitHub Copilot will automatically apply the most specific instructions for that area, cascading up to more general guidance.**
+
+### Directory-Specific Focus Areas
+
+- **Validation Items** (`src/lib/spec/items/`): Deterministic validation logic, healing functions
+- **Core Spec System** (`src/lib/spec/`): System orchestration, prompt building, type definitions  
+- **API Endpoints** (`src/app/api/`): Streaming NDJSON, error handling, AI integration
+- **UI Components** (`src/components/`): React patterns, accessibility, responsive design
+
+This approach ensures you get contextually relevant guidance whether you're implementing validation logic, building UI components, or working on API endpoints.
