@@ -2,7 +2,6 @@ import {
   createWordBoundaryRegex,
   createFlexibleRegex,
   HEALING_TEMPLATES,
-  voidUnused,
 } from "../helpers";
 
 import type { Issue, SpecPack } from "../types";
@@ -84,7 +83,6 @@ async function heal(
   _params: Params,
   _pack?: SpecPack
 ): Promise<string | null> {
-  voidUnused(_params, _pack);
   if (!issues.length) return null;
   const terms = issues.map(i => i.evidence ?? i.message).join(', ');
   return `${HEALING_TEMPLATES.BANNED_TEXT}. Specifically remove or rephrase: ${terms}.`;

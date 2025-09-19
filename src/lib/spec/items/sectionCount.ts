@@ -1,4 +1,4 @@
-import { countSections, HEALING_TEMPLATES, voidUnused } from "../helpers";
+import { countSections, HEALING_TEMPLATES } from "../helpers";
 
 import type { Issue } from "../types";
 
@@ -11,7 +11,6 @@ export type Params = {
 };
 
 function toPrompt(params: Params, _pack?: unknown): string {
-  voidUnused(_pack);
   const range =
     params.exact != null
       ? `exactly ${params.exact}`
@@ -20,7 +19,6 @@ function toPrompt(params: Params, _pack?: unknown): string {
 }
 
 async function validate(draft: string, params: Params, _pack?: unknown): Promise<Issue[]> {
-  voidUnused(_pack);
   const count = countSections(draft, params.headerRegex);
   const issues: Issue[] = [];
 
@@ -45,7 +43,6 @@ async function validate(draft: string, params: Params, _pack?: unknown): Promise
 }
 
 async function heal(issues: Issue[], params: Params, _pack?: unknown): Promise<string | null> {
-  voidUnused(_pack);
   if (!issues.length) return null;
 
   const range =

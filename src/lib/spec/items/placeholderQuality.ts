@@ -1,4 +1,4 @@
-import { PATTERNS, LIMITS, HEALING_TEMPLATES, voidUnused } from "../helpers";
+import { PATTERNS, LIMITS, HEALING_TEMPLATES } from "../helpers";
 
 import type { Issue } from "../types";
 
@@ -6,7 +6,6 @@ export const itemId = "placeholder-quality";
 // No Params type required
 
 function toPrompt(_params: Record<string, never>, _pack?: unknown): string {
-  voidUnused(_params, _pack);
   return "Placeholders must be specific: include data, units, timeframe, and source.";
 }
 
@@ -15,7 +14,6 @@ async function validate(
   _params: Record<string, never>,
   _pack?: unknown
 ): Promise<Issue[]> {
-  voidUnused(_params, _pack);
   const issues: Issue[] = [];
   const placeholders = draft.match(PATTERNS.PLACEHOLDER) ?? [];
 
@@ -56,7 +54,6 @@ async function heal(
   _params: Record<string, never>,
   _pack?: unknown
 ): Promise<string | null> {
-  voidUnused(_params, _pack);
   if (!issues.length) return null;
   return HEALING_TEMPLATES.IMPROVE_PLACEHOLDERS;
 }

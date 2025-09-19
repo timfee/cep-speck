@@ -116,7 +116,11 @@ class GeminiProvider implements AIProvider {
         return Promise.resolve(result);
       });
       return true;
-    } catch {
+    } catch (healthCheckError) {
+      // Health check failed - provider not available
+      console.warn("AI provider health check failed:", {
+        error: healthCheckError instanceof Error ? healthCheckError.message : String(healthCheckError)
+      });
       return false;
     }
   }
@@ -276,5 +280,5 @@ export function getResilientAI(): ResilientAI {
  * Legacy function for backward compatibility
  */
 export function geminiModel() {
-  return google("gemini-2.5-pro");
+  return google(AI_MODEL_PRIMARY);
 }

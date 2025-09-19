@@ -1,5 +1,3 @@
-import { voidUnused } from "../helpers";
-
 import type { Issue } from "../types";
 
 export const itemId = "technical-feasibility";
@@ -10,7 +8,6 @@ function toPrompt(_params: Params, _pack?: unknown): string {
 }
 
 async function validate(draft: string, _params: Params, _pack?: unknown): Promise<Issue[]> {
-  voidUnused(_params, _pack);
   const issues: Issue[] = [];
 
   // Check for impossible percentages (>100%)
@@ -41,12 +38,11 @@ async function validate(draft: string, _params: Params, _pack?: unknown): Promis
 }
 
 async function heal(
-  issues: Issue[],
+  _issues: Issue[],
   _params: Params,
   _pack?: unknown
 ): Promise<string | null> {
-  voidUnused(issues, _params, _pack);
-  if (!issues.length) return null;
+  if (!_issues.length) return null;
   return `Review all percentage claims. Replace any >100% value with a realistic figure. Rephrase any 100% claim (e.g., "100% adoption") to a more defensible range (e.g., "99.9% coverage" or "95% adoption").`;
 }
 

@@ -10,7 +10,6 @@ import {
   doesMetricReferenceFeature,
   countSections,
   validateHeaderPattern,
-  voidUnused,
   PATTERNS,
 } from "./index";
 
@@ -188,14 +187,6 @@ Content
       );
       expect(issues.length).toBeGreaterThan(0);
       expect(issues[0].id).toBe("label-pattern-mismatch");
-    });
-  });
-
-  describe("voidUnused", () => {
-    it("should accept any number of arguments without error", () => {
-      expect(() => voidUnused()).not.toThrow();
-      expect(() => voidUnused("param1")).not.toThrow();
-      expect(() => voidUnused("param1", "param2", { obj: true })).not.toThrow();
     });
   });
 });

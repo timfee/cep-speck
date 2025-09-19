@@ -31,6 +31,9 @@ type Mode = "structured" | "traditional";
 const GENERATION_ESTIMATE_SECONDS = 30;
 const VALIDATION_ESTIMATE_SECONDS = 10;
 
+// Constants for validation scoring (UI-specific logic)
+const SCORE_PENALTY_PER_ISSUE = 10;
+
 // Type guard for StreamFrame
 function isStreamFrame(obj: unknown): obj is StreamFrame {
   return (
@@ -137,7 +140,7 @@ export default function Page() {
       ? draft.split(/\s+/).filter((word) => word.length > 0).length
       : 0;
     const validationScore =
-      issues.length === 0 ? 100 : Math.max(0, 100 - issues.length * 10);
+      issues.length === 0 ? 100 : Math.max(0, 100 - issues.length * SCORE_PENALTY_PER_ISSUE);
     const healingAttempts = Math.max(0, attempt - 1);
     const estimatedCompletion =
       phase === "generating"
@@ -233,7 +236,11 @@ export default function Page() {
             setStreaming(false);
             break;
           }
-        } catch {
+        } catch (parseError) {
+          // Skip invalid JSON lines - this is expected during streaming
+          console.warn("Failed to parse streaming line:", line, {
+            error: parseError instanceof Error ? parseError.message : String(parseError)
+          });
           continue;
         }
       }

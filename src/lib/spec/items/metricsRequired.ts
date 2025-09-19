@@ -1,4 +1,4 @@
-import { PATTERNS, buildMetricHealing, voidUnused } from "../helpers";
+import { PATTERNS, buildMetricHealing } from "../helpers";
 
 import type { Issue } from "../types";
 
@@ -12,14 +12,12 @@ export type Params = {
 const MAX_EVIDENCE_LENGTH = 70;
 
 function toPrompt(params: Params, _pack?: unknown): string {
-  voidUnused(_pack);
   return `Every metric must include: ${params.require.join(
     ", "
   )}. Identify metric lines by regex: ${params.metricRegex}`;
 }
 
 async function validate(draft: string, params: Params, _pack?: unknown): Promise<Issue[]> {
-  voidUnused(_pack);
   const rx = new RegExp(params.metricRegex, "gm");
   // Find the Success Metrics section first
   const metricsSection = draft.match(PATTERNS.SUCCESS_METRICS_SECTION)?.[0] ?? "";
@@ -53,7 +51,6 @@ async function validate(draft: string, params: Params, _pack?: unknown): Promise
 }
 
 async function heal(issues: Issue[], params: Params, _pack?: unknown): Promise<string | null> {
-  voidUnused(_pack);
   return buildMetricHealing(issues, params);
 }
 
