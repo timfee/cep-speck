@@ -32,12 +32,22 @@ export const SIZE_LIMITS = {
   EXPANDED_LINES: 30,
 } as const;
 
+// Validation thresholds
+export const VALIDATION_THRESHOLDS = {
+  MIN_WORD_COUNT: 25,
+  MAX_WORD_COUNT: 25,
+  MIN_LINE_COUNT: 15,
+  MAX_LINE_COUNT: 15,
+} as const;
+
 // UI Component Constants
 export const UI_CONSTANTS = {
   // Animation values
   ANIMATION_SCALE_SMALL: 0.4,
   ANIMATION_SCALE_MEDIUM: 1.1,
   ANIMATION_SCALE_LARGE: 1.5,
+  ANIMATION_SCALE_PULSE: 1.02,
+  ANIMATION_SCALE_BREATHE: 1.2,
   ANIMATION_OPACITY: 0.1,
   ANIMATION_OPACITY_MEDIUM: 0.2,
   
@@ -51,6 +61,12 @@ export const UI_CONSTANTS = {
   // Sizes and dimensions  
   ICON_SIZE: 4,
   BORDER_RADIUS: 36,
+  
+  // Number bases and formatting
+  HEX_RADIX: 36,
+  
+  // Timing
+  DISPLAY_DELAY: 30,
 } as const;
 
 // Timing constants (in seconds)
@@ -62,6 +78,7 @@ export default {
   TIMEOUTS,
   RETRY_LIMITS,
   SIZE_LIMITS,
+  VALIDATION_THRESHOLDS,
   UI_CONSTANTS,
   TIMING,
 } as const;

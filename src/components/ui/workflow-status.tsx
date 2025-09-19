@@ -5,6 +5,7 @@ import { CheckCircle, AlertCircle, XCircle, Clock, Loader2 } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge";
 import { Spinner } from "@/components/ui/spinner";
+import { UI_CONSTANTS, RETRY_LIMITS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 
@@ -126,7 +127,7 @@ export function WorkflowStatus({
           bgColor
         )}
         layout
-        animate={{ scale: streaming && config.spinner ? [1, 1.02, 1] : 1 }}
+        animate={{ scale: streaming && config.spinner ? [1, UI_CONSTANTS.ANIMATION_SCALE_PULSE, 1] : 1 }}
         transition={{ duration: 2, repeat: streaming && config.spinner ? Infinity : 0 }}
         role="status"
         aria-live="polite"
@@ -184,7 +185,7 @@ const TIMELINE_PHASES: WorkflowPhase[] = ['starting', 'generating', 'validating'
 export function ProgressTimeline({ 
   currentPhase, 
   attempt, 
-  maxAttempts = 3, 
+  maxAttempts = RETRY_LIMITS.DEFAULT_MAX_ATTEMPTS, 
   className 
 }: ProgressTimelineProps) {
   const currentIndex = TIMELINE_PHASES.indexOf(currentPhase as WorkflowPhase);
@@ -216,7 +217,7 @@ export function ProgressTimeline({
                     ? cn(config.borderClasses, config.progressClasses)
                     : "border-gray-300 bg-white"
                 )}
-                animate={isActive ? { scale: [1, 1.2, 1] } : {}}
+                animate={isActive ? { scale: [1, UI_CONSTANTS.ANIMATION_SCALE_BREATHE, 1] } : {}}
                 transition={{ duration: 1, repeat: isActive ? Infinity : 0 }}
               />
               {index < TIMELINE_PHASES.length - 1 && (

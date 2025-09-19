@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { SectionTypeSelector } from '@/components/workflow/SectionTypeSelector';
+import { TIMEOUTS } from "@/lib/constants";
 
 import type { SectionDefinition } from '@/types/workflow';
 
@@ -103,7 +104,7 @@ export function StructureReviewStep({
           </div>
         )}
 
-        {totalSelectedWords > 2000 && (
+        {totalSelectedWords > TIMEOUTS.SHORT_DELAY && (
           <div className="text-sm text-amber-700 bg-amber-50 p-3 rounded-lg border border-amber-200">
             📝 Your selected sections will generate approximately {totalSelectedWords} words. 
             This is longer than typical PRDs. Consider removing some optional sections.

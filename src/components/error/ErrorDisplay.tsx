@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CopyButton } from "@/components/ui/copy-button";
 import { Status, StatusIndicator, StatusLabel } from "@/components/ui/status";
 // Import existing timeout constants
-import { TIMEOUTS } from "@/lib/constants";
+import { TIMEOUTS, UI_CONSTANTS } from "@/lib/constants";
 import { formatErrorForSupport, ERROR_CLASSIFICATIONS } from "@/lib/error/classification";
 
 import type { ErrorDetails, ErrorSeverityLevels } from "@/lib/error/types";
@@ -65,7 +65,7 @@ export function ErrorDisplay({ error, onRetry, onConfigureApi }: ErrorDisplayPro
       }
     },
     support: {
-      reportId: `ERR-${Date.now().toString(36).toUpperCase()}`,
+      reportId: `ERR-${Date.now().toString(UI_CONSTANTS.HEX_RADIX).toUpperCase()}`,
       reproduction: [
         "1. Navigate to the PRD generation page",
         "2. Enter specification text",

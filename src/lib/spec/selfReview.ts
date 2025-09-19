@@ -2,6 +2,7 @@ import { generateObject } from "ai";
 import { z } from "zod";
 
 import { geminiModel } from "@/lib/ai/provider";
+import { TIMEOUTS } from "@/lib/constants";
 
 import type { Issue } from "./types";
 
@@ -121,7 +122,7 @@ function buildSelfReviewPrompt(draft: string, issues: Issue[]): string {
   return `You are reviewing validation issues for a PRD document to filter out false positives while confirming genuine violations.
 
 **Document excerpt:**
-${draft.substring(0, 2000)}${draft.length > 2000 ? "..." : ""}
+${draft.substring(0, TIMEOUTS.SHORT_DELAY)}${draft.length > TIMEOUTS.SHORT_DELAY ? "..." : ""}
 
 **Validation Issues to Review:**
 ${issueList}

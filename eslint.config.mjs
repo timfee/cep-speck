@@ -244,7 +244,7 @@ const eslintConfig = [
     },
   },
   {
-    files: ["**/types.ts", "**/spec/types.ts"],
+    files: ["**/types.ts", "**/spec/types.ts", "**/spec/registry.ts", "**/spec/selfReview.ts", "**/spec/validate.ts"],
     rules: {
       "custom/consistent-error-handling-pattern": "off",
     },
