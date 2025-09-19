@@ -90,7 +90,7 @@ export async function POST(req: NextRequest) {
       try {
         // API key check
         const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
-        if (!apiKey || apiKey.trim() === "") {
+        if ((apiKey ?? "").length === 0) {
           const errorFrame = createErrorFrame(
             "Missing GOOGLE_GENERATIVE_AI_API_KEY on server. Add it to .env.local and restart.",
             false, // Not recoverable without restart

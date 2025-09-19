@@ -98,7 +98,7 @@ export function ProgressTimeline({ progress, className }: ProgressTimelineProps)
       </div>
 
       {/* Time estimates */}
-      {progress.timeEstimate && (
+      {(progress.timeEstimate ?? 0) > 0 && (
         <div className="text-xs text-muted-foreground text-center">
           Estimated time remaining: ~{progress.timeEstimate} minutes
         </div>

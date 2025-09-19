@@ -70,7 +70,7 @@ export function CircuitBreakerStatus({ state, className }: CircuitBreakerStatusP
           </div>
 
           <div className="flex items-center gap-2">
-            {state.current === 'open' && state.recoveryTime && (
+            {state.current === 'open' && (state.recoveryTime ?? 0) > 0 && (
               <div className="text-sm text-muted-foreground text-right">
                 <div>Recovery in</div>
                 <div className="font-mono">

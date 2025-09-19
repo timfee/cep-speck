@@ -1,6 +1,14 @@
 /**
  * Test utilities for streaming protocol validation
  */
+import { 
+  createPhaseFrame, 
+  createGenerationFrame, 
+  createValidationFrame, 
+  createResultFrame, 
+  createErrorFrame 
+} from "../streaming";
+
 import type { StreamFrame, ValidationReport, Issue } from "../types";
 
 /**
@@ -48,8 +56,9 @@ export function parseNDJSONStream(data: string): StreamFrame[] {
     try {
       const frame = JSON.parse(line) as StreamFrame;
       frames.push(frame);
-    } catch (error) {
-      console.warn("Failed to parse frame:", line, error);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.warn("Failed to parse frame:", line, message);
     }
   }
   
@@ -63,40 +72,12 @@ export function createTestFrameSequence(): StreamFrame[] {
   return [
     createPhaseFrame("starting", 1, "Test phase"),
     createPhaseFrame("generating", 1, "Test generation"),
-    {
-      type: "generation",
-      data: {
-        delta: "Hello ",
-        total: "Hello ",
-        tokenCount: 1,
-      },
-    },
-    {
-      type: "generation",
-      data: {
-        delta: "world!",
-        total: "Hello world!",
-        tokenCount: 2,
-      },
-    },
+    createGenerationFrame("Hello ", "Hello ", 1),
+    createGenerationFrame("world!", "Hello world!", 2),
     createPhaseFrame("validating", 1, "Test validation"),
-    {
-      type: "validation",
-      data: {
-        report: createMockValidationReport(true, []),
-        duration: 100,
-      },
-    },
+    createValidationFrame(createMockValidationReport(true, []), 100),
     createPhaseFrame("completed", 1, "Test completed"),
-    {
-      type: "result",
-      data: {
-        success: true,
-        finalDraft: "Hello world!",
-        totalAttempts: 1,
-        totalDuration: 1000,
-      },
-    },
+    createResultFrame(true, "Hello world!", 1, 1000),
   ];
 }
 
@@ -104,8 +85,8 @@ export function createTestFrameSequence(): StreamFrame[] {
  * Create error frame sequence for testing error scenarios
  */
 export function createErrorFrameSequence(
-  errorMessage: string = "Test error",
-  recoverable: boolean = true
+  _errorMessage: string = "Test error",
+  _recoverable: boolean = true
 ): StreamFrame[] {
   return [
     createPhaseFrame("error", 1, "Test error phase"),
@@ -125,14 +106,7 @@ export function simulateNetworkDelay(ms: number = 100): Promise<void> {
  */
 export function createLargeFrame(size: number = 10000): StreamFrame {
   const largeContent = "A".repeat(size);
-  return {
-    type: "generation",
-    data: {
-      delta: largeContent,
-      total: largeContent,
-      tokenCount: size,
-    },
-  };
+  return createGenerationFrame(largeContent, largeContent, size);
 }
 
 /**

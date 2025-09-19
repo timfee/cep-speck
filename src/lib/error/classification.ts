@@ -139,7 +139,7 @@ export function formatErrorForSupport(error: {
     lines.push(`Context: ${JSON.stringify(error.context, null, 2)}`);
   }
   
-  if (error.stack) {
+  if ((error.stack ?? "").length > 0) {
     lines.push(`Stack: ${error.stack}`);
   }
   

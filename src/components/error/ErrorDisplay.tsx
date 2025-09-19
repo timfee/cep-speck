@@ -159,7 +159,7 @@ export function ErrorDisplay({ error, onRetry, onConfigureApi }: ErrorDisplayPro
           <p className="text-sm text-muted-foreground mt-1">
             {classification.message}
           </p>
-          {error.attempt && error.maxAttempts && (
+          {(error.attempt ?? 0) > 0 && (error.maxAttempts ?? 0) > 0 && (
             <p className="text-xs text-muted-foreground mt-1">
               Attempt {error.attempt} of {error.maxAttempts}
             </p>
@@ -212,7 +212,7 @@ export function ErrorDisplay({ error, onRetry, onConfigureApi }: ErrorDisplayPro
               <pre className="mt-2 p-3 bg-muted rounded text-xs overflow-auto whitespace-pre-wrap">
                 {JSON.stringify(errorLevels.technical.context, null, 2)}
               </pre>
-              {errorLevels.technical.stack && (
+              {(errorLevels.technical.stack ?? "").length > 0 && (
                 <>
                   <div><strong>Stack Trace:</strong></div>
                   <pre className="mt-2 p-3 bg-muted rounded text-xs overflow-auto whitespace-pre-wrap">
