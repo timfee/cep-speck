@@ -62,7 +62,7 @@ function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
       });
     }
 
-    const pmInputMatches = draft.match(/\[PM_INPUT_NEEDED:[^\]]+\]/g) || [];
+    const pmInputMatches = draft.match(/\[PM_INPUT_NEEDED:[^\]]+\]/g) ?? [];
     const researchableTopics = pmInputMatches.filter((match) =>
       /competitor|research|analysis|snapshot/i.test(match)
     );

@@ -1,6 +1,7 @@
+import { TIMING, FEASIBILITY_THRESHOLDS } from "@/lib/constants";
+
 import type { Issue } from "../types";
 
-import { TIMING, FEASIBILITY_THRESHOLDS } from "@/lib/constants";
 
 export const itemId = "technical-feasibility";
 export type Params = Record<string, never>;

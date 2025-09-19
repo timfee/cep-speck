@@ -17,9 +17,9 @@ export interface ResearchResult {
   autoFilledFacts: string[];
 }
 
-export async function performCompetitorResearch(
+export function performCompetitorResearch(
   vendors: string[]
-): Promise<ResearchResult> {
+): ResearchResult {
   const result: ResearchResult = {
     competitors: [],
     citations: [],
@@ -35,8 +35,11 @@ export async function performCompetitorResearch(
         result.citations.push(competitorInfo.source);
       }
       
-      const autoFilledCount = Object.values(competitorInfo)
-        .filter(value => value && !value.includes('[PM_INPUT_NEEDED'))
+      const autoFilledCount = (Object.values(competitorInfo) as (string | undefined)[])
+        .filter((value): value is string => 
+          typeof value === 'string' && 
+          value.length > 0 && 
+          !value.includes('[PM_INPUT_NEEDED'))
         .length - 1; // Subtract 1 for vendor name
       
       if (autoFilledCount > 0) {

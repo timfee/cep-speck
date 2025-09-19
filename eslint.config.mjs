@@ -244,7 +244,7 @@ const eslintConfig = [
     },
   },
   {
-    files: ["**/types.ts", "**/spec/types.ts", "**/spec/registry.ts", "**/spec/selfReview.ts", "**/spec/validate.ts"],
+    files: ["**/types.ts", "**/spec/types.ts", "**/spec/registry.ts", "**/spec/selfReview.ts", "**/spec/validate.ts", "**/spec/helpers/**/*.ts", "**/spec/__tests__/**/*.ts"],
     rules: {
       "custom/consistent-error-handling-pattern": "off",
     },
@@ -258,7 +258,7 @@ const eslintConfig = [
     },
   },
   {
-    files: ["**/*.test.ts", "**/*.test.tsx", "**/*.spec.ts", "**/*.spec.tsx", "**/tests/**/*.ts"],
+    files: ["**/*.test.ts", "**/*.test.tsx", "**/*.spec.ts", "**/*.spec.tsx", "**/tests/**/*.ts", "**/__tests__/**/*.ts"],
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
       "@typescript-eslint/no-non-null-assertion": "off",

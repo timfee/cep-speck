@@ -131,7 +131,7 @@ export function formatErrorForSupport(error: {
     `Error Code: ${error.code}`,
     `Message: ${error.message}`,
     `Timestamp: ${new Date(error.timestamp).toISOString()}`,
-    `User Agent: ${typeof navigator !== 'undefined' ? navigator?.userAgent : 'N/A'}`,
+    `User Agent: ${typeof navigator !== 'undefined' ? navigator.userAgent : 'N/A'}`,
     `URL: ${typeof window !== 'undefined' ? window.location.href : 'N/A'}`,
   ];
   

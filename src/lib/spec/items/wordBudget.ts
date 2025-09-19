@@ -1,6 +1,7 @@
+import { WORD_BUDGET } from "@/lib/constants";
+
 import type { Issue } from "../types";
 
-import { WORD_BUDGET } from "@/lib/constants";
 
 export const itemId = "word-budget";
 export type Params = { target?: number; hardCap?: number };

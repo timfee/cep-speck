@@ -61,8 +61,8 @@ export function parseNDJSONStream(data: string): StreamFrame[] {
  */
 export function createTestFrameSequence(): StreamFrame[] {
   return [
-    createPhaseFrame(/* phase */, /* attempt */, /* message */),
-    createPhaseFrame(/* phase */, /* attempt */, /* message */),
+    createPhaseFrame("starting", 1, "Test phase"),
+    createPhaseFrame("generating", 1, "Test generation"),
     {
       type: "generation",
       data: {
@@ -79,7 +79,7 @@ export function createTestFrameSequence(): StreamFrame[] {
         tokenCount: 2,
       },
     },
-    createPhaseFrame(/* phase */, /* attempt */, /* message */),
+    createPhaseFrame("validating", 1, "Test validation"),
     {
       type: "validation",
       data: {

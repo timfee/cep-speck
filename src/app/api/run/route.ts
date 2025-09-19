@@ -139,16 +139,12 @@ export async function POST(req: NextRequest) {
           )
         );
 
-        const researchResult = await withErrorRecovery(
-          () =>
-            performCompetitorResearch([
-              "Zscaler",
-              "Island",
-              "Talon",
-              "Microsoft Edge for Business",
-            ]),
-          "Competitor research"
-        );
+        const researchResult = performCompetitorResearch([
+          "Zscaler",
+          "Island", 
+          "Talon",
+          "Microsoft Edge for Business",
+        ]);
 
         // Build context and messages
         let researchContext = "";

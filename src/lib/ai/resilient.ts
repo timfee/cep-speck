@@ -135,7 +135,8 @@ export class ResilientAI {
   ): Promise<StreamTextResult<Record<string, never>, never>> {
     let lastError: Error | null = null;
 
-    // Try each provider
+    // Try each provider - need index for provider rotation
+    // eslint-disable-next-line @typescript-eslint/prefer-for-of
     for (let providerAttempt = 0; providerAttempt < this.providers.length; providerAttempt++) {
       const provider = this.providers[this.currentProviderIndex];
 

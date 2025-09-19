@@ -17,7 +17,7 @@ function validate(
 ): Issue[] {
   voidUnused(_params, _pack);
   const issues: Issue[] = [];
-  const placeholders = draft.match(PATTERNS.PLACEHOLDER) || [];
+  const placeholders = draft.match(PATTERNS.PLACEHOLDER) ?? [];
 
   for (const ph of placeholders) {
     const content = ph.match(PATTERNS.PLACEHOLDER_CONTENT)?.[1] ?? "";

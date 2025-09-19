@@ -37,7 +37,7 @@ export function validateSpecPack(pack: SpecPack): PackValidationError[] {
     }
   }
   // Validate bannedText regex compilation
-  const regexList = pack.globals?.bannedText?.regex || [];
+  const regexList = pack.globals?.bannedText?.regex ?? [];
   for (const r of regexList) {
     try {
       // Handle (?i) syntax like the bannedText validator does

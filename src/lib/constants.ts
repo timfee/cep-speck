@@ -51,6 +51,7 @@ export const VALIDATION_THRESHOLDS = {
   MAX_WORD_COUNT: 25,
   MIN_LINE_COUNT: 15,
   MAX_LINE_COUNT: 15,
+  MIN_CAPTURE_GROUPS: 3, // For regex matching: full match + 2 captures
 } as const;
 
 // UI Component Constants
