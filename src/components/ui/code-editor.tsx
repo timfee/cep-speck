@@ -5,6 +5,9 @@ import { cn } from "@/lib/utils";
 import { CopyButton } from "./copy-button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./tooltip";
 import { Badge } from "./badge";
+import { Button } from "./button";
+import { SPEC_TEMPLATES, type SpecTemplateKey } from "@/lib/spec-templates";
+import { ChevronDown, FileText } from "lucide-react";
 
 interface CodeEditorProps {
   value: string;
@@ -16,6 +19,7 @@ interface CodeEditorProps {
   rows?: number;
   showWordCount?: boolean;
   maxWords?: number;
+  showTemplates?: boolean;
 }
 
 export function CodeEditor({
@@ -28,10 +32,12 @@ export function CodeEditor({
   rows = 16,
   showWordCount = true,
   maxWords = 100,
+  showTemplates = true,
 }: CodeEditorProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [wordCount, setWordCount] = useState(0);
   const [charCount, setCharCount] = useState(0);
+  const [showTemplateMenu, setShowTemplateMenu] = useState(false);
 
   useEffect(() => {
     const words = value.trim() ? value.trim().split(/\s+/).length : 0;
@@ -40,6 +46,12 @@ export function CodeEditor({
   }, [value]);
 
   const isOverLimit = maxWords && wordCount > maxWords;
+
+  const handleTemplateSelect = (templateKey: SpecTemplateKey) => {
+    const template = SPEC_TEMPLATES[templateKey];
+    onChange(template.content);
+    setShowTemplateMenu(false);
+  };
 
   return (
     <TooltipProvider>
@@ -57,16 +69,44 @@ export function CodeEditor({
               {title}
             </span>
           </div>
-          {copyButton && value && (
-            <CopyButton 
-              text={value} 
-              className="h-8"
-              onCopy={() => {
-                // Could add toast notification here
-                console.log("Spec copied to clipboard");
-              }}
-            />
-          )}
+          <div className="flex items-center gap-2">
+            {showTemplates && (
+              <div className="relative">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowTemplateMenu(!showTemplateMenu)}
+                  className="h-8"
+                >
+                  <FileText className="h-4 w-4 mr-2" />
+                  Templates
+                  <ChevronDown className="h-4 w-4 ml-2" />
+                </Button>
+                {showTemplateMenu && (
+                  <div className="absolute right-0 top-full mt-1 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-10">
+                    {Object.entries(SPEC_TEMPLATES).map(([key, template]) => (
+                      <button
+                        key={key}
+                        onClick={() => handleTemplateSelect(key as SpecTemplateKey)}
+                        className="w-full text-left px-3 py-2 text-sm hover:bg-gray-100 first:rounded-t-md last:rounded-b-md"
+                      >
+                        {template.name}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+            {copyButton && value && (
+              <CopyButton 
+                text={value} 
+                className="h-8"
+                onCopy={() => {
+                  console.log("Spec copied to clipboard");
+                }}
+              />
+            )}
+          </div>
         </div>
 
         {/* Editor */}
