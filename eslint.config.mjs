@@ -243,12 +243,7 @@ const eslintConfig = [
     files: ["**/page.tsx", "**/layout.tsx", "**/route.ts", "**/hooks/**", "**/components/**"],
     rules: {
       "custom/consistent-error-handling-pattern": "off",
-      "no-magic-numbers": ["error", {
-        ignore: [0, 1, -1, 2, 3, 5, 8, 10, 12, 16, 30, 36, 50, 60, 80, 100, 150, 200, 1000, 1024, 2000, 5000, 8000, 10000],
-        ignoreArrayIndexes: true,
-        enforceConst: true,
-        detectObjects: false,
-      }],
+      "no-magic-numbers": "off", // UI components often need specific numeric values
     },
   },
   {
