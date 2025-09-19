@@ -6,9 +6,12 @@ import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { CodeEditor } from "@/components/ui/code-editor";
 import { Status } from "@/components/ui/status";
+import { WorkflowStatus, ProgressTimeline } from "@/components/ui/workflow-status";
+import { TerminalDisplay } from "@/components/ui/typing-text";
+import { MetricsDashboard, type WorkflowMetrics } from "@/components/ui/metrics-dashboard";
 import { useSpecValidation } from "@/hooks/useSpecValidation";
 import type { Issue, StreamFrame } from "@/lib/spec/types";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState, useEffect } from "react";
 
 export default function Page() {
   const [spec, setSpec] = useState<string>(
@@ -19,10 +22,36 @@ export default function Page() {
   const [attempt, setAttempt] = useState<number>(0);
   const [draft, setDraft] = useState<string>("");
   const [issues, setIssues] = useState<Issue[]>([]);
+  const [startTime, setStartTime] = useState<number>(0);
+  const [elapsedTime, setElapsedTime] = useState<number>(0);
   const textRef = useRef<string>("");
 
   // Real-time spec validation
   const validation = useSpecValidation(spec);
+
+  // Track elapsed time during streaming
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (streaming && startTime > 0) {
+      interval = setInterval(() => {
+        setElapsedTime(Math.floor((Date.now() - startTime) / 1000));
+      }, 1000);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [streaming, startTime]);
+
+  // Calculate workflow metrics
+  const workflowMetrics: WorkflowMetrics = {
+    wordCount: draft.split(/\s+/).filter(word => word.length > 0).length,
+    validationScore: issues.length === 0 ? 100 : Math.max(0, 100 - (issues.length * 10)),
+    healingAttempts: Math.max(0, attempt - 1),
+    elapsedTime,
+    issuesFound: issues.length,
+    phase,
+    estimatedCompletion: phase === "generating" ? 30 : phase === "validating" ? 10 : undefined
+  };
 
   const run = useCallback(async () => {
     setStreaming(true);
@@ -31,6 +60,8 @@ export default function Page() {
     setIssues([]);
     setPhase("starting");
     setAttempt(1);
+    setStartTime(Date.now());
+    setElapsedTime(0);
 
     const res = await fetch("/api/run", {
       method: "POST",
@@ -152,39 +183,41 @@ export default function Page() {
         <Button onClick={run} disabled={streaming || validation.issues.length > 2}>
           Run
         </Button>
-        <div className="flex items-center gap-3">
-          <Badge
-            variant={
-              phase === "generating"
-                ? "default"
-                : phase === "validating"
-                ? "secondary"
-                : phase === "healing"
-                ? "outline"
-                : phase === "done"
-                ? "default"
-                : phase === "error"
-                ? "destructive"
-                : "secondary"
-            }
-            className="text-base px-4 py-2 font-medium"
-          >
-            {phase === "generating" && "🔄 Generating"}
-            {phase === "validating" && "🔍 Validating"}
-            {phase === "healing" && "🩹 Healing"}
-            {phase === "done" && "✅ Complete"}
-            {phase === "error" && "❌ Error"}
-            {!phase && "⏸️ Ready"}
-          </Badge>
-          <Badge variant="outline" className="text-sm px-3 py-1">
-            Attempt: {attempt || 0}
-          </Badge>
-        </div>
+        
+        {/* Enhanced Workflow Status */}
+        <WorkflowStatus 
+          phase={phase} 
+          attempt={attempt}
+          streaming={streaming}
+        />
+        
+        {/* Progress Timeline */}
+        <ProgressTimeline 
+          currentPhase={phase}
+          attempt={attempt}
+          maxAttempts={3}
+        />
+        
+        {/* Real-time Metrics Dashboard */}
+        <MetricsDashboard 
+          metrics={workflowMetrics}
+          streaming={streaming}
+        />
       </Card>
 
       <Card className="p-4 space-y-3">
         <h2 className="text-lg font-semibold">Draft</h2>
-        <pre className="whitespace-pre-wrap text-sm">{draft}</pre>
+        {draft ? (
+          <TerminalDisplay 
+            content={draft}
+            title="PRD Generation Output"
+            streaming={streaming}
+          />
+        ) : (
+          <div className="min-h-[200px] flex items-center justify-center text-muted-foreground bg-gray-50 rounded-lg border-2 border-dashed">
+            {streaming ? "Generating content..." : "Click 'Run' to generate your PRD"}
+          </div>
+        )}
         <Separator />
         <h3 className="text-md font-medium">Issues</h3>
         <div className="space-y-2">
