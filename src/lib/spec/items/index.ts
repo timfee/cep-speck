@@ -1,5 +1,4 @@
 import { createValidatorModule, registerItem } from "../registry";
-
 // Import each module object
 import { itemModule as bannedText } from "./bannedText";
 import { itemModule as competitorResearch } from "./competitorResearch";

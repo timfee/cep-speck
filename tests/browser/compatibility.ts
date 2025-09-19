@@ -47,9 +47,9 @@ export function mockBrowserEnvironment(): {
  * Network condition simulator
  */
 export class NetworkSimulator {
-  private latency: number = 0;
-  private bandwidthLimit: number = Infinity;
-  private dropRate: number = 0;
+  private readonly latency: number = 0;
+  private readonly bandwidthLimit: number = Infinity;
+  private readonly dropRate: number = 0;
   private isConnected: boolean = true;
 
   constructor(options: {
@@ -296,8 +296,8 @@ export class FramePerformanceMonitor {
  * Streaming protocol test runner for browsers
  */
 export class BrowserStreamingTester {
-  private networkSim: NetworkSimulator;
-  private perfMonitor: FramePerformanceMonitor;
+  private readonly networkSim: NetworkSimulator;
+  private readonly perfMonitor: FramePerformanceMonitor;
 
   constructor(networkConditions?: {
     latency?: number;

@@ -11,7 +11,7 @@ import type { Issue } from '../types';
  * Builder for creating consistent healing instructions
  */
 export class HealingInstructionBuilder {
-  private instructions: string[] = [];
+  private readonly instructions: string[] = [];
 
   /**
    * Add an instruction if a condition is met

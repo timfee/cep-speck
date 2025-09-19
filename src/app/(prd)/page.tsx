@@ -124,9 +124,13 @@ export default function Page() {
 
     const reader = res.body.getReader();
     const decoder = new TextDecoder();
-    while (true) {
+    let reading = true;
+    while (reading) {
       const { value, done } = await reader.read();
-      if (done) break;
+      if (done) {
+        reading = false;
+        break;
+      }
       const chunk = decoder.decode(value);
       for (const line of chunk.split("\n")) {
         if (!line.trim()) continue;

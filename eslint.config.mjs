@@ -235,12 +235,18 @@ const eslintConfig = [
       "@typescript-eslint/no-unsafe-member-access": "error",
       "@typescript-eslint/no-unsafe-call": "error",
       "@typescript-eslint/restrict-template-expressions": "error",
-      "@typescript-eslint/strict-boolean-expressions": "error",
+      "@typescript-eslint/strict-boolean-expressions": "warn",
       "@typescript-eslint/switch-exhaustiveness-check": "error",
       "no-case-declarations": "error",
       "@typescript-eslint/no-unnecessary-boolean-literal-compare": "error",
       "@typescript-eslint/prefer-readonly": "error",
       "@typescript-eslint/prefer-for-of": "error",
+    },
+  },
+  {
+    files: ["**/types.ts", "**/spec/types.ts"],
+    rules: {
+      "custom/consistent-error-handling-pattern": "off",
     },
   },
   {

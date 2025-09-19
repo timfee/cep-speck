@@ -20,7 +20,7 @@ function validate(
   const placeholders = draft.match(PATTERNS.PLACEHOLDER) || [];
 
   for (const ph of placeholders) {
-    const content = ph.match(PATTERNS.PLACEHOLDER_CONTENT)?.[1] || "";
+    const content = ph.match(PATTERNS.PLACEHOLDER_CONTENT)?.[1] ?? "";
 
     // Check for vague placeholders (< 3 words)
     if (content.trim().split(/\s+/).length < LIMITS.PLACEHOLDER_MIN_WORDS) {

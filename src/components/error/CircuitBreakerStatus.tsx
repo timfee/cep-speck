@@ -12,13 +12,17 @@ interface CircuitBreakerStatusProps {
   className?: string;
 }
 
+// Time conversion constants
+const MILLISECONDS_PER_SECOND = 1000;
+const SECONDS_PER_MINUTE = 60;
+
 function formatTime(milliseconds: number): string {
-  const seconds = Math.ceil(milliseconds / 1000);
-  if (seconds < 60) {
+  const seconds = Math.ceil(milliseconds / MILLISECONDS_PER_SECOND);
+  if (seconds < SECONDS_PER_MINUTE) {
     return `${seconds}s`;
   }
-  const minutes = Math.floor(seconds / 60);
-  const remainingSeconds = seconds % 60;
+  const minutes = Math.floor(seconds / SECONDS_PER_MINUTE);
+  const remainingSeconds = seconds % SECONDS_PER_MINUTE;
   return `${minutes}m ${remainingSeconds}s`;
 }
 

@@ -12,7 +12,7 @@ function toPrompt(_params: Params, _pack?: unknown): string {
 function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
   const issues: Issue[] = [];
   const section =
-    draft.match(/# 6\. Functional Requirements[\s\S]*?(?=# 7\.|$)/)?.[0] || "";
+    draft.match(/# 6\. Functional Requirements[\s\S]*?(?=# 7\.|$)/)?.[0] ?? "";
   const blocks = section.split(/## F\d+ —/).slice(1);
   for (const raw of blocks) {
     const block = raw.trim();

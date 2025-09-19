@@ -13,10 +13,10 @@ import type { StreamFrame, Issue } from '../../src/lib/spec/types';
  * Mock API response simulator
  */
 export class StreamingAPISimulator {
-  private frames: StreamFrame[] = [];
-  private delay = 50; // ms between frames
-  private shouldError = false;
-  private errorFrame: number = -1;
+  private readonly frames: StreamFrame[] = [];
+  private readonly delay: number = 50; // ms between frames
+  private readonly shouldError: boolean = false;
+  private readonly errorFrame: number = -1;
 
   constructor(frames: StreamFrame[], options: {
     delay?: number;

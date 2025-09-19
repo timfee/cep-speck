@@ -7,6 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CopyButton } from "@/components/ui/copy-button";
 import { Status, StatusIndicator, StatusLabel } from "@/components/ui/status";
+// Import existing timeout constants
+import { TIMEOUTS } from "@/lib/constants";
+
 import { formatErrorForSupport, ERROR_CLASSIFICATIONS } from "@/lib/error/classification";
 
 import type { ErrorDetails, ErrorSeverityLevels } from "@/lib/error/types";
@@ -117,10 +120,28 @@ export function ErrorDisplay({ error, onRetry, onConfigureApi }: ErrorDisplayPro
             icon: Clock,
             primary: true,
             handler: () => {
-              setTimeout(() => onRetry(), 5000);
+              setTimeout(() => onRetry(), TIMEOUTS.MEDIUM_DELAY);
             }
           });
         }
+        break;
+      case 'VALIDATION_FAILED':
+        // No specific recovery actions for validation failures
+        break;
+      case 'UNEXPECTED_ERROR':
+        if (onRetry) {
+          actions.push({
+            id: 'retry-operation',
+            label: 'Try Again',
+            description: 'Retry the failed operation',
+            icon: RefreshCw,
+            primary: true,
+            handler: onRetry
+          });
+        }
+        break;
+      case 'INVALID_INPUT':
+        // User needs to correct their input - no automatic recovery
         break;
     }
     

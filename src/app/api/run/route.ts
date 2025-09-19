@@ -50,7 +50,6 @@ function isValidRunRequest(body: unknown): body is RunRequestBody {
 const pack: SpecPack = packData as SpecPack;
 
 // Constants for magic numbers
-const DEFAULT_MAX_ATTEMPTS = 3;
 const MAX_ALLOWED_ATTEMPTS = 5;
 
 export async function POST(req: NextRequest) {

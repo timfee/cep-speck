@@ -80,7 +80,7 @@ class CircuitBreaker {
  */
 class GeminiProvider implements AIProvider {
   name = "gemini";
-  private circuitBreaker = new CircuitBreaker();
+  private readonly circuitBreaker = new CircuitBreaker();
 
   async generate(
     messages: CoreMessage[]
@@ -117,7 +117,7 @@ class GeminiProvider implements AIProvider {
  * Resilient AI service with retry logic and multiple providers
  */
 export class ResilientAI {
-  private providers: AIProvider[] = [];
+  private readonly providers: AIProvider[] = [];
   private currentProviderIndex = 0;
 
   constructor() {
