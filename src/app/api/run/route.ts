@@ -1,9 +1,9 @@
 import { getResilientAI } from "@/lib/ai/resilient";
+import { DEFAULT_SPEC_PACK } from "@/lib/config";
 import { readKnowledgeDirectory } from "@/lib/knowledge/reader";
 import { performCompetitorResearch } from "@/lib/research/webSearch";
 import { aggregateHealing } from "@/lib/spec/healing/aggregate";
 import "@/lib/spec/items";
-import packData from "@/lib/spec/packs/prd-v1.json";
 import { assertValidSpecPack } from "@/lib/spec/packValidate";
 import { buildSystemPrompt, buildUserPrompt } from "@/lib/spec/prompt";
 import {
@@ -19,7 +19,6 @@ import {
 } from "@/lib/spec/streaming";
 import { validateAll } from "@/lib/spec/validate";
 
-import type { SpecPack } from "@/lib/spec/types";
 import type { CoreMessage } from "ai";
 import type { NextRequest } from "next/server";
 
@@ -43,10 +42,9 @@ function isValidRunRequest(body: unknown): body is RunRequestBody {
   );
 }
 
-// Type-cast the imported JSON to SpecPack once at module level
-// This cast is necessary due to TypeScript's JSON import limitations
+// Use centralized spec pack configuration
 // The pack is validated at runtime via assertValidSpecPack() to ensure type safety
-const pack: SpecPack = packData as SpecPack;
+const pack = DEFAULT_SPEC_PACK;
 
 // Constants for magic numbers
 const MAX_ALLOWED_ATTEMPTS = 5;

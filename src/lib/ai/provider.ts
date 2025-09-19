@@ -1,5 +1,7 @@
 import { google } from "@ai-sdk/google";
 
+import { AI_MODEL_PRIMARY } from "@/lib/config";
+
 export function geminiModel() {
-  return google("gemini-1.5-pro");
+  return google(AI_MODEL_PRIMARY);
 }

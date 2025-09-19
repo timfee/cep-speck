@@ -1,6 +1,7 @@
 import { google } from "@ai-sdk/google";
 import { streamText, type CoreMessage, type StreamTextResult } from "ai";
 
+import { AI_MODEL_PRIMARY } from "@/lib/config";
 import { CIRCUIT_BREAKER, RETRY_LIMITS } from "@/lib/constants";
 
 import type { z } from "zod";
@@ -92,7 +93,7 @@ class GeminiProvider implements AIProvider {
     return await this.circuitBreaker.execute(async () => {
       return Promise.resolve(
         streamText({
-          model: google("gemini-1.5-pro"),
+          model: google(AI_MODEL_PRIMARY),
           messages,
         })
       );
@@ -108,7 +109,7 @@ class GeminiProvider implements AIProvider {
       // Simple health check
       await this.circuitBreaker.execute(async () => {
         const result = streamText({
-          model: google("gemini-1.5-pro"),
+          model: google(AI_MODEL_PRIMARY),
           messages: [{ role: "user", content: "Hi" }],
         });
         // We don't need to wait for the stream, just creating it tests the API
@@ -218,7 +219,7 @@ export class ResilientAI {
           // Use generateObject with the provider's model
           const { generateObject } = await import("ai");
           return await generateObject({
-            model: google("gemini-1.5-pro"), // Use correct model name
+            model: google(AI_MODEL_PRIMARY), // Use centralized model config
             prompt,
             schema,
           });
