@@ -4,7 +4,10 @@ import type {
   WorkflowStep, 
   ContentOutline,
   EnterpriseParameters,
-  WorkflowProgress 
+  WorkflowProgress,
+  SuccessMetric,
+  FunctionalRequirement,
+  Milestone 
 } from '@/types/workflow';
 import { WORKFLOW_STEPS, DEFAULT_ENTERPRISE_PARAMETERS } from '@/types/workflow';
 
@@ -17,7 +20,7 @@ const generateContentOutline = (prompt: string): ContentOutline => {
   const lowercasePrompt = prompt.toLowerCase();
   
   // Generate functional requirements based on prompt analysis
-  const functionalRequirements = [];
+  const functionalRequirements: FunctionalRequirement[] = [];
   
   // Basic requirements that are always included
   functionalRequirements.push({
@@ -54,7 +57,7 @@ const generateContentOutline = (prompt: string): ContentOutline => {
   }
 
   // Generate success metrics
-  const successMetrics = [
+  const successMetrics: SuccessMetric[] = [
     {
       id: 'sm-adoption',
       name: 'User Adoption Rate',
@@ -89,7 +92,7 @@ const generateContentOutline = (prompt: string): ContentOutline => {
   }
 
   // Generate milestones
-  const milestones = [
+  const milestones: Milestone[] = [
     {
       id: 'ms-research',
       title: 'Research & Discovery',
