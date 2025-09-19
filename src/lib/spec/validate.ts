@@ -10,10 +10,10 @@ export function validateAll(draft: string, pack: SpecPack): ValidationReport {
   for (const def of pack.items) {
     const found = invokeItemValidate(draft, def, pack);
     let hasError = false;
-    for (const it of found) {
-      // Ensure severity is set (defensive programming for validation modules)
-      (it as any).severity = it.severity ?? def.severity;
-      if (it.severity === "error") hasError = true;
+    for (const issue of found) {
+      if (issue.severity === "error") {
+        hasError = true;
+      }
     }
     coverage[def.id] = true;
     issues.push(...found);

@@ -27,7 +27,7 @@ export function StructuredPrdWizard({ onTraditionalMode }: StructuredPrdWizardPr
     generateContentOutlineForPrompt
   } = useStructuredWorkflow();
 
-  const handleRegenerateOutline = async () => {
+  const handleRegenerateOutline = () => {
     generateContentOutlineForPrompt(state.initialPrompt);
   };
 
@@ -37,7 +37,7 @@ export function StructuredPrdWizard({ onTraditionalMode }: StructuredPrdWizardPr
         state.contentOutline.functionalRequirements.length === 0) {
       generateContentOutlineForPrompt(state.initialPrompt);
     }
-  }, [state.currentStep, state.initialPrompt, state.contentOutline.functionalRequirements.length, generateContentOutlineForPrompt]);
+  }, [state.currentStep, state.initialPrompt, state.contentOutline.functionalRequirements.length]);
 
   const handleNext = () => {
     if (state.currentStep === 'idea' && state.progress.canGoNext) {
@@ -84,6 +84,16 @@ export function StructuredPrdWizard({ onTraditionalMode }: StructuredPrdWizardPr
             <h2 className="text-2xl font-bold mb-4">Generate PRD</h2>
             <p className="text-muted-foreground">
               Final PRD generation with content outline and enterprise parameters.
+            </p>
+          </div>
+        );
+      
+      case 'complete':
+        return (
+          <div className="text-center py-12">
+            <h2 className="text-2xl font-bold mb-4">PRD Complete</h2>
+            <p className="text-muted-foreground">
+              Your PRD has been successfully generated and is ready for review.
             </p>
           </div>
         );
