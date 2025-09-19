@@ -35,7 +35,7 @@ export function extractMetrics(block: string, params: { metricRegex?: string }):
   // Handles inline comments after # character
   const map = new Map<string, string>();
   const defaultPattern = /^[-*]\s+([^:]+):\s+([^#]+)(?:#.*)?$/;
-  const customPattern = params.metricRegex
+  const customPattern = (params.metricRegex ?? "").length > 0
     ? new RegExp(params.metricRegex)
     : null;
 
@@ -108,7 +108,7 @@ export function validateHeaderPattern(
   itemId: string
 ): Issue[] {
   const lines = draft.split('\n').filter(Boolean);
-  const headerRegex = params.headerRegex ? new RegExp(params.headerRegex) : PATTERNS.NUMBERED_HEADER;
+  const headerRegex = (params.headerRegex ?? "").length > 0 ? new RegExp(params.headerRegex) : PATTERNS.NUMBERED_HEADER;
   const issues: Issue[] = [];
   
   for (const line of lines) {

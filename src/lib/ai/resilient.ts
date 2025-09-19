@@ -96,7 +96,7 @@ class GeminiProvider implements AIProvider {
   }
 
   async isAvailable(): Promise<boolean> {
-    if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
+    if ((process.env.GOOGLE_GENERATIVE_AI_API_KEY ?? "").length === 0) {
       return false;
     }
 

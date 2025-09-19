@@ -42,7 +42,7 @@ export class HealingInstructionBuilder {
     }
     
     const joined = this.instructions.join('; ');
-    return prefix ? `${prefix}: ${joined}.` : `${joined}.`;
+    return (prefix ?? "").length > 0 ? `${prefix}: ${joined}.` : `${joined}.`;
   }
 }
 

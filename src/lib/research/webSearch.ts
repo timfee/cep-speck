@@ -31,7 +31,7 @@ export function performCompetitorResearch(
       const competitorInfo = searchCompetitorInfo(vendor);
       result.competitors.push(competitorInfo);
       
-      if (competitorInfo.source) {
+      if ((competitorInfo.source ?? "").length > 0) {
         result.citations.push(competitorInfo.source);
       }
       

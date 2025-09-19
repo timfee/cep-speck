@@ -160,7 +160,7 @@ export function ContentOutlineStep({
                   </Button>
                 </div>
                 <p className="text-sm text-muted-foreground">{req.description}</p>
-                {req.userStory && (
+                {(req.userStory ?? "").length > 0 && (
                   <div className="text-xs bg-gray-50 p-2 rounded border-l-2 border-blue-500">
                     <strong>User Story:</strong> {req.userStory}
                   </div>
@@ -202,10 +202,10 @@ export function ContentOutlineStep({
                   </Button>
                 </div>
                 <p className="text-sm text-muted-foreground">{metric.description}</p>
-                {metric.target && (
+                {(metric.target ?? "").length > 0 && (
                   <div className="text-xs bg-green-50 p-2 rounded border-l-2 border-green-500">
                     <strong>Target:</strong> {metric.target}
-                    {metric.measurement && <span className="ml-2"><strong>Measurement:</strong> {metric.measurement}</span>}
+                    {(metric.measurement ?? "").length > 0 && <span className="ml-2"><strong>Measurement:</strong> {metric.measurement}</span>}
                   </div>
                 )}
               </div>
@@ -245,7 +245,7 @@ export function ContentOutlineStep({
                   </Button>
                 </div>
                 <p className="text-sm text-muted-foreground">{milestone.description}</p>
-                {milestone.estimatedDate && (
+                {(milestone.estimatedDate ?? "").length > 0 && (
                   <div className="text-xs bg-purple-50 p-2 rounded border-l-2 border-purple-500">
                     <strong>Estimated Date:</strong> {milestone.estimatedDate}
                   </div>
