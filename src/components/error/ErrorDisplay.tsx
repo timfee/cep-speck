@@ -107,16 +107,18 @@ export function ErrorDisplay({ error, onRetry, onConfigureApi }: ErrorDisplayPro
         }
         break;
       case 'RATE_LIMITED':
-        actions.push({
-          id: 'wait-and-retry',
-          label: 'Wait & Retry',
-          description: 'Automatically retry after delay',
-          icon: Clock,
-          primary: true,
-          handler: () => {
-            setTimeout(() => onRetry?.(), 5000);
-          }
-        });
+        if (onRetry) {
+          actions.push({
+            id: 'wait-and-retry',
+            label: 'Wait & Retry',
+            description: 'Automatically retry after delay',
+            icon: Clock,
+            primary: true,
+            handler: () => {
+              setTimeout(() => onRetry(), 5000);
+            }
+          });
+        }
         break;
     }
     
@@ -217,8 +219,8 @@ export function ErrorDisplay({ error, onRetry, onConfigureApi }: ErrorDisplayPro
                 })}
                 className="h-8"
                 onCopy={() => {
-                  // Could show a toast notification here
-                  console.log('Error details copied for support');
+                  // User feedback is provided by the CopyButton component itself
+                  // which changes text to "Copied!" temporarily
                 }}
               />
             </div>

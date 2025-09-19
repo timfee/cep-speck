@@ -9,7 +9,7 @@ import { Status } from "@/components/ui/status";
 import { WorkflowStatus, ProgressTimeline } from "@/components/ui/workflow-status";
 import { TerminalDisplay } from "@/components/ui/typing-text";
 import { MetricsDashboard, type WorkflowMetrics } from "@/components/ui/metrics-dashboard";
-import { ErrorDisplay } from "@/components/error";
+import { ErrorDisplay, ApiKeyDialog } from "@/components/error";
 import { useSpecValidation } from "@/hooks/useSpecValidation";
 import type { Issue, StreamFrame } from "@/lib/spec/types";
 import type { ErrorDetails, ErrorCode } from "@/lib/error/types";
@@ -27,6 +27,7 @@ export default function Page() {
   const [startTime, setStartTime] = useState<number>(0);
   const [elapsedTime, setElapsedTime] = useState<number>(0);
   const [errorDetails, setErrorDetails] = useState<ErrorDetails | null>(null);
+  const [showApiKeyDialog, setShowApiKeyDialog] = useState(false);
   const textRef = useRef<string>("");
 
   // Real-time spec validation
@@ -241,9 +242,7 @@ export default function Page() {
             error={errorDetails}
             onRetry={run}
             onConfigureApi={() => {
-              // This would open an API key configuration dialog
-              // For now, just show an alert
-              alert("Please add your GOOGLE_GENERATIVE_AI_API_KEY to .env.local and restart the development server.");
+              setShowApiKeyDialog(true);
             }}
           />
         ) : draft ? (
@@ -273,6 +272,12 @@ export default function Page() {
           )}
         </div>
       </Card>
+      
+      {/* API Key Configuration Dialog */}
+      <ApiKeyDialog 
+        isOpen={showApiKeyDialog}
+        onClose={() => setShowApiKeyDialog(false)}
+      />
     </div>
   );
 }
