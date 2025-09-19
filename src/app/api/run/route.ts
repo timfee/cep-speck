@@ -41,6 +41,21 @@ export async function POST(req: NextRequest) {
 
   const stream = new ReadableStream({
     async start(controller) {
+      let controllerClosed = false;
+      
+      const safeClose = () => {
+        if (!controllerClosed) {
+          controller.close();
+          controllerClosed = true;
+        }
+      };
+      
+      const safeEnqueue = (frame: Uint8Array) => {
+        if (!controllerClosed) {
+          controller.enqueue(frame);
+        }
+      };
+      
       try {
         // API key check
         if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
@@ -49,25 +64,27 @@ export async function POST(req: NextRequest) {
             false, // Not recoverable without restart
             "MISSING_API_KEY"
           );
-          controller.enqueue(encodeStreamFrame(errorFrame));
-          controller.close();
+          safeEnqueue(encodeStreamFrame(errorFrame));
+          safeClose();
           return;
         }
 
         // Validate pack structure
-        await withErrorRecovery(async () => {
-          assertValidSpecPack(pack);
-        }, "SpecPack validation").catch((error) => {
+        try {
+          await withErrorRecovery(async () => {
+            assertValidSpecPack(pack);
+          }, "SpecPack validation");
+        } catch (error) {
           if (error instanceof StreamingError) {
-            controller.enqueue(encodeStreamFrame(error.toStreamFrame()));
-            controller.close();
+            safeEnqueue(encodeStreamFrame(error.toStreamFrame()));
+            safeClose();
             return;
           }
           throw error;
-        });
+        }
 
         // Phase 1: Load knowledge
-        controller.enqueue(
+        safeEnqueue(
           encodeStreamFrame(
             createPhaseFrame("loading-knowledge", 0, "Loading knowledge base")
           )
@@ -79,7 +96,7 @@ export async function POST(req: NextRequest) {
         );
 
         // Phase 2: Perform research
-        controller.enqueue(
+        safeEnqueue(
           encodeStreamFrame(
             createPhaseFrame(
               "performing-research",
@@ -141,7 +158,7 @@ export async function POST(req: NextRequest) {
           attempt++;
 
           // Phase 3: Generate content
-          controller.enqueue(
+          safeEnqueue(
             encodeStreamFrame(
               createPhaseFrame(
                 "generating",
@@ -156,7 +173,7 @@ export async function POST(req: NextRequest) {
           let draftContent = "";
           for await (const delta of result.textStream) {
             draftContent += delta;
-            controller.enqueue(
+            safeEnqueue(
               encodeStreamFrame(
                 createGenerationFrame(delta, draftContent, ++totalTokens)
               )
@@ -168,7 +185,7 @@ export async function POST(req: NextRequest) {
 
           // Phase 4: Validate content
           const validationStartTime = Date.now();
-          controller.enqueue(
+          safeEnqueue(
             encodeStreamFrame(
               createPhaseFrame(
                 "validating",
@@ -181,7 +198,7 @@ export async function POST(req: NextRequest) {
           const report = validateAll(draft, pack);
 
           const validationDuration = Date.now() - validationStartTime;
-          controller.enqueue(
+          safeEnqueue(
             encodeStreamFrame(createValidationFrame(report, validationDuration))
           );
 
@@ -189,12 +206,12 @@ export async function POST(req: NextRequest) {
             finalDraft = draft;
             const totalDuration = Date.now() - startTime;
 
-            controller.enqueue(
+            safeEnqueue(
               encodeStreamFrame(
                 createPhaseFrame("done", attempt, "Content generation complete")
               )
             );
-            controller.enqueue(
+            safeEnqueue(
               encodeStreamFrame(
                 createResultFrame(true, finalDraft, attempt, totalDuration)
               )
@@ -204,7 +221,7 @@ export async function POST(req: NextRequest) {
 
           // Phase 5: AI self-review phase for filtering false positives
           const selfReviewStartTime = Date.now();
-          controller.enqueue(
+          safeEnqueue(
             encodeStreamFrame(
               createPhaseFrame(
                 "self-reviewing",
@@ -222,7 +239,7 @@ export async function POST(req: NextRequest) {
             );
 
             const selfReviewDuration = Date.now() - selfReviewStartTime;
-            controller.enqueue(
+            safeEnqueue(
               encodeStreamFrame(
                 createStreamFrame("self-review", {
                   confirmed,
@@ -237,7 +254,7 @@ export async function POST(req: NextRequest) {
               finalDraft = draft;
               const totalDuration = Date.now() - startTime;
 
-              controller.enqueue(
+              safeEnqueue(
                 encodeStreamFrame(
                   createPhaseFrame(
                     "done",
@@ -246,7 +263,7 @@ export async function POST(req: NextRequest) {
                   )
                 )
               );
-              controller.enqueue(
+              safeEnqueue(
                 encodeStreamFrame(
                   createResultFrame(true, finalDraft, attempt, totalDuration)
                 )
@@ -264,7 +281,7 @@ export async function POST(req: NextRequest) {
           }
 
           // Phase 6: Healing phase
-          controller.enqueue(
+          safeEnqueue(
             encodeStreamFrame(
               createPhaseFrame(
                 "healing",
@@ -275,7 +292,7 @@ export async function POST(req: NextRequest) {
           );
           const followup = aggregateHealing(issuesToHeal, pack);
 
-          controller.enqueue(
+          safeEnqueue(
             encodeStreamFrame(
               createStreamFrame("healing", {
                 instruction: followup,
@@ -291,7 +308,7 @@ export async function POST(req: NextRequest) {
 
           if (attempt === maxAttempts) {
             const totalDuration = Date.now() - startTime;
-            controller.enqueue(
+            safeEnqueue(
               encodeStreamFrame(
                 createPhaseFrame(
                   "failed",
@@ -300,7 +317,7 @@ export async function POST(req: NextRequest) {
                 )
               )
             );
-            controller.enqueue(
+            safeEnqueue(
               encodeStreamFrame(
                 createResultFrame(false, finalDraft, attempt, totalDuration)
               )
@@ -309,7 +326,7 @@ export async function POST(req: NextRequest) {
           }
         }
 
-        controller.close();
+        safeClose();
       } catch (e: unknown) {
         const error =
           e instanceof StreamingError
@@ -321,8 +338,8 @@ export async function POST(req: NextRequest) {
                 e
               );
 
-        controller.enqueue(encodeStreamFrame(error.toStreamFrame()));
-        controller.close();
+        safeEnqueue(encodeStreamFrame(error.toStreamFrame()));
+        safeClose();
       }
     },
   });
