@@ -79,7 +79,7 @@ export function ErrorTerminal({ error, context, className }: ErrorTerminalProps)
         {(context?.phase ?? "").length > 0 && (
           <AnimatedSpan delay={300}>
             <span className="text-yellow-400">Phase:</span>{" "}
-            <span className="text-white">{context.phase}</span>
+            <span className="text-white">{context?.phase}</span>
           </AnimatedSpan>
         )}
         

@@ -55,9 +55,10 @@ export function validateSpecPack(pack: SpecPack): PackValidationError[] {
     }
   }
   // header regex
-  if ((pack.composition?.headerRegex ?? "").length > 0) {
+  const headerRegex = pack.composition?.headerRegex ?? "";
+  if (headerRegex.length > 0) {
     try {
-      new RegExp(pack.composition.headerRegex);
+      new RegExp(headerRegex);
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);

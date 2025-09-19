@@ -74,7 +74,7 @@ export function CircuitBreakerStatus({ state, className }: CircuitBreakerStatusP
               <div className="text-sm text-muted-foreground text-right">
                 <div>Recovery in</div>
                 <div className="font-mono">
-                  {formatTime(state.recoveryTime - Date.now())}
+                  {formatTime((state.recoveryTime ?? 0) - Date.now())}
                 </div>
               </div>
             )}

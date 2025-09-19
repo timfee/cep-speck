@@ -53,7 +53,7 @@ export function aggregateHealing(draftIssues: Issue[], pack: SpecPack): string {
   const header = `Revise the latest draft to satisfy the following constraints without resetting compliant content:`;
   let body = chunks.map((c) => `- ${c}`).join("\n");
   const labelGuard = (pack.composition?.labelPattern ?? "").length > 0
-    ? `Maintain the header pattern "${pack.composition.labelPattern}".`
+    ? `Maintain the header pattern "${pack.composition?.labelPattern}".`
     : "";
   const footer = `${labelGuard} Perform minimal edits to satisfy constraints.`;
 

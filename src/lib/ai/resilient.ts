@@ -87,11 +87,11 @@ class GeminiProvider implements AIProvider {
   async generate(
     messages: CoreMessage[]
   ): Promise<StreamTextResult<Record<string, never>, never>> {
-    return this.circuitBreaker.execute(() => {
-      return streamText({
+    return await this.circuitBreaker.execute(async () => {
+      return Promise.resolve(streamText({
         model: google("gemini-2.5-pro"),
         messages,
-      });
+      }));
     });
   }
 
@@ -102,11 +102,13 @@ class GeminiProvider implements AIProvider {
 
     try {
       // Simple health check
-      await this.circuitBreaker.execute(() => {
-        return streamText({
+      await this.circuitBreaker.execute(async () => {
+        const result = streamText({
           model: google("gemini-2.5-pro"),
           messages: [{ role: "user", content: "Hi" }],
         });
+        // We don't need to wait for the stream, just creating it tests the API
+        return Promise.resolve(result);
       });
       return true;
     } catch {

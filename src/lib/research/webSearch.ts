@@ -31,8 +31,9 @@ export function performCompetitorResearch(
       const competitorInfo = searchCompetitorInfo(vendor);
       result.competitors.push(competitorInfo);
       
-      if ((competitorInfo.source ?? "").length > 0) {
-        result.citations.push(competitorInfo.source);
+      const source = competitorInfo.source ?? "";
+      if (source.length > 0) {
+        result.citations.push(source);
       }
       
       const autoFilledCount = (Object.values(competitorInfo) as (string | undefined)[])
