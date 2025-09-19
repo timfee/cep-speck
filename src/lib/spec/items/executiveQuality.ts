@@ -1,10 +1,9 @@
-import {
-  PATTERNS,
-  createHealingBuilder,
-  HEALING_TEMPLATES,
-  voidUnused,
-  createWordBoundaryRegex,
-} from "../helpers";
+import { generateObject } from "ai";
+import { z } from "zod";
+
+import { geminiModel } from "@/lib/ai/provider";
+
+import { voidUnused } from "../helpers";
 
 import type { Issue } from "../types";
 
@@ -15,179 +14,114 @@ export type Params = {
   banOverExplanation: boolean;
 };
 
-// Constants for quality thresholds
-const MAX_VAGUE_QUANTIFIERS = 3;
-const MAX_OVER_EXPLANATION_INSTANCES = 5;
+// Schema for the AI to fill
+const QualityCheckSchema = z.object({
+  isExecutiveQuality: z.boolean().describe("Overall assessment if the tone is executive-ready, factual, and concise."),
+  factualToneIssues: z.array(z.string()).describe("List of specific phrases that are vague, hedging, or empty business-speak (e.g., 'might', 'could', 'some', 'strengthen our position')."),
+  metricIssues: z.array(z.string()).describe("List of metrics or numbers that lack specific units, timeframes, or sources."),
+  overExplanationIssues: z.array(z.string()).describe("List of phrases that are meta-commentary or over-explanation (e.g., 'as mentioned', 'it is important to note')."),
+  reasoning: z.string().describe("Brief (1-2 sentence) summary of the quality issues found.")
+});
+
+// Constants
+const TLDR_MAX_LENGTH = 1500;
+const MAX_EVIDENCE_ITEMS = 3;
 
 function toPrompt(_params: Params, _pack?: unknown): string {
   voidUnused(_params, _pack);
-  return `Write with executive precision: factual statements, specific metrics with units and timeframes, direct language without over-explanation. Avoid sensationalist claims, empty business speak, or cutesy headings. Each statement should add concrete value.`;
+  return `Write with executive precision: factual statements, specific metrics with units and timeframes, direct language. Avoid sensationalist claims, empty business speak, or meta-commentary.`;
 }
 
-function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
+async function validate(draft: string, params: Params, _pack?: unknown): Promise<Issue[]> {
   voidUnused(_pack);
   const issues: Issue[] = [];
 
-  if (params.enforceFactualTone) {
-    const vagueQuantifiers = draft.match(PATTERNS.VAGUE_QUANTIFIERS);
-    if (vagueQuantifiers && vagueQuantifiers.length > MAX_VAGUE_QUANTIFIERS) {
-      issues.push({
-        id: "vague-quantifiers",
-        itemId,
-        severity: "warn",
-        message:
-          "Too many vague quantifiers - use specific numbers where possible",
-        evidence: `Found ${
-          vagueQuantifiers.length
-        } instances: ${vagueQuantifiers.slice(0, MAX_VAGUE_QUANTIFIERS).join(", ")}...`,
-      });
-    }
+  // If no params are enabled, skip the check.
+  if (!params.enforceFactualTone && !params.requireSpecificMetrics && !params.banOverExplanation) {
+    return issues;
+  }
 
-    const hedgingLanguage = draft.match(PATTERNS.HEDGING_LANGUAGE);
-    if (
-      hedgingLanguage &&
-      hedgingLanguage.length > MAX_OVER_EXPLANATION_INSTANCES
-    ) {
-      issues.push({
-        id: "excessive-hedging",
-        itemId,
-        severity: "warn",
-        message: "Excessive hedging language - state facts directly when known",
-        evidence: `Found ${hedgingLanguage.length} instances`,
-      });
-    }
+  const tldr = draft.match(/# 1\. TL;DR[\s\S]*?(?=# 2\.|$)/)?.[0] ?? draft.substring(0, TLDR_MAX_LENGTH);
 
-    const qualityTheaterTerms = [
-      "NPS",
-      "Net Promoter Score",
-      "satisfaction score",
-      "happiness index",
-      "engagement score",
-    ];
-    // Pre-compile regexes for efficiency
-    const qualityTheaterRegexes = qualityTheaterTerms.map((term) =>
-      createWordBoundaryRegex(term, "gi")
-    );
-    const inventedMetrics = qualityTheaterTerms.filter((_term, index) => {
-      return qualityTheaterRegexes[index].test(draft);
+  const prompt = `Analyze the executive quality of the following PRD excerpt.
+Focus on:
+1.  Factual Tone: Is it direct and factual, or does it use vague quantifiers, hedging, or empty business-speak?
+2.  Specific Metrics: Are metrics specific? Do they include units and context?
+3.  Conciseness: Does it avoid over-explanation and meta-commentary like "as noted above" or "it is important to note"?
+
+Return your analysis in the specified JSON format.
+
+---DRAFT EXCERPT---
+${tldr}
+---END EXCERPT---`;
+
+  try {
+    const { object } = await generateObject({
+      model: geminiModel(), // Using the base model provider
+      prompt,
+      schema: QualityCheckSchema,
     });
-    if (inventedMetrics.length > 0) {
+
+    if (object.isExecutiveQuality) {
+      return issues; // AI confirms quality is high
+    }
+
+    // Map AI findings back to our Issue format
+    if (params.enforceFactualTone && object.factualToneIssues.length > 0) {
       issues.push({
-        id: "quality-theater-metrics",
+        id: "vague-or-hedging-language",
         itemId,
         severity: "warn",
-        message:
-          "Avoid quality theater metrics like NPS - focus on operational metrics",
-        evidence: `Quality indicators found: ${inventedMetrics.join(", ")}`,
+        message: `AI detected vague/hedging language: ${object.reasoning}`,
+        evidence: object.factualToneIssues.slice(0, MAX_EVIDENCE_ITEMS).join(", "),
       });
     }
 
-    const businessSpeakTerms = [
-      "solidify our future",
-      "strengthen our position",
-      "position ourselves",
-      "future-proof",
-    ];
-    const solidifyFuture = businessSpeakTerms.filter((term) => {
-      const regex = createWordBoundaryRegex(term, "gi");
-      return regex.test(draft);
-    });
-    if (solidifyFuture.length > 0) {
+    if (params.requireSpecificMetrics && object.metricIssues.length > 0) {
       issues.push({
-        id: "empty-business-speak",
+        id: "metrics-not-specific",
         itemId,
         severity: "error",
-        message: "Empty business speak detected - state concrete outcomes",
-        evidence: `Business speak found: ${solidifyFuture.join(", ")}`,
+        message: `AI detected non-specific metrics: ${object.reasoning}`,
+        evidence: object.metricIssues.slice(0, MAX_EVIDENCE_ITEMS).join(", "),
       });
     }
-  }
 
-  if (params.requireSpecificMetrics) {
-    const metricSections = draft.match(
-      /# \d+\. Success Metrics[\s\S]*?(?=# \d+\.|$)/i
-    );
-    if (metricSections) {
-      const metricsContent = metricSections[0];
-      // Complex regex for numbers without units - not suitable for helper
-      const numbersWithoutUnits = metricsContent.match(
-        // eslint-disable-next-line custom/enforce-helper-usage
-        /\b\d+(?!\s*(?:%|ms|s|sec|seconds|minutes|hours|days|weeks|months|years|qps|rps|rpm|req\/s|MB|GB|TB|requests|users|tenants|releases))\b/g
-      );
-      if (numbersWithoutUnits && numbersWithoutUnits.length > 2) {
-        issues.push({
-          id: "metrics-missing-units",
-          itemId,
-          severity: "error",
-          message: "Metrics section contains numbers without units",
-          evidence: `Numbers without units: ${numbersWithoutUnits.join(", ")}`,
-        });
-      }
-
-      // Complex regex for heuristic masking - not suitable for simple word boundary helper
-      const heuristicMasking = draft.match(
-        // eslint-disable-next-line custom/enforce-helper-usage
-        /\b(because|due to|in order to|to ensure|for the purpose of)\s+[^.]*\b(metric|measure|track|monitor)\b/gi
-      );
-      if (heuristicMasking && heuristicMasking.length > 0) {
-        issues.push({
-          id: "heuristic-masking",
-          itemId,
-          severity: "warn",
-          message:
-            "Consider stating the heuristic directly rather than obscuring through metrics",
-          evidence: `Potential heuristic masking: ${heuristicMasking
-            .slice(0, 2)
-            .join("; ")}`,
-        });
-      }
+    if (params.banOverExplanation && object.overExplanationIssues.length > 0) {
+      issues.push({
+        id: "over-explanation",
+        itemId,
+        severity: "warn",
+        message: `AI detected over-explanation/meta-commentary: ${object.reasoning}`,
+        evidence: object.overExplanationIssues.slice(0, MAX_EVIDENCE_ITEMS).join(", "),
+      });
     }
-  }
+    
+    return issues;
 
-  if (params.banOverExplanation) {
-    for (const pattern of PATTERNS.OVER_EXPLANATION) {
-      const matches = draft.match(pattern);
-      if (matches && matches.length > 2) {
-        issues.push({
-          id: "over-explanation",
-          itemId,
-          severity: "warn",
-          message: "Remove explanatory phrases - state facts directly",
-          evidence: `Over-explanation detected: ${matches.slice(0, 2).join(", ")}`,
-        });
-      }
-    }
+  } catch (error) {
+    console.warn("ExecutiveQuality AI validation failed:", error);
+    // Fail open: If the AI check fails, return no issues for this validator.
+    // The deterministic checks will still run.
+    return [];
   }
-
-  return issues;
 }
 
-function heal(
+// eslint-disable-next-line @typescript-eslint/require-await
+async function heal(
   issues: Issue[],
   _params: Params,
   _pack?: unknown
-): string | null {
+): Promise<string | null> {
   voidUnused(_params, _pack);
   if (!issues.length) return null;
 
-  return createHealingBuilder()
-    .addForIssue(
-      issues,
-      "vague-quantifiers",
-      HEALING_TEMPLATES.METRIC_SPECIFICITY
-    )
-    .addForIssue(issues, "excessive-hedging", HEALING_TEMPLATES.REDUCE_HEDGING)
-    .addForIssue(
-      issues,
-      "metrics-missing-units",
-      HEALING_TEMPLATES.METRIC_UNITS
-    )
-    .addForIssue(
-      issues,
-      "over-explanation",
-      HEALING_TEMPLATES.REMOVE_META_COMMENTARY
-    )
-    .build(HEALING_TEMPLATES.EXECUTIVE_PRECISION);
+  // The healing instructions can now be simpler and more direct
+  return `Enhance executive precision:
+- Replace vague quantifiers (e.g., "some", "many") with specific numbers.
+- State facts directly; remove hedging language (e.g., "might", "could") where possible.
+- Remove meta-commentary (e.g., "it is important to note").
+- Ensure all metrics have units and timeframes.`;
 }
 
 export const itemModule = { itemId, toPrompt, validate, heal };

@@ -9,7 +9,8 @@ function toPrompt(_params: Params, _pack?: unknown): string {
   return "Reject impossible percentages (>100%) and flag unrealistic rapid adoption claims.";
 }
 
-function validate(draft: string, _params: Params, _pack?: unknown): Issue[] {
+// eslint-disable-next-line @typescript-eslint/require-await
+async function validate(draft: string, _params: Params, _pack?: unknown): Promise<Issue[]> {
   const issues: Issue[] = [];
 
   // Check for impossible percentages (>100%)
@@ -89,11 +90,12 @@ function validate(draft: string, _params: Params, _pack?: unknown): Issue[] {
   return issues;
 }
 
-function heal(
+// eslint-disable-next-line @typescript-eslint/require-await
+async function heal(
   _issues: Issue[],
   _params: Params,
   _pack?: unknown
-): string | null {
+): Promise<string | null> {
   void _issues;
   void _params;
   void _pack;

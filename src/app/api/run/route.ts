@@ -6,7 +6,6 @@ import "@/lib/spec/items";
 import packData from "@/lib/spec/packs/prd-v1.json";
 import { assertValidSpecPack } from "@/lib/spec/packValidate";
 import { buildSystemPrompt, buildUserPrompt } from "@/lib/spec/prompt";
-import { performSelfReview } from "@/lib/spec/selfReview";
 import {
   createErrorFrame,
   createGenerationFrame,
@@ -209,7 +208,7 @@ export async function POST(req: NextRequest) {
           const draft = await result.text;
           finalDraft = draft;
 
-          // Phase 4: Validate content
+          // Phase 4: Validate content (NOW ASYNC)
           const validationStartTime = Date.now();
           safeEnqueue(
             encodeStreamFrame(
@@ -221,7 +220,7 @@ export async function POST(req: NextRequest) {
             )
           );
 
-          const report = validateAll(draft, pack);
+          const report = await validateAll(draft, pack);
 
           const validationDuration = Date.now() - validationStartTime;
           safeEnqueue(
@@ -245,68 +244,8 @@ export async function POST(req: NextRequest) {
             break;
           }
 
-          // Phase 5: AI self-review phase for filtering false positives
-          const selfReviewStartTime = Date.now();
-          safeEnqueue(
-            encodeStreamFrame(
-              createPhaseFrame(
-                "self-reviewing",
-                attempt,
-                "Filtering validation issues"
-              )
-            )
-          );
-
-          let issuesToHeal = report.issues;
-          try {
-            const { confirmed, filtered } = await performSelfReview(
-              draft,
-              report.issues
-            );
-
-            const selfReviewDuration = Date.now() - selfReviewStartTime;
-            safeEnqueue(
-              encodeStreamFrame(
-                createStreamFrame("self-review", {
-                  confirmed,
-                  filtered,
-                  duration: selfReviewDuration,
-                })
-              )
-            );
-
-            // Use confirmed issues for healing
-            if (confirmed.length === 0) {
-              finalDraft = draft;
-              const totalDuration = Date.now() - startTime;
-
-              safeEnqueue(
-                encodeStreamFrame(
-                  createPhaseFrame(
-                    "done",
-                    attempt,
-                    "Content approved after self-review"
-                  )
-                )
-              );
-              safeEnqueue(
-                encodeStreamFrame(
-                  createResultFrame(true, finalDraft, attempt, totalDuration)
-                )
-              );
-              break;
-            }
-
-            issuesToHeal = confirmed;
-          } catch (selfReviewError) {
-            console.warn(
-              "Self-review failed, proceeding with all issues:",
-              selfReviewError
-            );
-            // Continue with original issues if self-review fails
-          }
-
-          // Phase 6: Healing phase
+          // Phase 5: Healing phase
+          const issuesToHeal = report.issues; // Use issues directly
           safeEnqueue(
             encodeStreamFrame(
               createPhaseFrame(
@@ -316,7 +255,9 @@ export async function POST(req: NextRequest) {
               )
             )
           );
-          const followup = aggregateHealing(issuesToHeal, pack);
+          
+          // invokeItemHeal is now async
+          const followup = await aggregateHealing(issuesToHeal, pack);
 
           safeEnqueue(
             encodeStreamFrame(

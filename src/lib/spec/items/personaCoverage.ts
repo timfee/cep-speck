@@ -10,7 +10,8 @@ function toPrompt(_params: Params, _pack?: unknown): string {
   return "All personas must appear consistently in People Problems, Goals, and CUJs.";
 }
 
-function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
+// eslint-disable-next-line @typescript-eslint/require-await
+async function validate(draft: string, params: Params, _pack?: unknown): Promise<Issue[]> {
   voidUnused(_pack);
   const issues: Issue[] = [];
   const defs = [
@@ -37,11 +38,12 @@ function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
   return issues;
 }
 
-function heal(
+// eslint-disable-next-line @typescript-eslint/require-await
+async function heal(
   _issues: Issue[],
   _params: Params,
   _pack?: unknown
-): string | null {
+): Promise<string | null> {
   voidUnused(_issues, _params, _pack);
   return buildPersonaHealing();
 }

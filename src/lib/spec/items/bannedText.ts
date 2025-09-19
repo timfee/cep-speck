@@ -39,7 +39,8 @@ function toPrompt(params: Params, pack?: SpecPack): string {
   )}.`;
 }
 
-function validate(draft: string, params: Params, pack?: SpecPack): Issue[] {
+// eslint-disable-next-line @typescript-eslint/require-await
+async function validate(draft: string, params: Params, pack?: SpecPack): Promise<Issue[]> {
   const exact = collectExact(params, pack);
   const regex = collectRegex(params, pack);
   const issues: Issue[] = [];
@@ -72,11 +73,12 @@ function validate(draft: string, params: Params, pack?: SpecPack): Issue[] {
   return issues;
 }
 
-function heal(
+// eslint-disable-next-line @typescript-eslint/require-await
+async function heal(
   issues: Issue[],
   _params: Params,
   _pack?: SpecPack
-): string | null {
+): Promise<string | null> {
   voidUnused(_params, _pack);
   if (!issues.length) return null;
   return HEALING_TEMPLATES.BANNED_TEXT;

@@ -14,16 +14,18 @@ function toPrompt(params: Params, _pack?: unknown): string {
   return `Use the header label pattern: ${params.pattern} for top-level sections.`;
 }
 
-function validate(draft: string, params: Params, _pack?: unknown): Issue[] {
+// eslint-disable-next-line @typescript-eslint/require-await
+async function validate(draft: string, params: Params, _pack?: unknown): Promise<Issue[]> {
   voidUnused(_pack);
   return validateHeaderPattern(draft, params, itemId);
 }
 
-function heal(
+// eslint-disable-next-line @typescript-eslint/require-await
+async function heal(
   _issues: Issue[],
   params: Params,
   _pack?: unknown
-): string | null {
+): Promise<string | null> {
   voidUnused(_issues, _pack);
   return HEALING_TEMPLATES.HEADER_PATTERN(params.pattern);
 }

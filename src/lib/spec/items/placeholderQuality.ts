@@ -10,11 +10,12 @@ function toPrompt(_params: Record<string, never>, _pack?: unknown): string {
   return "Placeholders must be specific: include data, units, timeframe, and source.";
 }
 
-function validate(
+// eslint-disable-next-line @typescript-eslint/require-await
+async function validate(
   draft: string,
   _params: Record<string, never>,
   _pack?: unknown
-): Issue[] {
+): Promise<Issue[]> {
   voidUnused(_params, _pack);
   const issues: Issue[] = [];
   const placeholders = draft.match(PATTERNS.PLACEHOLDER) ?? [];
@@ -51,11 +52,12 @@ function validate(
   return issues;
 }
 
-function heal(
+// eslint-disable-next-line @typescript-eslint/require-await
+async function heal(
   issues: Issue[],
   _params: Record<string, never>,
   _pack?: unknown
-): string | null {
+): Promise<string | null> {
   voidUnused(_params, _pack);
   if (!issues.length) return null;
   return HEALING_TEMPLATES.IMPROVE_PLACEHOLDERS;
