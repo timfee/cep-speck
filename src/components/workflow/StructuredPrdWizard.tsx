@@ -5,7 +5,8 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ProgressTimeline } from '@/components/workflow/ProgressTimeline';
 import { IdeaCaptureStep } from '@/components/workflow/steps/IdeaCaptureStep';
-import { StructureReviewStep } from '@/components/workflow/steps/StructureReviewStep';
+import { ContentOutlineStep } from '@/components/workflow/steps/ContentOutlineStep';
+import { EnterpriseParametersStep } from '@/components/workflow/steps/EnterpriseParametersStep';
 import { useStructuredWorkflow, MIN_PROMPT_LENGTH } from '@/hooks/useStructuredWorkflow';
 import { ArrowLeft, ArrowRight, Wand2 } from 'lucide-react';
 
@@ -17,31 +18,34 @@ export function StructuredPrdWizard({ onTraditionalMode }: StructuredPrdWizardPr
   const {
     state,
     setInitialPrompt,
-    setSelectedSections,
+    setContentOutline,
+    setEnterpriseParameters,
     goToNextStep,
     goToPreviousStep,
     resetWorkflow,
-    generateStructureForPrompt
+    generateContentOutlineForPrompt
   } = useStructuredWorkflow();
 
-  const handleRegenerateStructure = async () => {
-    generateStructureForPrompt(state.initialPrompt);
+  const handleRegenerateOutline = async () => {
+    generateContentOutlineForPrompt(state.initialPrompt);
   };
 
-  // Auto-generate structure when prompt is ready and we're on structure step
+  // Auto-generate content outline when prompt is ready and we're on outline step
   React.useEffect(() => {
-    if (state.currentStep === 'structure' && state.initialPrompt.trim().length > MIN_PROMPT_LENGTH && state.suggestedSections.length === 0) {
-      generateStructureForPrompt(state.initialPrompt);
+    if (state.currentStep === 'outline' && state.initialPrompt.trim().length > MIN_PROMPT_LENGTH && 
+        state.contentOutline.functionalRequirements.length === 0) {
+      generateContentOutlineForPrompt(state.initialPrompt);
     }
-  }, [state.currentStep, state.initialPrompt, state.suggestedSections.length, generateStructureForPrompt]);
+  }, [state.currentStep, state.initialPrompt, state.contentOutline.functionalRequirements.length, generateContentOutlineForPrompt]);
 
   const handleNext = () => {
     if (state.currentStep === 'idea' && state.progress.canGoNext) {
       goToNextStep();
-    } else if (state.currentStep === 'structure' && state.progress.canGoNext) {
+    } else if (state.currentStep === 'outline' && state.progress.canGoNext) {
+      goToNextStep();
+    } else if (state.currentStep === 'parameters' && state.progress.canGoNext) {
       goToNextStep();
     }
-    // Add more steps as needed
   };
 
   const renderStepContent = () => {
@@ -54,26 +58,23 @@ export function StructuredPrdWizard({ onTraditionalMode }: StructuredPrdWizardPr
           />
         );
       
-      case 'structure':
+      case 'outline':
         return (
-          <StructureReviewStep
+          <ContentOutlineStep
             initialPrompt={state.initialPrompt}
-            suggestedSections={state.suggestedSections}
-            selectedSections={state.selectedSections}
-            onSelectedSectionsChange={setSelectedSections}
-            onRegenerateStructure={handleRegenerateStructure}
+            contentOutline={state.contentOutline}
+            onChange={setContentOutline}
+            onRegenerateOutline={handleRegenerateOutline}
             isLoading={state.isLoading}
           />
         );
       
-      case 'sections':
+      case 'parameters':
         return (
-          <div className="text-center py-12">
-            <h2 className="text-2xl font-bold mb-4">Section Editing</h2>
-            <p className="text-muted-foreground">
-              Section editing interface coming soon...
-            </p>
-          </div>
+          <EnterpriseParametersStep
+            parameters={state.enterpriseParameters}
+            onChange={setEnterpriseParameters}
+          />
         );
       
       case 'generate':
@@ -81,7 +82,7 @@ export function StructuredPrdWizard({ onTraditionalMode }: StructuredPrdWizardPr
           <div className="text-center py-12">
             <h2 className="text-2xl font-bold mb-4">Generate PRD</h2>
             <p className="text-muted-foreground">
-              PRD generation interface coming soon...
+              Final PRD generation with content outline and enterprise parameters.
             </p>
           </div>
         );
@@ -146,15 +147,15 @@ export function StructuredPrdWizard({ onTraditionalMode }: StructuredPrdWizardPr
         </div>
 
         <div className="flex items-center space-x-2">
-          {state.currentStep === 'structure' && (
+          {state.currentStep === 'outline' && (
             <Button
               variant="outline"
-              onClick={handleRegenerateStructure}
+              onClick={handleRegenerateOutline}
               disabled={state.isLoading}
               className="flex items-center gap-2"
             >
               <Wand2 className="h-4 w-4" />
-              Regenerate Structure
+              Regenerate Outline
             </Button>
           )}
           

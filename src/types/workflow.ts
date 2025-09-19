@@ -1,6 +1,61 @@
 // Workflow types for structured PRD input pipeline
 
-export type WorkflowStep = 'idea' | 'structure' | 'sections' | 'generate' | 'complete';
+export type WorkflowStep = 'idea' | 'outline' | 'parameters' | 'generate' | 'complete';
+
+// Content outline structures
+export interface FunctionalRequirement {
+  id: string;
+  title: string;
+  description: string;
+  priority: 'P0' | 'P1' | 'P2';
+  userStory?: string;
+  acceptanceCriteria?: string[];
+  dependencies?: string[];
+  estimatedEffort?: string;
+}
+
+export interface SuccessMetric {
+  id: string;
+  name: string;
+  description: string;
+  type: 'engagement' | 'adoption' | 'performance' | 'business';
+  target?: string;
+  measurement?: string;
+  frequency?: string;
+  owner?: string;
+}
+
+export interface Milestone {
+  id: string;
+  title: string;
+  description: string;
+  phase: 'research' | 'design' | 'development' | 'testing' | 'launch' | 'post-launch';
+  estimatedDate?: string;
+  dependencies?: string[];
+  deliverables?: string[];
+}
+
+export interface ContentOutline {
+  functionalRequirements: FunctionalRequirement[];
+  successMetrics: SuccessMetric[];
+  milestones: Milestone[];
+  executiveSummary?: {
+    problemStatement: string;
+    proposedSolution: string;
+    businessValue: string;
+    targetUsers: string;
+  };
+}
+
+// Enterprise-specific parameter options
+export interface EnterpriseParameters {
+  targetSku: 'premium' | 'enterprise' | 'education' | 'government';
+  deploymentModel: 'cloud' | 'hybrid' | 'on-premise';
+  securityRequirements: ('sso' | 'dlp' | 'compliance' | 'audit')[];
+  integrations: ('active-directory' | 'okta' | 'salesforce' | 'workspace')[];
+  supportLevel: 'standard' | 'premium' | 'enterprise';
+  rolloutStrategy: 'pilot' | 'phased' | 'full-deployment';
+}
 
 export interface SectionDefinition {
   id: string;
@@ -27,7 +82,8 @@ export interface WorkflowProgress {
 export interface StructuredWorkflowState {
   currentStep: WorkflowStep;
   initialPrompt: string;
-  suggestedSections: SectionDefinition[];
+  contentOutline: ContentOutline;
+  enterpriseParameters: EnterpriseParameters;
   selectedSections: string[];
   sectionContents: Record<string, string>;
   sectionOrder: string[];
@@ -120,7 +176,17 @@ export const AVAILABLE_SECTIONS: SectionDefinition[] = [
 
 export const WORKFLOW_STEPS = [
   { id: 'idea', name: 'Idea Capture', description: 'Describe your product concept' },
-  { id: 'structure', name: 'Section Selection', description: 'Choose PRD sections' },
-  { id: 'sections', name: 'Content Review', description: 'Customize section content' },
+  { id: 'outline', name: 'Content Outline', description: 'Review functional requirements & metrics' },
+  { id: 'parameters', name: 'Enterprise Settings', description: 'Configure deployment & security' },
   { id: 'generate', name: 'Generate PRD', description: 'Create final document' }
 ] as const;
+
+// Default enterprise parameters
+export const DEFAULT_ENTERPRISE_PARAMETERS: EnterpriseParameters = {
+  targetSku: 'premium',
+  deploymentModel: 'cloud',
+  securityRequirements: [],
+  integrations: [],
+  supportLevel: 'standard',
+  rolloutStrategy: 'pilot'
+};
