@@ -277,6 +277,10 @@ const eslintConfig = [
       "unicorn/no-array-reduce": "error",
       "unicorn/no-array-for-each": "error",
 
+      // ============ UNUSED CODE DETECTION ============
+      "unicorn/no-useless-spread": "error",
+      "unicorn/no-useless-length-check": "error",
+
       // ============ ADDITIONAL STRICT RULES ============
       "@typescript-eslint/no-unsafe-assignment": "error",
       "@typescript-eslint/no-unsafe-argument": "error",
