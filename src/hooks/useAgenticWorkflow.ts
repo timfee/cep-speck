@@ -47,7 +47,7 @@ export const useAgenticWorkflow = () => {
   }, []);
 
   const setError = useCallback((error: string | null) => {
-    setState(prev => ({ ...prev, error, isLoading: false, phase: error ? 'error' : prev.phase }));
+    setState(prev => ({ ...prev, error, isLoading: false, phase: error !== null ? 'error' : prev.phase }));
   }, []);
 
   /**
@@ -117,6 +117,7 @@ export const useAgenticWorkflow = () => {
       let draftContent = '';
       const decoder = new TextDecoder();
 
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
@@ -134,6 +135,7 @@ export const useAgenticWorkflow = () => {
     } catch (error) {
       setError(error instanceof Error ? error.message : 'Failed to generate draft');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.outline, setError]);
 
   /**
@@ -167,6 +169,7 @@ export const useAgenticWorkflow = () => {
     } catch (error) {
       setError(error instanceof Error ? error.message : 'Failed to evaluate draft');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setError]);
 
   /**
@@ -212,6 +215,7 @@ export const useAgenticWorkflow = () => {
       let refinedContent = '';
       const decoder = new TextDecoder();
 
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;

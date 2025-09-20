@@ -1,6 +1,8 @@
 import React from 'react';
+
 import { Button } from '@/components/ui/button';
 import { useAgenticWorkflow } from '@/hooks/useAgenticWorkflow';
+import type { AgenticWorkflowState } from '@/hooks/useAgenticWorkflow';
 import type { StructuredOutline } from '@/lib/agents/types';
 
 interface AgenticPrdWizardProps {
@@ -10,16 +12,24 @@ interface AgenticPrdWizardProps {
 export function AgenticPrdWizard({ onTraditionalMode }: AgenticPrdWizardProps) {
   const { state, setBrief, setOutline, generateOutline, generateDraft, resetWorkflow } = useAgenticWorkflow();
 
-  const handleBriefSubmit = () => {
-    void generateOutline();
+  const handleBriefSubmit = async () => {
+    try {
+      await generateOutline();
+    } catch (error) {
+      console.error('Failed to generate outline:', error);
+    }
   };
 
   const handleOutlineEdit = (outline: StructuredOutline) => {
     setOutline(outline);
   };
 
-  const handleGenerateDraft = () => {
-    void generateDraft();
+  const handleGenerateDraft = async () => {
+    try {
+      await generateDraft();
+    } catch (error) {
+      console.error('Failed to generate draft:', error);
+    }
   };
 
   const renderPhaseContent = () => {
@@ -119,7 +129,7 @@ function OutlineEditor({ outline, onChange, isLoading }: OutlineEditorProps) {
 // Phase Components
 
 interface IdeaPhaseProps {
-  state: any;
+  state: AgenticWorkflowState;
   setBrief: (brief: string) => void;
   onSubmit: () => void;
   onTraditionalMode: () => void;
@@ -154,7 +164,7 @@ function IdeaPhase({ state, setBrief, onSubmit, onTraditionalMode }: IdeaPhasePr
 }
 
 interface OutlinePhaseProps {
-  state: any;
+  state: AgenticWorkflowState;
   onEdit: (outline: StructuredOutline) => void;
   onGenerate: () => void;
   onEditBrief: () => void;
@@ -189,7 +199,7 @@ function OutlinePhase({ state, onEdit, onGenerate, onEditBrief }: OutlinePhasePr
   );
 }
 
-function DraftPhase({ state }: { state: any }) {
+function DraftPhase({ state }: { state: AgenticWorkflowState }) {
   return (
     <div className="space-y-4">
       <h2 className="text-2xl font-bold">Step 3: PRD Generation</h2>
@@ -213,7 +223,7 @@ function DraftPhase({ state }: { state: any }) {
         <div className="mt-4">
           <h3 className="font-semibold mb-2">Issues Found (Refining...):</h3>
           <ul className="space-y-1 text-sm">
-            {state.evaluationIssues.map((issue: any, index: number) => (
+            {state.evaluationIssues.map((issue, index: number) => (
               <li key={index} className="text-orange-600">
                 • {issue.section}: {issue.issue}
               </li>
@@ -225,7 +235,7 @@ function DraftPhase({ state }: { state: any }) {
   );
 }
 
-function CompletePhase({ state, onReset }: { state: any; onReset: () => void }) {
+function CompletePhase({ state, onReset }: { state: AgenticWorkflowState; onReset: () => void }) {
   return (
     <div className="space-y-4">
       <h2 className="text-2xl font-bold">✅ PRD Complete!</h2>
@@ -239,7 +249,7 @@ function CompletePhase({ state, onReset }: { state: any; onReset: () => void }) 
         <div>
           <h3 className="font-semibold mb-2 text-orange-600">Remaining Issues:</h3>
           <ul className="space-y-2 text-sm">
-            {state.evaluationIssues.map((issue: any, index: number) => (
+            {state.evaluationIssues.map((issue, index: number) => (
               <li key={index} className="border-l-4 border-orange-400 pl-3">
                 <strong>{issue.section}:</strong> {issue.issue}
                 <br />
@@ -259,7 +269,7 @@ function CompletePhase({ state, onReset }: { state: any; onReset: () => void }) 
   );
 }
 
-function ErrorPhase({ state, onReset }: { state: any; onReset: () => void }) {
+function ErrorPhase({ state, onReset }: { state: AgenticWorkflowState; onReset: () => void }) {
   return (
     <div className="space-y-4">
       <h2 className="text-2xl font-bold text-red-600">❌ Error</h2>

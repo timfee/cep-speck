@@ -5,12 +5,7 @@ import React from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-
-import {
-  processStreamingResponse,
-  useGenerationState,
-} from "@/components/workflow/hooks/useGenerationState";
-
+import { useGenerationState } from "@/components/workflow/hooks/useGenerationState";
 import { ProgressTimeline } from "@/components/workflow/ProgressTimeline";
 import { CompleteStep } from "@/components/workflow/steps/CompleteStep";
 import { ContentOutlineStep } from "@/components/workflow/steps/ContentOutlineStep";
@@ -31,7 +26,6 @@ export function StructuredPrdWizard({
     generatedPrd,
     isGenerating,
     error,
-    setGeneratedPrd,
     setIsGenerating,
     setError,
   } = useGenerationState();
@@ -51,7 +45,7 @@ export function StructuredPrdWizard({
     generateContentOutlineForPrompt(state.initialPrompt);
   };
 
-  const handleGeneratePrd = async () => {
+  const handleGeneratePrd = () => {
     setIsGenerating(true);
     setError(null);
 

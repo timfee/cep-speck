@@ -39,7 +39,7 @@ function createStreamingResponse(streamResult: { textStream: AsyncIterable<strin
  * Handle outline generation phase
  */
 async function handleOutlinePhase(body: GenerateRequest) {
-  if (!body.brief || body.brief.trim().length === 0) {
+  if (body.brief == null || body.brief.trim().length === 0) {
     return new Response(
       JSON.stringify({ error: 'Brief is required for outline phase' }),
       { status: 400, headers: { 'Content-Type': 'application/json' } }
@@ -56,7 +56,7 @@ async function handleOutlinePhase(body: GenerateRequest) {
  * Handle draft generation phase
  */
 async function handleDraftPhase(body: GenerateRequest) {
-  if (!body.outline) {
+  if (body.outline == null) {
     return new Response(
       JSON.stringify({ error: 'Outline is required for draft phase' }),
       { status: 400, headers: { 'Content-Type': 'application/json' } }
@@ -71,7 +71,7 @@ async function handleDraftPhase(body: GenerateRequest) {
  * Handle evaluation phase
  */
 async function handleEvaluatePhase(body: GenerateRequest) {
-  if (!body.draft || body.draft.trim().length === 0) {
+  if (body.draft == null || body.draft.trim().length === 0) {
     return new Response(
       JSON.stringify({ error: 'Draft is required for evaluate phase' }),
       { status: 400, headers: { 'Content-Type': 'application/json' } }
@@ -88,7 +88,7 @@ async function handleEvaluatePhase(body: GenerateRequest) {
  * Handle refinement phase
  */
 async function handleRefinePhase(body: GenerateRequest) {
-  if (!body.draft || body.draft.trim().length === 0 || !body.report) {
+  if (body.draft == null || body.draft.trim().length === 0 || body.report == null) {
     return new Response(
       JSON.stringify({ error: 'Draft and report are required for refine phase' }),
       { status: 400, headers: { 'Content-Type': 'application/json' } }
@@ -109,7 +109,7 @@ export async function POST(req: NextRequest) {
 
     // API key check
     const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
-    if (!apiKey || apiKey.trim().length === 0) {
+    if (apiKey == null || apiKey.trim().length === 0) {
       return new Response(
         JSON.stringify({ 
           error: 'Missing GOOGLE_GENERATIVE_AI_API_KEY on server. Add it to .env.local and restart.' 
