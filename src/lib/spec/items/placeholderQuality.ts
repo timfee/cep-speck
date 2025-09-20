@@ -1,40 +1,53 @@
-import { PATTERNS, LIMITS, HEALING_TEMPLATES, voidUnused } from "../helpers";
+import { PATTERNS, LIMITS, HEALING_TEMPLATES } from "../helpers";
 
 import type { Issue } from "../types";
 
 export const itemId = "placeholder-quality";
-// No Params type required
+export type Params = {
+  minWords?: number;
+  requireUnitsForMetrics?: boolean;
+};
 
-function toPrompt(_params: Record<string, never>, _pack?: unknown): string {
-  voidUnused(_params, _pack);
-  return "Placeholders must be specific: include data, units, timeframe, and source.";
+function toPrompt(params: Params, _pack?: unknown): string {
+  const minWords = params.minWords ?? LIMITS.PLACEHOLDER_MIN_WORDS;
+  const parts = [
+    `Placeholders must be specific with at least ${minWords} words describing what data is needed.`
+  ];
+  
+  if (params.requireUnitsForMetrics !== false) {
+    parts.push("For metric placeholders (baseline, target, KPI), include units, timeframe, and source of truth.");
+  }
+  
+  return parts.join(" ");
 }
 
 async function validate(
   draft: string,
-  _params: Record<string, never>,
+  params: Params,
   _pack?: unknown
 ): Promise<Issue[]> {
-  voidUnused(_params, _pack);
   const issues: Issue[] = [];
   const placeholders = draft.match(PATTERNS.PLACEHOLDER) ?? [];
+  const minWords = params.minWords ?? LIMITS.PLACEHOLDER_MIN_WORDS;
+  const requireUnitsForMetrics = params.requireUnitsForMetrics !== false;
 
   for (const ph of placeholders) {
     const content = ph.match(PATTERNS.PLACEHOLDER_CONTENT)?.[1] ?? "";
 
-    // Check for vague placeholders (< 3 words)
-    if (content.trim().split(/\s+/).length < LIMITS.PLACEHOLDER_MIN_WORDS) {
+    // Check for vague placeholders
+    if (content.trim().split(/\s+/).length < minWords) {
       issues.push({
         id: "vague-placeholder",
         itemId,
         severity: "warn",
-        message: `Placeholder too vague: "${ph}"`,
+        message: `Placeholder too vague: "${ph}" (needs at least ${minWords} words)`,
         evidence: ph,
       });
     }
 
     // Check for metric placeholders missing units
     if (
+      requireUnitsForMetrics &&
       PATTERNS.METRIC_KEYWORDS.test(content) &&
       !PATTERNS.UNIT_KEYWORDS.test(content)
     ) {
@@ -53,13 +66,24 @@ async function validate(
 
 async function heal(
   issues: Issue[],
-  _params: Record<string, never>,
+  params: Params,
   _pack?: unknown
 ): Promise<string | null> {
-  voidUnused(_params, _pack);
   if (!issues.length) return null;
-  return HEALING_TEMPLATES.IMPROVE_PLACEHOLDERS;
+  
+  const minWords = params.minWords ?? LIMITS.PLACEHOLDER_MIN_WORDS;
+  const hasVagueIssues = issues.some(i => i.id === "vague-placeholder");
+  const hasUnitIssues = issues.some(i => i.id === "placeholder-missing-units");
+  
+  const instructions = [];
+  if (hasVagueIssues) {
+    instructions.push(`Make placeholders more specific with at least ${minWords} descriptive words`);
+  }
+  if (hasUnitIssues) {
+    instructions.push("Add units, timeframe, and source of truth to metric placeholders");
+  }
+  
+  return `${HEALING_TEMPLATES.IMPROVE_PLACEHOLDERS}. ${instructions.join(". ")}.`;
 }
 
-export type Params = Record<string, never>;
 export const itemModule = { itemId, toPrompt, validate, heal };

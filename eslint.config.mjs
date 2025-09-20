@@ -244,6 +244,15 @@ const eslintConfig = [
       // ============ RULE 15: Spec Pack JSON Validation ============
       "custom/spec-pack-json-validation": "error",
 
+      // ============ RULE 16: No Hardcoded AI Models ============
+      "custom/no-hardcoded-ai-models": "error",
+
+      // ============ RULE 17: No Swallowed Errors ============
+      "custom/no-swallowed-errors": "error",
+
+      // ============ RULE 18: No VoidUnused Helper ============
+      "custom/no-void-unused-helper": "error",
+
       // Additional helpful rules
       "@typescript-eslint/no-unused-vars": [
         "error",

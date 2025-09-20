@@ -29,7 +29,10 @@ export function validateSpecPack(pack: SpecPack): PackValidationError[] {
     }
     try {
       getItem(def.id);
-    } catch {
+    } catch (registrationError) {
+      console.warn("Item registration check failed:", def.id, {
+        error: registrationError instanceof Error ? registrationError.message : String(registrationError)
+      });
       errs.push({
         code: "UNREGISTERED",
         message: `Item not registered: ${def.id}`,

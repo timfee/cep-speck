@@ -2,7 +2,7 @@ import { z } from "zod";
 
 import { getResilientAI } from "@/lib/ai/resilient";
 
-import { PATTERNS, extractSection, voidUnused } from "../helpers";
+import { PATTERNS, extractSection } from "../helpers";
 
 import type { Issue, SpecPack } from "../types";
 
@@ -48,8 +48,7 @@ const MegaValidationSchema = z.object({
 });
 
 // 3. toPrompt is a simple combination
-export function toPrompt(params: Params, pack?: SpecPack): string {
-  voidUnused(pack);
+export function toPrompt(params: Params, _pack?: SpecPack): string {
   return `Ensure document is semantically coherent, high-quality, and realistic.
 
 - Coherence: Metrics must match, summary must cover features, personas (${params.personas.join(', ')}) must be covered, and traceability must be complete.
@@ -58,8 +57,7 @@ export function toPrompt(params: Params, pack?: SpecPack): string {
 }
 
 // 4. validate function makes ONE AI call
-export async function validate(draft: string, params: Params, pack?: SpecPack): Promise<Issue[]> {
-  voidUnused(pack);
+export async function validate(draft: string, params: Params, _pack?: SpecPack): Promise<Issue[]> {
   const issues: Issue[] = [];
 
   // Extract sections for a focused prompt
@@ -211,8 +209,7 @@ Validate all coherence, quality, and realism rules in one pass.`;
 }
 
 // 6. Heal function aggregates all healing instructions
-export async function heal(issues: Issue[], params?: Params, pack?: SpecPack): Promise<string | null> {
-  voidUnused(params, pack);
+export async function heal(issues: Issue[], _params?: Params, _pack?: SpecPack): Promise<string | null> {
   if (!issues.length) return null;
 
   const healingPrompts: string[] = [];

@@ -14,7 +14,11 @@ export async function readKnowledgeDirectory(
 
   try {
     await stat(basePath);
-  } catch {
+  } catch (statError) {
+    // Directory doesn't exist - return empty array
+    console.warn("Knowledge directory not found:", basePath, {
+      error: statError instanceof Error ? statError.message : String(statError)
+    });
     return files;
   }
 

@@ -159,10 +159,4 @@ export function validateHeaderPattern(
   return issues;
 }
 
-/**
- * Helper to safely void unused parameters (reduces ESLint noise)
- */
-export function voidUnused(..._args: unknown[]): void {
-  // Intentionally empty - marks parameters as intentionally unused to satisfy linter
-  void _args; // This reference satisfies the linter
-}
+

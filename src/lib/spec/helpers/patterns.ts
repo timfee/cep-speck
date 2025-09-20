@@ -27,8 +27,12 @@ export function testAnyPattern(text: string, patterns: string[]): boolean {
     try {
       const regex = createFlexibleRegex(pattern);
       return regex.test(text);
-    } catch {
-      return false; // Invalid regex patterns fail gracefully
+    } catch (regexError) {
+      // Invalid regex patterns fail gracefully, but log for debugging
+      console.warn("Invalid regex pattern in testAnyPattern:", pattern, {
+        error: regexError instanceof Error ? regexError.message : String(regexError)
+      });
+      return false;
     }
   });
 }
@@ -46,8 +50,11 @@ export function findAllMatches(text: string, patterns: string[]): string[] {
       if (found) {
         matches.push(...found);
       }
-    } catch {
-      // Invalid regex patterns are silently ignored
+    } catch (regexError) {
+      // Invalid regex patterns are silently ignored, but log for debugging
+      console.warn("Invalid regex pattern ignored:", pattern, {
+        error: regexError instanceof Error ? regexError.message : String(regexError)
+      });
     }
   }
 
