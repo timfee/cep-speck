@@ -13,9 +13,9 @@ import {
 } from "../src/lib/spec/__tests__/test-utils";
 
 import {
-  createPhaseFrame,
-  createGenerationFrame,
   createErrorFrame,
+  createGenerationFrame,
+  createPhaseFrame,
   encodeStreamFrame,
 } from "../src/lib/spec/streaming";
 

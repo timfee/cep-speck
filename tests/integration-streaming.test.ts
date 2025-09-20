@@ -8,9 +8,9 @@ import {
 } from "./browser/compatibility";
 
 import {
+  ClientFrameProcessor,
   EndToEndTestRunner,
   IntegrationTestScenarios,
-  ClientFrameProcessor,
   StreamingAPISimulator,
 } from "./end-to-end";
 
