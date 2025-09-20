@@ -248,6 +248,12 @@ const eslintConfig = [
       // ============ RULE 17: No VoidUnused Helper ============
       "custom/no-void-unused-helper": "error",
 
+      // ============ RULE 18: Kebab Case Component Files ============
+      "custom/kebab-case-component-files": "error",
+
+      // ============ RULE 19: Component Organization ============
+      "custom/component-organization": "error",
+
       // Additional helpful rules
       "@typescript-eslint/no-unused-vars": [
         "error",
