@@ -45,7 +45,6 @@ export function StructuredPrdWizard({
     goToPreviousStep,
     resetWorkflow,
     generateContentOutlineForPrompt,
-    serializeToSpecText,
   } = useStructuredWorkflow();
 
   const handleRegenerateOutline = () => {
@@ -57,24 +56,8 @@ export function StructuredPrdWizard({
     setError(null);
 
     try {
-      const specText = serializeToSpecText();
-      const response = await fetch("/api/run", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ specText }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to generate PRD: ${response.statusText}`);
-      }
-
-      await processStreamingResponse(
-        response,
-        setGeneratedPrd,
-        setGeneratedPrd
-      );
-
-      goToNextStep();
+      // The old system has been deprecated - show migration message
+      setError("This workflow has been deprecated. Please use the new agentic mode instead.");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to generate PRD");
     } finally {

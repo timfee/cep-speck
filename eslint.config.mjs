@@ -183,24 +183,9 @@ const eslintConfig = [
         {
           patterns: [
             {
-              group: ["*/items/*", "!*/items", "!*/items/index"],
-              message:
-                "Import from the items barrel file (index.ts) instead of individual files",
-            },
-            {
               group: ["*/helpers/*", "!*/helpers", "!*/helpers/index"],
               message:
                 "Import from the helpers barrel file (index.ts) instead of individual files",
-            },
-            {
-              group: [
-                "*/spec/*/*",
-                "!*/spec/*/index",
-                "!*/spec/types",
-                "!*/spec/registry",
-                "!*/spec/streaming",
-              ],
-              message: "Use module barrel exports or explicitly allowed files",
             },
           ],
         },
@@ -217,28 +202,25 @@ const eslintConfig = [
       ],
       "@typescript-eslint/prefer-optional-chain": "error",
 
-      // ============ RULE 11: Enforce Validation Module Structure ============
-      "custom/enforce-validation-module-structure": "error",
-
-      // ============ RULE 12: Stream Frame Factory Usage ============
+      // ============ RULE 11: Stream Frame Factory Usage ============
       "custom/stream-frame-factory-usage": "error",
 
-      // ============ RULE 13: Consistent Error Handling Pattern ============
+      // ============ RULE 12: Consistent Error Handling Pattern ============
       "custom/consistent-error-handling-pattern": "error",
 
-      // ============ RULE 14: Enforce Helper Usage ============
+      // ============ RULE 13: Enforce Helper Usage ============
       "custom/enforce-helper-usage": "error",
 
-      // ============ RULE 15: Spec Pack JSON Validation ============
+      // ============ RULE 14: Spec Pack JSON Validation ============
       "custom/spec-pack-json-validation": "error",
 
-      // ============ RULE 16: No Hardcoded AI Models ============
+      // ============ RULE 15: No Hardcoded AI Models ============
       "custom/no-hardcoded-ai-models": "error",
 
-      // ============ RULE 17: No Swallowed Errors ============
+      // ============ RULE 16: No Swallowed Errors ============
       "custom/no-swallowed-errors": "error",
 
-      // ============ RULE 18: No VoidUnused Helper ============
+      // ============ RULE 17: No VoidUnused Helper ============
       "custom/no-void-unused-helper": "error",
 
       // Additional helpful rules
@@ -292,22 +274,12 @@ const eslintConfig = [
     files: [
       "**/types.ts",
       "**/spec/types.ts",
-      "**/spec/registry.ts",
       "**/spec/selfReview.ts",
-      "**/spec/validate.ts",
       "**/spec/helpers/**/*.ts",
       "**/spec/__tests__/**/*.ts",
     ],
     rules: {
       "custom/consistent-error-handling-pattern": "off",
-    },
-  },
-  {
-    files: ["**/spec/items/**/*.ts"],
-    rules: {
-      // Validator modules must implement async interface for consistency,
-      // even if individual functions don't use await
-      "@typescript-eslint/require-await": "off",
     },
   },
   {

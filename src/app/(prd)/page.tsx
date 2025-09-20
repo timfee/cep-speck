@@ -2,24 +2,24 @@
 
 import { useState } from "react";
 
-import { StructuredPrdWizard } from "@/components/workflow/StructuredPrdWizard";
+import { AgenticPrdWizard } from "@/components/workflow/AgenticPrdWizard";
 
 import { TraditionalMode } from "./components/TraditionalMode";
 
-type Mode = "structured" | "traditional";
+type Mode = "agentic" | "traditional";
 
 export default function Page() {
-  const [mode, setMode] = useState<Mode>("structured");
+  const [mode, setMode] = useState<Mode>("agentic");
 
-  // Show structured wizard or traditional interface
-  if (mode === "structured") {
+  // Show agentic wizard or traditional interface
+  if (mode === "agentic") {
     return (
       <div className="p-6">
-        <StructuredPrdWizard onTraditionalMode={() => setMode("traditional")} />
+        <AgenticPrdWizard onTraditionalMode={() => setMode("traditional")} />
       </div>
     );
   }
 
-  // Traditional mode
-  return <TraditionalMode onStructuredMode={() => setMode("structured")} />;
+  // Traditional mode (fallback to old system)
+  return <TraditionalMode onStructuredMode={() => setMode("agentic")} />;
 }

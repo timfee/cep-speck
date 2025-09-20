@@ -19,7 +19,6 @@ import {
 } from "./navigationHelpers";
 
 import { calculateStepProgress } from "./progressCalculationHelpers";
-import { serializeToSpecText } from "./serializationHelpers";
 // Initial state for the workflow
 const initialState: StructuredWorkflowState = {
   currentStep: "idea",
@@ -149,10 +148,6 @@ export const useStructuredWorkflow = () => {
     [setContentOutline]
   );
 
-  const serializeToSpecTextCallback = useCallback((): string => {
-    return serializeToSpecText(state);
-  }, [state]);
-
   return {
     state: currentState,
     setInitialPrompt,
@@ -169,6 +164,5 @@ export const useStructuredWorkflow = () => {
     goToStep,
     resetWorkflow,
     generateContentOutlineForPrompt,
-    serializeToSpecText: serializeToSpecTextCallback,
   };
 };
