@@ -2,8 +2,6 @@
 
 import {
   CheckCircle,
-  Edit3,
-  Plus,
   Target,
   BarChart3,
   Calendar,
@@ -22,6 +20,8 @@ import type {
   SuccessMetric,
   Milestone,
 } from "@/types/workflow";
+
+import { ContentSection } from "./components/ContentSection";
 
 interface ContentOutlineStepProps {
   initialPrompt: string;
@@ -139,162 +139,82 @@ export function ContentOutlineStep({
         </div>
       </Card>
 
-      {/* Functional Requirements */}
-      <Card className="p-4">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold flex items-center gap-2">
-            <Target className="h-5 w-5 text-green-600" />
-            Functional Requirements
-          </h3>
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={addFunctionalRequirement}
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Add Requirement
-          </Button>
-        </div>
+      <ContentSection
+        title="Functional Requirements"
+        icon={<Target className="h-5 w-5 text-green-600" />}
+        items={contentOutline.functionalRequirements}
+        onAdd={addFunctionalRequirement}
+        emptyMessage='No functional requirements generated. Click "Add Functional" to create one.'
+        renderItem={(req) => ({
+          id: req.id,
+          title: req.title,
+          description: req.description,
+          badge: (
+            <Badge
+              variant={
+                req.priority === "P0"
+                  ? "destructive"
+                  : req.priority === "P1"
+                    ? "default"
+                    : "secondary"
+              }
+            >
+              {req.priority}
+            </Badge>
+          ),
+          extra:
+            (req.userStory ?? "").length > 0 ? (
+              <div className="text-xs bg-gray-50 p-2 rounded border-l-2 border-blue-500">
+                <strong>User Story:</strong> {req.userStory}
+              </div>
+            ) : undefined,
+        })}
+      />
 
-        <div className="space-y-3">
-          {contentOutline.functionalRequirements.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              No functional requirements generated. Click &quot;Add
-              Requirement&quot; to create one.
-            </div>
-          ) : (
-            contentOutline.functionalRequirements.map((req) => (
-              <div key={req.id} className="border rounded-lg p-4 space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Badge
-                      variant={
-                        req.priority === "P0"
-                          ? "destructive"
-                          : req.priority === "P1"
-                            ? "default"
-                            : "secondary"
-                      }
-                    >
-                      {req.priority}
-                    </Badge>
-                    <h4 className="font-medium">{req.title}</h4>
-                  </div>
-                  <Button size="sm" variant="ghost">
-                    <Edit3 className="h-4 w-4" />
-                  </Button>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  {req.description}
-                </p>
-                {(req.userStory ?? "").length > 0 && (
-                  <div className="text-xs bg-gray-50 p-2 rounded border-l-2 border-blue-500">
-                    <strong>User Story:</strong> {req.userStory}
-                  </div>
+      <ContentSection
+        title="Success Metrics"
+        icon={<BarChart3 className="h-5 w-5 text-blue-600" />}
+        items={contentOutline.successMetrics}
+        onAdd={addSuccessMetric}
+        emptyMessage='No success metrics generated. Click "Add Success" to create one.'
+        renderItem={(metric) => ({
+          id: metric.id,
+          title: metric.name,
+          description: metric.description,
+          badge: <Badge variant="outline">{metric.type}</Badge>,
+          extra:
+            (metric.target ?? "").length > 0 ? (
+              <div className="text-xs bg-green-50 p-2 rounded border-l-2 border-green-500">
+                <strong>Target:</strong> {metric.target}
+                {(metric.measurement ?? "").length > 0 && (
+                  <span className="ml-2">
+                    <strong>Measurement:</strong> {metric.measurement}
+                  </span>
                 )}
               </div>
-            ))
-          )}
-        </div>
-      </Card>
+            ) : undefined,
+        })}
+      />
 
-      {/* Success Metrics */}
-      <Card className="p-4">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold flex items-center gap-2">
-            <BarChart3 className="h-5 w-5 text-blue-600" />
-            Success Metrics
-          </h3>
-          <Button size="sm" variant="outline" onClick={addSuccessMetric}>
-            <Plus className="h-4 w-4 mr-2" />
-            Add Metric
-          </Button>
-        </div>
-
-        <div className="space-y-3">
-          {contentOutline.successMetrics.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              No success metrics generated. Click &quot;Add Metric&quot; to
-              create one.
-            </div>
-          ) : (
-            contentOutline.successMetrics.map((metric) => (
-              <div key={metric.id} className="border rounded-lg p-4 space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Badge variant="outline">{metric.type}</Badge>
-                    <h4 className="font-medium">{metric.name}</h4>
-                  </div>
-                  <Button size="sm" variant="ghost">
-                    <Edit3 className="h-4 w-4" />
-                  </Button>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  {metric.description}
-                </p>
-                {(metric.target ?? "").length > 0 && (
-                  <div className="text-xs bg-green-50 p-2 rounded border-l-2 border-green-500">
-                    <strong>Target:</strong> {metric.target}
-                    {(metric.measurement ?? "").length > 0 && (
-                      <span className="ml-2">
-                        <strong>Measurement:</strong> {metric.measurement}
-                      </span>
-                    )}
-                  </div>
-                )}
+      <ContentSection
+        title="Milestones & Timeline"
+        icon={<Calendar className="h-5 w-5 text-purple-600" />}
+        items={contentOutline.milestones}
+        onAdd={addMilestone}
+        emptyMessage='No milestones generated. Click "Add Milestones" to create one.'
+        renderItem={(milestone) => ({
+          id: milestone.id,
+          title: milestone.title,
+          description: milestone.description,
+          badge: <Badge variant="outline">{milestone.phase}</Badge>,
+          extra:
+            (milestone.estimatedDate ?? "").length > 0 ? (
+              <div className="text-xs bg-purple-50 p-2 rounded border-l-2 border-purple-500">
+                <strong>Estimated Date:</strong> {milestone.estimatedDate}
               </div>
-            ))
-          )}
-        </div>
-      </Card>
-
-      {/* Milestones */}
-      <Card className="p-4">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold flex items-center gap-2">
-            <Calendar className="h-5 w-5 text-purple-600" />
-            Milestones & Timeline
-          </h3>
-          <Button size="sm" variant="outline" onClick={addMilestone}>
-            <Plus className="h-4 w-4 mr-2" />
-            Add Milestone
-          </Button>
-        </div>
-
-        <div className="space-y-3">
-          {contentOutline.milestones.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              No milestones generated. Click &quot;Add Milestone&quot; to create
-              one.
-            </div>
-          ) : (
-            contentOutline.milestones.map((milestone) => (
-              <div
-                key={milestone.id}
-                className="border rounded-lg p-4 space-y-2"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Badge variant="outline">{milestone.phase}</Badge>
-                    <h4 className="font-medium">{milestone.title}</h4>
-                  </div>
-                  <Button size="sm" variant="ghost">
-                    <Edit3 className="h-4 w-4" />
-                  </Button>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  {milestone.description}
-                </p>
-                {(milestone.estimatedDate ?? "").length > 0 && (
-                  <div className="text-xs bg-purple-50 p-2 rounded border-l-2 border-purple-500">
-                    <strong>Estimated Date:</strong> {milestone.estimatedDate}
-                  </div>
-                )}
-              </div>
-            ))
-          )}
-        </div>
-      </Card>
+            ) : undefined,
+        })}
+      />
 
       {/* Summary validation */}
       {totalItems > 0 && (
