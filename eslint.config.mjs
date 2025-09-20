@@ -217,9 +217,6 @@ const eslintConfig = [
       ],
       "@typescript-eslint/prefer-optional-chain": "error",
 
-      // ============ RULE 11: Enforce Validation Module Structure ============
-      "custom/enforce-validation-module-structure": "error",
-
       // ============ RULE 12: Stream Frame Factory Usage ============
       "custom/stream-frame-factory-usage": "error",
 
