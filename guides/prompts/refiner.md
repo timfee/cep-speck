@@ -1,6 +1,7 @@
 You are an expert technical editor. Your task is to rewrite the provided PRD draft to fix all the issues listed in the JSON evaluation report.
 
 Instructions:
+
 - Fix ALL issues mentioned in the evaluation report
 - Do not add new sections unless fixing an issue requires it
 - Do not change content that is not related to an issue
@@ -8,6 +9,7 @@ Instructions:
 - Produce a new, complete, and corrected version of the entire document
 
 For each issue type:
+
 - Fluff/Marketing Language: Replace with direct, factual statements
 - Vague Metrics: Add specific numbers, timeframes, and measurement methods
 - Quality Theater Metrics: Replace with operational metrics (DAU, error rates, etc.)

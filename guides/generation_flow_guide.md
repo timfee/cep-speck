@@ -3,6 +3,7 @@
 This guide details the exact agentic chain for generating a PRD.
 
 ## Phase 1: Brief to Outline
+
 1. User Action: User inputs an unstructured "brief" (e.g., "a tool to manage browser bookmarks for enterprise teams") and clicks "Generate Outline."
 2. System Action: The client sends a request to the API with (phase: "outline", brief: string).
 3. Agent 1 (Outliner): The server executes the "Outliner" agent.
@@ -25,14 +26,23 @@ This guide details the exact agentic chain for generating a PRD.
      "sections": [
        { "id": "1", "title": "TL;DR", "notes": "Focus on security." },
        { "id": "2", "title": "People Problems", "notes": "" },
-       { "id": "3", "title": "Functional Requirements", "notes": "- Admin console for managing shared folders\n- RBAC" },
-       { "id": "5", "title": "Competitor Analysis", "notes": "Check Island and Zscaler" },
+       {
+         "id": "3",
+         "title": "Functional Requirements",
+         "notes": "- Admin console for managing shared folders\n- RBAC"
+       },
+       {
+         "id": "5",
+         "title": "Competitor Analysis",
+         "notes": "Check Island and Zscaler"
+       },
        { "id": "4", "title": "Success Metrics", "notes": "" }
      ]
    }
    ```
 
 ## Phase 2: Outline to Draft
+
 1. User Action: User clicks "Generate Draft."
 2. System Action: The client sends a request to the API with (phase: "draft", outline: StructuredOutline).
 3. Agent 2 (Drafter): The server executes the "Drafter" agent.
@@ -43,6 +53,7 @@ This guide details the exact agentic chain for generating a PRD.
 8. System Action: The agent streams the full PRD draft (as text) back to the client.
 
 ## Phase 3: Iterative Refinement Loop
+
 1. System Action: Once the draft stream is complete, the client immediately sends a new request to the API with (phase: "evaluate", draft: string).
 2. Agent 3 (Evaluator): The server executes the "Evaluator" agent.
    - System Prompt: "You are a PRD quality assurance expert. Analyze the following PRD draft. Your only job is to find flaws based on the 'Style & Principles Guide'. Respond only with a JSON array of issues. If there are no issues, return an empty array []. Do not be conversational. Do not fix the issues."
@@ -76,11 +87,13 @@ This guide details the exact agentic chain for generating a PRD.
 8. System Action (Loop): The client receives the new draft and loops back to step 1 of this phase (sending the new draft to the "evaluate" phase).
 
 ## Error Handling
+
 - If any agent call fails, show error message to user with option to retry
 - If max refinement iterations (5) reached, show final draft with remaining issues
 - Network errors should be handled gracefully with retry buttons
 
 ## Performance Considerations
+
 - All text generation should stream to provide immediate feedback
 - JSON responses (outline, evaluation) should be fast since they're structured
 - Knowledge base search should be efficient and cached

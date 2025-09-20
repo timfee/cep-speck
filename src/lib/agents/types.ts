@@ -21,7 +21,7 @@ export interface EvaluationIssue {
   suggestion: string;
 }
 
-export type AgentPhase = 'outline' | 'draft' | 'evaluate' | 'refine';
+export type AgentPhase = "outline" | "draft" | "evaluate" | "refine";
 
 export interface GenerateRequest {
   phase: AgentPhase;

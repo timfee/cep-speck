@@ -1,11 +1,13 @@
 # Functional Requirements
 
 ## 1.0 System Core
+
 1.1. Core Objective: The system shall accept high-level, unstructured user ideas (a "brief") and manage a multi-stage, agentic workflow to produce a comprehensive, validated Product Requirements Document (PRD).
 1.2. Core Philosophy: The system architecture must prioritize minimal indirection and low cognitive load. Modularity shall be achieved through distinct, self-contained agents or "phases" in a chain, not through a complex programmatic registry of micro-validators.
 1.3. User Interface: The system shall provide a single, clean, and reactive web-based interface that guides the user through the generation workflow.
 
 ## 2.0 Phase 1: Input & Outlining
+
 2.1. Unstructured Input: The system shall present the user with a simple text-entry mechanism to capture their initial, unstructured PRD thoughts (the "brief").
 2.2. Outline Generation:
 The system shall pass the user's brief to a "PRD Outliner" agent.
@@ -18,6 +20,7 @@ The user must be able to add high-level notes or bullet points under each sectio
 2.4. State Management: The system shall maintain the user's tweaked outline as the new "structured state" for the PRD.
 
 ## 3.0 Phase 2: Draft Generation
+
 3.1. Generation Trigger: The user shall be able to trigger the draft generation phase after confirming the structured outline.
 3.2. Generation Agent:
 The system shall pass the entire structured state (the outline with user notes) to a "PRD Draft-Writer" agent.
@@ -33,6 +36,7 @@ If the user's brief or outline mentions competitors or requires market data, the
 3.6. Finalize Draft: Upon completion, the system holds the full draft in memory for the next phase.
 
 ## 4.0 Phase 3: Iterative Refinement Loop
+
 4.1. Loop Trigger: This phase shall begin automatically after Phase 2 (Draft Generation) is complete.
 4.2. Self-Evaluation (Self-Eval):
 The system shall pass the full draft to a "PRD Self-Evaluator" agent.
@@ -50,6 +54,7 @@ This agent's responsibility is to fix all the issues listed in the report by gen
 4.6. Finalization (Max Attempts): If the loop hits the maximum iteration limit, the system shall present the last available draft to the user, along with the final "Evaluation Report" to show what issues remain.
 
 ## 5.0 Non-Functional Requirements
+
 5.1. State: The system must be stateless from the server's perspective. The full state of the PRD (outline, draft, etc.) shall be maintained on the client.
 5.2. Performance: All LLM agent calls (Outline, Draft, Eval, Refine) must stream responses where applicable to keep the UI responsive.
 5.3. Modularity: Agent responsibilities must be clearly separated. The "Outliner" agent must not write drafts. The "Draft-Writer" must not self-evaluate. The "Evaluator" must not write new drafts.

@@ -6,13 +6,14 @@ Respond only with a JSON array of issues. If there are no issues, return an empt
 
 Each issue should have this format:
 {
-  "section": "Section Name",
-  "issue": "Issue Type",
-  "evidence": "Quote from the draft showing the problem",
-  "suggestion": "Specific fix recommendation"
+"section": "Section Name",
+"issue": "Issue Type",
+"evidence": "Quote from the draft showing the problem",
+"suggestion": "Specific fix recommendation"
 }
 
 Issue types to look for:
+
 - Fluff/Marketing Language: Revolutionary, world-class, streamline, etc.
 - Vague Metrics: User satisfaction, engagement, significantly, etc.
 - Quality Theater Metrics: NPS, happiness index, user engagement score

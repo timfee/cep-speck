@@ -22,13 +22,8 @@ interface StructuredPrdWizardProps {
 export function StructuredPrdWizard({
   onTraditionalMode,
 }: StructuredPrdWizardProps) {
-  const {
-    generatedPrd,
-    isGenerating,
-    error,
-    setIsGenerating,
-    setError,
-  } = useGenerationState();
+  const { generatedPrd, isGenerating, error, setIsGenerating, setError } =
+    useGenerationState();
 
   const {
     state,
@@ -51,7 +46,9 @@ export function StructuredPrdWizard({
 
     try {
       // The old system has been deprecated - show migration message
-      setError("This workflow has been deprecated. Please use the new agentic mode instead.");
+      setError(
+        "This workflow has been deprecated. Please use the new agentic mode instead."
+      );
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to generate PRD");
     } finally {
