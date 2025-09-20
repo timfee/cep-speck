@@ -1,8 +1,8 @@
 // Progress calculation helpers for structured workflow
 
 import type {
-  WorkflowProgress,
   StructuredWorkflowState,
+  WorkflowProgress,
 } from "@/types/workflow";
 
 import { WORKFLOW_STEPS } from "@/types/workflow";

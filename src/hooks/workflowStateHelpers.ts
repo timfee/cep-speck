@@ -1,6 +1,6 @@
 // Workflow state management helpers
 
-import type { WorkflowStep, WorkflowProgress } from "@/types/workflow";
+import type { WorkflowProgress, WorkflowStep } from "@/types/workflow";
 import { WORKFLOW_STEPS } from "@/types/workflow";
 
 // Get step IDs for easier manipulation

@@ -3,8 +3,8 @@
 import type {
   ContentOutline,
   FunctionalRequirement,
-  SuccessMetric,
   Milestone,
+  SuccessMetric,
 } from "@/types/workflow";
 
 // Generate functional requirements based on prompt analysis

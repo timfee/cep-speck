@@ -1,21 +1,21 @@
-import { useState, useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { DEFAULT_ENTERPRISE_PARAMETERS } from "@/types/workflow";
 
 import type {
-  StructuredWorkflowState,
-  WorkflowStep,
   ContentOutline,
   EnterpriseParameters,
+  StructuredWorkflowState,
+  WorkflowStep,
 } from "@/types/workflow";
 
 import { generateContentOutline } from "./contentOutlineHelpers";
 
 import {
+  canNavigateBack,
+  canNavigateNext,
   findNextStep,
   findPreviousStep,
-  canNavigateNext,
-  canNavigateBack,
 } from "./navigationHelpers";
 
 import { calculateStepProgress } from "./progressCalculationHelpers";

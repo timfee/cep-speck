@@ -1,11 +1,11 @@
 "use client";
 
 import {
-  CheckCircle,
-  Target,
   BarChart3,
   Calendar,
+  CheckCircle,
   FileText,
+  Target,
 } from "lucide-react";
 
 import React from "react";
@@ -17,8 +17,8 @@ import { Card } from "@/components/ui/card";
 import type {
   ContentOutline,
   FunctionalRequirement,
-  SuccessMetric,
   Milestone,
+  SuccessMetric,
 } from "@/types/workflow";
 
 import { ContentSection } from "./components/ContentSection";

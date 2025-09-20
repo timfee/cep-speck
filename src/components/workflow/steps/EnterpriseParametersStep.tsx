@@ -2,11 +2,11 @@
 
 import {
   Building2,
-  Shield,
-  Link,
-  Headphones,
-  Zap,
   CheckCircle,
+  Headphones,
+  Link,
+  Shield,
+  Zap,
 } from "lucide-react";
 
 import React from "react";
@@ -16,11 +16,11 @@ import { cn } from "@/lib/utils";
 import type { EnterpriseParameters } from "@/types/workflow";
 
 import {
-  TARGET_SKU_OPTIONS,
   DEPLOYMENT_MODEL_OPTIONS,
-  SECURITY_REQUIREMENTS_OPTIONS,
   INTEGRATION_OPTIONS,
+  SECURITY_REQUIREMENTS_OPTIONS,
   SUPPORT_LEVEL_OPTIONS,
+  TARGET_SKU_OPTIONS,
 } from "./components/enterpriseOptions";
 
 import { MultiSelectSection } from "./components/MultiSelectSection";
