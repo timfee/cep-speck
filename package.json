@@ -12,6 +12,8 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
     "complexity": "fta src",
     "complexity:json": "mkdir -p reports && fta src --format json > reports/fta.json && echo 'Wrote reports/fta.json'",
     "quality:fta": "node scripts/compare-fta.mjs",
