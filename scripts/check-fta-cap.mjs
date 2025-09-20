@@ -23,7 +23,7 @@ if (offenders.length) {
       console.error(` - ${o.file_name}  score=${o.fta_score.toFixed(2)}`)
     );
   console.error(
-    "\nRefactor or split code until scores are under the cap, then commit again."
+    "\nRefactor or split code until scores are under the cap, then commit again.\n\nESSENTIAL: Do not panic and make arbitrary changes and add indirections without holistically considering how to streamline and improve the code. We don't want to create technical debt. This will only make things worse.\n"
   );
   process.exit(1);
 }
