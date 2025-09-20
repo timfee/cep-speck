@@ -7,12 +7,14 @@ import { Status, StatusIndicator, StatusLabel } from "@/components/ui/status";
 import { classifyError } from "@/lib/error/classification";
 import type { ErrorDetails } from "@/lib/error/types";
 
+import { buildErrorLevels, buildSupportData } from "./error-level-helpers";
+
 import {
   SupportView,
   TechnicalView,
   ViewLevelTabs,
 } from "./error-view-components";
-import { buildErrorLevels, buildSupportData } from "./error-level-helpers";
+
 import { ERROR_SEVERITY_STYLES, getRecoveryActions } from "./recovery-helpers";
 
 interface ErrorDisplayProps {
