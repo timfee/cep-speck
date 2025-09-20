@@ -1,6 +1,6 @@
 "use client";
 
-import { AgenticPrdWizard } from "@/components/workflow/AgenticPrdWizard";
+import { AgenticPrdWizard } from "@/components/workflow/agentic-prd-wizard";
 
 export default function Page() {
   return (

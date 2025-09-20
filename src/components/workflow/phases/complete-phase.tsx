@@ -2,7 +2,7 @@ import React from "react";
 
 import { Button } from "@/components/ui/button";
 import { CopyButton } from "@/components/ui/copy-button";
-import type { AgenticWorkflowState } from "@/hooks/useAgenticWorkflow";
+import type { AgenticWorkflowState } from "@/hooks/use-agentic-workflow";
 
 interface CompletePhaseProps {
   state: AgenticWorkflowState;

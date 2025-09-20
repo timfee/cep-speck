@@ -40,6 +40,7 @@ jobs:
           git worktree add ../base "$BASE_SHA"
           pushd ../base
           pnpm install
+          mkdir -p reports
           pnpm exec fta src --format json > reports/fta.json
           popd
           mkdir -p reports

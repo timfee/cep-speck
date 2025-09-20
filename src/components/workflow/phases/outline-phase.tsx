@@ -1,10 +1,10 @@
 import React from "react";
 
 import { Button } from "@/components/ui/button";
-import type { AgenticWorkflowState } from "@/hooks/useAgenticWorkflow";
+import type { AgenticWorkflowState } from "@/hooks/use-agentic-workflow";
 import type { StructuredOutline } from "@/lib/agents/types";
 
-import { OutlineEditor } from "../OutlineEditor";
+import { OutlineEditor } from "../outline-editor";
 
 interface OutlinePhaseProps {
   state: AgenticWorkflowState;

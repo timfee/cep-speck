@@ -1,9 +1,9 @@
 import React from "react";
 
-import { useAgenticWorkflow } from "@/hooks/useAgenticWorkflow";
+import { useAgenticWorkflow } from "@/hooks/use-agentic-workflow";
 
-import { useWorkflowActions } from "./hooks/useWorkflowActions";
-import { renderPhaseContent } from "./utils/phaseRegistry";
+import { useWorkflowActions } from "./hooks/use-workflow-actions";
+import { renderPhaseContent } from "./utils/phase-registry";
 
 export function AgenticPrdWizard() {
   const workflowHook = useAgenticWorkflow();

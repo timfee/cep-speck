@@ -1,6 +1,6 @@
 import React from "react";
 
-import type { AgenticWorkflowState } from "@/hooks/useAgenticWorkflow";
+import type { AgenticWorkflowState } from "@/hooks/use-agentic-workflow";
 import type { StructuredOutline } from "@/lib/agents/types";
 
 import {

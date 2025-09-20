@@ -191,6 +191,31 @@ const eslintConfig = [
         },
       ],
 
+      // ============ RULE 9.5: File Naming Conventions ============
+      "unicorn/filename-case": [
+        "error",
+        {
+          cases: {
+            kebabCase: true,
+          },
+          ignore: [
+            // Allow specific Next.js file conventions
+            "^layout\\.tsx?$",
+            "^page\\.tsx?$",
+            "^not-found\\.tsx?$",
+            "^loading\\.tsx?$",
+            "^error\\.tsx?$",
+            "^global-error\\.tsx?$",
+            "^route\\.ts$",
+            "^middleware\\.ts$",
+            // Config files
+            ".*\\.config\\..*",
+            ".*\\.test\\..*",
+            ".*\\.spec\\..*",
+          ],
+        },
+      ],
+
       // ============ RULE 10: Nullish Coalescing & Optional Chain ============
       "@typescript-eslint/prefer-nullish-coalescing": [
         "error",
