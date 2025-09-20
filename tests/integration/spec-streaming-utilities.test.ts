@@ -8,9 +8,9 @@ import {
   createGenerationFrame,
   createErrorFrame,
   StreamingError,
-} from "./streaming";
+} from "../../src/lib/spec/streaming";
 
-import type { StreamFrame } from "./types";
+import type { StreamFrame } from "../../src/lib/spec/types";
 
 /**
  * Frame Creation Tests
