@@ -1,7 +1,29 @@
 #!/usr/bin/env sh
 set -e
 
-printf "\n\033[1;36m[husky] pre-push: lint + typecheck\033[0m\n"
+printf "\n\033[1;36m[husky] pre-push: comprehensive validation before pushing\033[0m\n"
+
+# Full linting and typecheck
+printf "\n[husky] running full lint + typecheck...\n"
 pnpm lint
+
+# Ensure tests exist
+printf "\n[husky] checking test files exist...\n"
+node scripts/ensure-tests-exist.mjs
+
+# Run tests
+printf "\n[husky] running all tests...\n"
+pnpm test
+
+# Complexity analysis
+printf "\n[husky] generating complexity analysis...\n"
+pnpm run complexity:json
+printf "[husky] enforcing FTA cap...\n"
+node scripts/check-fta-cap.mjs
+
+# Build check
+printf "\n[husky] verifying build...\n"
 pnpm build
-printf "\n\033[1;32m[husky] pre-push passed.\033[0m\n\n"
+
+printf "\n\033[1;32m[husky] pre-push passed - ready to push!\033[0m\n"
+printf "\033[0;33m[husky] CI will run additional checks on the remote repository.\033[0m\n\n"
