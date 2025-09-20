@@ -213,6 +213,20 @@ npm run lint
 npm run build
 ```
 
+### Quality Gates
+
+This project implements strict quality gates inspired by the [quality-workflow-meta repository](https://github.com/CaliLuke/quality-workflow-meta) by Luke Callaghan. These quality gates prevent complex, unmaintainable code from being committed and ensure consistent code quality across the project.
+
+The quality gates include:
+
+- Complexity analysis using `fta-cli`
+- Cognitive complexity limits via ESLint
+- Automatic test verification
+- Pre-commit and pre-push hooks
+- CI/CD quality checks
+
+See `docs/safety-manual.md` for complete documentation on using and adjusting these quality controls.
+
 ### Testing Changes
 
 1. Start the dev server: `npm run dev`

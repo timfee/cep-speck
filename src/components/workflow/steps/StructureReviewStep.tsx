@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { SectionTypeSelector } from "@/components/workflow/SectionTypeSelector";
 import { TIMEOUTS } from "@/lib/constants";
-
 import type { SectionDefinition } from "@/types/workflow";
 
 interface StructureReviewStepProps {

@@ -5,7 +5,6 @@
 import {
   classifyError,
   formatErrorForSupport,
-  ERROR_CLASSIFICATIONS,
 } from "../../src/lib/error/classification";
 
 import type { ErrorCode } from "../../src/lib/error/types";
@@ -23,7 +22,9 @@ describe("Error Classification System", () => {
     expect(classification.severity).toBe("critical");
     expect(classification.recoverable).toBe(false);
     expect(classification.status).toBe("offline");
-    expect(classification.actions).toContain("configure-api-key");
+    expect(classification.actions).toContain(
+      "Add GOOGLE_GENERATIVE_AI_API_KEY to your environment variables"
+    );
   });
 
   test("should classify NETWORK_TIMEOUT errors correctly", () => {
@@ -38,7 +39,9 @@ describe("Error Classification System", () => {
     expect(classification.severity).toBe("warning");
     expect(classification.recoverable).toBe(true);
     expect(classification.status).toBe("degraded");
-    expect(classification.actions).toContain("retry");
+    expect(classification.actions).toContain(
+      "Check internet connection and try again"
+    );
   });
 
   test("should handle unknown errors with fallback classification", () => {
@@ -96,7 +99,10 @@ describe("Error Classification System", () => {
     ];
 
     for (const errorCode of errorTypes) {
-      const classification = ERROR_CLASSIFICATIONS[errorCode];
+      const classification = classifyError({
+        message: `Test ${errorCode} error`,
+        code: errorCode,
+      });
       expect(classification).toBeDefined();
       expect(classification.actions).toBeDefined();
       expect(classification.actions.length).toBeGreaterThan(0);
@@ -107,14 +113,35 @@ describe("Error Classification System", () => {
 
   test("should have consistent severity and status mapping", () => {
     // Critical errors should be offline
-    expect(ERROR_CLASSIFICATIONS.MISSING_API_KEY.status).toBe("offline");
-    expect(ERROR_CLASSIFICATIONS.UNEXPECTED_ERROR.status).toBe("offline");
-    expect(ERROR_CLASSIFICATIONS.SERVICE_UNAVAILABLE.status).toBe("offline");
+    expect(
+      classifyError({ message: "Missing API key", code: "MISSING_API_KEY" })
+        .status
+    ).toBe("offline");
+    expect(
+      classifyError({ message: "Unexpected error", code: "UNEXPECTED_ERROR" })
+        .status
+    ).toBe("offline");
+    expect(
+      classifyError({
+        message: "Service unavailable",
+        code: "SERVICE_UNAVAILABLE",
+      }).status
+    ).toBe("offline");
 
     // Warning/Info errors should be degraded
-    expect(ERROR_CLASSIFICATIONS.NETWORK_TIMEOUT.status).toBe("degraded");
-    expect(ERROR_CLASSIFICATIONS.RATE_LIMITED.status).toBe("degraded");
-    expect(ERROR_CLASSIFICATIONS.VALIDATION_FAILED.status).toBe("degraded");
-    expect(ERROR_CLASSIFICATIONS.INVALID_INPUT.status).toBe("degraded");
+    expect(
+      classifyError({ message: "Network timeout", code: "NETWORK_TIMEOUT" })
+        .status
+    ).toBe("degraded");
+    expect(
+      classifyError({ message: "Rate limited", code: "RATE_LIMITED" }).status
+    ).toBe("degraded");
+    expect(
+      classifyError({ message: "Validation failed", code: "VALIDATION_FAILED" })
+        .status
+    ).toBe("degraded");
+    expect(
+      classifyError({ message: "Invalid input", code: "INVALID_INPUT" }).status
+    ).toBe("degraded");
   });
 });

@@ -12,7 +12,11 @@ function toPrompt(params: Params, _pack?: unknown): string {
   return `IMPORTANT: Use your web search capabilities to research current information about these enterprise browser vendors: ${vendors}. For each vendor, research and include specific details about: onboarding defaults, policy templates, enterprise browser posture, data protection capabilities, and mobile support. Include a brief competitive snapshot in the TL;DR section with specific vendor capabilities and positioning. Add citations with sources and dates in a Footnotes section after the Annexes. Use sources from the last ${params.recencyDays} days when possible.`;
 }
 
-async function validate(draft: string, params: Params, _pack?: unknown): Promise<Issue[]> {
+async function validate(
+  draft: string,
+  params: Params,
+  _pack?: unknown
+): Promise<Issue[]> {
   const issues: Issue[] = [];
 
   if (params.requireResearch) {
@@ -80,7 +84,11 @@ async function validate(draft: string, params: Params, _pack?: unknown): Promise
   return issues;
 }
 
-async function heal(issues: Issue[], params: Params, _pack?: unknown): Promise<string | null> {
+async function heal(
+  issues: Issue[],
+  params: Params,
+  _pack?: unknown
+): Promise<string | null> {
   if (!issues.length) return null;
 
   const vendors = params.vendors.join(", ");

@@ -28,28 +28,89 @@ This directory contains React components for the CEP Spec Validation application
 ### Component Structure Pattern
 
 ```typescript
+"use client"; // Add for client components with interactivity
+
+import { motion } from "framer-motion";
+import { SomeIcon } from "lucide-react";
 import type { ComponentProps } from "react";
+
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 interface ComponentNameProps {
   // Explicit prop types
   required: string;
   optional?: number;
   children?: React.ReactNode;
+  className?: string; // Always include for style customization
 }
 
 export function ComponentName({
   required,
   optional = defaultValue,
-  children
+  children,
+  className
 }: ComponentNameProps) {
   // Component implementation
   return (
-    <div className="tailwind-classes">
+    <div className={cn("base-tailwind-classes", className)}>
       {children}
     </div>
   );
 }
 ```
+
+### Modern Component Patterns
+
+#### Motion Components
+
+```typescript
+// Use framer-motion for sophisticated animations
+<motion.div
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.3 }}
+  className="component-classes"
+>
+  Content
+</motion.div>
+```
+
+#### Class Name Composition
+
+```typescript
+// Always use cn() utility for className merging
+import { cn } from "@/lib/utils";
+
+className={cn(
+  "base-classes",
+  variant === "primary" && "primary-classes",
+  disabled && "disabled-classes",
+  className // User-provided className last
+)}
+```
+
+#### TypeScript Patterns
+
+```typescript
+// Use proper typing for variants
+type Variant = "default" | "primary" | "secondary" | "destructive";
+type Size = "sm" | "md" | "lg";
+
+interface ComponentProps {
+  variant?: Variant;
+  size?: Size;
+  disabled?: boolean;
+}
+
+// Use discriminated unions for complex state
+type StatusState =
+  | { status: "loading"; progress?: number }
+  | { status: "success"; data: string }
+  | { status: "error"; error: string };
+```
+
+````
 
 ### State Management
 
@@ -95,7 +156,7 @@ pnpm dev
 # Test components in browser
 # Navigate to http://localhost:3000
 # Verify UI functionality and responsiveness
-```
+````
 
 ## Package Manager
 

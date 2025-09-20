@@ -1,4 +1,44 @@
-# Validation Items Instructions
+# Va### Module Creation Guidelines
+
+### Required Module Structure
+
+Every validation item module MUST follow this exact pattern:
+
+```typescript
+import type { Issue, SpecPack } from "../types";
+
+export const itemId = "kebab-case-id";
+export type Params = {
+  // Parameter interface - use 'void' if no params needed
+};
+
+async function toPrompt(params: Params, pack?: SpecPack): Promise<string> {
+  // Return single line rule description for AI
+}
+
+async function validate(
+  draft: string,
+  params: Params,
+  pack?: SpecPack
+): Promise<Issue[]> {
+  // Deterministic validation logic - NO network calls
+  return [];
+}
+
+async function heal(
+  issues: Issue[],
+  params: Params,
+  pack?: SpecPack
+): Promise<string | null> {
+  // Optional healing instructions
+  return null;
+}
+
+// REQUIRED: Export as module object for registry system
+export const itemModule = { itemId, toPrompt, validate, heal };
+```
+
+### Required Exportsation Items Instructions
 
 This directory contains individual validation modules that implement the modular validation system.
 
@@ -6,13 +46,12 @@ This directory contains individual validation modules that implement the modular
 
 ### Required Exports
 
-Every validation item module MUST export:
+Every validation item module MUST export an `itemModule` object with:
 
 - `itemId`: kebab-case string identifier
-- `Params`: TypeScript interface for configuration
-- `toPrompt()`: Contributes to AI system prompt
-- `validate()`: Performs deterministic validation
-- `heal()`: Optional healing instructions
+- `toPrompt()`: Contributes to AI system prompt (async)
+- `validate()`: Performs deterministic validation (async)
+- `heal()`: Optional healing instructions (async)
 
 ### Function Signatures (Strict)
 
@@ -22,17 +61,20 @@ export type Params = {
   /* interface */
 };
 
-export function toPrompt(params: Params, pack?: SpecPack): string;
-export function validate(
+async function toPrompt(params: Params, pack?: SpecPack): Promise<string>;
+async function validate(
   draft: string,
   params: Params,
   pack?: SpecPack
-): Issue[];
-export function heal(
+): Promise<Issue[]>;
+async function heal(
   issues: Issue[],
-  params?: Params,
+  params: Params,
   pack?: SpecPack
-): string | null;
+): Promise<string | null>;
+
+// REQUIRED: Export as module object
+export const itemModule = { itemId, toPrompt, validate, heal };
 ```
 
 ### Implementation Standards
@@ -96,9 +138,28 @@ return issues;
 ## Testing Your Items
 
 ```bash
-# 1. Register in index.ts
-# 2. Add to pack configuration
-# 3. Test end-to-end
+# 1. Create your module file following the exact pattern above
+# 2. Register in index.ts:
+import { itemModule as yourModule } from "./yourModule";
+registerItem(createValidatorModule(yourModule));
+
+# 3. Add to pack configuration in packs/prd-v1.json
+# 4. Test end-to-end
 pnpm dev
-# 4. Verify in browser at localhost:3000
+# 5. Verify in browser at localhost:3000
 ```
+
+## Current Validation Modules
+
+The following modules are currently implemented:
+
+- `bannedText` - Detects forbidden terms and buzzwords
+- `competitorResearch` - Validates competitive analysis inclusion
+- `labelPattern` - Enforces section numbering format
+- `metricsRequired` - Validates metrics have units/timeframe/SoT
+- `placeholderQuality` - Detects placeholder content
+- `sectionCount` - Enforces minimum section requirements
+- `semanticPolicyValidator` - AI-powered policy compliance
+- `skuDifferentiation` - Validates SKU-specific features
+- `technicalFeasibility` - Validates technical requirements
+- `wordBudget` - Enforces word count limits

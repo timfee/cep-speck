@@ -41,14 +41,18 @@ function toPrompt(params: Params, pack?: SpecPack): string {
   )}.`;
 }
 
-async function validate(draft: string, params: Params, pack?: SpecPack): Promise<Issue[]> {
+async function validate(
+  draft: string,
+  params: Params,
+  pack?: SpecPack
+): Promise<Issue[]> {
   const exact = collectExact(params, pack);
   const regex = collectRegex(params, pack);
   const issues: Issue[] = [];
-  
+
   for (const word of exact) {
     if (!word) continue;
-    const re = createWordBoundaryRegex(word, 'i');
+    const re = createWordBoundaryRegex(word, "i");
     const match = draft.match(re);
     if (match) {
       issues.push({
@@ -60,7 +64,7 @@ async function validate(draft: string, params: Params, pack?: SpecPack): Promise
       });
     }
   }
-  
+
   for (const pattern of regex) {
     if (!pattern) continue;
     const re = createFlexibleRegex(pattern);
@@ -71,7 +75,10 @@ async function validate(draft: string, params: Params, pack?: SpecPack): Promise
         itemId,
         severity: "error",
         message: `matches banned pattern: ${pattern}`,
-        evidence: match[0].length > MAX_EVIDENCE_LENGTH ? match[0].substring(0, MAX_EVIDENCE_LENGTH) + "..." : match[0],
+        evidence:
+          match[0].length > MAX_EVIDENCE_LENGTH
+            ? match[0].substring(0, MAX_EVIDENCE_LENGTH) + "..."
+            : match[0],
       });
     }
   }
@@ -84,7 +91,7 @@ async function heal(
   _pack?: SpecPack
 ): Promise<string | null> {
   if (!issues.length) return null;
-  const terms = issues.map(i => i.evidence ?? i.message).join(', ');
+  const terms = issues.map((i) => i.evidence ?? i.message).join(", ");
   return `${HEALING_TEMPLATES.BANNED_TEXT}. Specifically remove or rephrase: ${terms}.`;
 }
 

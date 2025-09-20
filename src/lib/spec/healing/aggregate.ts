@@ -1,78 +1,71 @@
-import { WORD_BUDGET, FEASIBILITY_THRESHOLDS } from "@/lib/constants";
+import { WORD_BUDGET } from "@/lib/constants";
 
+import { buildHealingMessage } from "../helpers";
 import { invokeItemHeal } from "../registry";
+import type { Issue, SpecItemDef, SpecPack } from "../types";
 
-import type { Issue, SpecPack } from "../types";
+import {
+  deduplicateIssues,
+  groupIssuesByItem,
+  sortItemIdsByPriority,
+} from "./helpers";
 
-export async function aggregateHealing(draftIssues: Issue[], pack: SpecPack): Promise<string> {
+export async function aggregateHealing(
+  draftIssues: Issue[],
+  pack: SpecPack
+): Promise<string> {
   if (!draftIssues.length) return "";
-  const key = (i: Issue) => `${i.itemId}::${i.message}`;
-  const map = new Map<string, Issue>();
-  for (const i of draftIssues) {
-    const k = key(i);
-    if (!map.has(k)) map.set(k, i);
-  }
-  const deduped = Array.from(map.values());
 
-  const byItem = new Map<string, Issue[]>();
-  for (const i of deduped) {
-    const arr = byItem.get(i.itemId) ?? [];
-    arr.push(i);
-    byItem.set(i.itemId, arr);
-  }
+  // Step 1: Deduplicate issues
+  const deduped = deduplicateIssues(draftIssues);
 
+  // Step 2: Group issues by item ID
+  const byItem = groupIssuesByItem(deduped);
+
+  // Step 3: Sort item IDs by priority and severity
   const defsById = new Map(pack.items.map((d) => [d.id, d]));
-  const order = pack.healPolicy.order;
-  const sortedItemIds = Array.from(byItem.keys()).sort((a, b) => {
-    const da = defsById.get(a);
-    const db = defsById.get(b);
-    if (!da || !db) return 0; // Should not happen, but handle gracefully
+  const sortedItemIds = sortItemIdsByPriority(
+    Array.from(byItem.keys()),
+    byItem,
+    defsById,
+    pack.healPolicy.order
+  );
 
-    if (order === "by-severity-then-priority") {
-      const issuesA = byItem.get(a);
-      const issuesB = byItem.get(b);
-      if (!issuesA || !issuesB) return 0; // Should not happen, but handle gracefully
+  // Step 4: Generate healing messages for each item
+  const chunks = await generateHealingChunks(
+    sortedItemIds,
+    byItem,
+    defsById,
+    pack
+  );
 
-      const sa = issuesA.some((i) => i.severity === "error") ? 1 : 0;
-      const sb = issuesB.some((i) => i.severity === "error") ? 1 : 0;
-      if (sa !== sb) return sb - sa;
-    }
-    return db.priority - da.priority;
-  });
+  // Step 5: Build final message with constraints
+  const maxChars = pack.healPolicy.maxChars ?? WORD_BUDGET.TARGET_BUDGET;
+  return buildHealingMessage(chunks, pack, maxChars);
+}
 
+/**
+ * Generates healing message chunks for each item
+ */
+async function generateHealingChunks(
+  sortedItemIds: string[],
+  byItem: Map<string, Issue[]>,
+  defsById: Map<string, SpecItemDef>,
+  pack: SpecPack
+): Promise<string[]> {
   const chunks: string[] = [];
+
   for (const id of sortedItemIds) {
     const def = defsById.get(id);
     const issues = byItem.get(id);
-    if (!def || !issues) continue; // Should not happen, but handle gracefully
+
+    if (!def || !issues) continue;
 
     const msg = await invokeItemHeal(issues, def, pack);
-    if ((msg ?? "").length > 0) chunks.push(`${id}: ${msg}`);
-  }
-
-  const header = `Revise the latest draft to satisfy the following constraints without resetting compliant content:`;
-  let body = chunks.map((c) => `- ${c}`).join("\n");
-  const labelGuard =
-    (pack.composition?.labelPattern ?? "").length > 0
-      ? `Maintain the header pattern "${pack.composition?.labelPattern}".`
-      : "";
-  const footer = `${labelGuard} Perform minimal edits to satisfy constraints.`;
-
-  let content = `${header}\n${body}\n${footer}`;
-  const max = pack.healPolicy.maxChars ?? WORD_BUDGET.TARGET_BUDGET;
-  if (content.length > max) {
-    while (content.length > max && chunks.length > 1) {
-      chunks.pop();
-      body = chunks.map((c) => `- ${c}`).join("\n");
-      content = `${header}\n${body}\n${footer}`;
-    }
-    if (content.length > max) {
-      content =
-        content.slice(
-          0,
-          max - FEASIBILITY_THRESHOLDS.HIGH_ADOPTION_PERCENTAGE
-        ) + "\n- Remaining items will be fixed in the next iteration.";
+    if ((msg ?? "").length > 0) {
+      chunks.push(`${id}: ${msg}`);
     }
   }
-  return content;
+
+  return chunks;
 }

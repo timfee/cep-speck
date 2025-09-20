@@ -11,10 +11,14 @@ export const PATTERNS = {
 
   // Metric patterns
   METRIC_KEYWORDS: /(baseline|target|metric|KPI)/i,
-  UNIT_KEYWORDS: /(minutes|hours|days|%|count|users|ms|seconds|admins|reduction|increase)/i,
-  METRIC_UNITS: /%|\bms\b|\bseconds?\b|\bminutes?\b|\bdays?\b|\bcount\b|\busers?\b|\badmins?\b|\bGiB\b|\bMiB\b|\bKB\b|\bMB\b|\bGB\b|\bTB\b/i,
-  TIMEFRAME_INDICATORS: /\b(within|by|Q[1-4]\s*'?[0-9]{2}|H[1-2]\s*'?[0-9]{2}|FY[0-9]{2}|[0-9]+\s*(days?|weeks?|months?|quarters?))\b/i,
-  SOURCE_OF_TRUTH: /\b(SoT|Source of Truth|CBCM|Telemetry|Analytics|Looker|Admin Console|Plx|BigQuery|Dashboard)\b/i,
+  UNIT_KEYWORDS:
+    /(minutes|hours|days|%|count|users|ms|seconds|admins|reduction|increase)/i,
+  METRIC_UNITS:
+    /%|\bms\b|\bseconds?\b|\bminutes?\b|\bdays?\b|\bcount\b|\busers?\b|\badmins?\b|\bGiB\b|\bMiB\b|\bKB\b|\bMB\b|\bGB\b|\bTB\b/i,
+  TIMEFRAME_INDICATORS:
+    /\b(within|by|Q[1-4]\s*'?[0-9]{2}|H[1-2]\s*'?[0-9]{2}|FY[0-9]{2}|[0-9]+\s*(days?|weeks?|months?|quarters?))\b/i,
+  SOURCE_OF_TRUTH:
+    /\b(SoT|Source of Truth|CBCM|Telemetry|Analytics|Looker|Admin Console|Plx|BigQuery|Dashboard)\b/i,
 
   // Content quality patterns
   VAGUE_QUANTIFIERS:

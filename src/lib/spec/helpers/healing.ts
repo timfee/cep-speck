@@ -5,7 +5,7 @@
  * across validation modules.
  */
 
-import type { Issue } from "../types";
+import type { Issue, SpecPack } from "../types";
 
 /**
  * Builder for creating consistent healing instructions
@@ -135,4 +135,55 @@ export function buildPersonaHealing(): string {
 2. Goals: include persona perspective (e.g., "IT Admin reduces...", "End User experiences...").
 3. CUJs: write at least one journey per persona or annotate shared journeys with persona tags.
 4. Avoid generic plural nouns; use explicit persona labels so automation can detect coverage.`;
+}
+
+/**
+ * Builds the healing message with appropriate length constraints
+ */
+export function buildHealingMessage(
+  chunks: string[],
+  pack: SpecPack,
+  maxChars: number
+): string {
+  const header = `Revise the latest draft to satisfy the following constraints without resetting compliant content:`;
+  const labelGuard =
+    (pack.composition?.labelPattern ?? "").length > 0
+      ? `Maintain the header pattern "${pack.composition?.labelPattern}".`
+      : "";
+  const footer = `${labelGuard} Perform minimal edits to satisfy constraints.`;
+
+  return buildConstrainedMessage(header, chunks, footer, maxChars);
+}
+
+/**
+ * Builds a message that fits within character constraints
+ */
+function buildConstrainedMessage(
+  header: string,
+  chunks: string[],
+  footer: string,
+  maxChars: number
+): string {
+  let body = chunks.map((c) => `- ${c}`).join("\n");
+  let content = `${header}\n${body}\n${footer}`;
+
+  // Trim chunks if content is too long
+  const workingChunks = [...chunks];
+  while (content.length > maxChars && workingChunks.length > 1) {
+    workingChunks.pop();
+    body = workingChunks.map((c) => `- ${c}`).join("\n");
+    content = `${header}\n${body}\n${footer}`;
+  }
+
+  // Final truncation if still too long
+  if (content.length > maxChars) {
+    const truncateAt =
+      maxChars -
+      "\n- Remaining items will be fixed in the next iteration.".length;
+    content =
+      content.slice(0, truncateAt) +
+      "\n- Remaining items will be fixed in the next iteration.";
+  }
+
+  return content;
 }

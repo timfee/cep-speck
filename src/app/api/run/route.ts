@@ -1,26 +1,22 @@
-import { getResilientAI } from "@/lib/ai/resilient";
+import type { NextRequest } from "next/server";
+
 import { DEFAULT_SPEC_PACK } from "@/lib/config";
-import { readKnowledgeDirectory } from "@/lib/knowledge/reader";
-import { performCompetitorResearch } from "@/lib/research/webSearch";
-import { aggregateHealing } from "@/lib/spec/healing/aggregate";
+import { runGenerationLoop } from "@/lib/spec/api/generationLoop";
+
+import {
+  buildContextualMessages,
+  loadKnowledgeBase,
+  performResearch,
+} from "@/lib/spec/api/workflowHelpers";
+
 import "@/lib/spec/items";
 import { assertValidSpecPack } from "@/lib/spec/packValidate";
-import { buildSystemPrompt, buildUserPrompt } from "@/lib/spec/prompt";
+
 import {
   createErrorFrame,
-  createGenerationFrame,
-  createPhaseFrame,
-  createResultFrame,
-  createStreamFrame,
-  createValidationFrame,
   encodeStreamFrame,
   StreamingError,
-  withErrorRecovery,
 } from "@/lib/spec/streaming";
-import { validateAll } from "@/lib/spec/validate";
-
-import type { CoreMessage } from "ai";
-import type { NextRequest } from "next/server";
 
 export const runtime = "nodejs";
 
@@ -110,186 +106,34 @@ export async function POST(req: NextRequest) {
           throw error;
         }
 
-        // Phase 1: Load knowledge
-        safeEnqueue(
-          encodeStreamFrame(
-            createPhaseFrame("loading-knowledge", 0, "Loading knowledge base")
-          )
+        // Phase 1 & 2: Load knowledge and perform research
+        const workflowContext = {
+          specText,
+          pack,
+          maxAttempts,
+          startTime,
+          safeEnqueue,
+        };
+
+        const knowledgeContext = await loadKnowledgeBase(workflowContext);
+        const researchContext = performResearch(workflowContext);
+
+        // Build contextual messages
+        const messages = buildContextualMessages(
+          specText,
+          pack,
+          knowledgeContext,
+          researchContext
         );
 
-        const knowledgeFiles = await withErrorRecovery(
-          () => readKnowledgeDirectory("./knowledge"),
-          "Knowledge loading"
-        );
-
-        // Phase 2: Perform research
-        safeEnqueue(
-          encodeStreamFrame(
-            createPhaseFrame(
-              "performing-research",
-              0,
-              "Researching competitors"
-            )
-          )
-        );
-
-        const researchResult = performCompetitorResearch([
-          "Zscaler",
-          "Island",
-          "Talon",
-          "Microsoft Edge for Business",
-        ]);
-
-        // Build context and messages
-        let researchContext = "";
-        if (knowledgeFiles.length > 0) {
-          researchContext += `\n\nKnowledge Base Context:\n${knowledgeFiles
-            .map((f) => `${f.path}:\n${f.content}`)
-            .join("\n\n")}`;
-        }
-
-        if (researchResult.competitors.length > 0) {
-          researchContext += `\n\nCompetitor Research Results:\n${researchResult.competitors
-            .map(
-              (c) =>
-                `${c.vendor}:\n- Onboarding: ${c.onboardingDefaults}\n- Policy Templates: ${c.policyTemplates}\n- Enterprise Browser: ${c.enterpriseBrowser}\n- Data Protection: ${c.dataProtection}\n- Mobile Support: ${c.mobileSupport}`
-            )
-            .join("\n\n")}`;
-        }
-
-        if (researchResult.autoFilledFacts.length > 0) {
-          researchContext += `\n\nAuto-filled Facts: ${researchResult.autoFilledFacts.join(
-            ", "
-          )}`;
-        }
-
-        const system = buildSystemPrompt(pack) + researchContext;
-        const messages: CoreMessage[] = [
-          { role: "system", content: system },
-          { role: "user", content: buildUserPrompt(specText) },
-        ];
-
-        // Initialize resilient AI
-        const ai = getResilientAI();
-
-        // Main generate-validate-heal loop
-        let attempt = 0;
-        let finalDraft = "";
-        let totalTokens = 0;
-
-        while (attempt < maxAttempts) {
-          attempt++;
-
-          // Phase 3: Generate content
-          safeEnqueue(
-            encodeStreamFrame(
-              createPhaseFrame(
-                "generating",
-                attempt,
-                `Generating content (attempt ${attempt}/${maxAttempts})`
-              )
-            )
-          );
-
-          const result = await ai.generateWithFallback(messages);
-
-          let draftContent = "";
-          for await (const delta of result.textStream) {
-            draftContent += delta;
-            safeEnqueue(
-              encodeStreamFrame(
-                createGenerationFrame(delta, draftContent, ++totalTokens)
-              )
-            );
-          }
-
-          const draft = await result.text;
-          finalDraft = draft;
-
-          // Phase 4: Validate content (NOW ASYNC)
-          const validationStartTime = Date.now();
-          safeEnqueue(
-            encodeStreamFrame(
-              createPhaseFrame(
-                "validating",
-                attempt,
-                "Running validation checks"
-              )
-            )
-          );
-
-          const report = await validateAll(draft, pack);
-
-          const validationDuration = Date.now() - validationStartTime;
-          safeEnqueue(
-            encodeStreamFrame(createValidationFrame(report, validationDuration))
-          );
-
-          if (report.ok) {
-            finalDraft = draft;
-            const totalDuration = Date.now() - startTime;
-
-            safeEnqueue(
-              encodeStreamFrame(
-                createPhaseFrame("done", attempt, "Content generation complete")
-              )
-            );
-            safeEnqueue(
-              encodeStreamFrame(
-                createResultFrame(true, finalDraft, attempt, totalDuration)
-              )
-            );
-            break;
-          }
-
-          // Phase 5: Healing phase
-          const issuesToHeal = report.issues; // Use issues directly
-          safeEnqueue(
-            encodeStreamFrame(
-              createPhaseFrame(
-                "healing",
-                attempt,
-                `Preparing healing instructions for ${issuesToHeal.length} issues`
-              )
-            )
-          );
-          
-          // invokeItemHeal is now async
-          const followup = await aggregateHealing(issuesToHeal, pack);
-
-          safeEnqueue(
-            encodeStreamFrame(
-              createStreamFrame("healing", {
-                instruction: followup,
-                issueCount: issuesToHeal.length,
-                attempt,
-              })
-            )
-          );
-
-          messages.push({ role: "assistant", content: draft });
-          messages.push({ role: "user", content: followup });
-          finalDraft = draft;
-
-          if (attempt === maxAttempts) {
-            const totalDuration = Date.now() - startTime;
-            safeEnqueue(
-              encodeStreamFrame(
-                createPhaseFrame(
-                  "failed",
-                  attempt,
-                  `Max attempts reached (${maxAttempts})`
-                )
-              )
-            );
-            safeEnqueue(
-              encodeStreamFrame(
-                createResultFrame(false, finalDraft, attempt, totalDuration)
-              )
-            );
-            break;
-          }
-        }
+        // Run the generation loop
+        await runGenerationLoop({
+          messages,
+          pack,
+          maxAttempts,
+          startTime,
+          safeEnqueue,
+        });
 
         safeClose();
       } catch (e: unknown) {

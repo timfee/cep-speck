@@ -1,10 +1,10 @@
 /**
  * ESLint rule: no-hardcoded-ai-models
- * 
- * Principle: Critical infrastructure config, like AI model names, must be centralized 
+ *
+ * Principle: Critical infrastructure config, like AI model names, must be centralized
  * in `src/lib/config.ts` to prevent deployment bugs and allow for easy swapping.
- * 
- * Anti-Pattern: A hardcoded string literal starting with `gemini-` or `gpt-` passed 
+ *
+ * Anti-Pattern: A hardcoded string literal starting with `gemini-` or `gpt-` passed
  * to `google()` or as a `model:` property in an AI SDK call.
  */
 
@@ -19,14 +19,17 @@ module.exports = {
     fixable: null,
     schema: [],
     messages: {
-      hardcodedModel: "Do not hardcode AI model names. Import `AI_MODEL_PRIMARY` or `AI_MODEL_FALLBACK` from `src/lib/config.ts` instead of using '{{modelName}}'.",
+      hardcodedModel:
+        "Do not hardcode AI model names. Import `AI_MODEL_PRIMARY` or `AI_MODEL_FALLBACK` from `src/lib/config.ts` instead of using '{{modelName}}'.",
     },
   },
 
   create(context) {
     function isAIModelString(value) {
-      return typeof value === "string" && 
-        (value.startsWith("gemini-") || value.startsWith("gpt-"));
+      return (
+        typeof value === "string" &&
+        (value.startsWith("gemini-") || value.startsWith("gpt-"))
+      );
     }
 
     function checkCallExpression(node) {
@@ -53,7 +56,7 @@ module.exports = {
       if (
         node.key &&
         ((node.key.type === "Identifier" && node.key.name === "model") ||
-         (node.key.type === "Literal" && node.key.value === "model")) &&
+          (node.key.type === "Literal" && node.key.value === "model")) &&
         node.value &&
         node.value.type === "Literal" &&
         isAIModelString(node.value.value)

@@ -30,7 +30,8 @@ export function testAnyPattern(text: string, patterns: string[]): boolean {
     } catch (regexError) {
       // Invalid regex patterns fail gracefully, but log for debugging
       console.warn("Invalid regex pattern in testAnyPattern:", pattern, {
-        error: regexError instanceof Error ? regexError.message : String(regexError)
+        error:
+          regexError instanceof Error ? regexError.message : String(regexError),
       });
       return false;
     }
@@ -53,7 +54,8 @@ export function findAllMatches(text: string, patterns: string[]): string[] {
     } catch (regexError) {
       // Invalid regex patterns are silently ignored, but log for debugging
       console.warn("Invalid regex pattern ignored:", pattern, {
-        error: regexError instanceof Error ? regexError.message : String(regexError)
+        error:
+          regexError instanceof Error ? regexError.message : String(regexError),
       });
     }
   }

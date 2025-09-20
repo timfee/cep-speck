@@ -140,14 +140,16 @@ All must pass successfully or CI will fail.
 - Performs competitive research with real data (Zscaler, Island, Talon, Microsoft Edge)
 - Implements self-healing validation loop with multiple validation attempts
 - Shows real-time phase indicators and streaming content
-- Validates against 8 modular validation rules:
+- Validates against 10 modular validation rules:
   - **bannedText**: Prevents buzzwords and forbidden terms
   - **competitorResearch**: Ensures competitive analysis
-  - **crossSectionConsistency**: Validates section consistency
-  - **executiveQuality**: Ensures executive summary quality
   - **labelPattern**: Validates section numbering format
   - **metricsRequired**: Validates metrics have units/timeframe/SoT
+  - **placeholderQuality**: Detects placeholder content
   - **sectionCount**: Ensures minimum section count
+  - **semanticPolicyValidator**: AI-powered policy compliance
+  - **skuDifferentiation**: Validates SKU-specific features
+  - **technicalFeasibility**: Validates technical requirements
   - **wordBudget**: Enforces word count limits (1800 words max)
 - Provides detailed validation issue reporting with specific error messages
 
@@ -171,7 +173,7 @@ All must pass successfully or CI will fail.
 
 - `src/lib/spec/types.ts` - TypeScript interfaces for validation system
 - `src/lib/spec/registry.ts` - Item registration system
-- `src/lib/spec/items/` - Individual validation modules (8 total)
+- `src/lib/spec/items/` - Individual validation modules (10 total)
 - `src/lib/spec/packs/prd-v1.json` - SpecPack configuration with rules
 - `src/lib/spec/prompt.ts` - System prompt building from modular items
 - `src/lib/spec/validate.ts` - Validation orchestration
@@ -301,14 +303,16 @@ src/
     knowledge/            # Knowledge base files
     research/             # Web search capabilities
     spec/
-      items/              # 8 validation modules:
+      items/              # 10 validation modules:
         bannedText.ts     # Prevents buzzwords and forbidden terms
         competitorResearch.ts # Ensures competitive analysis
-        crossSectionConsistency.ts # Validates section consistency
-        executiveQuality.ts # Ensures executive summary quality
         labelPattern.ts   # Validates section numbering format
         metricsRequired.ts # Validates metrics have units/timeframe/SoT
+        placeholderQuality.ts # Detects placeholder content
         sectionCount.ts   # Ensures minimum section count
+        semanticPolicyValidator.ts # AI-powered policy compliance
+        skuDifferentiation.ts # Validates SKU-specific features
+        technicalFeasibility.ts # Validates technical requirements
         wordBudget.ts     # Enforces word count limits
       packs/              # SpecPack JSON configurations
       healing/            # Healing aggregation

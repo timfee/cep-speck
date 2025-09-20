@@ -10,14 +10,14 @@ import {
   Shield,
   Users,
 } from "lucide-react";
+
+import type { LucideIcon } from "lucide-react";
 import React from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-
 import type { SectionDefinition } from "@/types/workflow";
-import type { LucideIcon } from "lucide-react";
 
 const iconMap: Record<string, LucideIcon> = {
   FileText,

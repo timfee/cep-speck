@@ -1,6 +1,5 @@
 import { CRITICAL_VALIDATION_REQUIREMENTS } from "./config/criticalValidationRules";
 import { invokeItemToPrompt } from "./registry";
-
 import type { SpecPack } from "./types";
 
 export function buildSystemPrompt(pack: SpecPack): string {

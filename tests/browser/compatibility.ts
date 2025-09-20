@@ -175,7 +175,7 @@ export class BrowserCompatibilityChecker {
       language: navigator.language,
       platform: navigator.platform,
       cookieEnabled: navigator.cookieEnabled,
-      onLine: navigator.onLine,
+      onLine: navigator.onLine ?? true, // Default to true in environments where onLine is undefined
     };
   }
 

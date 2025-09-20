@@ -1,8 +1,4 @@
-import {
-  validateHeaderPattern,
-  HEALING_TEMPLATES,
-} from "../helpers";
-
+import { validateHeaderPattern, HEALING_TEMPLATES } from "../helpers";
 import type { Issue } from "../types";
 
 export const itemId = "label-pattern";
@@ -12,7 +8,11 @@ function toPrompt(params: Params, _pack?: unknown): string {
   return `Use the header label pattern: ${params.pattern} for top-level sections.`;
 }
 
-async function validate(draft: string, params: Params, _pack?: unknown): Promise<Issue[]> {
+async function validate(
+  draft: string,
+  params: Params,
+  _pack?: unknown
+): Promise<Issue[]> {
   return validateHeaderPattern(draft, params, itemId);
 }
 

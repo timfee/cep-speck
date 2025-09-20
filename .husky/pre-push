@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+set -e
+
+printf "\n\033[1;36m[husky] pre-push: lint + typecheck\033[0m\n"
+pnpm lint
+pnpm build
+printf "\n\033[1;32m[husky] pre-push passed.\033[0m\n\n"

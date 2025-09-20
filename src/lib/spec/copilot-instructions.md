@@ -23,28 +23,31 @@ export type Params = {
   // Parameter interface
 };
 
-export function toPrompt(params: Params, pack?: SpecPack): string {
+async function toPrompt(params: Params, pack?: SpecPack): Promise<string> {
   // Single line description for AI prompt (≤140 chars ideally)
   return "Brief rule description for AI generation.";
 }
 
-export function validate(
+async function validate(
   draft: string,
   params: Params,
   pack?: SpecPack
-): Issue[] {
+): Promise<Issue[]> {
   // Deterministic validation logic - NO network calls
   return [];
 }
 
-export function heal(
+async function heal(
   issues: Issue[],
-  params?: Params,
+  params: Params,
   pack?: SpecPack
-): string | null {
+): Promise<string | null> {
   // Optional healing instructions - only for deterministic fixes
   return null;
 }
+
+// REQUIRED: Export as module object for registry system
+export const itemModule = { itemId, toPrompt, validate, heal };
 ```
 
 ### Development Workflow

@@ -7,7 +7,11 @@ function toPrompt(_params: Params, _pack?: unknown): string {
   return "Reject impossible percentages (>100%) and absolute claims (100%).";
 }
 
-async function validate(draft: string, _params: Params, _pack?: unknown): Promise<Issue[]> {
+async function validate(
+  draft: string,
+  _params: Params,
+  _pack?: unknown
+): Promise<Issue[]> {
   const issues: Issue[] = [];
 
   // Check for impossible percentages (>100%)
@@ -29,7 +33,8 @@ async function validate(draft: string, _params: Params, _pack?: unknown): Promis
         id: "absolute-percentage",
         itemId,
         severity: "warn", // This is a warning
-        message: "Avoid claiming 100% outcomes for human behavior (e.g., adoption, compliance).",
+        message:
+          "Avoid claiming 100% outcomes for human behavior (e.g., adoption, compliance).",
         evidence: match[0],
       });
     }

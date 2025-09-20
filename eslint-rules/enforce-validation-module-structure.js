@@ -64,7 +64,9 @@ module.exports = {
         }
 
         // Check function signatures and async requirement
-        const validateMatch = text.match(/(async\s+)?function\s+validate\s*\(([^)]*)\)/);
+        const validateMatch = text.match(
+          /(async\s+)?function\s+validate\s*\(([^)]*)\)/
+        );
         if (validateMatch) {
           if (!validateMatch[1]) {
             context.report({
@@ -82,7 +84,9 @@ module.exports = {
           }
         }
 
-        const healMatch = text.match(/(async\s+)?function\s+heal\s*\(([^)]*)\)/);
+        const healMatch = text.match(
+          /(async\s+)?function\s+heal\s*\(([^)]*)\)/
+        );
         if (healMatch) {
           if (!healMatch[1]) {
             context.report({

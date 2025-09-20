@@ -1,5 +1,4 @@
 import { invokeItemValidate } from "./registry";
-
 import type { Issue, SpecPack, ValidationReport } from "./types";
 
 /**

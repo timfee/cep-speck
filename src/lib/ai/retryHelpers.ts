@@ -1,0 +1,145 @@
+import type { CoreMessage, StreamTextResult } from "ai";
+import type { z } from "zod";
+
+import type { AIProvider } from "./resilient";
+
+/**
+ * Retry configuration for provider operations
+ */
+export interface RetryConfig {
+  maxRetries: number;
+  retryDelay: number;
+}
+
+/**
+ * Result of a provider attempt
+ */
+export interface ProviderAttemptResult<T> {
+  success: boolean;
+  result?: T;
+  error?: Error;
+}
+
+/**
+ * Attempts to generate text with a specific provider with retry logic
+ */
+export async function attemptWithProvider(
+  provider: AIProvider,
+  messages: CoreMessage[],
+  config: RetryConfig
+): Promise<
+  ProviderAttemptResult<StreamTextResult<Record<string, never>, never>>
+> {
+  const { maxRetries, retryDelay } = config;
+
+  for (let retry = 0; retry < maxRetries; retry++) {
+    try {
+      const isAvailable = await provider.isAvailable();
+      if (!isAvailable) {
+        throw new Error(`Provider ${provider.name} is not available`);
+      }
+
+      console.log(
+        `Generating with ${provider.name} (attempt ${retry + 1}/${maxRetries})`
+      );
+
+      const result = await provider.generate(messages);
+      return { success: true, result };
+    } catch (error) {
+      const errorObj =
+        error instanceof Error ? error : new Error(String(error));
+      console.warn(
+        `Provider ${provider.name} failed (attempt ${retry + 1}/${maxRetries}):`,
+        errorObj.message
+      );
+
+      // Wait before retry (exponential backoff)
+      if (retry < maxRetries - 1) {
+        await delay(retryDelay * Math.pow(2, retry));
+      }
+
+      // Return error if this was the last retry
+      if (retry === maxRetries - 1) {
+        return { success: false, error: errorObj };
+      }
+    }
+  }
+
+  // This should never be reached, but TypeScript needs it
+  return { success: false, error: new Error("Unexpected retry loop exit") };
+}
+
+/**
+ * Attempts to generate object with a specific provider with retry logic
+ */
+export async function attemptObjectWithProvider<T>(
+  provider: AIProvider,
+  prompt: string,
+  schema: z.ZodSchema<T>,
+  config: RetryConfig
+): Promise<ProviderAttemptResult<{ object: T }>> {
+  const { maxRetries, retryDelay } = config;
+
+  for (let retry = 0; retry < maxRetries; retry++) {
+    try {
+      const isAvailable = await provider.isAvailable();
+      if (!isAvailable) {
+        throw new Error(`Provider ${provider.name} is not available`);
+      }
+
+      console.log(
+        `Generating object with ${provider.name} (attempt ${retry + 1}/${maxRetries})`
+      );
+
+      // Use generateObject with the provider's model
+      const { generateObject } = await import("ai");
+      const { google } = await import("@ai-sdk/google");
+      const { AI_MODEL_PRIMARY } = await import("@/lib/config");
+
+      const result = await generateObject({
+        model: google(AI_MODEL_PRIMARY),
+        prompt,
+        schema,
+      });
+
+      return { success: true, result };
+    } catch (error) {
+      const errorObj =
+        error instanceof Error ? error : new Error(String(error));
+      console.warn(
+        `Provider ${provider.name} generateObject failed (attempt ${retry + 1}/${maxRetries}):`,
+        errorObj.message
+      );
+
+      // Wait before retry (exponential backoff)
+      if (retry < maxRetries - 1) {
+        await delay(retryDelay * Math.pow(2, retry));
+      }
+
+      // Return error if this was the last retry
+      if (retry === maxRetries - 1) {
+        return { success: false, error: errorObj };
+      }
+    }
+  }
+
+  // This should never be reached, but TypeScript needs it
+  return { success: false, error: new Error("Unexpected retry loop exit") };
+}
+
+/**
+ * Utility function for delays with exponential backoff
+ */
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/**
+ * Rotates to the next provider index in a circular fashion
+ */
+export function getNextProviderIndex(
+  currentIndex: number,
+  providerCount: number
+): number {
+  return (currentIndex + 1) % providerCount;
+}

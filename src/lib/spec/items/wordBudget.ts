@@ -11,7 +11,11 @@ function toPrompt(params: Params, _pack?: unknown): string {
   return `Target word count: ${target} words (hard cap: ${cap} words). Be concise and focused.`;
 }
 
-async function validate(draft: string, params: Params, _pack?: unknown): Promise<Issue[]> {
+async function validate(
+  draft: string,
+  params: Params,
+  _pack?: unknown
+): Promise<Issue[]> {
   const wordCount = draft.split(/\s+/).filter((word) => word.length > 0).length;
   const target = params.target ?? WORD_BUDGET.MINIMUM_BUDGET;
   const cap = params.hardCap ?? WORD_BUDGET.TARGET_BUDGET;
@@ -37,7 +41,11 @@ async function validate(draft: string, params: Params, _pack?: unknown): Promise
   return issues;
 }
 
-async function heal(issues: Issue[], params: Params, _pack?: unknown): Promise<string | null> {
+async function heal(
+  issues: Issue[],
+  params: Params,
+  _pack?: unknown
+): Promise<string | null> {
   if (!issues.length) return null;
   const target = params.target ?? WORD_BUDGET.MINIMUM_BUDGET;
   return `Compress content to meet word budget of ${target} words. Focus on removing redundancy, tightening sentences, and condensing bullet points while preserving key information.`;

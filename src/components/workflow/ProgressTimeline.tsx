@@ -7,7 +7,6 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { WORKFLOW_STEPS } from "@/types/workflow";
-
 import type { WorkflowProgress } from "@/types/workflow";
 
 interface ProgressTimelineProps {

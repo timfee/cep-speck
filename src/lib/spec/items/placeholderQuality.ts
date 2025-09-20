@@ -1,5 +1,4 @@
 import { PATTERNS, LIMITS, HEALING_TEMPLATES } from "../helpers";
-
 import type { Issue } from "../types";
 
 export const itemId = "placeholder-quality";
@@ -11,13 +10,15 @@ export type Params = {
 function toPrompt(params: Params, _pack?: unknown): string {
   const minWords = params.minWords ?? LIMITS.PLACEHOLDER_MIN_WORDS;
   const parts = [
-    `Placeholders must be specific with at least ${minWords} words describing what data is needed.`
+    `Placeholders must be specific with at least ${minWords} words describing what data is needed.`,
   ];
-  
+
   if (params.requireUnitsForMetrics !== false) {
-    parts.push("For metric placeholders (baseline, target, KPI), include units, timeframe, and source of truth.");
+    parts.push(
+      "For metric placeholders (baseline, target, KPI), include units, timeframe, and source of truth."
+    );
   }
-  
+
   return parts.join(" ");
 }
 
@@ -70,19 +71,25 @@ async function heal(
   _pack?: unknown
 ): Promise<string | null> {
   if (!issues.length) return null;
-  
+
   const minWords = params.minWords ?? LIMITS.PLACEHOLDER_MIN_WORDS;
-  const hasVagueIssues = issues.some(i => i.id === "vague-placeholder");
-  const hasUnitIssues = issues.some(i => i.id === "placeholder-missing-units");
-  
+  const hasVagueIssues = issues.some((i) => i.id === "vague-placeholder");
+  const hasUnitIssues = issues.some(
+    (i) => i.id === "placeholder-missing-units"
+  );
+
   const instructions = [];
   if (hasVagueIssues) {
-    instructions.push(`Make placeholders more specific with at least ${minWords} descriptive words`);
+    instructions.push(
+      `Make placeholders more specific with at least ${minWords} descriptive words`
+    );
   }
   if (hasUnitIssues) {
-    instructions.push("Add units, timeframe, and source of truth to metric placeholders");
+    instructions.push(
+      "Add units, timeframe, and source of truth to metric placeholders"
+    );
   }
-  
+
   return `${HEALING_TEMPLATES.IMPROVE_PLACEHOLDERS}. ${instructions.join(". ")}.`;
 }
 

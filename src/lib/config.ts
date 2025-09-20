@@ -1,6 +1,5 @@
 // eslint-disable-next-line no-restricted-imports
 import packData from "./spec/packs/prd-v1.json";
-
 import type { SpecPack } from "./spec/types";
 
 /**

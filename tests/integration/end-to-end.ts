@@ -6,15 +6,15 @@
  */
 
 import {
-  encodeStreamFrame,
-  createPhaseFrame,
-  createGenerationFrame,
-  createValidationFrame,
   createErrorFrame,
+  createGenerationFrame,
+  createPhaseFrame,
   createResultFrame,
+  createValidationFrame,
+  encodeStreamFrame,
 } from "../../src/lib/spec/streaming";
 
-import type { StreamFrame, Issue } from "../../src/lib/spec/types";
+import type { Issue, StreamFrame } from "../../src/lib/spec/types";
 
 /**
  * Mock API response simulator
@@ -113,62 +113,122 @@ export class ClientFrameProcessor {
     };
   }> {
     const startTime = Date.now();
-    this.streaming = true;
-    this.draft = "";
-    this.error = null;
-    this.frames = [];
+    this.initializeProcessing();
 
     const reader = stream.getReader();
     const decoder = new TextDecoder();
-    let shouldAbort = false;
 
     try {
-      while (true) {
-        const { value, done } = await reader.read();
-        if (done || shouldAbort) break;
-
-        const chunk = decoder.decode(value);
-        for (const line of chunk.split("\n")) {
-          if (!line.trim()) continue;
-
-          let frame: StreamFrame;
-          try {
-            frame = JSON.parse(line);
-            this.frames.push(frame);
-          } catch {
-            continue; // Skip malformed frames
-          }
-
-          // Process frame like the real client
-          if (frame.type === "phase") {
-            this.phase = frame.data.phase;
-            this.attempt = frame.data.attempt;
-          }
-
-          if (frame.type === "generation") {
-            this.draft += frame.data.delta;
-          }
-
-          if (frame.type === "validation") {
-            this.issues = frame.data.report.issues ?? [];
-          }
-
-          if (frame.type === "result") {
-            this.draft = frame.data.finalDraft;
-          }
-
-          if (frame.type === "error") {
-            this.error = frame.data.message;
-            this.streaming = false;
-            shouldAbort = true;
-            break;
-          }
-        }
-      }
+      await this.processStreamChunks(reader, decoder);
     } catch (streamError) {
       this.error = `Stream processing error: ${streamError}`;
     }
 
+    return this.createResult(startTime);
+  }
+
+  /**
+   * Initialize processing state
+   */
+  private initializeProcessing(): void {
+    this.streaming = true;
+    this.draft = "";
+    this.error = null;
+    this.frames = [];
+  }
+
+  /**
+   * Process all stream chunks
+   */
+  private async processStreamChunks(
+    reader: ReadableStreamDefaultReader<Uint8Array>,
+    decoder: TextDecoder
+  ): Promise<boolean> {
+    let shouldAbort = false;
+
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done || shouldAbort) break;
+
+      const chunk = decoder.decode(value);
+      shouldAbort = this.processChunkLines(chunk);
+
+      if (shouldAbort) break;
+    }
+
+    return shouldAbort;
+  }
+
+  /**
+   * Process lines within a chunk
+   */
+  private processChunkLines(chunk: string): boolean {
+    for (const line of chunk.split("\n")) {
+      if (!line.trim()) continue;
+
+      const frame = this.parseFrame(line);
+      if (!frame) continue;
+
+      this.frames.push(frame);
+
+      if (this.processFrame(frame)) {
+        return true; // Should abort
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Parse a frame from a line
+   */
+  private parseFrame(line: string): StreamFrame | null {
+    try {
+      return JSON.parse(line) as StreamFrame;
+    } catch {
+      return null; // Skip malformed frames
+    }
+  }
+
+  /**
+   * Process a single frame
+   */
+  private processFrame(frame: StreamFrame): boolean {
+    switch (frame.type) {
+      case "phase":
+        this.phase = frame.data.phase;
+        this.attempt = frame.data.attempt;
+        break;
+
+      case "generation":
+        this.draft += frame.data.delta;
+        break;
+
+      case "validation":
+        this.issues = frame.data.report.issues ?? [];
+        break;
+
+      case "result":
+        this.draft = frame.data.finalDraft;
+        break;
+
+      case "error":
+        this.error = frame.data.message;
+        this.streaming = false;
+        return true; // Should abort
+
+      case "self-review":
+      case "healing":
+        // These frame types don't require special processing in tests
+        break;
+    }
+
+    return false;
+  }
+
+  /**
+   * Create final result object
+   */
+  private createResult(startTime: number) {
     this.streaming = false;
     const endTime = Date.now();
 

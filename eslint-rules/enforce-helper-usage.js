@@ -57,11 +57,19 @@ module.exports = {
               fix(fixer) {
                 // Add import if not present
                 const importStatement = `import { ${helperName} } from "@/lib/spec/helpers";\n`;
-                const firstImport = node.parent.body.find(
-                  (n) => n.type === "ImportDeclaration"
-                );
-                if (firstImport) {
-                  return fixer.insertTextBefore(firstImport, importStatement);
+
+                // Safely check if node.parent and node.parent.body exist
+                if (
+                  node.parent &&
+                  node.parent.body &&
+                  Array.isArray(node.parent.body)
+                ) {
+                  const firstImport = node.parent.body.find(
+                    (n) => n.type === "ImportDeclaration"
+                  );
+                  if (firstImport) {
+                    return fixer.insertTextBefore(firstImport, importStatement);
+                  }
                 }
                 return null;
               },

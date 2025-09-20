@@ -8,14 +8,23 @@ import {
   Zap,
   CheckCircle,
 } from "lucide-react";
+
 import React from "react";
 
-import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
-
 import type { EnterpriseParameters } from "@/types/workflow";
+
+import {
+  TARGET_SKU_OPTIONS,
+  DEPLOYMENT_MODEL_OPTIONS,
+  SECURITY_REQUIREMENTS_OPTIONS,
+  INTEGRATION_OPTIONS,
+  SUPPORT_LEVEL_OPTIONS,
+} from "./components/enterpriseOptions";
+
+import { MultiSelectSection } from "./components/MultiSelectSection";
+import { RadioGroupSection } from "./components/RadioGroupSection";
 
 interface EnterpriseParametersStepProps {
   parameters: EnterpriseParameters;
@@ -28,24 +37,6 @@ export function EnterpriseParametersStep({
   onChange,
   className,
 }: EnterpriseParametersStepProps) {
-  const updateParameter = <K extends keyof EnterpriseParameters>(
-    key: K,
-    value: EnterpriseParameters[K]
-  ) => {
-    onChange({ ...parameters, [key]: value });
-  };
-
-  const toggleArrayParameter = (
-    key: "securityRequirements" | "integrations",
-    value: string
-  ) => {
-    const currentArray = parameters[key] as string[];
-    const newArray = currentArray.includes(value)
-      ? currentArray.filter((item) => item !== value)
-      : [...currentArray, value];
-    onChange({ ...parameters, [key]: newArray });
-  };
-
   return (
     <div className={cn("space-y-6", className)}>
       <div className="text-center space-y-2">
@@ -56,341 +47,116 @@ export function EnterpriseParametersStep({
         </p>
       </div>
 
-      {/* Target SKU */}
-      <Card className="p-4">
-        <div className="flex items-center gap-2 mb-4">
-          <Building2 className="h-5 w-5 text-blue-600" />
-          <h3 className="text-lg font-semibold">Target SKU</h3>
-        </div>
+      <RadioGroupSection
+        title="Target SKU"
+        icon={Building2}
+        iconColor="text-blue-600"
+        value={parameters.targetSku}
+        options={TARGET_SKU_OPTIONS}
+        onChange={(value) =>
+          onChange({
+            ...parameters,
+            targetSku: value as
+              | "premium"
+              | "enterprise"
+              | "education"
+              | "government",
+          })
+        }
+        columns={2}
+      />
 
-        <RadioGroup
-          value={parameters.targetSku}
-          onValueChange={(
-            value: "premium" | "enterprise" | "education" | "government"
-          ) => updateParameter("targetSku", value)}
-          className="grid grid-cols-2 gap-4"
-        >
-          {[
-            {
-              value: "premium",
-              label: "Chrome Enterprise Premium",
-              desc: "Advanced security and management",
-            },
-            {
-              value: "enterprise",
-              label: "Chrome Enterprise Core",
-              desc: "Basic enterprise features",
-            },
-            {
-              value: "education",
-              label: "Chrome Education Plus",
-              desc: "Educational institutions",
-            },
-            {
-              value: "government",
-              label: "Chrome Enterprise for Government",
-              desc: "Government compliance",
-            },
-          ].map((option) => (
-            <div
-              key={option.value}
-              className="flex items-center space-x-2 border rounded-lg p-3"
-            >
-              <RadioGroupItem value={option.value} id={option.value} />
-              <label htmlFor={option.value} className="flex-1 cursor-pointer">
-                <div className="font-medium">{option.label}</div>
-                <div className="text-xs text-muted-foreground">
-                  {option.desc}
-                </div>
-              </label>
-            </div>
-          ))}
-        </RadioGroup>
-      </Card>
+      <RadioGroupSection
+        title="Deployment Model"
+        icon={Zap}
+        iconColor="text-green-600"
+        value={parameters.deploymentModel}
+        options={DEPLOYMENT_MODEL_OPTIONS}
+        onChange={(value) =>
+          onChange({
+            ...parameters,
+            deploymentModel: value as "cloud" | "hybrid" | "on-premise",
+          })
+        }
+        columns={3}
+      />
 
-      {/* Deployment Model */}
-      <Card className="p-4">
-        <div className="flex items-center gap-2 mb-4">
-          <Zap className="h-5 w-5 text-green-600" />
-          <h3 className="text-lg font-semibold">Deployment Model</h3>
-        </div>
+      <MultiSelectSection
+        title="Security Requirements"
+        icon={Shield}
+        iconColor="text-red-600"
+        selectedValues={parameters.securityRequirements}
+        options={SECURITY_REQUIREMENTS_OPTIONS}
+        onToggle={(value) => {
+          const current = parameters.securityRequirements;
+          const updated = current.includes(value as (typeof current)[0])
+            ? current.filter((item) => item !== value)
+            : [...current, value as (typeof current)[0]];
+          onChange({ ...parameters, securityRequirements: updated });
+        }}
+      />
 
-        <RadioGroup
-          value={parameters.deploymentModel}
-          onValueChange={(value: "cloud" | "hybrid" | "on-premise") =>
-            updateParameter("deploymentModel", value)
-          }
-          className="grid grid-cols-3 gap-4"
-        >
-          {[
-            {
-              value: "cloud",
-              label: "Cloud-First",
-              desc: "Google Cloud managed",
-            },
-            { value: "hybrid", label: "Hybrid", desc: "Cloud + on-premise" },
-            { value: "on-premise", label: "On-Premise", desc: "Self-hosted" },
-          ].map((option) => (
-            <div
-              key={option.value}
-              className="flex items-center space-x-2 border rounded-lg p-3"
-            >
-              <RadioGroupItem value={option.value} id={option.value} />
-              <label htmlFor={option.value} className="flex-1 cursor-pointer">
-                <div className="font-medium">{option.label}</div>
-                <div className="text-xs text-muted-foreground">
-                  {option.desc}
-                </div>
-              </label>
-            </div>
-          ))}
-        </RadioGroup>
-      </Card>
+      <MultiSelectSection
+        title="Required Integrations"
+        icon={Link}
+        iconColor="text-purple-600"
+        selectedValues={parameters.integrations}
+        options={INTEGRATION_OPTIONS}
+        onToggle={(value) => {
+          const current = parameters.integrations;
+          const updated = current.includes(value as (typeof current)[0])
+            ? current.filter((item) => item !== value)
+            : [...current, value as (typeof current)[0]];
+          onChange({ ...parameters, integrations: updated });
+        }}
+      />
 
-      {/* Security Requirements */}
-      <Card className="p-4">
-        <div className="flex items-center gap-2 mb-4">
-          <Shield className="h-5 w-5 text-red-600" />
-          <h3 className="text-lg font-semibold">Security Requirements</h3>
-          {parameters.securityRequirements.length > 0 && (
-            <Badge variant="outline">
-              {parameters.securityRequirements.length} selected
-            </Badge>
-          )}
-        </div>
-
-        <div className="grid grid-cols-2 gap-3">
-          {[
-            {
-              value: "sso",
-              label: "Single Sign-On (SSO)",
-              desc: "SAML/OIDC authentication",
-            },
-            {
-              value: "dlp",
-              label: "Data Loss Prevention",
-              desc: "Content protection policies",
-            },
-            {
-              value: "compliance",
-              label: "Compliance",
-              desc: "SOC 2, HIPAA, FedRAMP",
-            },
-            {
-              value: "audit",
-              label: "Audit & Logging",
-              desc: "Security event monitoring",
-            },
-          ].map((option) => (
-            <div
-              key={option.value}
-              className={cn(
-                "border rounded-lg p-3 cursor-pointer transition-all",
-                parameters.securityRequirements.includes(
-                  option.value as "sso" | "dlp" | "compliance" | "audit"
-                )
-                  ? "border-primary bg-primary/5"
-                  : "border-gray-200 hover:border-primary/50"
-              )}
-              onClick={() =>
-                toggleArrayParameter("securityRequirements", option.value)
-              }
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="font-medium">{option.label}</div>
-                  <div className="text-xs text-muted-foreground">
-                    {option.desc}
-                  </div>
-                </div>
-                {parameters.securityRequirements.includes(
-                  option.value as "sso" | "dlp" | "compliance" | "audit"
-                ) && <CheckCircle className="h-4 w-4 text-primary" />}
-              </div>
-            </div>
-          ))}
-        </div>
-      </Card>
-
-      {/* Integrations */}
-      <Card className="p-4">
-        <div className="flex items-center gap-2 mb-4">
-          <Link className="h-5 w-5 text-purple-600" />
-          <h3 className="text-lg font-semibold">Required Integrations</h3>
-          {parameters.integrations.length > 0 && (
-            <Badge variant="outline">
-              {parameters.integrations.length} selected
-            </Badge>
-          )}
-        </div>
-
-        <div className="grid grid-cols-2 gap-3">
-          {[
-            {
-              value: "active-directory",
-              label: "Active Directory",
-              desc: "Microsoft AD integration",
-            },
-            {
-              value: "okta",
-              label: "Okta",
-              desc: "Identity management platform",
-            },
-            {
-              value: "salesforce",
-              label: "Salesforce",
-              desc: "CRM integration",
-            },
-            {
-              value: "workspace",
-              label: "Google Workspace",
-              desc: "Productivity suite",
-            },
-          ].map((option) => (
-            <div
-              key={option.value}
-              className={cn(
-                "border rounded-lg p-3 cursor-pointer transition-all",
-                parameters.integrations.includes(
-                  option.value as
-                    | "active-directory"
-                    | "okta"
-                    | "salesforce"
-                    | "workspace"
-                )
-                  ? "border-primary bg-primary/5"
-                  : "border-gray-200 hover:border-primary/50"
-              )}
-              onClick={() => toggleArrayParameter("integrations", option.value)}
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="font-medium">{option.label}</div>
-                  <div className="text-xs text-muted-foreground">
-                    {option.desc}
-                  </div>
-                </div>
-                {parameters.integrations.includes(
-                  option.value as
-                    | "active-directory"
-                    | "okta"
-                    | "salesforce"
-                    | "workspace"
-                ) && <CheckCircle className="h-4 w-4 text-primary" />}
-              </div>
-            </div>
-          ))}
-        </div>
-      </Card>
-
-      {/* Support Level & Rollout Strategy */}
       <div className="grid grid-cols-2 gap-6">
-        <Card className="p-4">
-          <div className="flex items-center gap-2 mb-4">
-            <Headphones className="h-5 w-5 text-orange-600" />
-            <h3 className="text-lg font-semibold">Support Level</h3>
-          </div>
+        <RadioGroupSection
+          title="Support Level"
+          icon={Headphones}
+          iconColor="text-orange-600"
+          value={parameters.supportLevel}
+          options={SUPPORT_LEVEL_OPTIONS}
+          onChange={(value) =>
+            onChange({
+              ...parameters,
+              supportLevel: value as "standard" | "premium" | "enterprise",
+            })
+          }
+        />
 
-          <RadioGroup
-            value={parameters.supportLevel}
-            onValueChange={(value: "standard" | "premium" | "enterprise") =>
-              updateParameter("supportLevel", value)
-            }
-            className="space-y-2"
-          >
-            {[
-              {
-                value: "standard",
-                label: "Standard Support",
-                desc: "Business hours coverage",
-              },
-              {
-                value: "premium",
-                label: "Premium Support",
-                desc: "24/7 priority support",
-              },
-              {
-                value: "enterprise",
-                label: "Enterprise Support",
-                desc: "Dedicated support team",
-              },
-            ].map((option) => (
-              <div
-                key={option.value}
-                className="flex items-center space-x-2 border rounded-lg p-3"
-              >
-                <RadioGroupItem
-                  value={option.value}
-                  id={`support-${option.value}`}
-                />
-                <label
-                  htmlFor={`support-${option.value}`}
-                  className="flex-1 cursor-pointer"
-                >
-                  <div className="font-medium">{option.label}</div>
-                  <div className="text-xs text-muted-foreground">
-                    {option.desc}
-                  </div>
-                </label>
-              </div>
-            ))}
-          </RadioGroup>
-        </Card>
-
-        <Card className="p-4">
-          <div className="flex items-center gap-2 mb-4">
-            <Zap className="h-5 w-5 text-yellow-600" />
-            <h3 className="text-lg font-semibold">Rollout Strategy</h3>
-          </div>
-
-          <RadioGroup
-            value={parameters.rolloutStrategy}
-            onValueChange={(value: "pilot" | "phased" | "full-deployment") =>
-              updateParameter("rolloutStrategy", value)
-            }
-            className="space-y-2"
-          >
-            {[
-              {
-                value: "pilot",
-                label: "Pilot Program",
-                desc: "Small group testing",
-              },
-              {
-                value: "phased",
-                label: "Phased Rollout",
-                desc: "Gradual deployment",
-              },
-              {
-                value: "full-deployment",
-                label: "Full Deployment",
-                desc: "Organization-wide launch",
-              },
-            ].map((option) => (
-              <div
-                key={option.value}
-                className="flex items-center space-x-2 border rounded-lg p-3"
-              >
-                <RadioGroupItem
-                  value={option.value}
-                  id={`rollout-${option.value}`}
-                />
-                <label
-                  htmlFor={`rollout-${option.value}`}
-                  className="flex-1 cursor-pointer"
-                >
-                  <div className="font-medium">{option.label}</div>
-                  <div className="text-xs text-muted-foreground">
-                    {option.desc}
-                  </div>
-                </label>
-              </div>
-            ))}
-          </RadioGroup>
-        </Card>
+        <RadioGroupSection
+          title="Rollout Strategy"
+          icon={Zap}
+          iconColor="text-yellow-600"
+          value={parameters.rolloutStrategy}
+          options={[
+            {
+              value: "pilot",
+              label: "Pilot Program",
+              desc: "Small group testing",
+            },
+            {
+              value: "phased",
+              label: "Phased Rollout",
+              desc: "Gradual deployment",
+            },
+            {
+              value: "full-deployment",
+              label: "Full Deployment",
+              desc: "Organization-wide launch",
+            },
+          ]}
+          onChange={(value) =>
+            onChange({
+              ...parameters,
+              rolloutStrategy: value as "pilot" | "phased" | "full-deployment",
+            })
+          }
+        />
       </div>
 
-      {/* Configuration Summary */}
       <Card className="p-4 bg-green-50 border-green-200">
         <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
           <CheckCircle className="h-5 w-5 text-green-600" />

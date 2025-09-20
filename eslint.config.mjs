@@ -1,12 +1,13 @@
-import { dirname } from "path";
-import { fileURLToPath } from "url";
 import { FlatCompat } from "@eslint/eslintrc";
 import js from "@eslint/js";
-import tseslint from "typescript-eslint";
-import reactHooks from "eslint-plugin-react-hooks";
 import importPlugin from "eslint-plugin-import";
 import promisePlugin from "eslint-plugin-promise";
+import reactHooks from "eslint-plugin-react-hooks";
+import sonarjs from "eslint-plugin-sonarjs";
 import unicorn from "eslint-plugin-unicorn";
+import { dirname } from "path";
+import tseslint from "typescript-eslint";
+import { fileURLToPath } from "url";
 import customRules from "./eslint-rules/index.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -27,6 +28,7 @@ const eslintConfig = [
       import: importPlugin,
       promise: promisePlugin,
       unicorn: unicorn,
+      sonarjs: sonarjs,
       custom: customRules,
     },
     languageOptions: {
@@ -72,7 +74,6 @@ const eslintConfig = [
             "internal",
             ["parent", "sibling"],
             "index",
-            "type",
           ],
           pathGroups: [
             {
@@ -80,28 +81,15 @@ const eslintConfig = [
               group: "internal",
               position: "after",
             },
-            {
-              pattern: "@/lib/spec/**",
-              group: "internal",
-              position: "after",
-            },
-            {
-              pattern: "@/lib/spec/items/**",
-              group: "internal",
-              position: "after",
-            },
-            {
-              pattern: "@/lib/spec/helpers/**",
-              group: "internal",
-              position: "after",
-            },
           ],
-          pathGroupsExcludedImportTypes: ["type"],
-          "newlines-between": "always",
+          pathGroupsExcludedImportTypes: [],
+          "newlines-between": "always-and-inside-groups",
+          consolidateIslands: "inside-groups",
           alphabetize: {
             order: "asc",
             caseInsensitive: true,
           },
+          warnOnUnassignedImports: false,
         },
       ],
 
@@ -294,6 +282,10 @@ const eslintConfig = [
       "@typescript-eslint/no-unnecessary-boolean-literal-compare": "error",
       "@typescript-eslint/prefer-readonly": "error",
       "@typescript-eslint/prefer-for-of": "error",
+
+      // ============ COMPLEXITY RULES ============
+      complexity: ["error", 15],
+      "sonarjs/cognitive-complexity": ["error", 15],
     },
   },
   {
@@ -397,6 +389,7 @@ const eslintConfig = [
       "*.config.js",
       "*.config.mjs",
       "eslint-rules/**",
+      "scripts/**",
     ],
   },
 ];

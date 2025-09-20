@@ -1,5 +1,4 @@
 import { countSections, HEALING_TEMPLATES } from "../helpers";
-
 import type { Issue } from "../types";
 
 export const itemId = "section-count";
@@ -18,7 +17,11 @@ function toPrompt(params: Params, _pack?: unknown): string {
   return `Ensure the document has ${range} top-level sections; detect sections using headerRegex: ${params.headerRegex}`;
 }
 
-async function validate(draft: string, params: Params, _pack?: unknown): Promise<Issue[]> {
+async function validate(
+  draft: string,
+  params: Params,
+  _pack?: unknown
+): Promise<Issue[]> {
   const count = countSections(draft, params.headerRegex);
   const issues: Issue[] = [];
 
@@ -42,7 +45,11 @@ async function validate(draft: string, params: Params, _pack?: unknown): Promise
   return issues;
 }
 
-async function heal(issues: Issue[], params: Params, _pack?: unknown): Promise<string | null> {
+async function heal(
+  issues: Issue[],
+  params: Params,
+  _pack?: unknown
+): Promise<string | null> {
   if (!issues.length) return null;
 
   const range =

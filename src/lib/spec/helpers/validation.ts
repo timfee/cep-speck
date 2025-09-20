@@ -1,12 +1,19 @@
 /**
- * Common validation utility functions
+ * @fileoverview Shared validation utilities and helpers
  */
 
-import { VALIDATION_THRESHOLDS } from "@/lib/constants";
-
+import type { Issue } from "../types";
 import { PATTERNS } from "./constants";
 
-import type { Issue } from "../types";
+// Validation thresholds
+export const VALIDATION_THRESHOLDS = {
+  MIN_WORD_COUNT: 50,
+  MAX_WORD_COUNT: 1800,
+  MIN_SECTION_COUNT: 5,
+  MAX_PLACEHOLDER_RATIO: 0.1,
+  MIN_COMPETITIVE_ANALYSIS_WORDS: 100,
+  MIN_CAPTURE_GROUPS: 3,
+} as const;
 
 /**
  * Extract section content using a regex pattern
@@ -34,36 +41,69 @@ export function extractMetrics(
   block: string,
   params: { metricRegex?: string }
 ): Map<string, string> {
-  // Extract metrics using pattern: - <metric>: <value> or * <metric>: <value>
-  // Handles inline comments after # character
   const map = new Map<string, string>();
-  const defaultPattern = /^[-*]\s+([^:]+):\s+([^#]+)(?:#.*)?$/;
+  const lines = block.split("\n");
   const metricRegex = params.metricRegex ?? "";
   const customPattern = metricRegex.length > 0 ? new RegExp(metricRegex) : null;
 
-  for (const line of block.split("\n")) {
-    if (customPattern) {
-      // Use custom regex if provided
-      const matches = line.match(customPattern);
-      if (
-        matches &&
-        matches.length >= VALIDATION_THRESHOLDS.MIN_CAPTURE_GROUPS &&
-        typeof matches[1] === "string" &&
-        typeof matches[2] === "string"
-      ) {
-        const key = matches[1].trim().toLowerCase();
-        const value = matches[2].trim();
-        if (key && value) {
-          map.set(key, value);
-        }
-      }
-    } else {
-      // Use default pattern
-      const m = line.match(defaultPattern);
-      if (m) map.set(m[1].trim().toLowerCase(), m[2].trim());
+  for (const line of lines) {
+    const result = customPattern
+      ? extractWithCustomPattern(line, customPattern)
+      : extractWithDefaultPattern(line);
+
+    if (result) {
+      map.set(result.key, result.value);
     }
   }
+
   return map;
+}
+
+/**
+ * Extract metric using custom regex pattern
+ */
+function extractWithCustomPattern(
+  line: string,
+  pattern: RegExp
+): { key: string; value: string } | null {
+  const matches = line.match(pattern);
+
+  if (!matches || !isValidCustomMatch(matches)) {
+    return null;
+  }
+
+  const key = matches[1].trim().toLowerCase();
+  const value = matches[2].trim();
+
+  return key && value ? { key, value } : null;
+}
+
+/**
+ * Extract metric using default bullet point pattern
+ */
+function extractWithDefaultPattern(
+  line: string
+): { key: string; value: string } | null {
+  const defaultPattern = /^[-*]\s+([^:]+):\s+([^#]+)(?:#.*)?$/;
+  const match = line.match(defaultPattern);
+
+  if (!match) return null;
+
+  return {
+    key: match[1].trim().toLowerCase(),
+    value: match[2].trim(),
+  };
+}
+
+/**
+ * Validate custom regex match has required capture groups
+ */
+function isValidCustomMatch(matches: RegExpMatchArray): boolean {
+  return (
+    matches.length >= VALIDATION_THRESHOLDS.MIN_CAPTURE_GROUPS &&
+    typeof matches[1] === "string" &&
+    typeof matches[2] === "string"
+  );
 }
 
 /**
@@ -158,5 +198,3 @@ export function validateHeaderPattern(
 
   return issues;
 }
-
-

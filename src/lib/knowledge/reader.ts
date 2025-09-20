@@ -17,7 +17,7 @@ export async function readKnowledgeDirectory(
   } catch (statError) {
     // Directory doesn't exist - return empty array
     console.warn("Knowledge directory not found:", basePath, {
-      error: statError instanceof Error ? statError.message : String(statError)
+      error: statError instanceof Error ? statError.message : String(statError),
     });
     return files;
   }
