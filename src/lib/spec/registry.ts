@@ -9,11 +9,6 @@ export interface ValidatorModule<Params = void> {
     params: Params,
     pack?: SpecPack
   ) => Promise<Issue[]>;
-  readonly heal: (
-    issues: Issue[],
-    params: Params,
-    pack?: SpecPack
-  ) => Promise<string | null>;
 }
 
 export function createValidatorModule<P>(
@@ -56,13 +51,4 @@ export async function invokeItemValidate<P>(
 ): Promise<Issue[]> {
   const mod = getItem<P>(def.id);
   return await mod.validate(draft, def.params, pack);
-}
-
-export async function invokeItemHeal<P>(
-  issues: Issue[],
-  def: SpecItemDef<P>,
-  pack: SpecPack
-): Promise<string | null> {
-  const mod = getItem<P>(def.id);
-  return await mod.heal(issues, def.params, pack);
 }

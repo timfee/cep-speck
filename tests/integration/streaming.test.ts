@@ -30,12 +30,12 @@ describe("Streaming Protocol Integration", () => {
       expect(result.duration).toBeLessThan(2000); // Should complete quickly in test
     });
 
-    test("should handle healing workflow with validation issues", async () => {
-      const result = await EndToEndTestRunner.testHealingWorkflow();
+    test("should handle validation failure workflow", async () => {
+      const result = await EndToEndTestRunner.testValidationFailureWorkflow();
 
-      expect(result.success).toBe(true);
-      expect(result.healingOccurred).toBe(true);
-      expect(result.finalAttempt).toBe(2);
+      expect(result.success).toBe(false);
+      expect(result.validationFailureOccurred).toBe(true);
+      expect(result.finalAttempt).toBe(1);
     });
 
     test("should handle error scenarios gracefully", async () => {

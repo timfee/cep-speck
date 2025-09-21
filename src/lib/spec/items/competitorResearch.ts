@@ -84,15 +84,4 @@ async function validate(
   return issues;
 }
 
-async function heal(
-  issues: Issue[],
-  params: Params,
-  _pack?: unknown
-): Promise<string | null> {
-  if (!issues.length) return null;
-
-  const vendors = params.vendors.join(", ");
-  return `Research and integrate competitive information about ${vendors} into the TL;DR section. Focus on onboarding defaults, policy templates, enterprise browser capabilities, and data protection features. Add citations as numbered footnotes after the Annexes section.`;
-}
-
-export const itemModule = { itemId, toPrompt, validate, heal };
+export const itemModule = { itemId, toPrompt, validate };

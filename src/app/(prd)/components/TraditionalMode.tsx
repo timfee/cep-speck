@@ -78,7 +78,7 @@ export function TraditionalMode({ onStructuredMode }: TraditionalModeProps) {
       issues.length === 0
         ? 100
         : Math.max(0, 100 - issues.length * SCORE_PENALTY_PER_ISSUE);
-    const healingAttempts = Math.max(0, attempt - 1);
+    const iterationAttempts = Math.max(0, attempt - 1);
     const estimatedCompletion =
       phase === "generating"
         ? GENERATION_ESTIMATE_SECONDS
@@ -89,7 +89,7 @@ export function TraditionalMode({ onStructuredMode }: TraditionalModeProps) {
     return {
       wordCount,
       validationScore,
-      healingAttempts,
+      iterationAttempts,
       elapsedTime,
       issuesFound: issues.length,
       phase,

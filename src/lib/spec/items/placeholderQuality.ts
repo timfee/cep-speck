@@ -1,4 +1,4 @@
-import { PATTERNS, LIMITS, HEALING_TEMPLATES } from "../helpers";
+import { PATTERNS, LIMITS } from "../helpers";
 import type { Issue } from "../types";
 
 export const itemId = "placeholder-quality";
@@ -65,32 +65,4 @@ async function validate(
   return issues;
 }
 
-async function heal(
-  issues: Issue[],
-  params: Params,
-  _pack?: unknown
-): Promise<string | null> {
-  if (!issues.length) return null;
-
-  const minWords = params.minWords ?? LIMITS.PLACEHOLDER_MIN_WORDS;
-  const hasVagueIssues = issues.some((i) => i.id === "vague-placeholder");
-  const hasUnitIssues = issues.some(
-    (i) => i.id === "placeholder-missing-units"
-  );
-
-  const instructions = [];
-  if (hasVagueIssues) {
-    instructions.push(
-      `Make placeholders more specific with at least ${minWords} descriptive words`
-    );
-  }
-  if (hasUnitIssues) {
-    instructions.push(
-      "Add units, timeframe, and source of truth to metric placeholders"
-    );
-  }
-
-  return `${HEALING_TEMPLATES.IMPROVE_PLACEHOLDERS}. ${instructions.join(". ")}.`;
-}
-
-export const itemModule = { itemId, toPrompt, validate, heal };
+export const itemModule = { itemId, toPrompt, validate };

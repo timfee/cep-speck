@@ -42,13 +42,4 @@ async function validate(
   return issues;
 }
 
-async function heal(
-  _issues: Issue[],
-  _params: Params,
-  _pack?: unknown
-): Promise<string | null> {
-  if (!_issues.length) return null;
-  return `Review all percentage claims. Replace any >100% value with a realistic figure. Rephrase any 100% claim (e.g., "100% adoption") to a more defensible range (e.g., "99.9% coverage" or "95% adoption").`;
-}
-
-export const itemModule = { itemId, toPrompt, validate, heal };
+export const itemModule = { itemId, toPrompt, validate };

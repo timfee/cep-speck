@@ -95,8 +95,7 @@ export function useStreamingWorkflow() {
             }
 
             case "self-review":
-            case "healing":
-              // Handle these cases if needed in the future
+              // Handle this case if needed in the future
               break;
 
             default:

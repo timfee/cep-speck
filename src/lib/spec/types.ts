@@ -59,7 +59,6 @@ export type StreamPhase =
   | "generating"
   | "validating"
   | "self-reviewing"
-  | "healing"
   | "done"
   | "failed"
   | "error";
@@ -95,14 +94,6 @@ export type StreamFrame =
         confirmed: Issue[];
         filtered: Issue[];
         duration?: number;
-      };
-    }
-  | {
-      type: "healing";
-      data: {
-        instruction: string;
-        issueCount: number;
-        attempt: number;
       };
     }
   | {

@@ -1,9 +1,4 @@
-import {
-  createWordBoundaryRegex,
-  createFlexibleRegex,
-  HEALING_TEMPLATES,
-} from "../helpers";
-
+import { createWordBoundaryRegex, createFlexibleRegex } from "../helpers";
 import type { Issue, SpecPack } from "../types";
 
 export const itemId = "banned-text";
@@ -85,14 +80,4 @@ async function validate(
   return issues;
 }
 
-async function heal(
-  issues: Issue[],
-  _params: Params,
-  _pack?: SpecPack
-): Promise<string | null> {
-  if (!issues.length) return null;
-  const terms = issues.map((i) => i.evidence ?? i.message).join(", ");
-  return `${HEALING_TEMPLATES.BANNED_TEXT}. Specifically remove or rephrase: ${terms}.`;
-}
-
-export const itemModule = { itemId, toPrompt, validate, heal };
+export const itemModule = { itemId, toPrompt, validate };

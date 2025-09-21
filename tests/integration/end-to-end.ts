@@ -97,6 +97,7 @@ export class ClientFrameProcessor {
   private issues: Issue[] = [];
   private streaming: boolean = false;
   private error: string | null = null;
+  private success: boolean = true; // Default to true, can be set by result frame
 
   /**
    * Process streaming frames like the real client
@@ -134,6 +135,7 @@ export class ClientFrameProcessor {
     this.streaming = true;
     this.draft = "";
     this.error = null;
+    this.success = true;
     this.frames = [];
   }
 
@@ -209,6 +211,7 @@ export class ClientFrameProcessor {
 
       case "result":
         this.draft = frame.data.finalDraft;
+        this.success = frame.data.success;
         break;
 
       case "error":
@@ -217,8 +220,7 @@ export class ClientFrameProcessor {
         return true; // Should abort
 
       case "self-review":
-      case "healing":
-        // These frame types don't require special processing in tests
+        // This frame type doesn't require special processing in tests
         break;
     }
 
@@ -233,7 +235,7 @@ export class ClientFrameProcessor {
     const endTime = Date.now();
 
     return {
-      success: !this.error,
+      success: this.error ? false : this.success,
       finalDraft: this.draft,
       totalFrames: this.frames.length,
       error: this.error || undefined,
@@ -321,9 +323,9 @@ export class IntegrationTestScenarios {
   }
 
   /**
-   * Create workflow with validation issues and healing
+   * Create workflow with validation failure (no healing)
    */
-  static createHealingWorkflow(): StreamFrame[] {
+  static createValidationFailureWorkflow(): StreamFrame[] {
     return [
       createPhaseFrame("generating", 1, "Generating content"),
       createGenerationFrame("Content with issues", "Content with issues", 3),
@@ -344,19 +346,8 @@ export class IntegrationTestScenarios {
         },
         100
       ),
-      createPhaseFrame("healing", 2, "Healing content"),
-      createGenerationFrame("Fixed content", "Fixed content", 2),
-      createPhaseFrame("validating", 2, "Running validation checks"),
-      createValidationFrame(
-        {
-          ok: true,
-          issues: [],
-          coverage: { "test-item": true },
-        },
-        80
-      ),
-      createPhaseFrame("done", 2, "Content generation complete"),
-      createResultFrame(true, "Fixed content", 2, 8000),
+      createPhaseFrame("failed", 1, "Validation failed with 1 issues"),
+      createResultFrame(false, "Content with issues", 1, 1000),
     ];
   }
 
@@ -439,13 +430,13 @@ export class EndToEndTestRunner {
   /**
    * Test healing workflow
    */
-  static async testHealingWorkflow(): Promise<{
+  static async testValidationFailureWorkflow(): Promise<{
     success: boolean;
-    healingOccurred: boolean;
+    validationFailureOccurred: boolean;
     finalAttempt: number;
     error?: string;
   }> {
-    const frames = IntegrationTestScenarios.createHealingWorkflow();
+    const frames = IntegrationTestScenarios.createValidationFailureWorkflow();
     const simulator = new StreamingAPISimulator(frames, { delay: 5 });
     const processor = new ClientFrameProcessor();
 
@@ -455,7 +446,7 @@ export class EndToEndTestRunner {
 
     return {
       success: result.success,
-      healingOccurred: state.attempt > 1,
+      validationFailureOccurred: !result.success && state.attempt === 1,
       finalAttempt: state.attempt,
       error: result.error,
     };

@@ -1,9 +1,4 @@
-import {
-  buildMetricHealing,
-  createWordBoundaryRegex,
-  extractSection,
-} from "../helpers";
-
+import { createWordBoundaryRegex, extractSection } from "../helpers";
 import type { Issue } from "../types";
 
 export const itemId = "metrics-required";
@@ -146,12 +141,4 @@ function createMetricIssue(line: string, missing: string[]): Issue {
   };
 }
 
-async function heal(
-  issues: Issue[],
-  params: Params,
-  _pack?: unknown
-): Promise<string | null> {
-  return buildMetricHealing(issues, params);
-}
-
-export const itemModule = { itemId, toPrompt, validate, heal };
+export const itemModule = { itemId, toPrompt, validate };

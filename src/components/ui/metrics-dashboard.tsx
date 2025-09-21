@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 export interface WorkflowMetrics {
   wordCount: number;
   validationScore: number;
-  healingAttempts: number;
+  iterationAttempts: number;
   elapsedTime: number;
   estimatedCompletion?: number;
   issuesFound: number;
@@ -69,8 +69,6 @@ export function MetricsDashboard({
         return UI_CONSTANTS.THRESHOLD_LOW;
       case "validating":
         return UI_CONSTANTS.SCORE_GOOD;
-      case "healing":
-        return UI_CONSTANTS.THRESHOLD_HIGH;
       case "done":
         return 100;
       case "error":
@@ -136,10 +134,12 @@ export function MetricsDashboard({
         >
           <div className="flex items-center gap-2 mb-1">
             <Zap className="h-4 w-4 text-amber-600" />
-            <span className="text-xs text-amber-700 font-medium">Healing</span>
+            <span className="text-xs text-amber-700 font-medium">
+              Iterations
+            </span>
           </div>
           <div className="text-xl font-bold text-amber-800">
-            {metrics.healingAttempts}
+            {metrics.iterationAttempts}
           </div>
           <div className="text-xs text-amber-600">Attempts</div>
         </motion.div>

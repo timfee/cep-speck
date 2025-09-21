@@ -1,4 +1,4 @@
-import { countSections, HEALING_TEMPLATES } from "../helpers";
+import { countSections } from "../helpers";
 import type { Issue } from "../types";
 
 export const itemId = "section-count";
@@ -45,19 +45,4 @@ async function validate(
   return issues;
 }
 
-async function heal(
-  issues: Issue[],
-  params: Params,
-  _pack?: unknown
-): Promise<string | null> {
-  if (!issues.length) return null;
-
-  const range =
-    params.exact != null
-      ? `exactly ${params.exact}`
-      : `${params.min ?? "?"}..${params.max ?? "?"}`;
-
-  return HEALING_TEMPLATES.SECTION_COUNT(range, params.headerRegex);
-}
-
-export const itemModule = { itemId, toPrompt, validate, heal };
+export const itemModule = { itemId, toPrompt, validate };
