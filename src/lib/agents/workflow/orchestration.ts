@@ -80,17 +80,21 @@ export async function handleRefinementPhase(
     draft: string,
     allIssues: Issue[],
     totalTokens: number
-  ) => Promise<string>
+  ) => Promise<{ draft: string; updatedTokens: number }>
 ): Promise<{ draft: string; totalTokens: number; shouldContinue: boolean }> {
   if (attempt < context.maxAttempts) {
-    const refinedDraft = await runRefinement(
+    const { draft: refinedDraft, updatedTokens } = await runRefinement(
       context,
       attempt,
       draft,
       allIssues,
       totalTokens
     );
-    return { draft: refinedDraft, totalTokens, shouldContinue: true };
+    return {
+      draft: refinedDraft,
+      totalTokens: updatedTokens,
+      shouldContinue: true,
+    };
   } else {
     finishWithFailure(context, attempt, draft, allIssues);
     return { draft, totalTokens, shouldContinue: false };

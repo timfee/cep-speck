@@ -24,7 +24,7 @@ export async function runRefinement(
   draft: string,
   allIssues: Issue[],
   totalTokens: number
-): Promise<string> {
+): Promise<{ draft: string; updatedTokens: number }> {
   sendRefinementPhaseNotification(context, attempt, allIssues);
   const refinerResult = await runRefinerAgent(draft, allIssues);
   return await streamRefinedContent(context, refinerResult, totalTokens);
@@ -50,17 +50,19 @@ async function streamRefinedContent(
   context: GenerationLoopContext,
   refinerResult: StreamTextResult<Record<string, never>, never>,
   totalTokens: number
-): Promise<string> {
+): Promise<{ draft: string; updatedTokens: number }> {
   let refinedContent = "";
+  let updatedTokens = totalTokens;
 
   for await (const delta of refinerResult.textStream) {
     refinedContent += delta;
     context.safeEnqueue(
       encodeStreamFrame(
-        createGenerationFrame(delta, refinedContent, ++totalTokens)
+        createGenerationFrame(delta, refinedContent, ++updatedTokens)
       )
     );
   }
 
-  return await refinerResult.text;
+  const draft = await refinerResult.text;
+  return { draft, updatedTokens };
 }

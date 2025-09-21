@@ -31,13 +31,17 @@ export async function runGenerationLoop(
   context: GenerationLoopContext
 ): Promise<void> {
   const state = createWorkflowState();
+  let currentDraft: string | null = null;
 
   while (state.attempt < context.maxAttempts) {
     state.attempt++;
 
-    const result = await executeWorkflowAttempt(context, state);
+    const result = await executeWorkflowAttempt(context, state, currentDraft);
     if (!result.success) break;
     if (!result.shouldContinue) break;
+
+    // Store the current draft for potential validation in the next iteration
+    currentDraft = result.draft ?? null;
   }
 }
 
@@ -46,16 +50,22 @@ export async function runGenerationLoop(
  */
 async function executeWorkflowAttempt(
   context: GenerationLoopContext,
-  state: { attempt: number; finalDraft: string; totalTokens: number }
-): Promise<{ success: boolean; shouldContinue: boolean }> {
+  state: { attempt: number; finalDraft: string; totalTokens: number },
+  existingDraft?: string | null
+): Promise<{ success: boolean; shouldContinue: boolean; draft?: string }> {
   try {
     const result = await runSingleAttempt(
       context,
       state.attempt,
-      state.totalTokens
+      state.totalTokens,
+      existingDraft
     );
     updateWorkflowState(state, result);
-    return { success: true, shouldContinue: result.shouldContinue };
+    return {
+      success: true,
+      shouldContinue: result.shouldContinue,
+      draft: result.draft,
+    };
   } catch (error) {
     handleWorkflowError(context, state.attempt, state.finalDraft, error);
     return { success: false, shouldContinue: false };
@@ -68,13 +78,23 @@ async function executeWorkflowAttempt(
 async function runSingleAttempt(
   context: GenerationLoopContext,
   attempt: number,
-  totalTokens: number
+  totalTokens: number,
+  existingDraft?: string | null
 ): Promise<{ draft: string; totalTokens: number; shouldContinue: boolean }> {
-  const { draft, updatedTokens } = await executeDraftPhase(
-    context,
-    attempt,
-    totalTokens
-  );
+  let draft: string;
+  let updatedTokens: number;
+
+  // If we have an existing draft (from refinement), validate it directly
+  // Otherwise, generate a new draft
+  if (existingDraft !== null && existingDraft !== undefined) {
+    draft = existingDraft;
+    updatedTokens = totalTokens;
+  } else {
+    const draftResult = await executeDraftPhase(context, attempt, totalTokens);
+    draft = draftResult.draft;
+    updatedTokens = draftResult.updatedTokens;
+  }
+
   const validationResult = await runValidationAndEvaluation(
     context,
     attempt,
