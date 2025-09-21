@@ -3,14 +3,14 @@
  */
 
 import {
-  encodeStreamFrame,
-  createPhaseFrame,
-  createGenerationFrame,
   createErrorFrame,
+  createGenerationFrame,
+  createPhaseFrame,
+  encodeStreamFrame,
   StreamingError,
-} from "./streaming";
+} from "../streaming";
 
-import type { StreamFrame } from "./types";
+import type { StreamFrame } from "../types";
 
 /**
  * Frame Creation Tests

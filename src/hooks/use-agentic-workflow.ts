@@ -206,7 +206,7 @@ export const useAgenticWorkflow = () => {
    */
   const refineDraftInternal = useCallback(
     async (draftToRefine: string, issues: EvaluationIssue[]) => {
-      // Check if we've reached max attempts
+      // Check if we've reached max attempts and increment attempt counter
       setState((prevState) => {
         if (prevState.attempt >= prevState.maxAttempts) {
           return {
@@ -217,12 +217,17 @@ export const useAgenticWorkflow = () => {
               "Maximum refinement attempts reached. Please review remaining issues.",
           };
         }
-        return { ...prevState, isLoading: true, phase: "refining" };
+        return {
+          ...prevState,
+          isLoading: true,
+          phase: "refining",
+          attempt: prevState.attempt + 1,
+        };
       });
 
-      // Get current attempt count
-      const currentAttempt = state.attempt;
-      if (currentAttempt >= state.maxAttempts) {
+      // Get current attempt count (after increment)
+      const currentAttempt = state.attempt + 1;
+      if (currentAttempt > state.maxAttempts) {
         return; // Exit early if max attempts reached
       }
 

@@ -1,7 +1,8 @@
 import React from "react";
 
 import { Button } from "@/components/ui/button";
-import type { AgenticWorkflowState } from "@/hooks/useAgenticWorkflow";
+import { CopyButton } from "@/components/ui/copy-button";
+import type { AgenticWorkflowState } from "@/hooks/use-agentic-workflow";
 
 interface CompletePhaseProps {
   state: AgenticWorkflowState;
@@ -9,14 +10,6 @@ interface CompletePhaseProps {
 }
 
 export function CompletePhase({ state, onReset }: CompletePhaseProps) {
-  const handleCopyToClipboard = async () => {
-    try {
-      await navigator.clipboard.writeText(state.draft);
-    } catch (error) {
-      console.error("Failed to copy to clipboard:", error);
-    }
-  };
-
   const getStatusMessage = () => {
     if (state.evaluationIssues.length === 0) {
       return "No issues found!";
@@ -51,9 +44,7 @@ export function CompletePhase({ state, onReset }: CompletePhaseProps) {
       )}
       <div className="flex gap-2">
         <Button onClick={onReset}>Start New PRD</Button>
-        <Button variant="outline" onClick={handleCopyToClipboard}>
-          Copy to Clipboard
-        </Button>
+        <CopyButton content={state.draft} variant="outline" />
       </div>
     </div>
   );

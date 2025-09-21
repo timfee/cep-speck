@@ -2,7 +2,7 @@ import type { CoreMessage, StreamTextResult } from "ai";
 
 import { getResilientAI } from "@/lib/ai/resilient";
 import { readKnowledgeDirectory } from "@/lib/knowledge/reader";
-import { performCompetitorResearch } from "@/lib/research/webSearch";
+import { performCompetitorResearch } from "@/lib/research/web-search";
 
 import type { StructuredOutline } from "./types";
 import { loadPrompt } from "./utils";

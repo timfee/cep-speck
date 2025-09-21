@@ -2,7 +2,13 @@
 
 This directory contains React components for the CEP Spec Validation application.
 
-## Component Development Guidelines
+## Component Organization
+
+### Directory Structure
+
+- `ui/` - Standard shadcn/ui components (badge, button, card, etc.)
+- `error/` - Error handling domain components (error-display, circuit-breaker-status, etc.)
+- `workflow/` - Business logic components (agentic-prd-wizard, outline-editor, phases/)
 
 ### Component Architecture
 
@@ -10,6 +16,7 @@ This directory contains React components for the CEP Spec Validation application
 - Implement **proper prop types** with interfaces
 - Follow **shadcn/ui** patterns for consistency
 - Use **modern React** patterns (hooks, context)
+- **All component files use kebab-case naming**
 
 ### TypeScript Standards
 

@@ -3,23 +3,23 @@
  */
 
 import {
-  FrameRateTracker,
-  measureMemoryUsage,
-} from "../../src/lib/spec/__tests__/test-utils";
-
-import {
-  createPhaseFrame,
-  createGenerationFrame,
-  createErrorFrame,
-  encodeStreamFrame,
-} from "../../src/lib/spec/streaming";
-
-import type { StreamFrame, StreamPhase } from "../../src/lib/spec/types";
-
-import {
   BrowserCompatibilityChecker,
   FramePerformanceMonitor,
-} from "../browser/compatibility";
+} from "./browser/compatibility";
+
+import {
+  FrameRateTracker,
+  measureMemoryUsage,
+} from "../src/lib/spec/__tests__/test-utils";
+
+import {
+  createErrorFrame,
+  createGenerationFrame,
+  createPhaseFrame,
+  encodeStreamFrame,
+} from "../src/lib/spec/streaming";
+
+import type { StreamFrame, StreamPhase } from "../src/lib/spec/types";
 
 describe("Streaming Protocol Performance", () => {
   describe("Frame Creation Performance", () => {

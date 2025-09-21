@@ -3,18 +3,18 @@
  */
 
 import {
+  BrowserCompatibilityChecker,
+  BrowserStreamingTester,
+} from "./browser/compatibility";
+
+import {
+  ClientFrameProcessor,
   EndToEndTestRunner,
   IntegrationTestScenarios,
-  ClientFrameProcessor,
   StreamingAPISimulator,
 } from "./end-to-end";
 
-import { encodeStreamFrame } from "../../src/lib/spec/streaming";
-
-import {
-  BrowserCompatibilityChecker,
-  BrowserStreamingTester,
-} from "../browser/compatibility";
+import { encodeStreamFrame } from "../src/lib/spec/streaming";
 
 describe("Streaming Protocol Integration", () => {
   describe("End-to-End Workflows", () => {

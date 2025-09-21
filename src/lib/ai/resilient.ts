@@ -9,7 +9,7 @@ import {
   attemptObjectWithProvider,
   attemptWithProvider,
   getNextProviderIndex,
-} from "./retryHelpers";
+} from "./retry-helpers";
 
 /**
  * Abstract AI provider interface for multi-provider architecture

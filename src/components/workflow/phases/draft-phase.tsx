@@ -1,6 +1,6 @@
 import React from "react";
 
-import type { AgenticWorkflowState } from "@/hooks/useAgenticWorkflow";
+import type { AgenticWorkflowState } from "@/hooks/use-agentic-workflow";
 
 interface DraftPhaseProps {
   state: AgenticWorkflowState;

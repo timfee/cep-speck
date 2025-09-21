@@ -12,9 +12,9 @@ import {
   createResultFrame,
   createValidationFrame,
   encodeStreamFrame,
-} from "../../src/lib/spec/streaming";
+} from "../src/lib/spec/streaming";
 
-import type { Issue, StreamFrame } from "../../src/lib/spec/types";
+import type { Issue, StreamFrame } from "../src/lib/spec/types";
 
 /**
  * Mock API response simulator

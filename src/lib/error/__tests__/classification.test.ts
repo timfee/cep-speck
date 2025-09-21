@@ -2,12 +2,8 @@
  * Tests for enhanced error handling system
  */
 
-import {
-  classifyError,
-  formatErrorForSupport,
-} from "../../src/lib/error/classification";
-
-import type { ErrorCode } from "../../src/lib/error/types";
+import { classifyError, formatErrorForSupport } from "../classification";
+import type { ErrorCode } from "../types";
 
 describe("Error Classification System", () => {
   test("should classify MISSING_API_KEY errors correctly", () => {
