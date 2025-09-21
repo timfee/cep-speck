@@ -240,7 +240,7 @@ const eslintConfig = [
 
       // ============ RULE 18: Filename Convention - Kebab Case ============
       "unicorn/filename-case": [
-        "error",
+        "warn", // Temporary: Change to "error" after all files are renamed
         {
           case: "kebabCase"
         }

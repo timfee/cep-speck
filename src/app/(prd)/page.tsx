@@ -1,6 +1,6 @@
 "use client";
 
-import { StructuredPrdWizard } from "@/components/workflow/StructuredPrdWizard";
+import { StructuredPrdWizard } from "@/components/workflow/structured-prd-wizard";
 
 export default function Page() {
   // Single agentic workflow - no mode switching

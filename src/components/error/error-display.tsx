@@ -13,9 +13,9 @@ import {
   SupportView,
   TechnicalView,
   ViewLevelTabs,
-} from "./ErrorViewComponents";
+} from "./error-view-components";
 
-import { ERROR_SEVERITY_STYLES, getRecoveryActions } from "./recoveryHelpers";
+import { ERROR_SEVERITY_STYLES, getRecoveryActions } from "./recovery-strategies";
 
 interface ErrorDisplayProps {
   error: ErrorDetails;

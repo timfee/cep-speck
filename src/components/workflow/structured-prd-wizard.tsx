@@ -9,16 +9,16 @@ import { Card } from "@/components/ui/card";
 import {
   processStreamingResponse,
   useGenerationState,
-} from "@/components/workflow/hooks/useGenerationState";
+} from "@/components/workflow/hooks/use-generation-state";
 
-import { ProgressTimeline } from "@/components/workflow/ProgressTimeline";
+import { ProgressTimeline } from "@/components/workflow/progress-timeline";
 import { CompleteStep } from "@/components/workflow/steps/CompleteStep";
 import { ContentOutlineStep } from "@/components/workflow/steps/ContentOutlineStep";
 import { EnterpriseParametersStep } from "@/components/workflow/steps/EnterpriseParametersStep";
 import { GenerateStep } from "@/components/workflow/steps/GenerateStep";
 import { IdeaCaptureStep } from "@/components/workflow/steps/IdeaCaptureStep";
-import { MIN_PROMPT_LENGTH } from "@/hooks/progressCalculationHelpers";
-import { useStructuredWorkflow } from "@/hooks/useStructuredWorkflow";
+import { MIN_PROMPT_LENGTH } from "@/hooks/progress-calculation";
+import { useStructuredWorkflow } from "@/hooks/use-structured-workflow";
 
 export function StructuredPrdWizard() {
   const {
