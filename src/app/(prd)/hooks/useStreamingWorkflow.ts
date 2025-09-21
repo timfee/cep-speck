@@ -1,33 +1,9 @@
 import { useCallback, useRef, useState } from "react";
 
-import type { ErrorCode, ErrorDetails } from "@/lib/error/types";
-import type { Issue, StreamFrame } from "@/lib/spec/types";
+import type { ErrorDetails } from "@/lib/error/types";
+import type { Issue } from "@/lib/spec/types";
 
-// Type guards
-function isStreamFrame(obj: unknown): obj is StreamFrame {
-  return (
-    typeof obj === "object" &&
-    obj !== null &&
-    "type" in obj &&
-    "data" in obj &&
-    typeof (obj as { type: unknown }).type === "string"
-  );
-}
-
-function isErrorCode(code: unknown): code is ErrorCode {
-  return (
-    typeof code === "string" &&
-    [
-      "MISSING_API_KEY",
-      "NETWORK_TIMEOUT",
-      "RATE_LIMITED",
-      "VALIDATION_FAILED",
-      "UNEXPECTED_ERROR",
-      "SERVICE_UNAVAILABLE",
-      "INVALID_INPUT",
-    ].includes(code)
-  );
-}
+import { processStreamLine } from "./streamHelpers";
 
 export function useStreamingWorkflow() {
   const [streaming, setStreaming] = useState(false);
@@ -40,79 +16,25 @@ export function useStreamingWorkflow() {
   const [errorDetails, setErrorDetails] = useState<ErrorDetails | null>(null);
   const textRef = useRef<string>("");
 
-  const processStreamChunk = useCallback(
+  const processChunk = useCallback(
     (chunk: string, spec: string) => {
+      const handlers = {
+        setPhase,
+        setAttempt,
+        setDraft,
+        setIssues,
+        setErrorDetails,
+        setStreaming,
+        textRef,
+        phase,
+        attempt,
+      };
+
       for (const line of chunk.split("\n")) {
-        if (!line.trim()) continue;
-
-        try {
-          const parsed: unknown = JSON.parse(line);
-          if (!isStreamFrame(parsed)) continue;
-
-          const obj = parsed;
-          switch (obj.type) {
-            case "phase":
-              setPhase(obj.data.phase);
-              setAttempt(obj.data.attempt);
-              break;
-
-            case "generation":
-              textRef.current += obj.data.delta;
-              setDraft(textRef.current);
-              break;
-
-            case "validation":
-              setIssues(obj.data.report.issues);
-              break;
-
-            case "result":
-              setDraft(obj.data.finalDraft);
-              break;
-
-            case "error": {
-              setPhase("error");
-              const errorCode: ErrorCode = isErrorCode(obj.data.code)
-                ? obj.data.code
-                : "UNEXPECTED_ERROR";
-
-              const errorDetails: ErrorDetails = {
-                code: errorCode,
-                message: obj.data.message,
-                timestamp: Date.now(),
-                phase,
-                attempt,
-                maxAttempts: 3,
-                context: {
-                  specLength: spec.length,
-                  streaming: true,
-                },
-                details: obj.data.details,
-              };
-
-              setErrorDetails(errorDetails);
-              setStreaming(false);
-              return true; // Signal to break from stream reading
-            }
-
-            case "self-review":
-              // Handle this case if needed in the future
-              break;
-
-            default:
-              // Handle unknown stream frame types
-              break;
-          }
-        } catch (parseError) {
-          // Skip invalid JSON lines - this is expected during streaming
-          console.warn("Failed to parse streaming line:", line, {
-            error:
-              parseError instanceof Error
-                ? parseError.message
-                : String(parseError),
-          });
-        }
+        const shouldBreak = processStreamLine(line, spec, handlers);
+        if (shouldBreak) return true;
       }
-      return false; // Continue streaming
+      return false;
     },
     [phase, attempt]
   );
@@ -148,13 +70,13 @@ export function useStreamingWorkflow() {
         if (done) break;
 
         const chunk = decoder.decode(value);
-        const shouldBreak = processStreamChunk(chunk, spec);
+        const shouldBreak = processChunk(chunk, spec);
         if (shouldBreak) break;
       }
 
       setStreaming(false);
     },
-    [processStreamChunk]
+    [processChunk]
   );
 
   return {
