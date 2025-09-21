@@ -32,12 +32,17 @@ const DEFAULT_CONFIG: DrafterConfig = {
 };
 
 /**
+ * Fallback master prompt if file cannot be loaded
+ */
+const FALLBACK_MASTER_PROMPT = `You are an expert Chrome Enterprise Premium (CEP) Product Manager at Google. 
+Generate comprehensive Product Requirements Documents (PRDs) that are precise, factual, and technically sophisticated.
+
+Voice: Direct, concise, executive-level thinking. No marketing language or empty business speak.
+Focus: Enterprise browser security, policy management, and admin tooling.
+Approach: Use structured placeholders when uncertain, avoid inventing facts.`;
+
+/**
  * Drafter agent that combines master mega-prompt with existing validation rules
- *
- * The Drafter integrates:
- * 1. Master mega-prompt with domain knowledge and generation instructions
- * 2. Existing toPrompt() functions from validation items via buildSystemPrompt()
- * 3. Optional knowledge base and research context
  *
  * This preserves the "define-once" architecture while adding sophisticated AI capabilities.
  */
@@ -49,21 +54,10 @@ export class DrafterAgent implements StreamingAgent {
   private readonly config: DrafterConfig;
   private readonly ai = getResilientAI();
 
-  /**
-   * Create a new Drafter agent
-   *
-   * @param config - Optional configuration overrides
-   */
   constructor(config: Partial<DrafterConfig> = {}) {
     this.config = { ...DEFAULT_CONFIG, ...config };
   }
 
-  /**
-   * Execute the drafter agent with streaming response
-   *
-   * @param context - Agent execution context
-   * @returns Promise resolving to streaming text result
-   */
   public async executeStreaming(
     context: AgentContext
   ): Promise<StreamTextResult<Record<string, never>, never>> {
@@ -71,49 +65,27 @@ export class DrafterAgent implements StreamingAgent {
     return await this.ai.generateWithFallback(messages);
   }
 
-  /**
-   * Execute the drafter agent and return complete result
-   *
-   * @param context - Agent execution context
-   * @returns Promise resolving to complete agent result
-   */
   public async execute(context: AgentContext): Promise<AgentResult> {
     const startTime = Date.now();
-
     const streamResult = await this.executeStreaming(context);
 
     let content = "";
     let tokenCount = 0;
-
     for await (const delta of streamResult.textStream) {
       content += delta;
       tokenCount++;
     }
 
-    const duration = Date.now() - startTime;
-
     return {
       content,
       metadata: {
         tokenCount,
-        duration,
+        duration: Date.now() - startTime,
         agentId: this.id,
       },
     };
   }
 
-  /**
-   * Build the complete message array for AI generation
-   *
-   * Combines:
-   * 1. Master prompt from guides/prompts/drafter-master.md
-   * 2. Existing validation rules via buildSystemPrompt()
-   * 3. Optional knowledge and research context
-   * 4. User input as user message
-   *
-   * @param context - Agent execution context
-   * @returns Array of core messages for AI generation
-   */
   private async buildMessages(context: AgentContext): Promise<CoreMessage[]> {
     const { userInput, pack, knowledgeContext, researchContext } = context;
 
@@ -121,21 +93,18 @@ export class DrafterAgent implements StreamingAgent {
     const masterPrompt = await loadPrompt({
       path: this.config.masterPromptPath,
       cache: true,
-      fallback: this.getFallbackMasterPrompt(),
+      fallback: FALLBACK_MASTER_PROMPT,
     });
 
-    // Get existing validation rules via buildSystemPrompt
+    // Build system prompt with validation rules
     const validationRules = buildSystemPrompt(pack);
+    let systemPrompt =
+      masterPrompt +
+      "\n\n## Validation Requirements\n\n" +
+      "The following validation rules MUST be followed:\n\n" +
+      validationRules;
 
-    // Build complete system prompt
-    let systemPrompt = masterPrompt;
-
-    // Add validation rules section
-    systemPrompt += "\n\n## Validation Requirements\n\n";
-    systemPrompt += "The following validation rules MUST be followed:\n\n";
-    systemPrompt += validationRules;
-
-    // Add knowledge context if available and enabled
+    // Add optional contexts
     if (
       this.config.includeKnowledge &&
       knowledgeContext !== undefined &&
@@ -143,8 +112,6 @@ export class DrafterAgent implements StreamingAgent {
     ) {
       systemPrompt += knowledgeContext;
     }
-
-    // Add research context if available and enabled
     if (
       this.config.includeResearch &&
       researchContext !== undefined &&
@@ -153,50 +120,15 @@ export class DrafterAgent implements StreamingAgent {
       systemPrompt += researchContext;
     }
 
-    // Build user prompt
-    const userPrompt = buildUserPrompt(userInput);
-
     return [
       { role: "system", content: systemPrompt },
-      { role: "user", content: userPrompt },
+      { role: "user", content: buildUserPrompt(userInput) },
     ];
-  }
-
-  /**
-   * Fallback master prompt if file cannot be loaded
-   */
-  private getFallbackMasterPrompt(): string {
-    return `You are an expert Chrome Enterprise Premium (CEP) Product Manager at Google. 
-Generate comprehensive Product Requirements Documents (PRDs) that are precise, factual, and technically sophisticated.
-
-Voice: Direct, concise, executive-level thinking. No marketing language or empty business speak.
-Focus: Enterprise browser security, policy management, and admin tooling.
-Approach: Use structured placeholders when uncertain, avoid inventing facts.`;
   }
 }
 
 /**
  * Convenience function to run the Drafter agent
- *
- * @param userInput - User specification text
- * @param pack - Validation pack configuration
- * @param knowledgeContext - Optional knowledge base context
- * @param researchContext - Optional research context
- * @returns Promise resolving to streaming text result
- *
- * @example
- * ```typescript
- * const result = await runDrafterAgent(
- *   "Project: Enhanced Policy Management\nTarget SKU: premium",
- *   pack,
- *   knowledgeContext,
- *   researchContext
- * );
- *
- * for await (const delta of result.textStream) {
- *   console.log(delta);
- * }
- * ```
  */
 export async function runDrafterAgent(
   userInput: string,
@@ -205,7 +137,6 @@ export async function runDrafterAgent(
   researchContext?: string
 ): Promise<StreamTextResult<Record<string, never>, never>> {
   const drafter = new DrafterAgent();
-
   return await drafter.executeStreaming({
     userInput,
     pack,
