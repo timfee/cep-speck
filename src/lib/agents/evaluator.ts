@@ -25,127 +25,71 @@ export interface SemanticIssue extends Issue {
 }
 
 /**
- * Zod schema for coherence analysis
+ * Common issue schema used across all evaluation types
  */
-const CoherenceAnalysisSchema = z.object({
-  crossReferenceAccuracy: z
-    .boolean()
-    .describe("Do all metrics, features, and goals align between sections?"),
-  narrativeFlow: z
-    .boolean()
-    .describe(
-      "Does the document tell a coherent story from problem to solution?"
-    ),
-  personaCoverage: z
-    .boolean()
-    .describe("Are all target personas consistently addressed throughout?"),
-  traceability: z
-    .boolean()
-    .describe(
-      "Can you trace problems → features → metrics in a logical chain?"
-    ),
-  issues: z
-    .array(
-      z.object({
-        section: z.string().describe("Specific section where issue occurs"),
-        description: z
-          .string()
-          .describe("Clear explanation of the coherence problem"),
-        suggestion: z.string().describe("Specific fix recommendation"),
-        severity: z.enum(["error", "warn"]).describe("Issue severity level"),
-      })
-    )
-    .describe("List of coherence issues found"),
+const IssueSchema = z.object({
+  section: z.string().describe("Specific section where issue occurs"),
+  description: z.string().describe("Clear explanation of the problem"),
+  suggestion: z.string().describe("Specific fix recommendation"),
+  severity: z.enum(["error", "warn"]).describe("Issue severity level"),
 });
 
 /**
- * Zod schema for quality assessment
+ * Base analysis schema with common boolean checks and issues array
  */
-const QualityAnalysisSchema = z.object({
-  toneAndVoice: z
-    .boolean()
-    .describe(
-      "Is the language professional, direct, and confidence-inspiring?"
+const createAnalysisSchema = (checks: Record<string, string>) =>
+  z.object({
+    ...Object.fromEntries(
+      Object.entries(checks).map(([key, desc]) => [
+        key,
+        z.boolean().describe(desc),
+      ])
     ),
-  specificity: z
-    .boolean()
-    .describe("Are claims backed by concrete numbers, timelines, and sources?"),
-  clarity: z
-    .boolean()
-    .describe("Would a busy executive understand the key points in 2 minutes?"),
-  conciseness: z
-    .boolean()
-    .describe("Is every sentence adding value or just filling space?"),
-  issues: z
-    .array(
-      z.object({
-        section: z.string().describe("Specific section where issue occurs"),
-        description: z
-          .string()
-          .describe("Clear explanation of the quality problem"),
-        suggestion: z.string().describe("Specific improvement recommendation"),
-        severity: z.enum(["error", "warn"]).describe("Issue severity level"),
-      })
-    )
-    .describe("List of quality issues found"),
-});
-
-/**
- * Zod schema for realism validation
- */
-const RealismAnalysisSchema = z.object({
-  timelinePlausibility: z
-    .boolean()
-    .describe("Are adoption estimates realistic for enterprise environments?"),
-  technicalFeasibility: z
-    .boolean()
-    .describe("Do proposed features align with current browser capabilities?"),
-  marketUnderstanding: z
-    .boolean()
-    .describe("Do competitive claims reflect actual market positioning?"),
-  resourceRequirements: z
-    .boolean()
-    .describe("Are implementation expectations achievable?"),
-  issues: z
-    .array(
-      z.object({
-        section: z.string().describe("Specific section where issue occurs"),
-        description: z
-          .string()
-          .describe("Clear explanation of the realism concern"),
-        suggestion: z.string().describe("Specific feasibility improvement"),
-        severity: z.enum(["error", "warn"]).describe("Issue severity level"),
-      })
-    )
-    .describe("List of realism issues found"),
-});
+    issues: z.array(IssueSchema).describe("List of issues found"),
+  });
 
 /**
  * Complete semantic evaluation schema
  */
 const SemanticEvaluationSchema = z.object({
-  coherence: CoherenceAnalysisSchema.describe(
-    "Analysis of logical consistency across sections"
-  ),
-  quality: QualityAnalysisSchema.describe(
-    "Assessment of executive readiness and clarity"
-  ),
-  realism: RealismAnalysisSchema.describe(
-    "Validation of practical feasibility"
-  ),
-  overallAssessment: z
-    .object({
-      isPublicationReady: z
-        .boolean()
-        .describe("Would this document pass rigorous executive review?"),
-      criticalIssues: z
-        .number()
-        .describe("Number of critical issues that block publication"),
-      improvementNeeded: z
-        .boolean()
-        .describe("Does the document need significant improvement?"),
-    })
-    .describe("Overall document assessment"),
+  coherence: createAnalysisSchema({
+    crossReferenceAccuracy:
+      "Do all metrics, features, and goals align between sections?",
+    narrativeFlow:
+      "Does the document tell a coherent story from problem to solution?",
+    personaCoverage:
+      "Are all target personas consistently addressed throughout?",
+    traceability:
+      "Can you trace problems → features → metrics in a logical chain?",
+  }),
+  quality: createAnalysisSchema({
+    toneAndVoice:
+      "Is the language professional, direct, and confidence-inspiring?",
+    specificity:
+      "Are claims backed by concrete numbers, timelines, and sources?",
+    clarity: "Would a busy executive understand the key points in 2 minutes?",
+    conciseness: "Is every sentence adding value or just filling space?",
+  }),
+  realism: createAnalysisSchema({
+    timelinePlausibility:
+      "Are adoption estimates realistic for enterprise environments?",
+    technicalFeasibility:
+      "Do proposed features align with current browser capabilities?",
+    marketUnderstanding:
+      "Do competitive claims reflect actual market positioning?",
+    resourceRequirements: "Are implementation expectations achievable?",
+  }),
+  overallAssessment: z.object({
+    isPublicationReady: z
+      .boolean()
+      .describe("Would this document pass rigorous executive review?"),
+    criticalIssues: z
+      .number()
+      .describe("Number of critical issues that block publication"),
+    improvementNeeded: z
+      .boolean()
+      .describe("Does the document need significant improvement?"),
+  }),
 });
 
 /**
@@ -159,54 +103,33 @@ type SemanticEvaluationResult = z.infer<typeof SemanticEvaluationSchema>;
 function convertToSemanticIssues(
   evaluation: SemanticEvaluationResult
 ): SemanticIssue[] {
-  const issues: SemanticIssue[] = [];
+  const issueTypes: Array<{
+    category: "coherence" | "quality" | "realism";
+    issues: Array<{
+      section: string;
+      description: string;
+      suggestion: string;
+      severity: "error" | "warn";
+    }>;
+  }> = [
+    { category: "coherence", issues: evaluation.coherence.issues },
+    { category: "quality", issues: evaluation.quality.issues },
+    { category: "realism", issues: evaluation.realism.issues },
+  ];
 
-  // Add coherence issues
-  for (const [index, issue] of evaluation.coherence.issues.entries()) {
-    issues.push({
-      id: `coherence-${index}`,
+  return issueTypes.flatMap(({ category, issues }) =>
+    issues.map((issue, index) => ({
+      id: `${category}-${index}`,
       itemId: "semantic-evaluator",
-      type: "coherence",
+      type: category,
       severity: issue.severity,
       section: issue.section,
       message: issue.description,
       suggestion: issue.suggestion,
       evidence: issue.section,
       hints: [issue.suggestion],
-    });
-  }
-
-  // Add quality issues
-  for (const [index, issue] of evaluation.quality.issues.entries()) {
-    issues.push({
-      id: `quality-${index}`,
-      itemId: "semantic-evaluator",
-      type: "quality",
-      severity: issue.severity,
-      section: issue.section,
-      message: issue.description,
-      suggestion: issue.suggestion,
-      evidence: issue.section,
-      hints: [issue.suggestion],
-    });
-  }
-
-  // Add realism issues
-  for (const [index, issue] of evaluation.realism.issues.entries()) {
-    issues.push({
-      id: `realism-${index}`,
-      itemId: "semantic-evaluator",
-      type: "realism",
-      severity: issue.severity,
-      section: issue.section,
-      message: issue.description,
-      suggestion: issue.suggestion,
-      evidence: issue.section,
-      hints: [issue.suggestion],
-    });
-  }
-
-  return issues;
+    }))
+  );
 }
 
 /**

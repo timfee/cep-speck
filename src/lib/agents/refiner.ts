@@ -44,26 +44,33 @@ export interface RefinerResult {
 }
 
 /**
- * Group issues by type for targeted healing instructions
+ * Issue classification patterns for grouping
  */
-function groupIssuesByType(issues: Issue[]): {
-  deterministic: Issue[];
-  semantic: Issue[];
-  structural: Issue[];
-} {
+const ISSUE_PATTERNS = {
+  semantic: ["semantic", "quality"],
+  structural: ["structure", "section"],
+} as const;
+
+/**
+ * Group issues by type and build healing instructions
+ */
+function buildHealingInstructions(issues: Issue[]): string {
   const groups = {
     deterministic: [] as Issue[],
     semantic: [] as Issue[],
     structural: [] as Issue[],
   };
 
+  // Classify issues
   for (const issue of issues) {
-    // Classify issues based on itemId patterns
-    if (issue.itemId.includes("semantic") || issue.itemId.includes("quality")) {
+    if (
+      ISSUE_PATTERNS.semantic.some((pattern) => issue.itemId.includes(pattern))
+    ) {
       groups.semantic.push(issue);
     } else if (
-      issue.itemId.includes("structure") ||
-      issue.itemId.includes("section")
+      ISSUE_PATTERNS.structural.some((pattern) =>
+        issue.itemId.includes(pattern)
+      )
     ) {
       groups.structural.push(issue);
     } else {
@@ -71,36 +78,31 @@ function groupIssuesByType(issues: Issue[]): {
     }
   }
 
-  return groups;
-}
+  // Build sections
+  const sections = [
+    {
+      title: "Deterministic Issues to Fix",
+      issues: groups.deterministic,
+      label: "Fix",
+    },
+    {
+      title: "Semantic Issues to Fix",
+      issues: groups.semantic,
+      label: "Improvement",
+    },
+    {
+      title: "Structural Issues to Fix",
+      issues: groups.structural,
+      label: "Required",
+    },
+  ];
 
-/**
- * Build specific healing instructions for different issue types
- */
-function buildHealingInstructions(groupedIssues: {
-  deterministic: Issue[];
-  semantic: Issue[];
-  structural: Issue[];
-}): string {
-  let instructions = "";
-
-  instructions += buildIssueSection(
-    "Deterministic Issues to Fix",
-    groupedIssues.deterministic,
-    "Fix"
-  );
-  instructions += buildIssueSection(
-    "Semantic Issues to Fix",
-    groupedIssues.semantic,
-    "Improvement"
-  );
-  instructions += buildIssueSection(
-    "Structural Issues to Fix",
-    groupedIssues.structural,
-    "Required"
-  );
-
-  return instructions;
+  return sections
+    .filter((section) => section.issues.length > 0)
+    .map((section) =>
+      buildIssueSection(section.title, section.issues, section.label)
+    )
+    .join("");
 }
 
 /**
@@ -111,9 +113,16 @@ function buildIssueSection(
   issues: Issue[],
   hintLabel: string
 ): string {
-  if (issues.length === 0) {
-    return "";
-  }
+  if (issues.length === 0) return "";
+
+  const evidenceLabels = {
+    Deterministic: "Evidence",
+    Semantic: "Location",
+    default: "Section",
+  };
+  const evidenceLabel =
+    evidenceLabels[title.split(" ")[0] as keyof typeof evidenceLabels] ||
+    evidenceLabels.default;
 
   let section = `## ${title}:\n`;
 
@@ -121,11 +130,6 @@ function buildIssueSection(
     section += `${index + 1}. **${issue.message}**\n`;
 
     if (issue.evidence?.trim() !== "") {
-      const evidenceLabel = title.includes("Deterministic")
-        ? "Evidence"
-        : title.includes("Semantic")
-          ? "Location"
-          : "Section";
       section += `   - ${evidenceLabel}: ${issue.evidence}\n`;
     }
 
@@ -169,9 +173,8 @@ export async function runRefinerAgent(
         "Fix all validation issues in this PRD while maintaining quality and coherence.",
     });
 
-    // Group issues by type for targeted instructions
-    const groupedIssues = groupIssuesByType(allIssues);
-    const healingInstructions = buildHealingInstructions(groupedIssues);
+    // Build healing instructions from issues
+    const healingInstructions = buildHealingInstructions(allIssues);
 
     // Build comprehensive refinement prompt
     const refinementPrompt = `${refinerPrompt}
