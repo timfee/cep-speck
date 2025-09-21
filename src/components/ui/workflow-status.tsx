@@ -21,6 +21,7 @@ type WorkflowPhase =
   | "starting"
   | "generating"
   | "validating"
+  | "failed"
   | "done"
   | "error"
   | "";
@@ -68,6 +69,16 @@ const PHASE_CONFIG: Record<
     label: "Validating Output",
     description: "Checking against validation rules",
     icon: Clock,
+  },
+  failed: {
+    status: "offline",
+    spinner: null,
+    bgColor: "bg-red-50 border-red-200 text-red-700",
+    borderClasses: "border-red-500",
+    progressClasses: "bg-red-100",
+    label: "Validation Failed",
+    description: "Content generated but validation issues found",
+    icon: XCircle,
   },
   done: {
     status: "online",
@@ -182,6 +193,7 @@ const TIMELINE_PHASES: WorkflowPhase[] = [
   "starting",
   "generating",
   "validating",
+  "failed",
   "done",
 ];
 
