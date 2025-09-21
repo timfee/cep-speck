@@ -1,9 +1,9 @@
 import { useCallback, useRef, useState } from "react";
 
 import type { ErrorDetails } from "@/lib/error/types";
+import { processStreamLine } from "@/lib/spec/helpers/stream-helpers";
 import type { Issue } from "@/lib/spec/types";
 
-import { processStreamLine } from "./streamHelpers";
 
 export function useStreamingWorkflow() {
   const [streaming, setStreaming] = useState(false);

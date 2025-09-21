@@ -4,12 +4,12 @@ import { useState } from "react";
 import { ApiKeyDialog } from "@/components/error";
 import { Button } from "@/components/ui/button";
 
-import { DraftSection } from "./DraftSection";
-import { SpecSection } from "./SpecSection";
-import { useElapsedTimeTracker } from "../hooks/useElapsedTimeTracker";
-import { useSpecValidation } from "../hooks/useSpecValidation";
-import { useStreamingWorkflow } from "../hooks/useStreamingWorkflow";
-import { useWorkflowMetrics } from "../hooks/useWorkflowMetrics";
+import { DraftSection } from "./draft-section";
+import { SpecSection } from "./spec-section";
+import { useElapsedTimeTracker } from "../hooks/use-elapsed-time-tracker";
+import { useSpecValidation } from "../hooks/use-spec-validation";
+import { useStreamingWorkflow } from "../hooks/use-streaming-workflow";
+import { useWorkflowMetrics } from "../hooks/use-workflow-metrics";
 
 interface TraditionalModeProps {
   onStructuredMode: () => void;

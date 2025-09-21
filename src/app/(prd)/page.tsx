@@ -4,7 +4,7 @@ import { useState } from "react";
 
 import { StructuredPrdWizard } from "@/components/workflow/StructuredPrdWizard";
 
-import { TraditionalMode } from "./components/TraditionalMode";
+import { TraditionalMode } from "./components/traditional-mode";
 
 type Mode = "structured" | "traditional";
 

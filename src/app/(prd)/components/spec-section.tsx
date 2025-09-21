@@ -13,7 +13,7 @@ import {
   WorkflowStatus,
 } from "@/components/ui/workflow-status";
 
-import { ValidationFeedback } from "./ValidationFeedback";
+import { ValidationFeedback } from "./validation-feedback";
 
 interface SpecValidation {
   issues: string[];

@@ -5,8 +5,23 @@ module.exports = {
   testMatch: ["**/*.(test|spec).+(ts|tsx|js)"],
   testPathIgnorePatterns: ["/__tests__/.*\\.ts$", "/setup\\.ts$"],
   transform: {
-    "^.+\\.(ts|tsx)$": "ts-jest",
+    "^.+\\.(ts|tsx)$": [
+      "ts-jest",
+      {
+        babelConfig: {
+          presets: [
+            "@babel/preset-env",
+            "@babel/preset-react",
+            "@babel/preset-typescript",
+          ],
+        },
+      },
+    ],
+    "^.+\\.(js|jsx)$": "babel-jest",
   },
+  transformIgnorePatterns: [
+    "node_modules/(?!(@babel/runtime)/)"
+  ],
   collectCoverageFrom: [
     "src/**/*.{ts,tsx}",
     "tests/**/*.{ts,tsx}",
