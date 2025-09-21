@@ -1,23 +1,15 @@
 "use client";
 
-import {
-  Building2,
-  CheckCircle,
-  Headphones,
-  Link,
-  Shield,
-  Zap,
-} from "lucide-react";
-
+import { Building2, Headphones, Link, Shield, Zap } from "lucide-react";
 import React from "react";
 
-import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import type { EnterpriseParameters } from "@/types/workflow";
 
 import {
   DEPLOYMENT_MODEL_OPTIONS,
   INTEGRATION_OPTIONS,
+  ROLLOUT_STRATEGY_OPTIONS,
   SECURITY_REQUIREMENTS_OPTIONS,
   SUPPORT_LEVEL_OPTIONS,
   TARGET_SKU_OPTIONS,
@@ -25,6 +17,16 @@ import {
 
 import { MultiSelectSection } from "./components/multi-select-section";
 import { RadioGroupSection } from "./components/radio-group-section";
+import { ConfigurationSummary } from "./configuration-summary";
+
+import {
+  createDeploymentModelHandler,
+  createIntegrationToggleHandler,
+  createRolloutStrategyHandler,
+  createSecurityToggleHandler,
+  createSupportLevelHandler,
+  createTargetSkuHandler,
+} from "./enterprise-parameters-handlers";
 
 interface EnterpriseParametersStepProps {
   parameters: EnterpriseParameters;
@@ -37,6 +39,29 @@ export function EnterpriseParametersStep({
   onChange,
   className,
 }: EnterpriseParametersStepProps) {
+  // Create handlers
+  const handleTargetSkuChange = createTargetSkuHandler(parameters, onChange);
+  const handleDeploymentModelChange = createDeploymentModelHandler(
+    parameters,
+    onChange
+  );
+  const handleSupportLevelChange = createSupportLevelHandler(
+    parameters,
+    onChange
+  );
+  const handleRolloutStrategyChange = createRolloutStrategyHandler(
+    parameters,
+    onChange
+  );
+  const handleSecurityToggle = createSecurityToggleHandler(
+    parameters,
+    onChange
+  );
+  const handleIntegrationToggle = createIntegrationToggleHandler(
+    parameters,
+    onChange
+  );
+
   return (
     <div className={cn("space-y-6", className)}>
       <div className="text-center space-y-2">
@@ -53,16 +78,7 @@ export function EnterpriseParametersStep({
         iconColor="text-blue-600"
         value={parameters.targetSku}
         options={TARGET_SKU_OPTIONS}
-        onChange={(value) =>
-          onChange({
-            ...parameters,
-            targetSku: value as
-              | "premium"
-              | "enterprise"
-              | "education"
-              | "government",
-          })
-        }
+        onChange={handleTargetSkuChange}
         columns={2}
       />
 
@@ -72,12 +88,7 @@ export function EnterpriseParametersStep({
         iconColor="text-green-600"
         value={parameters.deploymentModel}
         options={DEPLOYMENT_MODEL_OPTIONS}
-        onChange={(value) =>
-          onChange({
-            ...parameters,
-            deploymentModel: value as "cloud" | "hybrid" | "on-premise",
-          })
-        }
+        onChange={handleDeploymentModelChange}
         columns={3}
       />
 
@@ -87,13 +98,7 @@ export function EnterpriseParametersStep({
         iconColor="text-red-600"
         selectedValues={parameters.securityRequirements}
         options={SECURITY_REQUIREMENTS_OPTIONS}
-        onToggle={(value) => {
-          const current = parameters.securityRequirements;
-          const updated = current.includes(value as (typeof current)[0])
-            ? current.filter((item) => item !== value)
-            : [...current, value as (typeof current)[0]];
-          onChange({ ...parameters, securityRequirements: updated });
-        }}
+        onToggle={handleSecurityToggle}
       />
 
       <MultiSelectSection
@@ -102,13 +107,7 @@ export function EnterpriseParametersStep({
         iconColor="text-purple-600"
         selectedValues={parameters.integrations}
         options={INTEGRATION_OPTIONS}
-        onToggle={(value) => {
-          const current = parameters.integrations;
-          const updated = current.includes(value as (typeof current)[0])
-            ? current.filter((item) => item !== value)
-            : [...current, value as (typeof current)[0]];
-          onChange({ ...parameters, integrations: updated });
-        }}
+        onToggle={handleIntegrationToggle}
       />
 
       <div className="grid grid-cols-2 gap-6">
@@ -118,12 +117,7 @@ export function EnterpriseParametersStep({
           iconColor="text-orange-600"
           value={parameters.supportLevel}
           options={SUPPORT_LEVEL_OPTIONS}
-          onChange={(value) =>
-            onChange({
-              ...parameters,
-              supportLevel: value as "standard" | "premium" | "enterprise",
-            })
-          }
+          onChange={handleSupportLevelChange}
         />
 
         <RadioGroupSection
@@ -131,64 +125,12 @@ export function EnterpriseParametersStep({
           icon={Zap}
           iconColor="text-yellow-600"
           value={parameters.rolloutStrategy}
-          options={[
-            {
-              value: "pilot",
-              label: "Pilot Program",
-              desc: "Small group testing",
-            },
-            {
-              value: "phased",
-              label: "Phased Rollout",
-              desc: "Gradual deployment",
-            },
-            {
-              value: "full-deployment",
-              label: "Full Deployment",
-              desc: "Organization-wide launch",
-            },
-          ]}
-          onChange={(value) =>
-            onChange({
-              ...parameters,
-              rolloutStrategy: value as "pilot" | "phased" | "full-deployment",
-            })
-          }
+          options={ROLLOUT_STRATEGY_OPTIONS}
+          onChange={handleRolloutStrategyChange}
         />
       </div>
 
-      <Card className="p-4 bg-green-50 border-green-200">
-        <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-          <CheckCircle className="h-5 w-5 text-green-600" />
-          Configuration Summary
-        </h3>
-        <div className="grid grid-cols-2 gap-4 text-sm">
-          <div>
-            <strong>Target SKU:</strong> {parameters.targetSku}
-          </div>
-          <div>
-            <strong>Deployment:</strong> {parameters.deploymentModel}
-          </div>
-          <div>
-            <strong>Security:</strong>{" "}
-            {parameters.securityRequirements.length > 0
-              ? parameters.securityRequirements.join(", ")
-              : "None selected"}
-          </div>
-          <div>
-            <strong>Integrations:</strong>{" "}
-            {parameters.integrations.length > 0
-              ? parameters.integrations.join(", ")
-              : "None selected"}
-          </div>
-          <div>
-            <strong>Support:</strong> {parameters.supportLevel}
-          </div>
-          <div>
-            <strong>Rollout:</strong> {parameters.rolloutStrategy}
-          </div>
-        </div>
-      </Card>
+      <ConfigurationSummary parameters={parameters} />
     </div>
   );
 }
