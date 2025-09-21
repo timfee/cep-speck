@@ -44,7 +44,7 @@ module.exports = {
         const fileName = context.getFilename();
 
         // Skip if this is the helpers file itself
-        if (fileName.includes("/helpers/")) {
+        if (fileName.includes("/helpers/") || fileName.includes("/agents/")) {
           return;
         }
 

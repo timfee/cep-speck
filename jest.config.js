@@ -4,6 +4,9 @@ module.exports = {
   roots: ["<rootDir>/src", "<rootDir>/tests"],
   testMatch: ["**/*.(test|spec).+(ts|tsx|js)"],
   testPathIgnorePatterns: ["/__tests__/.*\\.ts$", "/setup\\.ts$"],
+  moduleNameMapper: {
+    "^@/(.*)$": "<rootDir>/src/$1",
+  },
   transform: {
     "^.+\\.(ts|tsx)$": [
       "ts-jest",
@@ -19,9 +22,7 @@ module.exports = {
     ],
     "^.+\\.(js|jsx)$": "babel-jest",
   },
-  transformIgnorePatterns: [
-    "node_modules/(?!(@babel/runtime)/)"
-  ],
+  transformIgnorePatterns: ["node_modules/(?!(@babel/runtime)/)"],
   collectCoverageFrom: [
     "src/**/*.{ts,tsx}",
     "tests/**/*.{ts,tsx}",

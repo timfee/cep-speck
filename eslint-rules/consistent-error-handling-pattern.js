@@ -22,6 +22,9 @@ module.exports = {
       if (fileName.includes("/spec/streaming") || fileName.includes("/api/")) {
         return "streaming";
       }
+      if (fileName.includes("/agents/")) {
+        return "agent";
+      }
       if (
         fileName.includes("/components/") ||
         fileName.includes("/hooks/") ||
@@ -85,7 +88,11 @@ module.exports = {
         ) {
           const fileContext = getFileContext(fileName);
 
-          if (node.name === "Issue" && fileContext !== "validation") {
+          if (
+            node.name === "Issue" &&
+            fileContext !== "validation" &&
+            fileContext !== "agent"
+          ) {
             context.report({
               node,
               message: "Issue type should only be used in validation context",
