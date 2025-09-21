@@ -58,6 +58,8 @@ export type StreamPhase =
   | "performing-research"
   | "generating"
   | "validating"
+  | "evaluating"
+  | "healing"
   | "self-reviewing"
   | "done"
   | "failed"

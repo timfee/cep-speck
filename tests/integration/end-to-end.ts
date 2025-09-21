@@ -281,13 +281,13 @@ export class ClientFrameProcessor {
  */
 export class IntegrationTestScenarios {
   /**
-   * Create successful workflow frames
+   * Create successful workflow frames for hybrid workflow
    */
   static createSuccessfulWorkflow(): StreamFrame[] {
     return [
       createPhaseFrame("loading-knowledge", 1, "Loading knowledge base"),
       createPhaseFrame("performing-research", 1, "Researching competitors"),
-      createPhaseFrame("generating", 1, "Generating content"),
+      createPhaseFrame("generating", 1, "Drafting content (attempt 1/3)"),
       createGenerationFrame(
         "# Product Requirements Document\n\n",
         "# Product Requirements Document\n\n",
@@ -303,7 +303,8 @@ export class IntegrationTestScenarios {
         "# Product Requirements Document\n\n## Executive Summary\nThis document outlines...",
         12
       ),
-      createPhaseFrame("validating", 1, "Running validation checks"),
+      createPhaseFrame("validating", 1, "Running deterministic validation"),
+      createPhaseFrame("evaluating", 1, "Running semantic evaluation"),
       createValidationFrame(
         {
           ok: true,
@@ -327,9 +328,10 @@ export class IntegrationTestScenarios {
    */
   static createValidationFailureWorkflow(): StreamFrame[] {
     return [
-      createPhaseFrame("generating", 1, "Generating content"),
+      createPhaseFrame("generating", 1, "Drafting content (attempt 1/3)"),
       createGenerationFrame("Content with issues", "Content with issues", 3),
-      createPhaseFrame("validating", 1, "Running validation checks"),
+      createPhaseFrame("validating", 1, "Running deterministic validation"),
+      createPhaseFrame("evaluating", 1, "Running semantic evaluation"),
       createValidationFrame(
         {
           ok: false,
@@ -348,6 +350,57 @@ export class IntegrationTestScenarios {
       ),
       createPhaseFrame("failed", 1, "Validation failed with 1 issues"),
       createResultFrame(false, "Content with issues", 1, 1000),
+    ];
+  }
+
+  /**
+   * Create hybrid workflow with healing attempt
+   */
+  static createHybridWorkflowWithHealing(): StreamFrame[] {
+    return [
+      // First attempt - fails validation
+      createPhaseFrame("generating", 1, "Drafting content (attempt 1/3)"),
+      createGenerationFrame(
+        "Initial draft with issues",
+        "Initial draft with issues",
+        5
+      ),
+      createPhaseFrame("validating", 1, "Running deterministic validation"),
+      createPhaseFrame("evaluating", 1, "Running semantic evaluation"),
+      createValidationFrame(
+        {
+          ok: false,
+          issues: [
+            {
+              id: "test-issue-1",
+              itemId: "test-item",
+              severity: "error" as const,
+              message: "Test validation error",
+              evidence: "Initial draft with issues",
+            },
+          ],
+          coverage: { "test-item": false },
+        },
+        100
+      ),
+      // Healing phase
+      createPhaseFrame("healing", 1, "Refining content (1 issues found)"),
+      createGenerationFrame("Refined content", "Refined content", 8),
+      // Second attempt - succeeds
+      createPhaseFrame("generating", 2, "Drafting content (attempt 2/3)"),
+      createGenerationFrame("Fixed content", "Fixed content", 12),
+      createPhaseFrame("validating", 2, "Running deterministic validation"),
+      createPhaseFrame("evaluating", 2, "Running semantic evaluation"),
+      createValidationFrame(
+        {
+          ok: true,
+          issues: [],
+          coverage: { "test-item": true },
+        },
+        80
+      ),
+      createPhaseFrame("done", 2, "Content generation complete"),
+      createResultFrame(true, "Fixed content", 2, 3000),
     ];
   }
 

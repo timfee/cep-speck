@@ -1,10 +1,9 @@
 import type { NextRequest } from "next/server";
 
+import { runGenerationLoop } from "@/lib/agents/hybridWorkflow";
 import { DEFAULT_SPEC_PACK } from "@/lib/config";
-import { runGenerationLoop } from "@/lib/spec/api/generationLoop";
 
 import {
-  buildContextualMessages,
   loadKnowledgeBase,
   performResearch,
 } from "@/lib/spec/api/workflowHelpers";
@@ -118,17 +117,11 @@ export async function POST(req: NextRequest) {
         const knowledgeContext = await loadKnowledgeBase(workflowContext);
         const researchContext = performResearch(workflowContext);
 
-        // Build contextual messages
-        const messages = buildContextualMessages(
-          specText,
-          pack,
-          knowledgeContext,
-          researchContext
-        );
-
-        // Run the generation loop
+        // Run the hybrid generation loop
         await runGenerationLoop({
-          messages,
+          specText,
+          knowledgeContext,
+          researchContext,
           pack,
           maxAttempts,
           startTime,
