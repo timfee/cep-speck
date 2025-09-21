@@ -238,7 +238,15 @@ const eslintConfig = [
       // ============ RULE 17: No Swallowed Errors ============
       "custom/no-swallowed-errors": "error",
 
-      // ============ RULE 18: No VoidUnused Helper ============
+      // ============ RULE 18: Filename Convention - Kebab Case ============
+      "unicorn/filename-case": [
+        "error",
+        {
+          case: "kebabCase"
+        }
+      ],
+
+      // ============ RULE 19: No VoidUnused Helper ============
       "custom/no-void-unused-helper": "error",
 
       // Additional helpful rules

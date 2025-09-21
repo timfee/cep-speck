@@ -10,15 +10,15 @@ export {
   createStreamingResponse,
   createStreamController,
   handleStreamError,
-} from "./streamingHelpers";
+} from "./streaming-response";
 
 export {
   calculateMaxAttempts,
   prepareWorkflowContext,
   executeHybridWorkflow,
-} from "./workflowHelpers";
+} from "./workflow-execution";
 
-export { validateApiKey, validateSpecPack } from "./validationHelpers";
+export { validateApiKey, validateSpecPack } from "./api-validation";
 
 // Use centralized spec pack configuration
 // The pack is validated at runtime via assertValidSpecPack() to ensure type safety

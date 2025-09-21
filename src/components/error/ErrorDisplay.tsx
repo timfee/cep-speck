@@ -7,7 +7,7 @@ import { Status, StatusIndicator, StatusLabel } from "@/components/ui/status";
 import { classifyError } from "@/lib/error/classification";
 import type { ErrorDetails } from "@/lib/error/types";
 
-import { buildErrorLevels, buildSupportData } from "./errorLevelHelpers";
+import { buildErrorLevels, buildSupportData } from "./error-level-formatting";
 
 import {
   SupportView,

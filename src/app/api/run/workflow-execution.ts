@@ -8,7 +8,7 @@ import { DEFAULT_SPEC_PACK } from "@/lib/config";
 import {
   loadKnowledgeBase,
   performResearch,
-} from "@/lib/spec/api/workflowHelpers";
+} from "@/lib/spec/api/workflow-context";
 
 // Constants for magic numbers
 const MAX_ALLOWED_ATTEMPTS = 5;

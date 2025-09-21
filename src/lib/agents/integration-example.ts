@@ -51,7 +51,7 @@ export function integrationComparison() {
       ],
       files: [
         "src/lib/spec/prompt.ts",
-        "src/lib/spec/api/workflowHelpers.ts",
+        "src/lib/spec/api/workflow-context.ts",
         "src/lib/spec/api/generationLoop.ts",
       ],
     },
