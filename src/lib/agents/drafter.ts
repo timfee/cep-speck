@@ -2,25 +2,19 @@
  * Drafter agent that combines mega-prompt with registry toPrompt functions
  */
 
-import type { CoreMessage, StreamTextResult } from "ai";
+import type { StreamTextResult } from "ai";
 
-import { loadPrompt } from "./prompt-loader";
-import type { AgentContext, AgentResult, StreamingAgent } from "./types";
+import { buildDrafterMessages } from "./drafter-messages";
+
+import type {
+  AgentContext,
+  AgentResult,
+  DrafterConfig,
+  StreamingAgent,
+} from "./types";
+
 import { getResilientAI } from "../ai/resilient";
-import { buildSystemPrompt, buildUserPrompt } from "../spec/prompt";
 import type { SpecPack } from "../spec/types";
-
-/**
- * Configuration for the Drafter agent
- */
-export interface DrafterConfig {
-  /** Path to the master prompt file */
-  masterPromptPath: string;
-  /** Whether to include knowledge context in system prompt */
-  includeKnowledge: boolean;
-  /** Whether to include research context in system prompt */
-  includeResearch: boolean;
-}
 
 /**
  * Default configuration for the Drafter agent
@@ -35,7 +29,7 @@ const DEFAULT_CONFIG: DrafterConfig = {
  * Fallback master prompt if file cannot be loaded
  * Condensed version of the full master prompt with key guidelines
  */
-const FALLBACK_MASTER_PROMPT = `You are an expert Chrome Enterprise Premium (CEP) Product Manager at Google, specializing in enterprise browser security, policy management, and admin tooling.
+export const FALLBACK_MASTER_PROMPT = `You are an expert Chrome Enterprise Premium (CEP) Product Manager at Google, specializing in enterprise browser security, policy management, and admin tooling.
 
 ## Voice and Tone
 - L7+ Google PM voice: Direct, concise, executive-level thinking
@@ -84,7 +78,11 @@ export class DrafterAgent implements StreamingAgent {
   public async executeStreaming(
     context: AgentContext
   ): Promise<StreamTextResult<Record<string, never>, never>> {
-    const messages = await this.buildMessages(context);
+    const messages = await buildDrafterMessages(
+      context,
+      this.config,
+      FALLBACK_MASTER_PROMPT
+    );
     return await this.ai.generateWithFallback(messages);
   }
 
@@ -111,46 +109,6 @@ export class DrafterAgent implements StreamingAgent {
         agentId: this.id,
       },
     };
-  }
-
-  private async buildMessages(context: AgentContext): Promise<CoreMessage[]> {
-    const { userInput, pack, knowledgeContext, researchContext } = context;
-
-    // Load master prompt
-    const masterPrompt = await loadPrompt({
-      path: this.config.masterPromptPath,
-      cache: true,
-      fallback: FALLBACK_MASTER_PROMPT,
-    });
-
-    // Build system prompt with validation rules
-    const validationRules = buildSystemPrompt(pack);
-    let systemPrompt =
-      masterPrompt +
-      "\n\n## Validation Requirements\n\n" +
-      "The following validation rules MUST be followed:\n\n" +
-      validationRules;
-
-    // Add optional contexts
-    if (
-      this.config.includeKnowledge &&
-      knowledgeContext !== undefined &&
-      knowledgeContext.length > 0
-    ) {
-      systemPrompt += knowledgeContext;
-    }
-    if (
-      this.config.includeResearch &&
-      researchContext !== undefined &&
-      researchContext.length > 0
-    ) {
-      systemPrompt += researchContext;
-    }
-
-    return [
-      { role: "system", content: systemPrompt },
-      { role: "user", content: buildUserPrompt(userInput) },
-    ];
   }
 }
 

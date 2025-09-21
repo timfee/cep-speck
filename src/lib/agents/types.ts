@@ -43,10 +43,10 @@ export interface AgentResult {
 export interface Agent {
   /** Unique identifier for the agent */
   readonly id: string;
-  
+
   /** Human-readable description of agent purpose */
   readonly description: string;
-  
+
   /**
    * Execute the agent with given context
    * @param context - Input context and configuration
@@ -64,7 +64,9 @@ export interface StreamingAgent extends Agent {
    * @param context - Input context and configuration
    * @returns Promise resolving to streaming result
    */
-  executeStreaming(context: AgentContext): Promise<StreamTextResult<Record<string, never>, never>>;
+  executeStreaming(
+    context: AgentContext
+  ): Promise<StreamTextResult<Record<string, never>, never>>;
 }
 
 /**
@@ -77,4 +79,16 @@ export interface PromptConfig {
   cache?: boolean;
   /** Fallback content if file cannot be loaded */
   fallback?: string;
+}
+
+/**
+ * Configuration for the Drafter agent
+ */
+export interface DrafterConfig {
+  /** Path to the master prompt file */
+  masterPromptPath: string;
+  /** Whether to include knowledge context in system prompt */
+  includeKnowledge: boolean;
+  /** Whether to include research context in system prompt */
+  includeResearch: boolean;
 }
