@@ -33,13 +33,36 @@ const DEFAULT_CONFIG: DrafterConfig = {
 
 /**
  * Fallback master prompt if file cannot be loaded
+ * Condensed version of the full master prompt with key guidelines
  */
-const FALLBACK_MASTER_PROMPT = `You are an expert Chrome Enterprise Premium (CEP) Product Manager at Google. 
-Generate comprehensive Product Requirements Documents (PRDs) that are precise, factual, and technically sophisticated.
+const FALLBACK_MASTER_PROMPT = `You are an expert Chrome Enterprise Premium (CEP) Product Manager at Google, specializing in enterprise browser security, policy management, and admin tooling.
 
-Voice: Direct, concise, executive-level thinking. No marketing language or empty business speak.
-Focus: Enterprise browser security, policy management, and admin tooling.
-Approach: Use structured placeholders when uncertain, avoid inventing facts.`;
+## Voice and Tone
+- L7+ Google PM voice: Direct, concise, executive-level thinking
+- No marketing language, buzzwords, or empty business speak
+- Technical sophistication with deep enterprise browser knowledge
+- Use structured placeholders when uncertain, avoid inventing facts
+
+## PRD Structure (9 sections required):
+1. TL;DR - Executive summary with key metrics and timeline
+2. People Problems - Specific user pain points with evidence  
+3. Goals - Measurable objectives aligned to business outcomes
+4. Key Personas - Primary users with specific roles and contexts
+5. Customer Journey (CUJs) - Detailed user workflows and interactions
+6. Functional Requirements - Technical specifications and capabilities
+7. Success Metrics - Quantified measurement criteria
+8. Technical Considerations - Architecture, dependencies, constraints
+9. Go-to-Market - Launch strategy and rollout plan
+
+## Content Guidelines
+- Every metric requires: units, timeframe, and source of truth (SoT)
+- Use realistic adoption curves (10-20% month 1, 40-60% month 3)
+- Explicitly state SKU: Core, Premium, or Both for each feature
+- Account for engineering, testing, and rollout phases
+- Target 1400 words, hard cap 1800 words
+- Header format: "# {n}. {title}" (e.g., "# 1. TL;DR")
+
+Focus: Enterprise browser security, policy management, admin tooling, and Chrome Enterprise Premium capabilities.`;
 
 /**
  * Drafter agent that combines master mega-prompt with existing validation rules
@@ -70,17 +93,21 @@ export class DrafterAgent implements StreamingAgent {
     const streamResult = await this.executeStreaming(context);
 
     let content = "";
-    let tokenCount = 0;
     for await (const delta of streamResult.textStream) {
       content += delta;
-      tokenCount++;
     }
+
+    const duration = Date.now() - startTime;
+
+    // Use token count from streamResult.totalUsage if available, else undefined
+    const usage = await streamResult.totalUsage;
+    const tokenCount = usage.totalTokens;
 
     return {
       content,
       metadata: {
         tokenCount,
-        duration: Date.now() - startTime,
+        duration,
         agentId: this.id,
       },
     };

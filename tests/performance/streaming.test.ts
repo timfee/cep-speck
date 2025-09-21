@@ -184,7 +184,7 @@ describe("Streaming Protocol Performance", () => {
       if (initialMemory.available) {
         // Memory usage might not always increase due to GC timing,
         // so we'll just verify it's reasonable and not growing excessively
-        const memoryDiff = afterCreation.used - initialMemory.used;
+        const memoryDiff = Math.max(0, afterCreation.used - initialMemory.used);
 
         // After cleanup, memory growth should be minimal regardless of creation impact
         const finalGrowth = afterCleanup.used - initialMemory.used;
