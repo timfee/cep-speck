@@ -26,3 +26,11 @@ export type {
   PromptConfig,
   DrafterConfig,
 } from "./types";
+export {
+  runGenerationLoop,
+  type GenerationLoopContext,
+} from "./hybridWorkflow";
+export {
+  combineAllIssues,
+  convertSemanticIssuesToIssues,
+} from "./semanticIssueConverter";
