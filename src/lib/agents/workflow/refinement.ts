@@ -1,0 +1,64 @@
+/**
+ * Refinement phase implementation
+ */
+
+import type { GenerationLoopContext } from "./types";
+
+import {
+  createGenerationFrame,
+  createPhaseFrame,
+  encodeStreamFrame,
+} from "../../spec/streaming";
+
+import type { Issue } from "../../spec/types";
+import { runRefinerAgent } from "../refiner";
+
+/**
+ * Run refinement phase
+ */
+export async function runRefinement(
+  context: GenerationLoopContext,
+  attempt: number,
+  draft: string,
+  allIssues: Issue[],
+  totalTokens: number
+): Promise<string> {
+  sendRefinementPhaseNotification(context, attempt, allIssues);
+  const refinerResult = await runRefinerAgent(draft, allIssues);
+  return await streamRefinedContent(context, refinerResult, totalTokens);
+}
+
+function sendRefinementPhaseNotification(
+  context: GenerationLoopContext,
+  attempt: number,
+  allIssues: Issue[]
+) {
+  context.safeEnqueue(
+    encodeStreamFrame(
+      createPhaseFrame(
+        "healing",
+        attempt,
+        `Refining content (${allIssues.length} issues found)`
+      )
+    )
+  );
+}
+
+async function streamRefinedContent(
+  context: GenerationLoopContext,
+  refinerResult: Awaited<ReturnType<typeof runRefinerAgent>>,
+  totalTokens: number
+): Promise<string> {
+  let refinedContent = "";
+
+  for await (const delta of refinerResult.textStream) {
+    refinedContent += delta;
+    context.safeEnqueue(
+      encodeStreamFrame(
+        createGenerationFrame(delta, refinedContent, ++totalTokens)
+      )
+    );
+  }
+
+  return await refinerResult.text;
+}
