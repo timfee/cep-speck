@@ -10,6 +10,7 @@ import {
   executeHybridWorkflow,
   handleStreamError,
   isValidRunRequest,
+  pack,
   validateApiKey,
   validateSpecPack,
 } from "./utils";
@@ -62,7 +63,7 @@ async function processWorkflowRequest(
 ) {
   try {
     if (!validateApiKey(streamController)) return;
-    if (!validateSpecPack(streamController)) return;
+    if (!validateSpecPack(pack, streamController)) return;
 
     await executeHybridWorkflow({
       ...params,
