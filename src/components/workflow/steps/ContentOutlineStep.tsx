@@ -1,11 +1,13 @@
 "use client";
 
 import {
-  BarChart3,
-  Calendar,
-  CheckCircle,
+  ArrowDown,
+  ArrowUp,
   FileText,
-  Target,
+  GripVertical,
+  Plus,
+  Sparkles,
+  Trash2,
 } from "lucide-react";
 
 import React from "react";
@@ -13,219 +15,174 @@ import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
+import type { StructuredOutline } from "@/lib/agents";
+import type { EditableOutlineSection } from "@/types/workflow";
 
-import type {
-  ContentOutline,
-  FunctionalRequirement,
-  Milestone,
-  SuccessMetric,
-} from "@/types/workflow";
-
-import { ContentSection } from "./components/ContentSection";
+const BRIEF_PREVIEW_LIMIT = 140;
 
 interface ContentOutlineStepProps {
-  initialPrompt: string;
-  contentOutline: ContentOutline;
-  onChange: (outline: ContentOutline) => void;
+  brief: string;
+  outline: StructuredOutline | null;
   onRegenerateOutline: () => void;
+  onUpdateSection: (
+    id: string,
+    updates: Partial<EditableOutlineSection>
+  ) => void;
+  onAddSection: () => void;
+  onRemoveSection: (id: string) => void;
+  onMoveSection: (fromIndex: number, toIndex: number) => void;
   isLoading?: boolean;
 }
 
 export function ContentOutlineStep({
-  initialPrompt,
-  contentOutline,
-  onChange,
+  brief,
+  outline,
   onRegenerateOutline,
+  onUpdateSection,
+  onAddSection,
+  onRemoveSection,
+  onMoveSection,
   isLoading = false,
 }: ContentOutlineStepProps) {
-  const totalItems =
-    contentOutline.functionalRequirements.length +
-    contentOutline.successMetrics.length +
-    contentOutline.milestones.length;
-
-  const addFunctionalRequirement = () => {
-    const newReq: FunctionalRequirement = {
-      id: `fr-${Date.now()}`,
-      title: "New Functional Requirement",
-      description: "Enter description here",
-      priority: "P1",
-    };
-    onChange({
-      ...contentOutline,
-      functionalRequirements: [
-        ...contentOutline.functionalRequirements,
-        newReq,
-      ],
-    });
-  };
-
-  const addSuccessMetric = () => {
-    const newMetric: SuccessMetric = {
-      id: `sm-${Date.now()}`,
-      name: "New Success Metric",
-      description: "Enter description here",
-      type: "engagement",
-    };
-    onChange({
-      ...contentOutline,
-      successMetrics: [...contentOutline.successMetrics, newMetric],
-    });
-  };
-
-  const addMilestone = () => {
-    const newMilestone: Milestone = {
-      id: `ms-${Date.now()}`,
-      title: "New Milestone",
-      description: "Enter description here",
-      phase: "development",
-    };
-    onChange({
-      ...contentOutline,
-      milestones: [...contentOutline.milestones, newMilestone],
-    });
-  };
+  const sections = outline?.sections ?? [];
 
   return (
     <div className="space-y-6">
       <div className="text-center space-y-2">
-        <h2 className="text-2xl font-bold">Review Content Outline</h2>
+        <h2 className="text-2xl font-bold">Review & Edit Outline</h2>
         <p className="text-muted-foreground">
-          AI has generated functional requirements, metrics, and milestones
-          based on your product description. Review and customize these before
-          generating the final PRD.
+          Fine-tune the structure before drafting. Update section titles, add
+          context notes, or adjust the order to match your narrative.
         </p>
       </div>
 
-      {/* Summary card */}
-      <Card className="p-4">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold flex items-center gap-2">
+      <Card className="p-4 space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
             <FileText className="h-5 w-5 text-primary" />
-            AI-Generated Content Outline
-          </h3>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onRegenerateOutline}
-            disabled={isLoading}
-            className="flex items-center gap-2"
-          >
-            <CheckCircle
-              className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`}
-            />
-            Regenerate
-          </Button>
+            <span className="font-semibold">Generated Outline</span>
+            <Badge variant="outline">{sections.length} sections</Badge>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onRegenerateOutline}
+              disabled={isLoading}
+              className="flex items-center gap-2"
+            >
+              <Sparkles className="h-4 w-4" />
+              Regenerate
+            </Button>
+            <Button
+              size="sm"
+              onClick={onAddSection}
+              disabled={isLoading}
+              className="flex items-center gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              Add Section
+            </Button>
+          </div>
         </div>
-
-        <div className="space-y-3">
-          <div className="text-sm text-muted-foreground bg-blue-50 p-3 rounded-lg border border-blue-200">
-            <strong>Based on:</strong> &quot;{initialPrompt.slice(0, 100)}
-            {initialPrompt.length > 100 ? "..." : ""}&quot;
-          </div>
-
-          <div className="flex flex-wrap gap-2">
-            <Badge variant="outline">{totalItems} total items</Badge>
-            <Badge variant="outline">
-              {contentOutline.functionalRequirements.length} functional
-              requirements
-            </Badge>
-            <Badge variant="outline">
-              {contentOutline.successMetrics.length} metrics
-            </Badge>
-            <Badge variant="outline">
-              {contentOutline.milestones.length} milestones
-            </Badge>
-          </div>
+        <div className="text-sm text-muted-foreground bg-blue-50 p-3 rounded-lg border border-blue-200">
+          <strong>Brief:</strong> &ldquo;{brief.slice(0, BRIEF_PREVIEW_LIMIT)}
+          {brief.length > BRIEF_PREVIEW_LIMIT ? "…" : ""}&rdquo;
         </div>
       </Card>
 
-      <ContentSection
-        title="Functional Requirements"
-        icon={<Target className="h-5 w-5 text-green-600" />}
-        items={contentOutline.functionalRequirements}
-        onAdd={addFunctionalRequirement}
-        emptyMessage='No functional requirements generated. Click "Add Functional" to create one.'
-        renderItem={(req) => ({
-          id: req.id,
-          title: req.title,
-          description: req.description,
-          badge: (
-            <Badge
-              variant={
-                req.priority === "P0"
-                  ? "destructive"
-                  : req.priority === "P1"
-                    ? "default"
-                    : "secondary"
-              }
+      {sections.length === 0 ? (
+        <Card className="p-8 text-center text-muted-foreground border-dashed">
+          <p className="flex flex-col items-center gap-3">
+            <GripVertical className="h-8 w-8 text-muted-foreground/60" />
+            No sections yet. Generate or add a section to get started.
+          </p>
+        </Card>
+      ) : (
+        <div className="space-y-4">
+          {sections.map((section, index) => (
+            <Card
+              key={section.id}
+              className="p-4 space-y-4 border border-primary/10"
             >
-              {req.priority}
-            </Badge>
-          ),
-          extra:
-            (req.userStory ?? "").length > 0 ? (
-              <div className="text-xs bg-gray-50 p-2 rounded border-l-2 border-blue-500">
-                <strong>User Story:</strong> {req.userStory}
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <GripVertical className="h-4 w-4" />
+                  Section {index + 1}
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => onMoveSection(index, Math.max(0, index - 1))}
+                    disabled={index === 0 || isLoading}
+                    aria-label="Move section up"
+                  >
+                    <ArrowUp className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() =>
+                      onMoveSection(
+                        index,
+                        Math.min(sections.length - 1, index + 1)
+                      )
+                    }
+                    disabled={index === sections.length - 1 || isLoading}
+                    aria-label="Move section down"
+                  >
+                    <ArrowDown className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => onRemoveSection(section.id)}
+                    disabled={isLoading}
+                    aria-label="Remove section"
+                  >
+                    <Trash2 className="h-4 w-4 text-destructive" />
+                  </Button>
+                </div>
               </div>
-            ) : undefined,
-        })}
-      />
 
-      <ContentSection
-        title="Success Metrics"
-        icon={<BarChart3 className="h-5 w-5 text-blue-600" />}
-        items={contentOutline.successMetrics}
-        onAdd={addSuccessMetric}
-        emptyMessage='No success metrics generated. Click "Add Success" to create one.'
-        renderItem={(metric) => ({
-          id: metric.id,
-          title: metric.name,
-          description: metric.description,
-          badge: <Badge variant="outline">{metric.type}</Badge>,
-          extra:
-            (metric.target ?? "").length > 0 ? (
-              <div className="text-xs bg-green-50 p-2 rounded border-l-2 border-green-500">
-                <strong>Target:</strong> {metric.target}
-                {(metric.measurement ?? "").length > 0 && (
-                  <span className="ml-2">
-                    <strong>Measurement:</strong> {metric.measurement}
-                  </span>
-                )}
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-foreground">
+                  Section Title
+                </label>
+                <input
+                  type="text"
+                  value={section.title}
+                  onChange={(event) =>
+                    onUpdateSection(section.id, { title: event.target.value })
+                  }
+                  disabled={isLoading}
+                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
+                  placeholder="e.g., Executive Summary"
+                />
               </div>
-            ) : undefined,
-        })}
-      />
 
-      <ContentSection
-        title="Milestones & Timeline"
-        icon={<Calendar className="h-5 w-5 text-purple-600" />}
-        items={contentOutline.milestones}
-        onAdd={addMilestone}
-        emptyMessage='No milestones generated. Click "Add Milestones" to create one.'
-        renderItem={(milestone) => ({
-          id: milestone.id,
-          title: milestone.title,
-          description: milestone.description,
-          badge: <Badge variant="outline">{milestone.phase}</Badge>,
-          extra:
-            (milestone.estimatedDate ?? "").length > 0 ? (
-              <div className="text-xs bg-purple-50 p-2 rounded border-l-2 border-purple-500">
-                <strong>Estimated Date:</strong> {milestone.estimatedDate}
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-foreground">
+                  Notes for the drafter
+                </label>
+                <Textarea
+                  value={section.notes ?? ""}
+                  onChange={(event) =>
+                    onUpdateSection(section.id, { notes: event.target.value })
+                  }
+                  disabled={isLoading}
+                  rows={4}
+                  placeholder="Add key bullets, context, or links for this section..."
+                />
+                <p className="text-xs text-muted-foreground">
+                  These notes are passed directly to the drafting agent to steer
+                  the content for this section.
+                </p>
               </div>
-            ) : undefined,
-        })}
-      />
-
-      {/* Summary validation */}
-      {totalItems > 0 && (
-        <div className="text-center">
-          <div className="inline-flex items-center space-x-2 text-sm text-green-700 bg-green-50 p-3 rounded-lg border border-green-200">
-            <CheckCircle className="h-4 w-4" />
-            <span>
-              Content outline looks comprehensive. You can proceed to configure
-              enterprise parameters.
-            </span>
-          </div>
+            </Card>
+          ))}
         </div>
       )}
     </div>

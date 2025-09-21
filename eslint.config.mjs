@@ -107,7 +107,7 @@ const eslintConfig = [
       "react-hooks/exhaustive-deps": [
         "error",
         {
-          additionalHooks: "(useSpecValidation|useCallback|useMemo)",
+          additionalHooks: "(useCallback|useMemo)",
           enableDangerousAutofixThisMayCauseInfiniteLoops: false,
         },
       ],
@@ -178,34 +178,6 @@ const eslintConfig = [
       ],
 
       // ============ RULE 9: No Restricted Imports (Barrel Files) ============
-      "no-restricted-imports": [
-        "error",
-        {
-          patterns: [
-            {
-              group: ["*/items/*", "!*/items", "!*/items/index"],
-              message:
-                "Import from the items barrel file (index.ts) instead of individual files",
-            },
-            {
-              group: ["*/helpers/*", "!*/helpers", "!*/helpers/index"],
-              message:
-                "Import from the helpers barrel file (index.ts) instead of individual files",
-            },
-            {
-              group: [
-                "*/spec/*/*",
-                "!*/spec/*/index",
-                "!*/spec/types",
-                "!*/spec/registry",
-                "!*/spec/streaming",
-              ],
-              message: "Use module barrel exports or explicitly allowed files",
-            },
-          ],
-        },
-      ],
-
       // ============ RULE 10: Nullish Coalescing & Optional Chain ============
       "@typescript-eslint/prefer-nullish-coalescing": [
         "error",
@@ -217,28 +189,14 @@ const eslintConfig = [
       ],
       "@typescript-eslint/prefer-optional-chain": "error",
 
-      // ============ RULE 11: Enforce Validation Module Structure ============
-      "custom/enforce-validation-module-structure": "error",
-
-      // ============ RULE 12: Stream Frame Factory Usage ============
-      "custom/stream-frame-factory-usage": "error",
-
-      // ============ RULE 13: Consistent Error Handling Pattern ============
-      "custom/consistent-error-handling-pattern": "error",
-
-      // ============ RULE 14: Enforce Helper Usage ============
-      "custom/enforce-helper-usage": "error",
-
-      // ============ RULE 15: Spec Pack JSON Validation ============
-      "custom/spec-pack-json-validation": "error",
-
-      // ============ RULE 16: No Hardcoded AI Models ============
+      // ============ RULE 11: Stream Frame Factory Usage ============
+      // ============ RULE 11: No Hardcoded AI Models ============
       "custom/no-hardcoded-ai-models": "error",
 
-      // ============ RULE 17: No Swallowed Errors ============
+      // ============ RULE 12: No Swallowed Errors ============
       "custom/no-swallowed-errors": "error",
 
-      // ============ RULE 18: No VoidUnused Helper ============
+      // ============ RULE 13: No VoidUnused Helper ============
       "custom/no-void-unused-helper": "error",
 
       // Additional helpful rules
@@ -289,28 +247,6 @@ const eslintConfig = [
     },
   },
   {
-    files: [
-      "**/types.ts",
-      "**/spec/types.ts",
-      "**/spec/registry.ts",
-      "**/spec/selfReview.ts",
-      "**/spec/validate.ts",
-      "**/spec/helpers/**/*.ts",
-      "**/spec/__tests__/**/*.ts",
-    ],
-    rules: {
-      "custom/consistent-error-handling-pattern": "off",
-    },
-  },
-  {
-    files: ["**/spec/items/**/*.ts"],
-    rules: {
-      // Validator modules must implement async interface for consistency,
-      // even if individual functions don't use await
-      "@typescript-eslint/require-await": "off",
-    },
-  },
-  {
     files: ["**/components/ui/**/*.tsx", "**/components/ui/**/*.ts"],
     rules: {
       "no-magic-numbers": "off",
@@ -331,7 +267,6 @@ const eslintConfig = [
       "@typescript-eslint/no-explicit-any": "off",
       "@typescript-eslint/no-non-null-assertion": "off",
       "no-magic-numbers": "off",
-      "custom/consistent-error-handling-pattern": "off",
       "@typescript-eslint/strict-boolean-expressions": "off",
       "@typescript-eslint/no-unsafe-assignment": "off",
       "@typescript-eslint/no-unsafe-argument": "off",
@@ -343,7 +278,6 @@ const eslintConfig = [
   {
     files: ["**/page.tsx", "**/layout.tsx", "**/route.ts"],
     rules: {
-      "custom/consistent-error-handling-pattern": "off",
       // Allow magic numbers in route handlers for HTTP status codes, timeouts, etc.
       "no-magic-numbers": [
         "error",
@@ -362,7 +296,6 @@ const eslintConfig = [
   {
     files: ["**/hooks/**", "**/components/**"],
     rules: {
-      "custom/consistent-error-handling-pattern": "off",
       // Stricter rules for components but allow UI-specific numeric values
       "no-magic-numbers": [
         "error",

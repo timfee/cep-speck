@@ -1,57 +1,55 @@
 import { useCallback, useMemo, useState } from "react";
 
-import { DEFAULT_ENTERPRISE_PARAMETERS } from "@/types/workflow";
-
-import type {
-  ContentOutline,
-  EnterpriseParameters,
-  StructuredWorkflowState,
-  WorkflowStep,
+import {
+  WORKFLOW_STEPS,
+  type StructuredWorkflowState,
+  type WorkflowStep,
 } from "@/types/workflow";
 
-import { generateContentOutline } from "./contentOutlineHelpers";
+import {
+  MIN_PROMPT_LENGTH,
+  calculateStepProgress,
+} from "./progressCalculationHelpers";
+
+import { runAgenticRefinementLoop } from "./refinementLoop";
+import { useOutlineActions } from "./useOutlineActions";
 
 import {
-  canNavigateBack,
-  canNavigateNext,
-  findNextStep,
-  findPreviousStep,
-} from "./navigationHelpers";
+  requestEvaluation,
+  requestOutline,
+  streamDraft,
+  streamRefinement,
+} from "./workflowApi";
 
-import { calculateStepProgress } from "./progressCalculationHelpers";
-import { serializeToSpecText } from "./serializationHelpers";
-// Initial state for the workflow
-const initialState: StructuredWorkflowState = {
+const TOTAL_WORKFLOW_STEPS = WORKFLOW_STEPS.length;
+const INITIAL_STEP_NAME = WORKFLOW_STEPS[0].name;
+const MAX_REFINEMENT_LOOPS = 5;
+
+const INITIAL_STATE: StructuredWorkflowState = {
   currentStep: "idea",
-  initialPrompt: "",
-  contentOutline: {
-    functionalRequirements: [],
-    successMetrics: [],
-    milestones: [],
-  },
-  enterpriseParameters: DEFAULT_ENTERPRISE_PARAMETERS,
-  selectedSections: [],
-  sectionContents: {},
-  sectionOrder: [],
-  finalPrd: "",
+  brief: "",
+  outline: null,
+  draft: "",
+  finalDraft: "",
+  evaluationReport: null,
+  iteration: 0,
+  status: "idle",
   progress: {
     step: 1,
-    totalSteps: 4,
-    stepName: "Idea Capture",
+    totalSteps: TOTAL_WORKFLOW_STEPS,
+    stepName: INITIAL_STEP_NAME,
     completion: 0,
     canGoBack: false,
     canGoNext: false,
   },
   isLoading: false,
+  error: undefined,
 };
 
 export const useStructuredWorkflow = () => {
-  const [state, setState] = useState<StructuredWorkflowState>(initialState);
+  const [state, setState] = useState<StructuredWorkflowState>(INITIAL_STATE);
 
-  // Calculate current progress using helper
   const progress = useMemo(() => calculateStepProgress(state), [state]);
-
-  // Update the state with calculated progress
   const currentState = useMemo(
     () => ({
       ...state,
@@ -60,115 +58,221 @@ export const useStructuredWorkflow = () => {
     [state, progress]
   );
 
-  const setInitialPrompt = useCallback((prompt: string) => {
-    setState((prev) => ({ ...prev, initialPrompt: prompt }));
+  const setBrief = useCallback((brief: string) => {
+    setState((prev) => {
+      const shouldClearError =
+        typeof prev.error === "string" &&
+        prev.error.length > 0 &&
+        brief.trim().length >= MIN_PROMPT_LENGTH;
+
+      return {
+        ...prev,
+        brief,
+        error: shouldClearError ? undefined : prev.error,
+      };
+    });
   }, []);
 
-  // Keep for backward compatibility (not used in new workflow)
+  const { setOutline, addSection, updateSection, removeSection, moveSection } =
+    useOutlineActions(setState);
 
-  const setContentOutline = useCallback((outline: ContentOutline) => {
-    setState((prev) => ({ ...prev, contentOutline: outline }));
+  const setError = useCallback((error?: string | null) => {
+    setState((prev) => ({ ...prev, error: error ?? undefined }));
   }, []);
 
-  const setEnterpriseParameters = useCallback(
-    (parameters: EnterpriseParameters) => {
-      setState((prev) => ({ ...prev, enterpriseParameters: parameters }));
-    },
-    []
-  );
+  const generateOutline = useCallback(async () => {
+    const brief = state.brief.trim();
+    if (brief.length < MIN_PROMPT_LENGTH) {
+      const errorMessage =
+        "Please add more detail before generating an outline.";
+      setState((prev) => ({ ...prev, error: errorMessage }));
+      throw new Error(errorMessage);
+    }
 
-  const setSelectedSections = useCallback((sectionIds: string[]) => {
     setState((prev) => ({
       ...prev,
-      selectedSections: sectionIds,
-      sectionOrder: sectionIds,
+      isLoading: true,
+      status: "outline",
+      error: undefined,
     }));
-  }, []);
 
-  const updateSectionContent = useCallback(
-    (sectionId: string, content: string) => {
+    try {
+      const outline = await requestOutline(brief);
+      setOutline(outline);
       setState((prev) => ({
         ...prev,
-        sectionContents: {
-          ...prev.sectionContents,
-          [sectionId]: content,
-        },
+        isLoading: false,
+        status: "idle",
       }));
-    },
-    []
-  );
+      return outline;
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Failed to generate outline";
+      setState((prev) => ({
+        ...prev,
+        isLoading: false,
+        status: "idle",
+        error: message,
+      }));
+      throw error;
+    }
+  }, [setOutline, state.brief]);
 
-  const reorderSections = useCallback((newOrder: string[]) => {
-    setState((prev) => ({ ...prev, sectionOrder: newOrder }));
+  const runRefinementLoop = useCallback(async (initialDraft: string) => {
+    const result = await runAgenticRefinementLoop({
+      initialDraft,
+      maxIterations: MAX_REFINEMENT_LOOPS,
+      evaluate: requestEvaluation,
+      refine: streamRefinement,
+      onEvaluating: (iteration) => {
+        setState((prev) => ({
+          ...prev,
+          status: "evaluating",
+          iteration,
+        }));
+      },
+      onNoIssues: () => {
+        setState((prev) => ({
+          ...prev,
+          evaluationReport: [],
+        }));
+      },
+      onLimitReached: (report) => {
+        setState((prev) => ({
+          ...prev,
+          evaluationReport: report,
+        }));
+      },
+      onRefining: (iteration, report) => {
+        setState((prev) => ({
+          ...prev,
+          status: "refining",
+          iteration,
+          evaluationReport: report,
+        }));
+      },
+      onDraftUpdate: (content) => {
+        setState((prev) => ({ ...prev, draft: content }));
+      },
+    });
+
+    setState((prev) => ({
+      ...prev,
+      status: "idle",
+      isLoading: false,
+      draft: result.draft,
+      finalDraft: result.draft,
+      evaluationReport: result.report ?? [],
+      iteration: result.iterations,
+      error:
+        result.limitHit && result.report != null && result.report.length > 0
+          ? "Reached refinement limit. Review remaining issues."
+          : prev.error,
+    }));
+
+    return result;
   }, []);
 
-  const setLoading = useCallback((loading: boolean) => {
-    setState((prev) => ({ ...prev, isLoading: loading }));
-  }, []);
+  const generateDraft = useCallback(async () => {
+    const outline = state.outline;
+    if (!outline || outline.sections.length === 0) {
+      const errorMessage =
+        "Generate an outline with at least one section first.";
+      setState((prev) => ({ ...prev, error: errorMessage }));
+      throw new Error(errorMessage);
+    }
 
-  const setError = useCallback((error?: string) => {
-    setState((prev) => ({ ...prev, error }));
-  }, []);
+    setState((prev) => ({
+      ...prev,
+      isLoading: true,
+      status: "generating",
+      draft: "",
+      finalDraft: "",
+      evaluationReport: null,
+      iteration: 0,
+      error: undefined,
+    }));
 
-  const setFinalPrd = useCallback((prd: string) => {
-    setState((prev) => ({ ...prev, finalPrd: prd }));
-  }, []);
+    try {
+      const initialDraft = await streamDraft(outline, (content) => {
+        setState((prev) => ({ ...prev, draft: content }));
+      });
 
-  // Navigation functions using helpers
+      await runRefinementLoop(initialDraft);
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Failed to generate draft";
+      setState((prev) => ({
+        ...prev,
+        isLoading: false,
+        status: "idle",
+        error: message,
+      }));
+      throw error;
+    }
+  }, [runRefinementLoop, state.outline]);
+
   const goToNextStep = useCallback(() => {
-    if (!canNavigateNext(currentState.progress.canGoNext)) return;
+    if (!currentState.progress.canGoNext) {
+      return;
+    }
 
-    const nextStep = findNextStep(state.currentStep);
+    const currentIndex = WORKFLOW_STEPS.findIndex(
+      (step) => step.id === state.currentStep
+    );
+    const nextStep = WORKFLOW_STEPS[currentIndex + 1]?.id as
+      | WorkflowStep
+      | undefined;
+
     if (nextStep) {
       setState((prev) => ({ ...prev, currentStep: nextStep }));
     }
   }, [currentState.progress.canGoNext, state.currentStep]);
 
   const goToPreviousStep = useCallback(() => {
-    if (!canNavigateBack(currentState.progress.canGoBack)) return;
+    if (!currentState.progress.canGoBack) {
+      return;
+    }
 
-    const prevStep = findPreviousStep(state.currentStep);
+    const currentIndex = WORKFLOW_STEPS.findIndex(
+      (step) => step.id === state.currentStep
+    );
+    const prevStep = WORKFLOW_STEPS[currentIndex - 1]?.id as
+      | WorkflowStep
+      | undefined;
+
     if (prevStep) {
       setState((prev) => ({ ...prev, currentStep: prevStep }));
     }
   }, [currentState.progress.canGoBack, state.currentStep]);
 
   const goToStep = useCallback((step: WorkflowStep) => {
+    const isValidStep = WORKFLOW_STEPS.some(({ id }) => id === step);
+    if (!isValidStep) {
+      return;
+    }
+
     setState((prev) => ({ ...prev, currentStep: step }));
   }, []);
 
   const resetWorkflow = useCallback(() => {
-    setState(initialState);
+    setState(INITIAL_STATE);
   }, []);
-
-  const generateContentOutlineForPrompt = useCallback(
-    (prompt: string) => {
-      const outline = generateContentOutline(prompt);
-      setContentOutline(outline);
-    },
-    [setContentOutline]
-  );
-
-  const serializeToSpecTextCallback = useCallback((): string => {
-    return serializeToSpecText(state);
-  }, [state]);
 
   return {
     state: currentState,
-    setInitialPrompt,
-    setContentOutline,
-    setEnterpriseParameters,
-    setSelectedSections,
-    updateSectionContent,
-    reorderSections,
-    setLoading,
+    setBrief,
+    setOutline,
+    addSection,
+    updateSection,
+    removeSection,
+    moveSection,
     setError,
-    setFinalPrd,
+    generateOutline,
+    generateDraft,
     goToNextStep,
     goToPreviousStep,
     goToStep,
     resetWorkflow,
-    generateContentOutlineForPrompt,
-    serializeToSpecText: serializeToSpecTextCallback,
-  };
+  } as const;
 };

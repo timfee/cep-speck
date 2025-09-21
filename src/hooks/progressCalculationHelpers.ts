@@ -9,6 +9,10 @@ import { WORKFLOW_STEPS } from "@/types/workflow";
 
 export const MIN_PROMPT_LENGTH = 10;
 export const PROMPT_COMPLETION_TARGET = 50;
+const DRAFTING_PROGRESS = 25;
+const EVALUATING_PROGRESS = 50;
+const REFINEMENT_PROGRESS_INCREMENT = 10;
+const REFINEMENT_PROGRESS_MAX = 90;
 
 // Calculate step completion and navigation state
 export function calculateStepProgress(
@@ -29,7 +33,7 @@ export function calculateStepProgress(
   }
 
   const stepInfo = WORKFLOW_STEPS[stepIndex];
-  const { canGoNext, completion } = getStepCompletion(state);
+  const { canGoNext, completion, statusLabel } = getStepCompletion(state);
 
   return {
     step: stepIndex + 1,
@@ -38,6 +42,7 @@ export function calculateStepProgress(
     completion,
     canGoBack: stepIndex > 0,
     canGoNext,
+    statusLabel,
   };
 }
 
@@ -45,22 +50,20 @@ export function calculateStepProgress(
 function getStepCompletion(state: StructuredWorkflowState): {
   canGoNext: boolean;
   completion: number;
+  statusLabel?: string;
 } {
   switch (state.currentStep) {
     case "idea":
-      return getIdeaStepCompletion(state.initialPrompt);
+      return getIdeaStepCompletion(state.brief);
 
     case "outline":
-      return getOutlineStepCompletion(state.contentOutline);
-
-    case "parameters":
-      return { canGoNext: true, completion: 100 }; // Optional step
+      return getOutlineStepCompletion(state.outline);
 
     case "generate":
-      return { canGoNext: true, completion: state.finalPrd ? 100 : 0 };
+      return getGenerateStepCompletion(state);
 
     case "complete":
-      return { canGoNext: false, completion: 100 };
+      return { canGoNext: false, completion: 100, statusLabel: "Done" };
 
     default:
       return { canGoNext: false, completion: 0 };
@@ -71,6 +74,7 @@ function getStepCompletion(state: StructuredWorkflowState): {
 function getIdeaStepCompletion(prompt: string): {
   canGoNext: boolean;
   completion: number;
+  statusLabel?: string;
 } {
   const canGoNext = prompt.trim().length > MIN_PROMPT_LENGTH;
   const completion = Math.min(
@@ -78,25 +82,69 @@ function getIdeaStepCompletion(prompt: string): {
     (prompt.length / PROMPT_COMPLETION_TARGET) * 100
   );
 
-  return { canGoNext, completion };
+  return {
+    canGoNext,
+    completion,
+    statusLabel: canGoNext ? "Ready" : "Add more detail",
+  };
 }
 
 // Calculate outline step completion
-function getOutlineStepCompletion(contentOutline: {
-  functionalRequirements: unknown[];
-  successMetrics: unknown[];
-  milestones: unknown[];
-}): {
+function getOutlineStepCompletion(
+  outline: StructuredWorkflowState["outline"]
+): {
   canGoNext: boolean;
   completion: number;
+  statusLabel?: string;
 } {
-  const totalItems =
-    contentOutline.functionalRequirements.length +
-    contentOutline.successMetrics.length +
-    contentOutline.milestones.length;
+  const sections = outline?.sections ?? [];
+  const canGoNext = sections.length > 0;
 
-  const canGoNext = totalItems > 0;
-  const completion = totalItems > 0 ? 100 : 0;
+  return {
+    canGoNext,
+    completion: canGoNext ? 100 : 0,
+    statusLabel: canGoNext
+      ? `${sections.length} section${sections.length > 1 ? "s" : ""}`
+      : "Awaiting outline",
+  };
+}
 
-  return { canGoNext, completion };
+function getGenerateStepCompletion(state: StructuredWorkflowState): {
+  canGoNext: boolean;
+  completion: number;
+  statusLabel?: string;
+} {
+  if (state.status === "generating") {
+    return {
+      canGoNext: false,
+      completion: DRAFTING_PROGRESS,
+      statusLabel: "Drafting",
+    };
+  }
+
+  if (state.status === "evaluating") {
+    return {
+      canGoNext: false,
+      completion: EVALUATING_PROGRESS,
+      statusLabel: "Evaluating",
+    };
+  }
+
+  if (state.status === "refining") {
+    return {
+      canGoNext: false,
+      completion: Math.min(
+        REFINEMENT_PROGRESS_MAX,
+        EVALUATING_PROGRESS + state.iteration * REFINEMENT_PROGRESS_INCREMENT
+      ),
+      statusLabel: `Refinement ${state.iteration}`,
+    };
+  }
+
+  const hasDraft = state.finalDraft.trim().length > 0;
+  return {
+    canGoNext: hasDraft,
+    completion: hasDraft ? 100 : 0,
+    statusLabel: hasDraft ? "Ready" : "Awaiting draft",
+  };
 }

@@ -91,6 +91,13 @@ export const TIMING = {
   DAYS_PER_MONTH: 30, // Approximate
 } as const;
 
+// Agent orchestration limits
+export const AGENT_LIMITS = {
+  KNOWLEDGE_FILES: 3,
+  COMPETITOR_VENDORS: 5,
+  KEYWORD_MIN_LENGTH: 4,
+} as const;
+
 // Feasibility thresholds
 export const FEASIBILITY_THRESHOLDS = {
   HIGH_ADOPTION_PERCENTAGE: 80,
@@ -114,6 +121,7 @@ export default {
   VALIDATION_THRESHOLDS,
   UI_CONSTANTS,
   TIMING,
+  AGENT_LIMITS,
   FEASIBILITY_THRESHOLDS,
   INPUT_VALIDATION,
 } as const;

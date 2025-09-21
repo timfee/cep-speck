@@ -32,6 +32,11 @@ export function ProgressTimeline({
         <p className="text-sm text-muted-foreground">
           {progress.stepName} • {Math.round(progress.completion)}% complete
         </p>
+        {progress.statusLabel != null && progress.statusLabel.length > 0 && (
+          <p className="text-xs text-muted-foreground">
+            Status: {progress.statusLabel}
+          </p>
+        )}
       </div>
 
       {/* Step Timeline */}

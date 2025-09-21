@@ -1,150 +1,176 @@
 "use client";
 
-import { ArrowLeft, ArrowRight, Wand2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, RotateCcw, Wand2 } from "lucide-react";
 import React from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-
-import {
-  processStreamingResponse,
-  useGenerationState,
-} from "@/components/workflow/hooks/useGenerationState";
-
 import { ProgressTimeline } from "@/components/workflow/ProgressTimeline";
 import { CompleteStep } from "@/components/workflow/steps/CompleteStep";
 import { ContentOutlineStep } from "@/components/workflow/steps/ContentOutlineStep";
-import { EnterpriseParametersStep } from "@/components/workflow/steps/EnterpriseParametersStep";
 import { GenerateStep } from "@/components/workflow/steps/GenerateStep";
 import { IdeaCaptureStep } from "@/components/workflow/steps/IdeaCaptureStep";
 import { MIN_PROMPT_LENGTH } from "@/hooks/progressCalculationHelpers";
 import { useStructuredWorkflow } from "@/hooks/useStructuredWorkflow";
 
-interface StructuredPrdWizardProps {
-  onTraditionalMode: () => void;
-}
-
-export function StructuredPrdWizard({
-  onTraditionalMode,
-}: StructuredPrdWizardProps) {
-  const {
-    generatedPrd,
-    isGenerating,
-    error,
-    setGeneratedPrd,
-    setIsGenerating,
-    setError,
-  } = useGenerationState();
-
+export function StructuredPrdWizard() {
   const {
     state,
-    setInitialPrompt,
-    setContentOutline,
-    setEnterpriseParameters,
+    setBrief,
+    setOutline,
+    addSection,
+    updateSection,
+    removeSection,
+    moveSection,
+    setError,
+    generateOutline,
+    generateDraft,
     goToNextStep,
     goToPreviousStep,
     resetWorkflow,
-    generateContentOutlineForPrompt,
-    serializeToSpecText,
   } = useStructuredWorkflow();
 
-  const handleRegenerateOutline = () => {
-    generateContentOutlineForPrompt(state.initialPrompt);
-  };
-
-  const handleGeneratePrd = async () => {
-    setIsGenerating(true);
-    setError(null);
-
-    try {
-      const specText = serializeToSpecText();
-      const response = await fetch("/api/run", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ specText }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to generate PRD: ${response.statusText}`);
+  const handleRegenerateOutline = React.useCallback(() => {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    void (async () => {
+      try {
+        await generateOutline();
+      } catch (error) {
+        console.warn("Structured workflow async error", error);
       }
+    })();
+  }, [generateOutline]);
 
-      await processStreamingResponse(
-        response,
-        setGeneratedPrd,
-        setGeneratedPrd
-      );
-
-      goToNextStep();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to generate PRD");
-    } finally {
-      setIsGenerating(false);
-    }
-  };
+  const handleGeneratePrd = React.useCallback(() => {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    void (async () => {
+      try {
+        await generateDraft();
+      } catch (error) {
+        console.warn("Structured workflow async error", error);
+      }
+    })();
+  }, [generateDraft]);
 
   // Auto-generate content outline when prompt is ready and we're on outline step
   React.useEffect(() => {
     if (
       state.currentStep === "outline" &&
-      state.initialPrompt.trim().length > MIN_PROMPT_LENGTH &&
-      state.contentOutline.functionalRequirements.length === 0
+      state.brief.trim().length > MIN_PROMPT_LENGTH &&
+      (state.outline?.sections.length ?? 0) === 0 &&
+      !state.isLoading
     ) {
-      generateContentOutlineForPrompt(state.initialPrompt);
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      void (async () => {
+        try {
+          await generateOutline();
+        } catch (error) {
+          console.warn("Structured workflow async error", error);
+        }
+      })();
     }
   }, [
     state.currentStep,
-    state.initialPrompt,
-    state.contentOutline.functionalRequirements.length,
-    generateContentOutlineForPrompt,
+    state.brief,
+    state.outline?.sections.length,
+    state.isLoading,
+    generateOutline,
   ]);
 
-  const handleNext = () => {
-    if (state.progress.canGoNext) {
+  const handleNext = React.useCallback(() => {
+    if (!state.progress.canGoNext) {
+      return;
+    }
+
+    if (state.currentStep === "idea") {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      void (async () => {
+        try {
+          await generateOutline();
+          goToNextStep();
+        } catch (error) {
+          console.warn("Structured workflow async error", error);
+        }
+      })();
+      return;
+    }
+
+    goToNextStep();
+  }, [
+    state.progress.canGoNext,
+    state.currentStep,
+    generateOutline,
+    goToNextStep,
+  ]);
+
+  React.useEffect(() => {
+    if (
+      state.currentStep === "generate" &&
+      state.finalDraft.trim().length > 0 &&
+      !state.isLoading &&
+      state.status === "idle" &&
+      state.progress.canGoNext
+    ) {
       goToNextStep();
     }
-  };
+  }, [
+    state.currentStep,
+    state.finalDraft,
+    state.isLoading,
+    state.status,
+    state.progress.canGoNext,
+    goToNextStep,
+  ]);
 
   const renderStepContent = () => {
     switch (state.currentStep) {
       case "idea":
-        return (
-          <IdeaCaptureStep
-            prompt={state.initialPrompt}
-            onChange={setInitialPrompt}
-          />
-        );
+        return <IdeaCaptureStep prompt={state.brief} onChange={setBrief} />;
 
       case "outline":
         return (
           <ContentOutlineStep
-            initialPrompt={state.initialPrompt}
-            contentOutline={state.contentOutline}
-            onChange={setContentOutline}
+            brief={state.brief}
+            outline={state.outline}
+            onUpdateSection={updateSection}
+            onAddSection={addSection}
+            onRemoveSection={removeSection}
+            onMoveSection={moveSection}
             onRegenerateOutline={handleRegenerateOutline}
             isLoading={state.isLoading}
-          />
-        );
-
-      case "parameters":
-        return (
-          <EnterpriseParametersStep
-            parameters={state.enterpriseParameters}
-            onChange={setEnterpriseParameters}
           />
         );
 
       case "generate":
         return (
           <GenerateStep
-            error={error}
-            isGenerating={isGenerating}
-            generatedPrd={generatedPrd}
+            error={state.error ?? null}
+            status={state.status}
+            isBusy={state.isLoading}
+            generatedPrd={state.draft}
+            evaluationReport={state.evaluationReport}
+            iteration={state.iteration}
             onGenerate={handleGeneratePrd}
+            onReset={() => {
+              setOutline({
+                sections: [...(state.outline?.sections ?? [])],
+              });
+              setError(undefined);
+            }}
           />
         );
 
       case "complete":
-        return <CompleteStep generatedPrd={generatedPrd} />;
+        return (
+          <CompleteStep
+            generatedPrd={state.finalDraft}
+            evaluationReport={state.evaluationReport}
+            refinementLimitReached={
+              state.error ===
+              "Reached refinement limit. Review remaining issues."
+            }
+          />
+        );
 
       default:
         return (
@@ -168,9 +194,6 @@ export function StructuredPrdWizard({
             Create comprehensive PRDs through a guided, step-by-step process
           </p>
         </div>
-        <Button variant="outline" onClick={onTraditionalMode}>
-          Switch to Traditional Mode
-        </Button>
       </div>
 
       {/* Progress timeline */}
@@ -205,20 +228,31 @@ export function StructuredPrdWizard({
 
         <div className="flex items-center space-x-2">
           {state.currentStep === "outline" && (
-            <Button
-              variant="outline"
-              onClick={handleRegenerateOutline}
-              disabled={state.isLoading}
-              className="flex items-center gap-2"
-            >
-              <Wand2 className="h-4 w-4" />
-              Regenerate Outline
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                onClick={handleRegenerateOutline}
+                disabled={state.isLoading}
+                className="flex items-center gap-2"
+              >
+                <Wand2 className="h-4 w-4" />
+                Regenerate Outline
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={() => setOutline({ sections: [] })}
+                disabled={state.isLoading}
+                className="flex items-center gap-2"
+              >
+                <RotateCcw className="h-4 w-4" />
+                Reset Outline
+              </Button>
+            </div>
           )}
 
           <Button
             onClick={handleNext}
-            disabled={!state.progress.canGoNext}
+            disabled={state.isLoading || !state.progress.canGoNext}
             className="flex items-center gap-2"
           >
             Next
