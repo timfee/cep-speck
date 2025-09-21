@@ -28,7 +28,7 @@ jobs:
           git worktree add ../base "$BASE_SHA"
           pushd ../base
           pnpm install
-          pnpm exec fta src --format json > reports/fta.json
+          pnpm run complexity:json
           popd
           mkdir -p reports
           cp ../base/reports/fta.json reports/fta.base.json

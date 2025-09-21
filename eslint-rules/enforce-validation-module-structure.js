@@ -33,7 +33,6 @@ module.exports = {
           { pattern: /export\s+type\s+Params\s*=/, name: "Params type" },
           { pattern: /function\s+toPrompt/, name: "toPrompt function" },
           { pattern: /function\s+validate/, name: "validate function" },
-          { pattern: /function\s+heal/, name: "heal function" },
           {
             pattern: /export\s+const\s+itemModule\s*=/,
             name: "itemModule export",
@@ -88,20 +87,12 @@ module.exports = {
           /(async\s+)?function\s+heal\s*\(([^)]*)\)/
         );
         if (healMatch) {
-          if (!healMatch[1]) {
-            context.report({
-              node,
-              message:
-                "heal function must be async: async function heal(...) => Promise<string | null>",
-            });
-          }
-          if (!healMatch[2].includes("issues")) {
-            context.report({
-              node,
-              message:
-                "heal function must have signature: async (issues: Issue[], params?: Params, pack?: SpecPack) => Promise<string | null>",
-            });
-          }
+          // heal function is deprecated and should be removed
+          context.report({
+            node,
+            message:
+              "heal function is deprecated and should be removed as part of hybrid agentic workflow migration",
+          });
         }
 
         // Check itemModule structure
@@ -111,7 +102,7 @@ module.exports = {
           );
           if (moduleMatch) {
             const moduleContent = moduleMatch[1];
-            const requiredProps = ["itemId", "toPrompt", "validate", "heal"];
+            const requiredProps = ["itemId", "toPrompt", "validate"];
             requiredProps.forEach((prop) => {
               if (!moduleContent.includes(prop)) {
                 context.report({
@@ -120,6 +111,15 @@ module.exports = {
                 });
               }
             });
+
+            // Check for deprecated heal property
+            if (moduleContent.includes("heal")) {
+              context.report({
+                node,
+                message:
+                  "itemModule should not include deprecated 'heal' property",
+              });
+            }
           }
         }
       },

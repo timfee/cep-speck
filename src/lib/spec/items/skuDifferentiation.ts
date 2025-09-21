@@ -50,22 +50,4 @@ async function validate(
   return issues;
 }
 
-async function heal(
-  _issues: Issue[],
-  _params: Params,
-  _pack?: unknown
-): Promise<string | null> {
-  void _issues;
-  void _params;
-  void _pack;
-  return `For each feature block under "# 6. Functional Requirements":
-1. Add a line beginning with "**Target SKU:**" followed by one of (Core | Premium | Both).
-2. If the overall PRD target SKU is Premium and a feature is marked Core, immediately follow with a one-sentence differentiation rationale referencing:
-   - Premium-only capability leveraged, OR
-   - Upgrade path (e.g., "Core baseline enables X; premium adds Y for Z metric improvement").
-3. Use patterns like: "**Target SKU:** Premium — differentiates by <capability> enabling <persona>/<metric>.".
-4. Avoid vague words (better, more secure); cite concrete mechanism or measurable lever.
-Do not alter already compliant SKU annotations.`;
-}
-
-export const itemModule = { itemId, toPrompt, validate, heal };
+export const itemModule = { itemId, toPrompt, validate };

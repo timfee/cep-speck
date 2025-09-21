@@ -41,14 +41,4 @@ async function validate(
   return issues;
 }
 
-async function heal(
-  issues: Issue[],
-  params: Params,
-  _pack?: unknown
-): Promise<string | null> {
-  if (!issues.length) return null;
-  const target = params.target ?? WORD_BUDGET.MINIMUM_BUDGET;
-  return `Compress content to meet word budget of ${target} words. Focus on removing redundancy, tightening sentences, and condensing bullet points while preserving key information.`;
-}
-
-export const itemModule = { itemId, toPrompt, validate, heal };
+export const itemModule = { itemId, toPrompt, validate };

@@ -20,13 +20,7 @@ import { IdeaCaptureStep } from "@/components/workflow/steps/IdeaCaptureStep";
 import { MIN_PROMPT_LENGTH } from "@/hooks/progressCalculationHelpers";
 import { useStructuredWorkflow } from "@/hooks/useStructuredWorkflow";
 
-interface StructuredPrdWizardProps {
-  onTraditionalMode: () => void;
-}
-
-export function StructuredPrdWizard({
-  onTraditionalMode,
-}: StructuredPrdWizardProps) {
+export function StructuredPrdWizard() {
   const {
     generatedPrd,
     isGenerating,
@@ -168,9 +162,6 @@ export function StructuredPrdWizard({
             Create comprehensive PRDs through a guided, step-by-step process
           </p>
         </div>
-        <Button variant="outline" onClick={onTraditionalMode}>
-          Switch to Traditional Mode
-        </Button>
       </div>
 
       {/* Progress timeline */}

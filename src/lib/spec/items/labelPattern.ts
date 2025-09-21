@@ -1,4 +1,4 @@
-import { validateHeaderPattern, HEALING_TEMPLATES } from "../helpers";
+import { validateHeaderPattern } from "../helpers";
 import type { Issue } from "../types";
 
 export const itemId = "label-pattern";
@@ -16,12 +16,4 @@ async function validate(
   return validateHeaderPattern(draft, params, itemId);
 }
 
-async function heal(
-  _issues: Issue[],
-  params: Params,
-  _pack?: unknown
-): Promise<string | null> {
-  return HEALING_TEMPLATES.HEADER_PATTERN(params.pattern);
-}
-
-export const itemModule = { itemId, toPrompt, validate, heal };
+export const itemModule = { itemId, toPrompt, validate };

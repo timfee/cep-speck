@@ -1,14 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-
-import {
-  CheckCircle,
-  AlertCircle,
-  XCircle,
-  Clock,
-  Loader2,
-} from "lucide-react";
+import { CheckCircle, XCircle, Clock, Loader2 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Spinner } from "@/components/ui/spinner";
@@ -28,7 +21,7 @@ type WorkflowPhase =
   | "starting"
   | "generating"
   | "validating"
-  | "healing"
+  | "failed"
   | "done"
   | "error"
   | "";
@@ -77,15 +70,15 @@ const PHASE_CONFIG: Record<
     description: "Checking against validation rules",
     icon: Clock,
   },
-  healing: {
-    status: "degraded",
-    spinner: "bars",
-    bgColor: "bg-amber-50 border-amber-200 text-amber-700",
-    borderClasses: "border-amber-500",
-    progressClasses: "bg-amber-100",
-    label: "Self-Healing",
-    description: "Correcting identified issues",
-    icon: AlertCircle,
+  failed: {
+    status: "offline",
+    spinner: null,
+    bgColor: "bg-red-50 border-red-200 text-red-700",
+    borderClasses: "border-red-500",
+    progressClasses: "bg-red-100",
+    label: "Validation Failed",
+    description: "Content generated but validation issues found",
+    icon: XCircle,
   },
   done: {
     status: "online",
@@ -200,7 +193,7 @@ const TIMELINE_PHASES: WorkflowPhase[] = [
   "starting",
   "generating",
   "validating",
-  "healing",
+  "failed",
   "done",
 ];
 

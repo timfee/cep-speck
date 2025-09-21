@@ -2,13 +2,10 @@ import type { CoreMessage } from "ai";
 
 import { getResilientAI } from "@/lib/ai/resilient";
 
-import { aggregateHealing } from "../healing/aggregate";
-
 import {
   createGenerationFrame,
   createPhaseFrame,
   createResultFrame,
-  createStreamFrame,
   createValidationFrame,
   encodeStreamFrame,
 } from "../streaming";
@@ -93,51 +90,23 @@ export async function runGenerationLoop(
       break;
     }
 
-    // Phase 5: Healing phase
-    const issuesToHeal = report.issues;
+    // Validation failed - without healing, we complete with validation issues
+    finalDraft = draft;
+    const totalDuration = Date.now() - context.startTime;
     context.safeEnqueue(
       encodeStreamFrame(
         createPhaseFrame(
-          "healing",
+          "failed",
           attempt,
-          `Preparing healing instructions for ${issuesToHeal.length} issues`
+          `Validation failed with ${report.issues.length} issues`
         )
       )
     );
-
-    const followup = await aggregateHealing(issuesToHeal, context.pack);
-
     context.safeEnqueue(
       encodeStreamFrame(
-        createStreamFrame("healing", {
-          instruction: followup,
-          issueCount: issuesToHeal.length,
-          attempt,
-        })
+        createResultFrame(false, finalDraft, attempt, totalDuration)
       )
     );
-
-    context.messages.push({ role: "assistant", content: draft });
-    context.messages.push({ role: "user", content: followup });
-    finalDraft = draft;
-
-    if (attempt === context.maxAttempts) {
-      const totalDuration = Date.now() - context.startTime;
-      context.safeEnqueue(
-        encodeStreamFrame(
-          createPhaseFrame(
-            "failed",
-            attempt,
-            `Max attempts reached (${context.maxAttempts})`
-          )
-        )
-      );
-      context.safeEnqueue(
-        encodeStreamFrame(
-          createResultFrame(false, finalDraft, attempt, totalDuration)
-        )
-      );
-      break;
-    }
+    break;
   }
 }
