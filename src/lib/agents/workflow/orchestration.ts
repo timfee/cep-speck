@@ -3,9 +3,9 @@
  */
 
 // Re-export focused utilities for clean organization
-export { createWorkflowState, updateWorkflowState } from "./stateManagement";
-export { finishSuccessfully, finishWithFailure } from "./completionHelpers";
-export { handleWorkflowError } from "./errorHandling";
+export { createWorkflowState, updateWorkflowState } from "./state-management";
+export { finishSuccessfully, finishWithFailure } from "./completion-helpers";
+export { handleWorkflowError } from "./error-handling";
 
 import type { GenerationLoopContext } from "./types";
 import type { Issue } from "../../spec/types";
@@ -27,7 +27,7 @@ export async function processValidationResult(
     totalTokens: number
   ) => Promise<{ draft: string; totalTokens: number; shouldContinue: boolean }>
 ): Promise<{ draft: string; totalTokens: number; shouldContinue: boolean }> {
-  const { finishSuccessfully } = await import("./completionHelpers");
+  const { finishSuccessfully } = await import("./completion-helpers");
 
   if (validationResult.unifiedReport.ok) {
     finishSuccessfully(context, attempt, draft);
@@ -60,7 +60,7 @@ export async function handleRefinementPhase(
     totalTokens: number
   ) => Promise<{ draft: string; updatedTokens: number }>
 ): Promise<{ draft: string; totalTokens: number; shouldContinue: boolean }> {
-  const { finishWithFailure } = await import("./completionHelpers");
+  const { finishWithFailure } = await import("./completion-helpers");
 
   if (attempt < context.maxAttempts) {
     const { draft: refinedDraft, updatedTokens } = await runRefinement(

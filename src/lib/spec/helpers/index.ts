@@ -7,6 +7,6 @@
 
 export * from "./constants";
 export * from "./patterns";
-export * from "./semantic/sectionExtraction";
-export * from "./semantic/validationIssues";
+export * from "./semantic/section-extraction";
+export * from "./semantic/validation-issues";
 export * from "./validation";

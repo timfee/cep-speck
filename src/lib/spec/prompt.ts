@@ -1,7 +1,12 @@
-import { CRITICAL_VALIDATION_REQUIREMENTS } from "./config/criticalValidationRules";
 import { invokeItemToPrompt } from "./registry";
 import type { SpecPack } from "./types";
 
+/**
+ * Build system prompt for PRD generation from SpecPack configuration
+ *
+ * @param pack - SpecPack containing validation items and composition rules
+ * @returns Formatted system prompt with all validation constraints
+ */
 export function buildSystemPrompt(pack: SpecPack): string {
   const lines: string[] = [];
   for (const def of pack.items) {
@@ -20,9 +25,15 @@ export function buildSystemPrompt(pack: SpecPack): string {
   }
   return `You are generating a PRD for Chrome Enterprise Premium (CEP). Write as an L7+ Google PM: precise, factual, executive-level thinking. Voice: direct, concise, technically sophisticated. No marketing language, sensationalist claims, cutesy headings, or empty business speak. Use web search capabilities for competitor research with current data and citations. Do not invent facts; use placeholders when uncertain. Avoid quality theater metrics like NPS - focus on operational metrics. When using metrics to justify decisions, consider stating the underlying heuristic directly rather than obscuring intent through gameable metrics. Follow all constraints:\n${lines.join(
     "\n"
-  )}${CRITICAL_VALIDATION_REQUIREMENTS}`;
+  )}`;
 }
 
+/**
+ * Build user prompt containing the spec input text
+ *
+ * @param specText - The input specification text from the user
+ * @returns Formatted user prompt
+ */
 export function buildUserPrompt(specText: string): string {
   return `Inputs/spec:\n${specText}`;
 }

@@ -2,7 +2,7 @@
  * Validation helpers for API route
  */
 
-import { assertValidSpecPack } from "@/lib/spec/packValidate";
+import { assertValidSpecPack } from "@/lib/spec/pack-validate";
 
 import {
   createErrorFrame,

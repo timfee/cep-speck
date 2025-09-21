@@ -29,8 +29,8 @@ export type {
 export {
   runGenerationLoop,
   type GenerationLoopContext,
-} from "./hybridWorkflow";
+} from "./hybrid-workflow";
 export {
   combineAllIssues,
   convertSemanticIssuesToIssues,
-} from "./semanticIssueConverter";
+} from "./semantic-issue-converter";

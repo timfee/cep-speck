@@ -9,17 +9,17 @@ import type {
   WorkflowStep,
 } from "@/types/workflow";
 
-import { generateContentOutline } from "./contentOutlineHelpers";
+import { generateContentOutline } from "./content-outline-generation";
 
 import {
   canNavigateBack,
   canNavigateNext,
   findNextStep,
   findPreviousStep,
-} from "./navigationHelpers";
+} from "./navigation-state";
 
-import { calculateStepProgress } from "./progressCalculationHelpers";
-import { serializeToSpecText } from "./serializationHelpers";
+import { calculateStepProgress } from "./progress-calculation";
+import { serializeToSpecText } from "./workflow-serialization";
 // Initial state for the workflow
 const initialState: StructuredWorkflowState = {
   currentStep: "idea",

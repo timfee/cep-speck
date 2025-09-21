@@ -1,4 +1,4 @@
-import type { PackValidationError } from "../packValidate";
+import type { PackValidationError } from "../pack-validate";
 import { getItem } from "../registry";
 import type { SpecPack } from "../types";
 

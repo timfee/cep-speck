@@ -49,6 +49,28 @@ export const DEPLOYMENT_MODEL_OPTIONS: Array<{
   },
 ];
 
+export const ROLLOUT_STRATEGY_OPTIONS: Array<{
+  value: string;
+  label: string;
+  desc: string;
+}> = [
+  {
+    value: "pilot",
+    label: "Pilot Program",
+    desc: "Small group testing",
+  },
+  {
+    value: "phased",
+    label: "Phased Rollout",
+    desc: "Gradual deployment",
+  },
+  {
+    value: "full-deployment",
+    label: "Full Deployment",
+    desc: "Organization-wide launch",
+  },
+];
+
 export const SECURITY_REQUIREMENTS_OPTIONS: Array<{
   value: string;
   label: string;

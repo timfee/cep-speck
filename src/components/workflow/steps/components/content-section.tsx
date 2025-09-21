@@ -6,7 +6,7 @@ import {
   EmptyState,
   ItemCard,
   SectionHeader,
-} from "./ContentSectionComponents";
+} from "./content-section-components";
 
 interface ContentSectionProps<T> {
   title: string;

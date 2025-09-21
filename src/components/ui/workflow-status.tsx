@@ -1,12 +1,14 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { CheckCircle, XCircle, Clock, Loader2 } from "lucide-react";
+import React from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Spinner } from "@/components/ui/spinner";
-import { UI_CONSTANTS, RETRY_LIMITS } from "@/lib/constants";
+import { UI_CONSTANTS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+
+import { getPhaseConfig } from "./workflow-phase-config";
 
 export interface WorkflowStatusProps {
   phase: string;
@@ -16,102 +18,6 @@ export interface WorkflowStatusProps {
   showAttempt?: boolean;
 }
 
-// Define valid phase types
-type WorkflowPhase =
-  | "starting"
-  | "generating"
-  | "validating"
-  | "failed"
-  | "done"
-  | "error"
-  | "";
-
-// Comprehensive phase configuration with explicit class mappings
-const PHASE_CONFIG: Record<
-  WorkflowPhase,
-  {
-    status: "maintenance" | "degraded" | "online" | "offline";
-    spinner: "ring" | "infinite" | "ellipsis" | "bars" | null;
-    bgColor: string;
-    borderClasses: string;
-    progressClasses: string;
-    label: string;
-    description: string;
-    icon: typeof Loader2;
-  }
-> = {
-  starting: {
-    status: "maintenance",
-    spinner: "ring",
-    bgColor: "bg-blue-50 border-blue-200 text-blue-700",
-    borderClasses: "border-blue-500",
-    progressClasses: "bg-blue-100",
-    label: "Initializing",
-    description: "Setting up PRD generation",
-    icon: Loader2,
-  },
-  generating: {
-    status: "maintenance",
-    spinner: "infinite",
-    bgColor: "bg-blue-50 border-blue-200 text-blue-700",
-    borderClasses: "border-blue-500",
-    progressClasses: "bg-blue-100",
-    label: "Generating Content",
-    description: "AI is creating your PRD document",
-    icon: Loader2,
-  },
-  validating: {
-    status: "degraded",
-    spinner: "ellipsis",
-    bgColor: "bg-amber-50 border-amber-200 text-amber-700",
-    borderClasses: "border-amber-500",
-    progressClasses: "bg-amber-100",
-    label: "Validating Output",
-    description: "Checking against validation rules",
-    icon: Clock,
-  },
-  failed: {
-    status: "offline",
-    spinner: null,
-    bgColor: "bg-red-50 border-red-200 text-red-700",
-    borderClasses: "border-red-500",
-    progressClasses: "bg-red-100",
-    label: "Validation Failed",
-    description: "Content generated but validation issues found",
-    icon: XCircle,
-  },
-  done: {
-    status: "online",
-    spinner: null,
-    bgColor: "bg-green-50 border-green-200 text-green-700",
-    borderClasses: "border-green-500",
-    progressClasses: "bg-green-100",
-    label: "Generation Complete",
-    description: "PRD successfully generated and validated",
-    icon: CheckCircle,
-  },
-  error: {
-    status: "offline",
-    spinner: null,
-    bgColor: "bg-red-50 border-red-200 text-red-700",
-    borderClasses: "border-red-500",
-    progressClasses: "bg-red-100",
-    label: "Generation Failed",
-    description: "An error occurred during generation",
-    icon: XCircle,
-  },
-  "": {
-    status: "offline",
-    spinner: null,
-    bgColor: "bg-gray-50 border-gray-200 text-gray-700",
-    borderClasses: "border-gray-500",
-    progressClasses: "bg-gray-100",
-    label: "Ready",
-    description: "Ready to start PRD generation",
-    icon: Clock,
-  },
-};
-
 export function WorkflowStatus({
   phase,
   attempt = 0,
@@ -119,7 +25,7 @@ export function WorkflowStatus({
   className,
   showAttempt = true,
 }: WorkflowStatusProps) {
-  const config = PHASE_CONFIG[phase as WorkflowPhase] || PHASE_CONFIG[""];
+  const config = getPhaseConfig(phase);
   const { spinner, bgColor, label, description, icon: Icon } = config;
 
   return (
@@ -181,78 +87,8 @@ export function WorkflowStatus({
   );
 }
 
-// Progress Timeline Component
-export interface ProgressTimelineProps {
-  currentPhase: string;
-  attempt: number;
-  maxAttempts?: number;
-  className?: string;
-}
-
-const TIMELINE_PHASES: WorkflowPhase[] = [
-  "starting",
-  "generating",
-  "validating",
-  "failed",
-  "done",
-];
-
-export function ProgressTimeline({
-  currentPhase,
-  attempt,
-  maxAttempts = RETRY_LIMITS.DEFAULT_MAX_ATTEMPTS,
-  className,
-}: ProgressTimelineProps) {
-  const currentIndex = TIMELINE_PHASES.indexOf(currentPhase as WorkflowPhase);
-
-  return (
-    <div className={cn("space-y-3", className)}>
-      {/* Phase Progress */}
-      <div className="flex items-center justify-between">
-        <span className="text-sm font-medium text-muted-foreground">
-          Progress
-        </span>
-        <span className="text-xs text-muted-foreground">
-          {attempt}/{maxAttempts} attempts
-        </span>
-      </div>
-
-      <div className="flex items-center gap-1">
-        {TIMELINE_PHASES.map((phase, index) => {
-          const isActive = index === currentIndex;
-          const isCompleted = index < currentIndex;
-          const config = PHASE_CONFIG[phase];
-
-          return (
-            <div key={phase} className="flex items-center">
-              <motion.div
-                className={cn(
-                  "w-3 h-3 rounded-full border-2 transition-all duration-300",
-                  isCompleted
-                    ? "bg-green-500 border-green-500"
-                    : isActive
-                      ? cn(config.borderClasses, config.progressClasses)
-                      : "border-gray-300 bg-white"
-                )}
-                animate={
-                  isActive
-                    ? { scale: [1, UI_CONSTANTS.ANIMATION_SCALE_BREATHE, 1] }
-                    : {}
-                }
-                transition={{ duration: 1, repeat: isActive ? Infinity : 0 }}
-              />
-              {index < TIMELINE_PHASES.length - 1 && (
-                <div
-                  className={cn(
-                    "w-6 h-0.5 mx-1 transition-colors duration-300",
-                    index < currentIndex ? "bg-green-500" : "bg-gray-300"
-                  )}
-                />
-              )}
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
+// Re-export the progress timeline component
+export {
+  ProgressTimeline,
+  type ProgressTimelineProps,
+} from "./progress-timeline";

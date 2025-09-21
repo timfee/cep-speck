@@ -151,7 +151,7 @@ pnpm dev
 
 ## Current Validation Modules
 
-The following modules are currently implemented:
+The following deterministic validation modules are currently implemented:
 
 - `bannedText` - Detects forbidden terms and buzzwords
 - `competitorResearch` - Validates competitive analysis inclusion
@@ -159,7 +159,8 @@ The following modules are currently implemented:
 - `metricsRequired` - Validates metrics have units/timeframe/SoT
 - `placeholderQuality` - Detects placeholder content
 - `sectionCount` - Enforces minimum section requirements
-- `semanticPolicyValidator` - AI-powered policy compliance
 - `skuDifferentiation` - Validates SKU-specific features
 - `technicalFeasibility` - Validates technical requirements
 - `wordBudget` - Enforces word count limits
+
+**Note:** Semantic analysis is now handled by the AI Evaluator agent in the hybrid workflow.

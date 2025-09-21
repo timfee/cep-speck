@@ -12,7 +12,7 @@ import type { ValidationReport } from "../../spec/types";
 import { validateAll } from "../../spec/validate";
 import { runSemanticEvaluator } from "../evaluator";
 import type { SemanticIssue } from "../evaluator-helpers";
-import { combineAllIssues } from "../semanticIssueConverter";
+import { combineAllIssues } from "../semantic-issue-converter";
 import type { GenerationLoopContext } from "./types";
 
 /**

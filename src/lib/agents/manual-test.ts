@@ -21,11 +21,6 @@ const mockPack: SpecPack = {
       params: { listsFromPack: true },
     },
   ],
-  healPolicy: {
-    maxAttempts: 3,
-    order: "by-severity-then-priority",
-    groupBy: "item",
-  },
 };
 
 async function demonstrateDrafterAgent(): Promise<void> {

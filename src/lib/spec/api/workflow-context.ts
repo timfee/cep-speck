@@ -1,7 +1,7 @@
 import type { CoreMessage } from "ai";
 
 import { readKnowledgeDirectory } from "@/lib/knowledge/reader";
-import { performCompetitorResearch } from "@/lib/research/webSearch";
+import { performCompetitorResearch } from "@/lib/research/web-search";
 
 import { buildSystemPrompt, buildUserPrompt } from "../prompt";
 
