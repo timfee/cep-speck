@@ -2,56 +2,23 @@
 
 import React from "react";
 
-import { Spinner } from "@/components/ui/spinner";
 import { Status, StatusIndicator, StatusLabel } from "@/components/ui/status";
 import type { CircuitBreakerState } from "@/lib/error/types";
+
+import { STATE_CONFIG, shouldShowRecoveryTime } from "./circuit-breaker-utils";
+import { RecoveryTimeDisplay } from "./recovery-time-display";
+import { TestingIndicator } from "./testing-indicator";
 
 interface CircuitBreakerStatusProps {
   state: CircuitBreakerState;
   className?: string;
 }
 
-// Time conversion constants
-const MILLISECONDS_PER_SECOND = 1000;
-const SECONDS_PER_MINUTE = 60;
-
-function formatTime(milliseconds: number): string {
-  const seconds = Math.ceil(milliseconds / MILLISECONDS_PER_SECOND);
-  if (seconds < SECONDS_PER_MINUTE) {
-    return `${seconds}s`;
-  }
-  const minutes = Math.floor(seconds / SECONDS_PER_MINUTE);
-  const remainingSeconds = seconds % SECONDS_PER_MINUTE;
-  return `${minutes}m ${remainingSeconds}s`;
-}
-
 export function CircuitBreakerStatus({
   state,
   className,
 }: CircuitBreakerStatusProps) {
-  const stateConfig = {
-    closed: {
-      status: "online" as const,
-      label: "Service Available",
-      color: "text-green-600",
-      description: "All systems operational",
-    },
-    open: {
-      status: "offline" as const,
-      label: "Service Unavailable",
-      color: "text-red-600",
-      description:
-        "Service is temporarily unavailable due to repeated failures",
-    },
-    halfOpen: {
-      status: "degraded" as const,
-      label: "Testing Service",
-      color: "text-amber-600",
-      description: "Testing if service has recovered",
-    },
-  };
-
-  const config = stateConfig[state.current];
+  const config = STATE_CONFIG[state.current];
 
   return (
     <div className={className}>
@@ -73,27 +40,11 @@ export function CircuitBreakerStatus({
           </div>
 
           <div className="flex items-center gap-2">
-            {state.current === "open" && (state.recoveryTime ?? 0) > 0 && (
-              <div className="text-sm text-muted-foreground text-right">
-                <div>Recovery in</div>
-                <div className="font-mono">
-                  {formatTime((state.recoveryTime ?? 0) - Date.now())}
-                </div>
-              </div>
+            {shouldShowRecoveryTime(state) && (
+              <RecoveryTimeDisplay state={state} />
             )}
 
-            {state.current === "halfOpen" && (
-              <div className="flex items-center gap-2">
-                <Spinner
-                  variant="ellipsis"
-                  size={16}
-                  className="text-amber-500"
-                />
-                <span className="text-xs text-muted-foreground">
-                  Testing...
-                </span>
-              </div>
-            )}
+            {state.current === "halfOpen" && <TestingIndicator />}
           </div>
         </div>
       </Status>

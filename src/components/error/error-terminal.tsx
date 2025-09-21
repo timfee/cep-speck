@@ -1,10 +1,22 @@
 "use client";
 
-import { motion } from "framer-motion";
 import React from "react";
 
 import type { ErrorDetails } from "@/lib/error/types";
 import { cn } from "@/lib/utils";
+
+import {
+  formatErrorTimestamp,
+  hasValidAttemptInfo,
+  isErrorRecoverable,
+} from "./error-recovery-utils";
+
+import {
+  AnimatedSpan,
+  ConditionalTerminalLine,
+  TerminalLine,
+  TerminalPrompt,
+} from "./terminal-components";
 
 interface ErrorTerminalProps {
   error: ErrorDetails;
@@ -16,31 +28,12 @@ interface ErrorTerminalProps {
   className?: string;
 }
 
-interface AnimatedSpanProps {
-  children: React.ReactNode;
-  delay: number;
-}
-
-function AnimatedSpan({ children, delay }: AnimatedSpanProps) {
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ delay: delay / 1000, duration: 0.3 }}
-      className="font-mono text-sm"
-    >
-      {children}
-    </motion.div>
-  );
-}
-
 export function ErrorTerminal({
   error,
   context,
   className,
 }: ErrorTerminalProps) {
-  const isRecoverable =
-    error.code !== "UNEXPECTED_ERROR" && error.code !== "MISSING_API_KEY";
+  const recoverable = isErrorRecoverable(error);
 
   return (
     <div
@@ -49,78 +42,55 @@ export function ErrorTerminal({
         className
       )}
     >
-      {/* Terminal Header */}
-      <div className="flex items-center justify-between px-4 py-2 bg-gray-800 border-b border-gray-700">
+      <div className="bg-red-500/10 px-4 py-2 border-b border-red-500/20">
         <div className="flex items-center gap-2">
-          <div className="flex gap-2">
-            <div className="w-3 h-3 bg-red-500 rounded-full" />
-            <div className="w-3 h-3 bg-yellow-500 rounded-full" />
-            <div className="w-3 h-3 bg-green-500 rounded-full" />
-          </div>
-          <span className="text-sm text-gray-300 ml-2">Error Console</span>
-        </div>
-        <div className="flex items-center gap-2 text-xs text-gray-400">
-          <div className="w-2 h-2 bg-red-400 rounded-full" />
-          <span>Error</span>
+          <div className="w-3 h-3 rounded-full bg-red-500"></div>
+          <span className="text-red-400 font-mono text-sm">Error Terminal</span>
         </div>
       </div>
 
-      {/* Terminal Content */}
-      <div className="p-4 space-y-2 min-h-[120px] max-h-[300px] overflow-auto">
-        <AnimatedSpan delay={0}>
-          <span className="text-red-400">ERROR</span>{" "}
-          <span className="text-gray-300">PRD Generation Failed</span>
-        </AnimatedSpan>
+      <div className="p-4 space-y-2">
+        <TerminalLine
+          label="Code"
+          value={error.code}
+          delay={100}
+          valueColor="text-red-400"
+        />
 
-        <AnimatedSpan delay={100}>
-          <span className="text-yellow-400">Code:</span>{" "}
-          <span className="text-white">{error.code}</span>
-        </AnimatedSpan>
+        <TerminalLine
+          label="Message"
+          value={error.message}
+          delay={200}
+        />
 
-        <AnimatedSpan delay={200}>
-          <span className="text-yellow-400">Message:</span>{" "}
-          <span className="text-gray-300">{error.message}</span>
-        </AnimatedSpan>
+        <ConditionalTerminalLine
+          condition={(context?.phase ?? "").length > 0}
+          label="Phase"
+          value={context?.phase ?? ""}
+          delay={300}
+          valueColor="text-white"
+        />
 
-        {(context?.phase ?? "").length > 0 && (
-          <AnimatedSpan delay={300}>
-            <span className="text-yellow-400">Phase:</span>{" "}
-            <span className="text-white">{context?.phase}</span>
-          </AnimatedSpan>
-        )}
+        <ConditionalTerminalLine
+          condition={hasValidAttemptInfo(context)}
+          label="Attempt"
+          value={`${context?.attempt}/${context?.maxAttempts}`}
+          delay={400}
+          valueColor="text-white"
+        />
 
-        {context?.attempt !== undefined &&
-          context.maxAttempts !== undefined &&
-          context.attempt > 0 &&
-          context.maxAttempts > 0 && (
-            <AnimatedSpan delay={400}>
-              <span className="text-yellow-400">Attempt:</span>{" "}
-              <span className="text-white">
-                {context.attempt}/{context.maxAttempts}
-              </span>
-            </AnimatedSpan>
-          )}
+        <TerminalLine
+          label="Timestamp"
+          value={formatErrorTimestamp(error.timestamp)}
+          delay={500}
+        />
 
-        <AnimatedSpan delay={500}>
-          <span className="text-yellow-400">Timestamp:</span>{" "}
-          <span className="text-gray-300">
-            {new Date(error.timestamp).toISOString()}
-          </span>
-        </AnimatedSpan>
-
-        {isRecoverable && (
-          <AnimatedSpan delay={600}>
-            <span className="text-green-400">Recovery:</span>{" "}
-            <span className="text-white">Available</span>
-          </AnimatedSpan>
-        )}
-
-        {!isRecoverable && (
-          <AnimatedSpan delay={600}>
-            <span className="text-red-400">Recovery:</span>{" "}
-            <span className="text-gray-300">Manual intervention required</span>
-          </AnimatedSpan>
-        )}
+        <TerminalLine
+          label="Recovery"
+          value={recoverable ? "Available" : "Manual intervention required"}
+          delay={600}
+          valueColor={recoverable ? "text-green-400" : "text-red-400"}
+        />
 
         {(error.stack ?? "").length > 0 && (
           <>
@@ -135,12 +105,7 @@ export function ErrorTerminal({
           </>
         )}
 
-        <AnimatedSpan delay={900}>
-          <div className="flex items-center gap-2 mt-4 pt-2 border-t border-gray-700">
-            <span className="text-gray-500">$</span>
-            <span className="text-gray-500 animate-pulse">_</span>
-          </div>
-        </AnimatedSpan>
+        <TerminalPrompt delay={900} />
       </div>
     </div>
   );
