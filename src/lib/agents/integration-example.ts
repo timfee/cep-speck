@@ -1,18 +1,17 @@
 /**
  * Example integration showing how to use Drafter agent in the existing API
- * 
+ *
  * This demonstrates how the new Drafter agent could replace the current
  * generation logic in src/app/api/run/route.ts while preserving all
  * existing functionality.
  */
 
-import type { CoreMessage } from "ai";
 import { runDrafterAgent } from "@/lib/agents";
 import type { SpecPack } from "@/lib/spec/types";
 
 /**
  * Example of how Drafter agent integrates with existing workflow
- * 
+ *
  * This function shows the integration pattern that would replace the
  * current buildContextualMessages + ai.generateWithFallback pattern
  * in the generationLoop.
@@ -24,7 +23,7 @@ export async function exampleDrafterIntegration(
   researchContext: string
 ) {
   console.log("🔄 Using Drafter agent for generation...");
-  
+
   // NEW: Single call to Drafter agent replaces the multi-step process
   const streamResult = await runDrafterAgent(
     specText,
@@ -32,7 +31,7 @@ export async function exampleDrafterIntegration(
     knowledgeContext,
     researchContext
   );
-  
+
   console.log("✅ Drafter agent streaming result ready");
   return streamResult;
 }
@@ -45,34 +44,34 @@ export function integrationComparison() {
     current: {
       steps: [
         "1. buildSystemPrompt(pack) - get validation rules",
-        "2. buildUserPrompt(specText) - format user input", 
+        "2. buildUserPrompt(specText) - format user input",
         "3. Manually combine with knowledge/research context",
         "4. Create CoreMessage[] array",
-        "5. Call ai.generateWithFallback(messages)"
+        "5. Call ai.generateWithFallback(messages)",
       ],
       files: [
         "src/lib/spec/prompt.ts",
-        "src/lib/spec/api/workflowHelpers.ts", 
-        "src/lib/spec/api/generationLoop.ts"
-      ]
+        "src/lib/spec/api/workflowHelpers.ts",
+        "src/lib/spec/api/generationLoop.ts",
+      ],
     },
-    
+
     drafter: {
       steps: [
         "1. Call runDrafterAgent(input, pack, knowledge, research)",
-        "2. Get streaming result directly"
+        "2. Get streaming result directly",
       ],
       files: [
-        "src/lib/agents/drafter.ts (preserves all existing functionality)"
+        "src/lib/agents/drafter.ts (preserves all existing functionality)",
       ],
       advantages: [
         "✅ Preserves existing buildSystemPrompt() integration",
         "✅ Adds rich domain knowledge from master prompt",
         "✅ Simplifies API route logic",
         "✅ Maintains compatibility with validation system",
-        "✅ Proper error handling and fallbacks built-in"
-      ]
-    }
+        "✅ Proper error handling and fallbacks built-in",
+      ],
+    },
   };
 }
 

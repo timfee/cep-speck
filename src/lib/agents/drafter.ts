@@ -33,24 +33,25 @@ const DEFAULT_CONFIG: DrafterConfig = {
 
 /**
  * Drafter agent that combines master mega-prompt with existing validation rules
- * 
+ *
  * The Drafter integrates:
  * 1. Master mega-prompt with domain knowledge and generation instructions
  * 2. Existing toPrompt() functions from validation items via buildSystemPrompt()
  * 3. Optional knowledge base and research context
- * 
+ *
  * This preserves the "define-once" architecture while adding sophisticated AI capabilities.
  */
 export class DrafterAgent implements StreamingAgent {
   public readonly id = "drafter";
-  public readonly description = "Generates comprehensive PRDs using master prompt combined with validation rules";
+  public readonly description =
+    "Generates comprehensive PRDs using master prompt combined with validation rules";
 
   private readonly config: DrafterConfig;
   private readonly ai = getResilientAI();
 
   /**
    * Create a new Drafter agent
-   * 
+   *
    * @param config - Optional configuration overrides
    */
   constructor(config: Partial<DrafterConfig> = {}) {
@@ -59,36 +60,38 @@ export class DrafterAgent implements StreamingAgent {
 
   /**
    * Execute the drafter agent with streaming response
-   * 
+   *
    * @param context - Agent execution context
    * @returns Promise resolving to streaming text result
    */
-  public async executeStreaming(context: AgentContext): Promise<StreamTextResult<Record<string, never>, never>> {
+  public async executeStreaming(
+    context: AgentContext
+  ): Promise<StreamTextResult<Record<string, never>, never>> {
     const messages = await this.buildMessages(context);
     return await this.ai.generateWithFallback(messages);
   }
 
   /**
    * Execute the drafter agent and return complete result
-   * 
+   *
    * @param context - Agent execution context
    * @returns Promise resolving to complete agent result
    */
   public async execute(context: AgentContext): Promise<AgentResult> {
     const startTime = Date.now();
-    
+
     const streamResult = await this.executeStreaming(context);
-    
+
     let content = "";
     let tokenCount = 0;
-    
+
     for await (const delta of streamResult.textStream) {
       content += delta;
       tokenCount++;
     }
-    
+
     const duration = Date.now() - startTime;
-    
+
     return {
       content,
       metadata: {
@@ -101,50 +104,58 @@ export class DrafterAgent implements StreamingAgent {
 
   /**
    * Build the complete message array for AI generation
-   * 
+   *
    * Combines:
    * 1. Master prompt from guides/prompts/drafter-master.md
    * 2. Existing validation rules via buildSystemPrompt()
    * 3. Optional knowledge and research context
    * 4. User input as user message
-   * 
+   *
    * @param context - Agent execution context
    * @returns Array of core messages for AI generation
    */
   private async buildMessages(context: AgentContext): Promise<CoreMessage[]> {
     const { userInput, pack, knowledgeContext, researchContext } = context;
-    
+
     // Load master prompt
     const masterPrompt = await loadPrompt({
       path: this.config.masterPromptPath,
       cache: true,
       fallback: this.getFallbackMasterPrompt(),
     });
-    
+
     // Get existing validation rules via buildSystemPrompt
     const validationRules = buildSystemPrompt(pack);
-    
+
     // Build complete system prompt
     let systemPrompt = masterPrompt;
-    
+
     // Add validation rules section
     systemPrompt += "\n\n## Validation Requirements\n\n";
     systemPrompt += "The following validation rules MUST be followed:\n\n";
     systemPrompt += validationRules;
-    
+
     // Add knowledge context if available and enabled
-    if (this.config.includeKnowledge && knowledgeContext && knowledgeContext.length > 0) {
+    if (
+      this.config.includeKnowledge &&
+      knowledgeContext !== undefined &&
+      knowledgeContext.length > 0
+    ) {
       systemPrompt += knowledgeContext;
     }
-    
+
     // Add research context if available and enabled
-    if (this.config.includeResearch && researchContext && researchContext.length > 0) {
+    if (
+      this.config.includeResearch &&
+      researchContext !== undefined &&
+      researchContext.length > 0
+    ) {
       systemPrompt += researchContext;
     }
-    
+
     // Build user prompt
     const userPrompt = buildUserPrompt(userInput);
-    
+
     return [
       { role: "system", content: systemPrompt },
       { role: "user", content: userPrompt },
@@ -166,13 +177,13 @@ Approach: Use structured placeholders when uncertain, avoid inventing facts.`;
 
 /**
  * Convenience function to run the Drafter agent
- * 
+ *
  * @param userInput - User specification text
  * @param pack - Validation pack configuration
  * @param knowledgeContext - Optional knowledge base context
  * @param researchContext - Optional research context
  * @returns Promise resolving to streaming text result
- * 
+ *
  * @example
  * ```typescript
  * const result = await runDrafterAgent(
@@ -181,7 +192,7 @@ Approach: Use structured placeholders when uncertain, avoid inventing facts.`;
  *   knowledgeContext,
  *   researchContext
  * );
- * 
+ *
  * for await (const delta of result.textStream) {
  *   console.log(delta);
  * }
@@ -194,7 +205,7 @@ export async function runDrafterAgent(
   researchContext?: string
 ): Promise<StreamTextResult<Record<string, never>, never>> {
   const drafter = new DrafterAgent();
-  
+
   return await drafter.executeStreaming({
     userInput,
     pack,
