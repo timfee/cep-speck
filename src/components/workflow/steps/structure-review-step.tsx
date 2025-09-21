@@ -6,7 +6,7 @@ import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { SectionTypeSelector } from "@/components/workflow/SectionTypeSelector";
+import { SectionTypeSelector } from "@/components/workflow/section-type-selector";
 import { TIMEOUTS } from "@/lib/constants";
 import type { SectionDefinition } from "@/types/workflow";
 

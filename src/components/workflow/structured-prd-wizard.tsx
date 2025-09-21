@@ -12,11 +12,11 @@ import {
 } from "@/components/workflow/hooks/use-generation-state";
 
 import { ProgressTimeline } from "@/components/workflow/progress-timeline";
-import { CompleteStep } from "@/components/workflow/steps/CompleteStep";
-import { ContentOutlineStep } from "@/components/workflow/steps/ContentOutlineStep";
-import { EnterpriseParametersStep } from "@/components/workflow/steps/EnterpriseParametersStep";
-import { GenerateStep } from "@/components/workflow/steps/GenerateStep";
-import { IdeaCaptureStep } from "@/components/workflow/steps/IdeaCaptureStep";
+import { CompleteStep } from "@/components/workflow/steps/complete-step";
+import { ContentOutlineStep } from "@/components/workflow/steps/content-outline-step";
+import { EnterpriseParametersStep } from "@/components/workflow/steps/enterprise-parameters-step";
+import { GenerateStep } from "@/components/workflow/steps/generate-step";
+import { IdeaCaptureStep } from "@/components/workflow/steps/idea-capture-step";
 import { MIN_PROMPT_LENGTH } from "@/hooks/progress-calculation";
 import { useStructuredWorkflow } from "@/hooks/use-structured-workflow";
 

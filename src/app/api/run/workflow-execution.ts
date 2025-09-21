@@ -2,7 +2,7 @@
  * Workflow execution utilities for API route
  */
 
-import { runGenerationLoop } from "@/lib/agents/hybridWorkflow";
+import { runGenerationLoop } from "@/lib/agents/hybrid-workflow";
 import { DEFAULT_SPEC_PACK } from "@/lib/config";
 
 import {

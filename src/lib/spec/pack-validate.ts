@@ -4,7 +4,7 @@ import {
   validateBannedTextRegex,
   validateHeaderRegex,
   validateItems,
-} from "./validation/packHelpers";
+} from "./validation/pack-helpers";
 
 export interface PackValidationError {
   code: string;

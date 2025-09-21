@@ -21,10 +21,10 @@ import {
   SECURITY_REQUIREMENTS_OPTIONS,
   SUPPORT_LEVEL_OPTIONS,
   TARGET_SKU_OPTIONS,
-} from "./components/enterpriseOptions";
+} from "./components/enterprise-options";
 
-import { MultiSelectSection } from "./components/MultiSelectSection";
-import { RadioGroupSection } from "./components/RadioGroupSection";
+import { MultiSelectSection } from "./components/multi-select-section";
+import { RadioGroupSection } from "./components/radio-group-section";
 
 interface EnterpriseParametersStepProps {
   parameters: EnterpriseParameters;

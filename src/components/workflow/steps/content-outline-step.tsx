@@ -21,7 +21,7 @@ import type {
   SuccessMetric,
 } from "@/types/workflow";
 
-import { ContentSection } from "./components/ContentSection";
+import { ContentSection } from "./components/content-section";
 
 interface ContentOutlineStepProps {
   initialPrompt: string;
