@@ -2,6 +2,8 @@
  * Refinement phase implementation
  */
 
+import type { StreamTextResult } from "ai";
+
 import type { GenerationLoopContext } from "./types";
 
 import {
@@ -46,7 +48,7 @@ function sendRefinementPhaseNotification(
 
 async function streamRefinedContent(
   context: GenerationLoopContext,
-  refinerResult: Awaited<ReturnType<typeof runRefinerAgent>>,
+  refinerResult: StreamTextResult<Record<string, never>, never>,
   totalTokens: number
 ): Promise<string> {
   let refinedContent = "";

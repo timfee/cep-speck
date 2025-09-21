@@ -2,6 +2,8 @@
  * Draft phase implementation
  */
 
+import type { StreamTextResult } from "ai";
+
 import {
   createGenerationFrame,
   createPhaseFrame,
@@ -46,7 +48,7 @@ function sendDraftPhaseNotification(
 
 async function streamDraftContent(
   context: GenerationLoopContext,
-  drafterResult: Awaited<ReturnType<typeof runDrafterAgent>>,
+  drafterResult: StreamTextResult<Record<string, never>, never>,
   totalTokens: number
 ): Promise<{ draft: string; updatedTokens: number }> {
   let draftContent = "";
