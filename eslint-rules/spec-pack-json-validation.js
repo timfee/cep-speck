@@ -1,6 +1,16 @@
 const fs = require("fs");
 const path = require("path");
 
+/**
+ * ESLint rule to validate SpecPack JSON structure for the hybrid validation system
+ *
+ * Validates:
+ * - Required top-level fields (id, items)
+ * - Item structure and field validation
+ * - Kind and severity value constraints
+ * - Priority ranges and uniqueness
+ * - Composition configuration
+ */
 module.exports = {
   meta: {
     type: "problem",
@@ -24,8 +34,8 @@ module.exports = {
           const fileContent = fs.readFileSync(fileName, "utf8");
           const pack = JSON.parse(fileContent);
 
-          // Validate required top-level fields
-          const requiredFields = ["id", "items", "healPolicy"];
+          // Validate required top-level fields (healPolicy removed in hybrid migration)
+          const requiredFields = ["id", "items"];
           requiredFields.forEach((field) => {
             if (!pack[field]) {
               context.report({
@@ -34,24 +44,6 @@ module.exports = {
               });
             }
           });
-
-          // Validate healPolicy structure
-          if (pack.healPolicy) {
-            if (typeof pack.healPolicy.maxAttempts !== "number") {
-              context.report({
-                node,
-                message: "healPolicy.maxAttempts must be a number",
-              });
-            }
-
-            const validOrders = ["by-priority", "by-severity-then-priority"];
-            if (!validOrders.includes(pack.healPolicy.order)) {
-              context.report({
-                node,
-                message: `healPolicy.order must be one of: ${validOrders.join(", ")}`,
-              });
-            }
-          }
 
           // Validate items array
           if (Array.isArray(pack.items)) {

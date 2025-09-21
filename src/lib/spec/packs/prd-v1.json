@@ -1,14 +1,6 @@
 {
   "id": "prd-v1",
   "description": "CEP PRD rules",
-  "healPolicy": {
-    "maxAttempts": 3,
-    "order": "by-severity-then-priority",
-    "groupBy": "item",
-    "maxChars": 1800,
-    "includeExamples": true,
-    "style": "bullets"
-  },
   "composition": {
     "sections": [
       { "id": "1", "title": "TL;DR", "required": true },
@@ -121,18 +113,6 @@
         ],
         "recencyDays": 365,
         "requireResearch": true
-      }
-    },
-    {
-      "id": "semantic-policy-validator",
-      "kind": "policy",
-      "priority": 90,
-      "severity": "error",
-      "params": {
-        "personas": ["IT Admin", "End User", "Security Team"],
-        "enforceFactualTone": true,
-        "requireSpecificMetrics": true,
-        "banOverExplanation": true
       }
     }
   ]

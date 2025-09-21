@@ -44,7 +44,7 @@ export interface SpecPack {
   id: string;
   description?: string;
   items: SpecItemDef[];
-  healPolicy: HealPolicy;
+  healPolicy?: HealPolicy; // Optional - legacy healing system removed in hybrid migration
   composition?: CompositionSpec;
   globals?: {
     bannedText?: { exact?: string[]; regex?: string[] };
