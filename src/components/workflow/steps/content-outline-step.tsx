@@ -23,6 +23,13 @@ import type {
 
 import { ContentSection } from "./components/content-section";
 
+import {
+  createNewFunctionalRequirement,
+  createNewMilestone,
+  createNewSuccessMetric,
+  getOutlineSummary,
+} from "./content-outline-helpers";
+
 interface ContentOutlineStepProps {
   initialPrompt: string;
   contentOutline: ContentOutline;
@@ -30,7 +37,10 @@ interface ContentOutlineStepProps {
   onRegenerateOutline: () => void;
   isLoading?: boolean;
   // Editing functions
-  onEditFunctionalRequirement?: (id: string, updates: Partial<FunctionalRequirement>) => void;
+  onEditFunctionalRequirement?: (
+    id: string,
+    updates: Partial<FunctionalRequirement>
+  ) => void;
   onDeleteFunctionalRequirement?: (id: string) => void;
   onAddFunctionalRequirement?: (requirement: FunctionalRequirement) => void;
   onEditSuccessMetric?: (id: string, updates: Partial<SuccessMetric>) => void;
@@ -57,27 +67,13 @@ export function ContentOutlineStep({
   onDeleteMilestone,
   onAddMilestone,
 }: ContentOutlineStepProps) {
-  const totalItems =
-    contentOutline.functionalRequirements.length +
-    contentOutline.successMetrics.length +
-    contentOutline.milestones.length;
+  const outlineSummary = getOutlineSummary(contentOutline);
 
   const handleAddFunctionalRequirement = () => {
+    const newReq = createNewFunctionalRequirement();
     if (onAddFunctionalRequirement) {
-      const newReq: FunctionalRequirement = {
-        id: `fr-${Date.now()}`,
-        title: "New Functional Requirement",
-        description: "Enter description here",
-        priority: "P1",
-      };
       onAddFunctionalRequirement(newReq);
     } else {
-      const newReq: FunctionalRequirement = {
-        id: `fr-${Date.now()}`,
-        title: "New Functional Requirement",
-        description: "Enter description here",
-        priority: "P1",
-      };
       onChange({
         ...contentOutline,
         functionalRequirements: [
@@ -89,21 +85,10 @@ export function ContentOutlineStep({
   };
 
   const handleAddSuccessMetric = () => {
+    const newMetric = createNewSuccessMetric();
     if (onAddSuccessMetric) {
-      const newMetric: SuccessMetric = {
-        id: `sm-${Date.now()}`,
-        name: "New Success Metric",
-        description: "Enter description here",
-        type: "engagement",
-      };
       onAddSuccessMetric(newMetric);
     } else {
-      const newMetric: SuccessMetric = {
-        id: `sm-${Date.now()}`,
-        name: "New Success Metric",
-        description: "Enter description here",
-        type: "engagement",
-      };
       onChange({
         ...contentOutline,
         successMetrics: [...contentOutline.successMetrics, newMetric],
@@ -112,21 +97,10 @@ export function ContentOutlineStep({
   };
 
   const handleAddMilestone = () => {
+    const newMilestone = createNewMilestone();
     if (onAddMilestone) {
-      const newMilestone: Milestone = {
-        id: `ms-${Date.now()}`,
-        title: "New Milestone",
-        description: "Enter description here",
-        phase: "development",
-      };
       onAddMilestone(newMilestone);
     } else {
-      const newMilestone: Milestone = {
-        id: `ms-${Date.now()}`,
-        title: "New Milestone",
-        description: "Enter description here",
-        phase: "development",
-      };
       onChange({
         ...contentOutline,
         milestones: [...contentOutline.milestones, newMilestone],
@@ -189,16 +163,17 @@ export function ContentOutlineStep({
           </div>
 
           <div className="flex flex-wrap gap-2">
-            <Badge variant="outline">{totalItems} total items</Badge>
             <Badge variant="outline">
-              {contentOutline.functionalRequirements.length} functional
-              requirements
+              {outlineSummary.totalItems} total items
             </Badge>
             <Badge variant="outline">
-              {contentOutline.successMetrics.length} metrics
+              {outlineSummary.functionalRequirements} functional requirements
             </Badge>
             <Badge variant="outline">
-              {contentOutline.milestones.length} milestones
+              {outlineSummary.successMetrics} metrics
+            </Badge>
+            <Badge variant="outline">
+              {outlineSummary.milestones} milestones
             </Badge>
           </div>
         </div>
@@ -288,7 +263,7 @@ export function ContentOutlineStep({
       />
 
       {/* Summary validation */}
-      {totalItems > 0 && (
+      {outlineSummary.totalItems > 0 && (
         <div className="text-center">
           <div className="inline-flex items-center space-x-2 text-sm text-green-700 bg-green-50 p-3 rounded-lg border border-green-200">
             <CheckCircle className="h-4 w-4" />
