@@ -1,6 +1,6 @@
 "use client";
 
-import { SpinnerDots, SpinnerBars, SpinnerSVG } from "./spinner-components";
+import { SpinnerBars, SpinnerDots } from "./spinner-components";
 
 export interface SpinnerProps {
   variant?: "default" | "ring" | "ellipsis" | "bars" | "infinite";
@@ -15,7 +15,6 @@ export function Spinner({
 }: SpinnerProps) {
   if (variant === "ellipsis")
     return <SpinnerDots size={size} className={className} />;
-  if (variant === "bars")
-    return <SpinnerBars size={size} className={className} />;
-  return <SpinnerSVG variant={variant} size={size} className={className} />;
+
+  return <SpinnerBars size={size} className={className} />;
 }
