@@ -5,7 +5,7 @@ import { ContentOutlineStep } from "@/components/workflow/steps/content-outline-
 import { EnterpriseParametersStep } from "@/components/workflow/steps/enterprise-parameters-step";
 import { GenerateStep } from "@/components/workflow/steps/generate-step";
 import { IdeaCaptureStep } from "@/components/workflow/steps/idea-capture-step";
-import { useStructuredWorkflow } from "@/hooks/use-structured-workflow";
+import { useStructuredWorkflowContext } from "@/contexts/structured-workflow-context";
 
 interface StepRendererProps {
   generatedPrd: string;
@@ -36,7 +36,7 @@ export function StepRenderer({
     updateMilestone,
     deleteMilestone,
     addMilestone,
-  } = useStructuredWorkflow();
+  } = useStructuredWorkflowContext();
 
   switch (state.currentStep) {
     case "idea":

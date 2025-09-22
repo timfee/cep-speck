@@ -214,6 +214,11 @@ export const WORKFLOW_STEPS = [
     name: "Generate PRD",
     description: "Create final document",
   },
+  {
+    id: "complete",
+    name: "PRD Complete",
+    description: "Review generated document",
+  },
 ] as const;
 
 // Default enterprise parameters

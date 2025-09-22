@@ -4,7 +4,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { useStructuredWorkflow } from "@/hooks/use-structured-workflow";
+import { useStructuredWorkflowContext } from "@/contexts/structured-workflow-context";
 import { getPhaseDescription } from "@/lib/streaming/stream-processor";
 
 import { usePrdGeneration } from "../hooks/use-prd-generation";
@@ -12,7 +12,7 @@ import { usePrdGeneration } from "../hooks/use-prd-generation";
 const MAX_ISSUES_TO_DISPLAY = 5;
 
 export function GenerateStep() {
-  const { state } = useStructuredWorkflow();
+  const { state, goToNextStep } = useStructuredWorkflowContext();
   const { 
     generatedPrd, 
     isGenerating, 
@@ -22,7 +22,7 @@ export function GenerateStep() {
     validationIssues,
     error, 
     generatePrd 
-  } = usePrdGeneration();
+  } = usePrdGeneration(goToNextStep);
   
   const handleGenerate = () => {
     generatePrd(state);

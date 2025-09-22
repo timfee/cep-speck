@@ -6,13 +6,13 @@ import { Card } from "@/components/ui/card";
 import { ProgressTimeline } from "@/components/workflow/progress-timeline";
 import { StepRenderer } from "@/components/workflow/step-renderer";
 import { WizardNavigation } from "@/components/workflow/wizard-navigation";
-import { useStructuredWorkflow } from "@/hooks/use-structured-workflow";
+import { StructuredWorkflowProvider, useStructuredWorkflowContext } from "@/contexts/structured-workflow-context";
 
 import { useAutoGeneration } from "./hooks/use-auto-generation";
 import { usePrdWizardHandlers } from "./hooks/use-prd-wizard-handlers";
 
-export function StructuredPrdWizard() {
-  const { state } = useStructuredWorkflow();
+function StructuredPrdWizardContent() {
+  const { state } = useStructuredWorkflowContext();
 
   const {
     generatedPrd,
@@ -48,10 +48,10 @@ export function StructuredPrdWizard() {
       <Card className="p-6 min-h-[600px]">
         <StepRenderer
           generatedPrd={generatedPrd}
-          isGenerating={isGenerating}
-          error={error}
+          _isGenerating={isGenerating}
+          _error={error}
           handleRegenerateOutline={handleRegenerateOutline}
-          handleGeneratePrd={handleGeneratePrd}
+          _handleGeneratePrd={handleGeneratePrd}
         />
       </Card>
 
@@ -66,5 +66,13 @@ export function StructuredPrdWizard() {
         </p>
       </div>
     </div>
+  );
+}
+
+export function StructuredPrdWizard() {
+  return (
+    <StructuredWorkflowProvider>
+      <StructuredPrdWizardContent />
+    </StructuredWorkflowProvider>
   );
 }

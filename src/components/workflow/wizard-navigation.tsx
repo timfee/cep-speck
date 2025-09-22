@@ -2,7 +2,7 @@ import { ArrowLeft, ArrowRight, Wand2 } from "lucide-react";
 import React from "react";
 
 import { Button } from "@/components/ui/button";
-import { useStructuredWorkflow } from "@/hooks/use-structured-workflow";
+import { useStructuredWorkflowContext } from "@/contexts/structured-workflow-context";
 
 interface WizardNavigationProps {
   handleRegenerateOutline: () => Promise<void>;
@@ -12,7 +12,7 @@ export function WizardNavigation({
   handleRegenerateOutline,
 }: WizardNavigationProps) {
   const { state, goToNextStep, goToPreviousStep, resetWorkflow } =
-    useStructuredWorkflow();
+    useStructuredWorkflowContext();
 
   const handleNext = () => {
     if (state.progress.canGoNext) {

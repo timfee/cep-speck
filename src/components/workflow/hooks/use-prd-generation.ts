@@ -10,7 +10,7 @@ import type { Issue } from '@/lib/spec/types';
 import { StreamProcessor, getProgressForPhase } from '@/lib/streaming/stream-processor';
 import type { StructuredWorkflowState } from '@/types/workflow';
 
-export function usePrdGeneration() {
+export function usePrdGeneration(onGenerationComplete?: () => void) {
   const [generatedPrd, setGeneratedPrd] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [phase, setPhase] = useState('');
@@ -74,6 +74,10 @@ export function usePrdGeneration() {
                 setGeneratedPrd(frame.data.finalDraft);
                 setProgress(100);
                 setPhase('done');
+                // Call completion callback when result is received
+                if (onGenerationComplete) {
+                  onGenerationComplete();
+                }
               }
               break;
               
@@ -98,12 +102,19 @@ export function usePrdGeneration() {
       
       // Process remaining frames
       const finalFrames = processor.flush();
+      let generationSuccessful = false;
       for (const frame of finalFrames) {
         if (frame.type === 'result' && frame.data.finalDraft) {
           setGeneratedPrd(frame.data.finalDraft);
           setProgress(100);
           setPhase('done');
+          generationSuccessful = true;
         }
+      }
+      
+      // Call completion callback if generation was successful
+      if (generationSuccessful && onGenerationComplete) {
+        onGenerationComplete();
       }
       
     } catch (err) {
@@ -114,7 +125,7 @@ export function usePrdGeneration() {
     } finally {
       setIsGenerating(false);
     }
-  }, []);
+  }, [onGenerationComplete]);
   
   const resetGeneration = useCallback(() => {
     setGeneratedPrd('');
