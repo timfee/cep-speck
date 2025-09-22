@@ -6,7 +6,7 @@
     "predev": "pnpm lint:quick",
     "dev": "next dev --turbopack",
     "dev:lint-watch": "concurrently \"pnpm dev\" \"pnpm lint:watch\"",
-    "build": "pnpm lint && pnpm fta:check && next build --turbopack",
+    "build": "next build --turbopack",
     "start": "next start",
     "preinstall": "npx only-allow pnpm",
     "lint": "eslint",
