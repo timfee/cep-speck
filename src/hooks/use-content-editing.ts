@@ -154,12 +154,15 @@ export function useContentEditing(
   );
 
   return {
+    // Functional requirements
     updateFunctionalRequirement,
     deleteFunctionalRequirement,
     addFunctionalRequirement,
+    // Success metrics
     updateSuccessMetric,
     deleteSuccessMetric,
     addSuccessMetric,
+    // Milestones
     updateMilestone,
     deleteMilestone,
     addMilestone,

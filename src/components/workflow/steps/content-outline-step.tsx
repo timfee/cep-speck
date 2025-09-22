@@ -12,13 +12,8 @@ import type {
 import { CompletionStatus } from "./components/completion-status";
 import { ContentSections } from "./components/content-sections";
 import { OutlineHeader } from "./components/outline-header";
-
-import {
-  createNewFunctionalRequirement,
-  createNewMilestone,
-  createNewSuccessMetric,
-  getOutlineSummary,
-} from "./content-outline-helpers";
+import { getOutlineSummary } from "./content-outline-helpers";
+import { useOutlineStepHandlers } from "./hooks/use-outline-step-handlers";
 
 interface ContentOutlineStepProps {
   initialPrompt: string;
@@ -47,72 +42,29 @@ export function ContentOutlineStep({
   onChange,
   onRegenerateOutline,
   isLoading = false,
-  onEditFunctionalRequirement: _onEditFunctionalRequirement,
   onDeleteFunctionalRequirement,
   onAddFunctionalRequirement,
-  onEditSuccessMetric: _onEditSuccessMetric,
   onDeleteSuccessMetric,
   onAddSuccessMetric,
-  onEditMilestone: _onEditMilestone,
   onDeleteMilestone,
   onAddMilestone,
 }: ContentOutlineStepProps) {
   const outlineSummary = getOutlineSummary(contentOutline);
 
-  const handleAddFunctionalRequirement = () => {
-    const newReq = createNewFunctionalRequirement();
-    if (onAddFunctionalRequirement) {
-      onAddFunctionalRequirement(newReq);
-    } else {
-      onChange({
-        ...contentOutline,
-        functionalRequirements: [
-          ...contentOutline.functionalRequirements,
-          newReq,
-        ],
-      });
-    }
-  };
-
-  const handleAddSuccessMetric = () => {
-    const newMetric = createNewSuccessMetric();
-    if (onAddSuccessMetric) {
-      onAddSuccessMetric(newMetric);
-    } else {
-      onChange({
-        ...contentOutline,
-        successMetrics: [...contentOutline.successMetrics, newMetric],
-      });
-    }
-  };
-
-  const handleAddMilestone = () => {
-    const newMilestone = createNewMilestone();
-    if (onAddMilestone) {
-      onAddMilestone(newMilestone);
-    } else {
-      onChange({
-        ...contentOutline,
-        milestones: [...contentOutline.milestones, newMilestone],
-      });
-    }
-  };
-
-  // Edit handlers - for now just console log to test the connection
-  const handleEditFunctionalRequirement = (id: string) => {
-    console.log("Edit functional requirement:", id);
-    // TODO: Open edit dialog
-  };
-
-  const handleEditSuccessMetric = (id: string) => {
-    console.log("Edit success metric:", id);
-    // TODO: Open edit dialog
-  };
-
-  const handleEditMilestone = (id: string) => {
-    console.log("Edit milestone:", id);
-    // TODO: Open edit dialog
-  };
+  const {
+    handleAddFunctionalRequirement,
+    handleEditFunctionalRequirement,
+    handleAddSuccessMetric,
+    handleEditSuccessMetric,
+    handleAddMilestone,
+    handleEditMilestone,
+  } = useOutlineStepHandlers({
+    contentOutline,
+    onChange,
+    onAddFunctionalRequirement,
+    onAddSuccessMetric,
+    onAddMilestone,
+  });
 
   return (
     <div className="space-y-6">
