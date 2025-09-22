@@ -29,6 +29,16 @@ interface ContentOutlineStepProps {
   onChange: (outline: ContentOutline) => void;
   onRegenerateOutline: () => void;
   isLoading?: boolean;
+  // Editing functions
+  onEditFunctionalRequirement?: (id: string, updates: Partial<FunctionalRequirement>) => void;
+  onDeleteFunctionalRequirement?: (id: string) => void;
+  onAddFunctionalRequirement?: (requirement: FunctionalRequirement) => void;
+  onEditSuccessMetric?: (id: string, updates: Partial<SuccessMetric>) => void;
+  onDeleteSuccessMetric?: (id: string) => void;
+  onAddSuccessMetric?: (metric: SuccessMetric) => void;
+  onEditMilestone?: (id: string, updates: Partial<Milestone>) => void;
+  onDeleteMilestone?: (id: string) => void;
+  onAddMilestone?: (milestone: Milestone) => void;
 }
 
 export function ContentOutlineStep({
@@ -37,52 +47,107 @@ export function ContentOutlineStep({
   onChange,
   onRegenerateOutline,
   isLoading = false,
+  onEditFunctionalRequirement: _onEditFunctionalRequirement,
+  onDeleteFunctionalRequirement,
+  onAddFunctionalRequirement,
+  onEditSuccessMetric: _onEditSuccessMetric,
+  onDeleteSuccessMetric,
+  onAddSuccessMetric,
+  onEditMilestone: _onEditMilestone,
+  onDeleteMilestone,
+  onAddMilestone,
 }: ContentOutlineStepProps) {
   const totalItems =
     contentOutline.functionalRequirements.length +
     contentOutline.successMetrics.length +
     contentOutline.milestones.length;
 
-  const addFunctionalRequirement = () => {
-    const newReq: FunctionalRequirement = {
-      id: `fr-${Date.now()}`,
-      title: "New Functional Requirement",
-      description: "Enter description here",
-      priority: "P1",
-    };
-    onChange({
-      ...contentOutline,
-      functionalRequirements: [
-        ...contentOutline.functionalRequirements,
-        newReq,
-      ],
-    });
+  const handleAddFunctionalRequirement = () => {
+    if (onAddFunctionalRequirement) {
+      const newReq: FunctionalRequirement = {
+        id: `fr-${Date.now()}`,
+        title: "New Functional Requirement",
+        description: "Enter description here",
+        priority: "P1",
+      };
+      onAddFunctionalRequirement(newReq);
+    } else {
+      const newReq: FunctionalRequirement = {
+        id: `fr-${Date.now()}`,
+        title: "New Functional Requirement",
+        description: "Enter description here",
+        priority: "P1",
+      };
+      onChange({
+        ...contentOutline,
+        functionalRequirements: [
+          ...contentOutline.functionalRequirements,
+          newReq,
+        ],
+      });
+    }
   };
 
-  const addSuccessMetric = () => {
-    const newMetric: SuccessMetric = {
-      id: `sm-${Date.now()}`,
-      name: "New Success Metric",
-      description: "Enter description here",
-      type: "engagement",
-    };
-    onChange({
-      ...contentOutline,
-      successMetrics: [...contentOutline.successMetrics, newMetric],
-    });
+  const handleAddSuccessMetric = () => {
+    if (onAddSuccessMetric) {
+      const newMetric: SuccessMetric = {
+        id: `sm-${Date.now()}`,
+        name: "New Success Metric",
+        description: "Enter description here",
+        type: "engagement",
+      };
+      onAddSuccessMetric(newMetric);
+    } else {
+      const newMetric: SuccessMetric = {
+        id: `sm-${Date.now()}`,
+        name: "New Success Metric",
+        description: "Enter description here",
+        type: "engagement",
+      };
+      onChange({
+        ...contentOutline,
+        successMetrics: [...contentOutline.successMetrics, newMetric],
+      });
+    }
   };
 
-  const addMilestone = () => {
-    const newMilestone: Milestone = {
-      id: `ms-${Date.now()}`,
-      title: "New Milestone",
-      description: "Enter description here",
-      phase: "development",
-    };
-    onChange({
-      ...contentOutline,
-      milestones: [...contentOutline.milestones, newMilestone],
-    });
+  const handleAddMilestone = () => {
+    if (onAddMilestone) {
+      const newMilestone: Milestone = {
+        id: `ms-${Date.now()}`,
+        title: "New Milestone",
+        description: "Enter description here",
+        phase: "development",
+      };
+      onAddMilestone(newMilestone);
+    } else {
+      const newMilestone: Milestone = {
+        id: `ms-${Date.now()}`,
+        title: "New Milestone",
+        description: "Enter description here",
+        phase: "development",
+      };
+      onChange({
+        ...contentOutline,
+        milestones: [...contentOutline.milestones, newMilestone],
+      });
+    }
+  };
+
+  // Edit handlers - for now just console log to test the connection
+  const handleEditFunctionalRequirement = (id: string) => {
+    console.log("Edit functional requirement:", id);
+    // TODO: Open edit dialog
+  };
+
+  const handleEditSuccessMetric = (id: string) => {
+    console.log("Edit success metric:", id);
+    // TODO: Open edit dialog
+  };
+
+  const handleEditMilestone = (id: string) => {
+    console.log("Edit milestone:", id);
+    // TODO: Open edit dialog
   };
 
   return (
@@ -143,7 +208,9 @@ export function ContentOutlineStep({
         title="Functional Requirements"
         icon={<Target className="h-5 w-5 text-green-600" />}
         items={contentOutline.functionalRequirements}
-        onAdd={addFunctionalRequirement}
+        onAdd={handleAddFunctionalRequirement}
+        onEdit={handleEditFunctionalRequirement}
+        onDelete={onDeleteFunctionalRequirement}
         emptyMessage='No functional requirements generated. Click "Add Functional" to create one.'
         renderItem={(req) => ({
           id: req.id,
@@ -175,7 +242,9 @@ export function ContentOutlineStep({
         title="Success Metrics"
         icon={<BarChart3 className="h-5 w-5 text-blue-600" />}
         items={contentOutline.successMetrics}
-        onAdd={addSuccessMetric}
+        onAdd={handleAddSuccessMetric}
+        onEdit={handleEditSuccessMetric}
+        onDelete={onDeleteSuccessMetric}
         emptyMessage='No success metrics generated. Click "Add Success" to create one.'
         renderItem={(metric) => ({
           id: metric.id,
@@ -200,7 +269,9 @@ export function ContentOutlineStep({
         title="Milestones & Timeline"
         icon={<Calendar className="h-5 w-5 text-purple-600" />}
         items={contentOutline.milestones}
-        onAdd={addMilestone}
+        onAdd={handleAddMilestone}
+        onEdit={handleEditMilestone}
+        onDelete={onDeleteMilestone}
         emptyMessage='No milestones generated. Click "Add Milestones" to create one.'
         renderItem={(milestone) => ({
           id: milestone.id,

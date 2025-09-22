@@ -40,10 +40,20 @@ export function StructuredPrdWizard() {
     resetWorkflow,
     generateContentOutlineForPrompt,
     serializeToSpecText,
+    // Content editing functions
+    updateFunctionalRequirement,
+    deleteFunctionalRequirement,
+    addFunctionalRequirement,
+    updateSuccessMetric,
+    deleteSuccessMetric,
+    addSuccessMetric,
+    updateMilestone,
+    deleteMilestone,
+    addMilestone,
   } = useStructuredWorkflow();
 
-  const handleRegenerateOutline = () => {
-    generateContentOutlineForPrompt(state.initialPrompt);
+  const handleRegenerateOutline = async () => {
+    await generateContentOutlineForPrompt(state.initialPrompt);
   };
 
   const handleGeneratePrd = async () => {
@@ -78,17 +88,28 @@ export function StructuredPrdWizard() {
 
   // Auto-generate content outline when prompt is ready and we're on outline step
   React.useEffect(() => {
+    async function autoGenerateOutline() {
+      try {
+        await generateContentOutlineForPrompt(state.initialPrompt);
+      } catch (error) {
+        console.error("Failed to auto-generate content outline:", error);
+      }
+    }
+
     if (
       state.currentStep === "outline" &&
       state.initialPrompt.trim().length > MIN_PROMPT_LENGTH &&
-      state.contentOutline.functionalRequirements.length === 0
+      state.contentOutline.functionalRequirements.length === 0 &&
+      !state.isLoading
     ) {
-      generateContentOutlineForPrompt(state.initialPrompt);
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      autoGenerateOutline();
     }
   }, [
     state.currentStep,
     state.initialPrompt,
     state.contentOutline.functionalRequirements.length,
+    state.isLoading,
     generateContentOutlineForPrompt,
   ]);
 
@@ -116,6 +137,15 @@ export function StructuredPrdWizard() {
             onChange={setContentOutline}
             onRegenerateOutline={handleRegenerateOutline}
             isLoading={state.isLoading}
+            onEditFunctionalRequirement={updateFunctionalRequirement}
+            onDeleteFunctionalRequirement={deleteFunctionalRequirement}
+            onAddFunctionalRequirement={addFunctionalRequirement}
+            onEditSuccessMetric={updateSuccessMetric}
+            onDeleteSuccessMetric={deleteSuccessMetric}
+            onAddSuccessMetric={addSuccessMetric}
+            onEditMilestone={updateMilestone}
+            onDeleteMilestone={deleteMilestone}
+            onAddMilestone={addMilestone}
           />
         );
 

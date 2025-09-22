@@ -40,9 +40,19 @@ interface ItemCardProps {
   description: string;
   badge: React.ReactNode;
   extra?: React.ReactNode;
+  onEdit?: (id: string) => void;
+  onDelete?: (id: string) => void;
 }
 
-export function ItemCard({ title, description, badge, extra }: ItemCardProps) {
+export function ItemCard({
+  id,
+  title,
+  description,
+  badge,
+  extra,
+  onEdit,
+  onDelete,
+}: ItemCardProps) {
   return (
     <div className="border rounded-lg p-4 space-y-2">
       <div className="flex items-center justify-between">
@@ -50,9 +60,18 @@ export function ItemCard({ title, description, badge, extra }: ItemCardProps) {
           {badge}
           <h4 className="font-medium">{title}</h4>
         </div>
-        <Button size="sm" variant="ghost">
-          <Edit3 className="h-4 w-4" />
-        </Button>
+        <div className="flex items-center gap-1">
+          {onEdit && (
+            <Button size="sm" variant="ghost" onClick={() => onEdit(id)}>
+              <Edit3 className="h-4 w-4" />
+            </Button>
+          )}
+          {onDelete && (
+            <Button size="sm" variant="ghost" onClick={() => onDelete(id)}>
+              <span className="h-4 w-4">×</span>
+            </Button>
+          )}
+        </div>
       </div>
       <p className="text-sm text-muted-foreground">{description}</p>
       {extra}

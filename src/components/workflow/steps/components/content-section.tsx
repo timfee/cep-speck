@@ -13,6 +13,8 @@ interface ContentSectionProps<T> {
   icon: React.ReactNode;
   items: T[];
   onAdd: () => void;
+  onEdit?: (id: string) => void;
+  onDelete?: (id: string) => void;
   emptyMessage: string;
   renderItem: (item: T) => {
     id: string;
@@ -28,6 +30,8 @@ export function ContentSection<T>({
   icon,
   items,
   onAdd,
+  onEdit,
+  onDelete,
   emptyMessage,
   renderItem,
 }: ContentSectionProps<T>) {
@@ -48,6 +52,8 @@ export function ContentSection<T>({
                 description={rendered.description}
                 badge={rendered.badge}
                 extra={rendered.extra}
+                onEdit={onEdit}
+                onDelete={onDelete}
               />
             );
           })

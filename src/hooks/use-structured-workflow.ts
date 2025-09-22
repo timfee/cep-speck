@@ -5,7 +5,10 @@ import { DEFAULT_ENTERPRISE_PARAMETERS } from "@/types/workflow";
 import type {
   ContentOutline,
   EnterpriseParameters,
+  FunctionalRequirement,
+  Milestone,
   StructuredWorkflowState,
+  SuccessMetric,
   WorkflowStep,
 } from "@/types/workflow";
 
@@ -114,6 +117,126 @@ export const useStructuredWorkflow = () => {
     setState((prev) => ({ ...prev, finalPrd: prd }));
   }, []);
 
+  // Content editing functions
+  const updateFunctionalRequirement = useCallback(
+    (id: string, updates: Partial<FunctionalRequirement>) => {
+      setState((prev) => ({
+        ...prev,
+        contentOutline: {
+          ...prev.contentOutline,
+          functionalRequirements:
+            prev.contentOutline.functionalRequirements.map((req) =>
+              req.id === id ? { ...req, ...updates } : req
+            ),
+        },
+      }));
+    },
+    []
+  );
+
+  const deleteFunctionalRequirement = useCallback((id: string) => {
+    setState((prev) => ({
+      ...prev,
+      contentOutline: {
+        ...prev.contentOutline,
+        functionalRequirements:
+          prev.contentOutline.functionalRequirements.filter(
+            (req) => req.id !== id
+          ),
+      },
+    }));
+  }, []);
+
+  const addFunctionalRequirement = useCallback(
+    (requirement: FunctionalRequirement) => {
+      setState((prev) => ({
+        ...prev,
+        contentOutline: {
+          ...prev.contentOutline,
+          functionalRequirements: [
+            ...prev.contentOutline.functionalRequirements,
+            requirement,
+          ],
+        },
+      }));
+    },
+    []
+  );
+
+  const updateSuccessMetric = useCallback(
+    (id: string, updates: Partial<SuccessMetric>) => {
+      setState((prev) => ({
+        ...prev,
+        contentOutline: {
+          ...prev.contentOutline,
+          successMetrics: prev.contentOutline.successMetrics.map((metric) =>
+            metric.id === id ? { ...metric, ...updates } : metric
+          ),
+        },
+      }));
+    },
+    []
+  );
+
+  const deleteSuccessMetric = useCallback((id: string) => {
+    setState((prev) => ({
+      ...prev,
+      contentOutline: {
+        ...prev.contentOutline,
+        successMetrics: prev.contentOutline.successMetrics.filter(
+          (metric) => metric.id !== id
+        ),
+      },
+    }));
+  }, []);
+
+  const addSuccessMetric = useCallback((metric: SuccessMetric) => {
+    setState((prev) => ({
+      ...prev,
+      contentOutline: {
+        ...prev.contentOutline,
+        successMetrics: [...prev.contentOutline.successMetrics, metric],
+      },
+    }));
+  }, []);
+
+  const updateMilestone = useCallback(
+    (id: string, updates: Partial<Milestone>) => {
+      setState((prev) => ({
+        ...prev,
+        contentOutline: {
+          ...prev.contentOutline,
+          milestones: prev.contentOutline.milestones.map((milestone) =>
+            milestone.id === id ? { ...milestone, ...updates } : milestone
+          ),
+        },
+      }));
+    },
+    []
+  );
+
+  const deleteMilestone = useCallback((id: string) => {
+    setState((prev) => ({
+      ...prev,
+      contentOutline: {
+        ...prev.contentOutline,
+        milestones: prev.contentOutline.milestones.filter(
+          (milestone) => milestone.id !== id
+        ),
+      },
+    }));
+  }, []);
+
+  const addMilestone = useCallback((milestone: Milestone) => {
+    setState((prev) => ({
+      ...prev,
+      contentOutline: {
+        ...prev.contentOutline,
+        milestones: [...prev.contentOutline.milestones, milestone],
+      },
+    }));
+  }, []);
+
   // Navigation functions using helpers
   const goToNextStep = useCallback(() => {
     if (!canNavigateNext(currentState.progress.canGoNext)) return;
@@ -142,11 +265,25 @@ export const useStructuredWorkflow = () => {
   }, []);
 
   const generateContentOutlineForPrompt = useCallback(
-    (prompt: string) => {
-      const outline = generateContentOutline(prompt);
-      setContentOutline(outline);
+    async (prompt: string) => {
+      setLoading(true);
+      setError(undefined);
+
+      try {
+        const outline = await generateContentOutline(prompt);
+        setContentOutline(outline);
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : "Failed to generate content outline";
+        setError(errorMessage);
+        console.error("Content outline generation failed:", error);
+      } finally {
+        setLoading(false);
+      }
     },
-    [setContentOutline]
+    [setContentOutline, setLoading, setError]
   );
 
   const serializeToSpecTextCallback = useCallback((): string => {
@@ -170,5 +307,15 @@ export const useStructuredWorkflow = () => {
     resetWorkflow,
     generateContentOutlineForPrompt,
     serializeToSpecText: serializeToSpecTextCallback,
+    // Content editing functions
+    updateFunctionalRequirement,
+    deleteFunctionalRequirement,
+    addFunctionalRequirement,
+    updateSuccessMetric,
+    deleteSuccessMetric,
+    addSuccessMetric,
+    updateMilestone,
+    deleteMilestone,
+    addMilestone,
   };
 };
