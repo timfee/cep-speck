@@ -7,6 +7,18 @@ import type {
   SuccessMetric,
 } from "@/types/workflow";
 
+import {
+  addFunctionalRequirementToOutline,
+  addMilestoneToOutline,
+  addSuccessMetricToOutline,
+  deleteFunctionalRequirementFromOutline,
+  deleteMilestoneFromOutline,
+  deleteSuccessMetricFromOutline,
+  updateFunctionalRequirementInOutline,
+  updateMilestoneInOutline,
+  updateSuccessMetricInOutline,
+} from "./content-editing-utils";
+
 /**
  * Hook for content editing operations
  * Extracted from use-structured-workflow to reduce complexity
@@ -21,13 +33,11 @@ export function useContentEditing(
     (id: string, updates: Partial<FunctionalRequirement>) => {
       setState((prev) => ({
         ...prev,
-        contentOutline: {
-          ...prev.contentOutline,
-          functionalRequirements:
-            prev.contentOutline.functionalRequirements.map((req) =>
-              req.id === id ? { ...req, ...updates } : req
-            ),
-        },
+        contentOutline: updateFunctionalRequirementInOutline(
+          prev.contentOutline,
+          id,
+          updates
+        ),
       }));
     },
     [setState]
@@ -37,13 +47,10 @@ export function useContentEditing(
     (id: string) => {
       setState((prev) => ({
         ...prev,
-        contentOutline: {
-          ...prev.contentOutline,
-          functionalRequirements:
-            prev.contentOutline.functionalRequirements.filter(
-              (req) => req.id !== id
-            ),
-        },
+        contentOutline: deleteFunctionalRequirementFromOutline(
+          prev.contentOutline,
+          id
+        ),
       }));
     },
     [setState]
@@ -53,13 +60,10 @@ export function useContentEditing(
     (requirement: FunctionalRequirement) => {
       setState((prev) => ({
         ...prev,
-        contentOutline: {
-          ...prev.contentOutline,
-          functionalRequirements: [
-            ...prev.contentOutline.functionalRequirements,
-            requirement,
-          ],
-        },
+        contentOutline: addFunctionalRequirementToOutline(
+          prev.contentOutline,
+          requirement
+        ),
       }));
     },
     [setState]
@@ -70,12 +74,11 @@ export function useContentEditing(
     (id: string, updates: Partial<SuccessMetric>) => {
       setState((prev) => ({
         ...prev,
-        contentOutline: {
-          ...prev.contentOutline,
-          successMetrics: prev.contentOutline.successMetrics.map((metric) =>
-            metric.id === id ? { ...metric, ...updates } : metric
-          ),
-        },
+        contentOutline: updateSuccessMetricInOutline(
+          prev.contentOutline,
+          id,
+          updates
+        ),
       }));
     },
     [setState]
@@ -85,12 +88,7 @@ export function useContentEditing(
     (id: string) => {
       setState((prev) => ({
         ...prev,
-        contentOutline: {
-          ...prev.contentOutline,
-          successMetrics: prev.contentOutline.successMetrics.filter(
-            (metric) => metric.id !== id
-          ),
-        },
+        contentOutline: deleteSuccessMetricFromOutline(prev.contentOutline, id),
       }));
     },
     [setState]
@@ -100,10 +98,7 @@ export function useContentEditing(
     (metric: SuccessMetric) => {
       setState((prev) => ({
         ...prev,
-        contentOutline: {
-          ...prev.contentOutline,
-          successMetrics: [...prev.contentOutline.successMetrics, metric],
-        },
+        contentOutline: addSuccessMetricToOutline(prev.contentOutline, metric),
       }));
     },
     [setState]
@@ -114,12 +109,11 @@ export function useContentEditing(
     (id: string, updates: Partial<Milestone>) => {
       setState((prev) => ({
         ...prev,
-        contentOutline: {
-          ...prev.contentOutline,
-          milestones: prev.contentOutline.milestones.map((milestone) =>
-            milestone.id === id ? { ...milestone, ...updates } : milestone
-          ),
-        },
+        contentOutline: updateMilestoneInOutline(
+          prev.contentOutline,
+          id,
+          updates
+        ),
       }));
     },
     [setState]
@@ -129,12 +123,7 @@ export function useContentEditing(
     (id: string) => {
       setState((prev) => ({
         ...prev,
-        contentOutline: {
-          ...prev.contentOutline,
-          milestones: prev.contentOutline.milestones.filter(
-            (milestone) => milestone.id !== id
-          ),
-        },
+        contentOutline: deleteMilestoneFromOutline(prev.contentOutline, id),
       }));
     },
     [setState]
@@ -144,25 +133,19 @@ export function useContentEditing(
     (milestone: Milestone) => {
       setState((prev) => ({
         ...prev,
-        contentOutline: {
-          ...prev.contentOutline,
-          milestones: [...prev.contentOutline.milestones, milestone],
-        },
+        contentOutline: addMilestoneToOutline(prev.contentOutline, milestone),
       }));
     },
     [setState]
   );
 
   return {
-    // Functional requirements
     updateFunctionalRequirement,
     deleteFunctionalRequirement,
     addFunctionalRequirement,
-    // Success metrics
     updateSuccessMetric,
     deleteSuccessMetric,
     addSuccessMetric,
-    // Milestones
     updateMilestone,
     deleteMilestone,
     addMilestone,
