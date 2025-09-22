@@ -1,13 +1,12 @@
 import { motion } from "framer-motion";
 
+import { UI_CONSTANTS, RETRY_LIMITS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 import { 
   TIMING, 
   ANIMATION_CONFIGS,
-  getAnimationStyles,
-  getDotAnimation,
-  getBarAnimation
+  getAnimationStyles
 } from "./spinner-animation-config";
 
 export function createAnimationProps(
@@ -16,54 +15,14 @@ export function createAnimationProps(
   type: "dot" | "bar"
 ) {
   const styles = getAnimationStyles(size, type);
+  const isDot = type === "dot";
   
-  if (type === "dot") {
-    const animation = getDotAnimation(index);
-    return {
-      ...styles,
-      animate: { opacity: animation.opacity },
-      transition: animation.transition,
-    };
-  } else {
-    const animation = getBarAnimation(index);
-    return {
-      ...styles,
-      animate: { scaleY: animation.scaleY },
-      transition: animation.transition,
-    };
-  }
-}
-
-export function SpinnerDots({ size, className }: { size: number; className?: string }) {
-  return (
-    <div className={cn("flex gap-1", className)}>
-      {[0, 1, 2].map((index) => (
-        <motion.div key={index} {...createAnimationProps(size, index, "dot")} />
-      ))}
-    </div>
-  );
-}
-
-export function SpinnerBars({ size, className }: { size: number; className?: string }) {
-  return (
-    <div className={cn("flex gap-1 items-end", className)}>
-      {[0, 1, 2, 3].map((index) => (
-        <motion.div key={index} {...createAnimationProps(size, index, "bar")} />
-      ))}
-    </div>
-  );
-}
-
-export function SpinnerRing({ size, className }: { size: number; className?: string }) {
-  return (
-    <motion.div
-      className={cn("border-2 border-current border-t-transparent rounded-full", className)}
-      style={{ width: size, height: size }}
-      animate={ANIMATION_CONFIGS.ring}
-      transition={{ duration: TIMING.RING_DURATION, repeat: Infinity, ease: "linear" }}
-    />
-  );
-}
+  return {
+    ...styles,
+    animate: isDot
+      ? {
+          opacity: [
+            UI_CONSTANTS.ANIMATION_OPACITY,
             1,
             UI_CONSTANTS.ANIMATION_SCALE_SMALL,
           ],
@@ -119,7 +78,6 @@ export function SpinnerBars({
     </div>
   );
 }
-
 export function SpinnerSVG({
   variant,
   size,

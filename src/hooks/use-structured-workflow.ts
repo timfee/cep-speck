@@ -1,13 +1,13 @@
 import { useCallback, useMemo, useState } from "react";
 
+import { generateContentOutlineFromPrompt } from "@/lib/services/content-outline-service";
+import { serializeWorkflowToSpec } from "@/lib/serializers/workflow-to-spec";
 import type { StructuredWorkflowState } from "@/types/workflow";
 
-import { generateContentOutline } from "./content-outline-generation";
 import { calculateStepProgress } from "./progress-calculation";
 import { useContentEditing } from "./use-content-editing";
 import { initialWorkflowState } from "./workflow-initial-state";
 import { useWorkflowNavigation } from "./workflow-navigation";
-import { serializeToSpecText } from "./workflow-serialization";
 import { useWorkflowSetters } from "./workflow-setters";
 
 export const useStructuredWorkflow = () => {
@@ -41,7 +41,7 @@ export const useStructuredWorkflow = () => {
       setters.setError(undefined);
 
       try {
-        const outline = await generateContentOutline(prompt);
+        const outline = await generateContentOutlineFromPrompt(prompt);
         setters.setContentOutline(outline);
       } catch (error) {
         const errorMessage =
@@ -58,7 +58,7 @@ export const useStructuredWorkflow = () => {
   );
 
   const serializeToSpecTextCallback = useCallback((): string => {
-    return serializeToSpecText(state);
+    return serializeWorkflowToSpec(state);
   }, [state]);
 
   return {

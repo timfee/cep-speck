@@ -9,18 +9,18 @@ import { useStructuredWorkflow } from "@/hooks/use-structured-workflow";
 
 interface StepRendererProps {
   generatedPrd: string;
-  isGenerating: boolean;
-  error: string | null;
+  _isGenerating: boolean;
+  _error: string | null;
   handleRegenerateOutline: () => Promise<void>;
-  handleGeneratePrd: () => Promise<void>;
+  _handleGeneratePrd: () => Promise<void>;
 }
 
 export function StepRenderer({
   generatedPrd,
-  isGenerating,
-  error,
+  _isGenerating,
+  _error,
   handleRegenerateOutline,
-  handleGeneratePrd,
+  _handleGeneratePrd,
 }: StepRendererProps) {
   const {
     state,
@@ -76,14 +76,7 @@ export function StepRenderer({
       );
 
     case "generate":
-      return (
-        <GenerateStep
-          error={error}
-          isGenerating={isGenerating}
-          generatedPrd={generatedPrd}
-          onGenerate={handleGeneratePrd}
-        />
-      );
+      return <GenerateStep />;
 
     case "complete":
       return <CompleteStep generatedPrd={generatedPrd} />;
