@@ -1,4 +1,5 @@
 import { Wand2, Copy, AlertCircle, CheckCircle } from "lucide-react";
+import { useCallback } from "react";
 
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -12,7 +13,16 @@ import { usePrdGeneration } from "../hooks/use-prd-generation";
 const MAX_ISSUES_TO_DISPLAY = 5;
 
 export function GenerateStep() {
-  const { state, goToNextStep } = useStructuredWorkflowContext();
+  const { state, goToNextStep, setFinalPrd } = useStructuredWorkflowContext();
+  
+  // Create a callback that persists the PRD and navigates
+  const handleGenerationComplete = useCallback((generatedPrd: string) => {
+    // Store the generated PRD in shared state for the CompleteStep
+    setFinalPrd(generatedPrd);
+    // Then navigate to the complete step
+    goToNextStep();
+  }, [setFinalPrd, goToNextStep]);
+  
   const { 
     generatedPrd, 
     isGenerating, 
@@ -22,7 +32,7 @@ export function GenerateStep() {
     validationIssues,
     error, 
     generatePrd 
-  } = usePrdGeneration(goToNextStep);
+  } = usePrdGeneration(handleGenerationComplete);
   
   const handleGenerate = () => {
     generatePrd(state);

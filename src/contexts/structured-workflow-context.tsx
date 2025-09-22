@@ -19,13 +19,13 @@ interface StructuredWorkflowContextType {
   setInitialPrompt: (prompt: string) => void;
   setContentOutline: (outline: ContentOutline) => void;
   setEnterpriseParameters: (params: EnterpriseParameters) => void;
-  updateFunctionalRequirement: (id: string, requirement: FunctionalRequirement) => void;
+  updateFunctionalRequirement: (id: string, updates: Partial<FunctionalRequirement>) => void;
   deleteFunctionalRequirement: (id: string) => void;
   addFunctionalRequirement: (requirement: FunctionalRequirement) => void;
-  updateSuccessMetric: (id: string, metric: SuccessMetric) => void;
+  updateSuccessMetric: (id: string, updates: Partial<SuccessMetric>) => void;
   deleteSuccessMetric: (id: string) => void;
   addSuccessMetric: (metric: SuccessMetric) => void;
-  updateMilestone: (id: string, milestone: Milestone) => void;
+  updateMilestone: (id: string, updates: Partial<Milestone>) => void;
   deleteMilestone: (id: string) => void;
   addMilestone: (milestone: Milestone) => void;
   goToNextStep: () => void;
@@ -34,6 +34,7 @@ interface StructuredWorkflowContextType {
   resetWorkflow: () => void;
   generateContentOutlineForPrompt: (prompt: string) => Promise<void>;
   serializeToSpecText: () => string;
+  setFinalPrd: (prd: string) => void;
 }
 
 // Create the context
@@ -58,7 +59,7 @@ export function StructuredWorkflowProvider({ children }: StructuredWorkflowProvi
 export function useStructuredWorkflowContext(): StructuredWorkflowContextType {
   const context = useContext(StructuredWorkflowContext);
   if (!context) {
-    throw new Error("useStructuredWorkflowContext must be used within a StructuredWorkflowProvider");
+    throw new Error("useStructuredWorkflowContext must be used within a StructuredWorkflowProvider. Wrap your component tree with <StructuredWorkflowProvider>.");
   }
   return context;
 }

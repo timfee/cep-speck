@@ -47,7 +47,7 @@ function StructuredPrdWizardContent() {
       {/* Step content */}
       <Card className="p-6 min-h-[600px]">
         <StepRenderer
-          generatedPrd={generatedPrd}
+          _generatedPrd={generatedPrd}
           _isGenerating={isGenerating}
           _error={error}
           handleRegenerateOutline={handleRegenerateOutline}

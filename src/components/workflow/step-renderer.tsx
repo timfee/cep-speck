@@ -8,7 +8,7 @@ import { IdeaCaptureStep } from "@/components/workflow/steps/idea-capture-step";
 import { useStructuredWorkflowContext } from "@/contexts/structured-workflow-context";
 
 interface StepRendererProps {
-  generatedPrd: string;
+  _generatedPrd: string;
   _isGenerating: boolean;
   _error: string | null;
   handleRegenerateOutline: () => Promise<void>;
@@ -16,7 +16,7 @@ interface StepRendererProps {
 }
 
 export function StepRenderer({
-  generatedPrd,
+  _generatedPrd,
   _isGenerating,
   _error,
   handleRegenerateOutline,
@@ -79,7 +79,7 @@ export function StepRenderer({
       return <GenerateStep />;
 
     case "complete":
-      return <CompleteStep generatedPrd={generatedPrd} />;
+      return <CompleteStep generatedPrd={state.finalPrd} />;
 
     default:
       return (
