@@ -6,21 +6,23 @@ import React from "react";
 /**
  * Render a formatted code block
  */
-export function CodeBlock({ 
-  title, 
-  content, 
-  className = "" 
-}: { 
-  title: string; 
-  content: string; 
-  className?: string; 
+export function CodeBlock({
+  title,
+  content,
+  className = "",
+}: {
+  title: string;
+  content: string;
+  className?: string;
 }) {
   return (
     <>
       <div>
         <strong>{title}:</strong>
       </div>
-      <pre className={`mt-2 p-3 bg-muted rounded text-xs overflow-auto whitespace-pre-wrap ${className}`}>
+      <pre
+        className={`mt-2 p-3 bg-muted rounded text-xs overflow-auto whitespace-pre-wrap ${className}`}
+      >
         {content}
       </pre>
     </>
@@ -30,12 +32,13 @@ export function CodeBlock({
 /**
  * Render technical context as JSON
  */
-export function TechnicalContext({ context }: { context: Record<string, unknown> }) {
+export function TechnicalContext({
+  context,
+}: {
+  context: Record<string, unknown>;
+}) {
   return (
-    <CodeBlock 
-      title="Context" 
-      content={JSON.stringify(context, null, 2)} 
-    />
+    <CodeBlock title="Context" content={JSON.stringify(context, null, 2)} />
   );
 }
 
@@ -43,14 +46,9 @@ export function TechnicalContext({ context }: { context: Record<string, unknown>
  * Render stack trace if available
  */
 export function StackTrace({ stack }: { stack?: string }) {
-  if (!stack || stack.length === 0) return null;
+  if (stack == null || stack.length === 0) return null;
 
-  return (
-    <CodeBlock 
-      title="Stack Trace" 
-      content={stack} 
-    />
-  );
+  return <CodeBlock title="Stack Trace" content={stack} />;
 }
 
 /**
