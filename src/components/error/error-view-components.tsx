@@ -5,6 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CopyButton } from "@/components/ui/copy-button";
 import type { ErrorSeverityLevels } from "@/lib/error/types";
 
+import { TechnicalContext, StackTrace, ReproductionSteps } from "./error-view-helpers";
+
 interface TechnicalViewProps {
   errorLevels: ErrorSeverityLevels;
 }
@@ -20,22 +22,8 @@ export function TechnicalView({ errorLevels }: TechnicalViewProps) {
           <div>
             <strong>Code:</strong> {errorLevels.technical.code}
           </div>
-          <div>
-            <strong>Context:</strong>
-          </div>
-          <pre className="mt-2 p-3 bg-muted rounded text-xs overflow-auto whitespace-pre-wrap">
-            {JSON.stringify(errorLevels.technical.context, null, 2)}
-          </pre>
-          {(errorLevels.technical.stack ?? "").length > 0 && (
-            <>
-              <div>
-                <strong>Stack Trace:</strong>
-              </div>
-              <pre className="mt-2 p-3 bg-muted rounded text-xs overflow-auto whitespace-pre-wrap">
-                {errorLevels.technical.stack}
-              </pre>
-            </>
-          )}
+          <TechnicalContext context={errorLevels.technical.context} />
+          <StackTrace stack={errorLevels.technical.stack} />
         </div>
       </CardContent>
     </Card>
@@ -68,25 +56,15 @@ export function SupportView({ errorLevels, supportData }: SupportViewProps) {
           <div>
             <strong>Report ID:</strong> {errorLevels.support.reportId}
           </div>
+          <ReproductionSteps steps={errorLevels.support.reproduction} />
           <div>
-            <strong>Reproduction Steps:</strong>
-            <ol className="mt-1 ml-4 list-decimal space-y-1">
-              {errorLevels.support.reproduction.map((step, idx) => (
-                <li key={idx}>{step}</li>
-              ))}
-            </ol>
-          </div>
-          <div>
-            <strong>Environment:</strong>
-            <div className="mt-1 p-2 bg-muted rounded text-xs">
-              <div>Browser: {errorLevels.support.environment.userAgent}</div>
-              <div>URL: {errorLevels.support.environment.url}</div>
-              <div>Time: {errorLevels.support.environment.timestamp}</div>
-              <div>
-                API Key Present:{" "}
-                {errorLevels.support.environment.apiKeyPresent ? "Yes" : "No"}
-              </div>
-            </div>
+            <strong>System Information:</strong>
+            <ul className="mt-1 ml-4 list-disc space-y-1">
+              <li>Browser: {errorLevels.support.environment.userAgent}</li>
+              <li>URL: {errorLevels.support.environment.url}</li>
+              <li>Timestamp: {errorLevels.support.environment.timestamp}</li>
+              <li>API Key Present: {errorLevels.support.environment.apiKeyPresent ? "Yes" : "No"}</li>
+            </ul>
           </div>
         </div>
       </CardContent>

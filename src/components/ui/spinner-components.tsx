@@ -1,53 +1,69 @@
 import { motion } from "framer-motion";
 
-import { UI_CONSTANTS, RETRY_LIMITS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
-export const TIMING = {
-  DOT_DURATION: 1.2,
-  BAR_DURATION: 0.8,
-  DEFAULT_DURATION: 1,
-  RING_DURATION: 1.5,
-  ELLIPSIS_DURATION: 1.2,
-  INFINITE_DURATION: 2,
-} as const;
-
-export const ANIMATION_CONFIGS = {
-  default: { rotate: 360, duration: TIMING.DEFAULT_DURATION },
-  ring: { rotate: 360, duration: TIMING.RING_DURATION },
-  ellipsis: { x: [0, 10, 0], duration: TIMING.ELLIPSIS_DURATION },
-  bars: {
-    scaleY: [1, UI_CONSTANTS.ANIMATION_SCALE_LARGE, 1],
-    duration: TIMING.BAR_DURATION,
-  },
-  infinite: {
-    rotate: 360,
-    scale: [1, UI_CONSTANTS.ANIMATION_SCALE_MEDIUM, 1],
-    duration: TIMING.INFINITE_DURATION,
-  },
-};
+import { 
+  TIMING, 
+  ANIMATION_CONFIGS,
+  getAnimationStyles,
+  getDotAnimation,
+  getBarAnimation
+} from "./spinner-animation-config";
 
 export function createAnimationProps(
   size: number,
   index: number,
   type: "dot" | "bar"
 ) {
-  const isDot = type === "dot";
+  const styles = getAnimationStyles(size, type);
+  
+  if (type === "dot") {
+    const animation = getDotAnimation(index);
+    return {
+      ...styles,
+      animate: { opacity: animation.opacity },
+      transition: animation.transition,
+    };
+  } else {
+    const animation = getBarAnimation(index);
+    return {
+      ...styles,
+      animate: { scaleY: animation.scaleY },
+      transition: animation.transition,
+    };
+  }
+}
 
-  return {
-    className: isDot
-      ? "rounded-full bg-current text-current"
-      : "bg-current text-current",
-    style: isDot
-      ? {
-          width: size / UI_CONSTANTS.ICON_SIZE,
-          height: size / UI_CONSTANTS.ICON_SIZE,
-        }
-      : { width: size / UI_CONSTANTS.ICON_SIZE, height: size / 2 },
-    animate: isDot
-      ? {
-          opacity: [
-            UI_CONSTANTS.ANIMATION_SCALE_SMALL,
+export function SpinnerDots({ size, className }: { size: number; className?: string }) {
+  return (
+    <div className={cn("flex gap-1", className)}>
+      {[0, 1, 2].map((index) => (
+        <motion.div key={index} {...createAnimationProps(size, index, "dot")} />
+      ))}
+    </div>
+  );
+}
+
+export function SpinnerBars({ size, className }: { size: number; className?: string }) {
+  return (
+    <div className={cn("flex gap-1 items-end", className)}>
+      {[0, 1, 2, 3].map((index) => (
+        <motion.div key={index} {...createAnimationProps(size, index, "bar")} />
+      ))}
+    </div>
+  );
+}
+
+export function SpinnerRing({ size, className }: { size: number; className?: string }) {
+  return (
+    <motion.div
+      className={cn("border-2 border-current border-t-transparent rounded-full", className)}
+      style={{ width: size, height: size }}
+      animate={ANIMATION_CONFIGS.ring}
+      transition={{ duration: TIMING.RING_DURATION, repeat: Infinity, ease: "linear" }}
+    />
+  );
+}
             1,
             UI_CONSTANTS.ANIMATION_SCALE_SMALL,
           ],
