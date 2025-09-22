@@ -25,7 +25,7 @@ export function formatTime(milliseconds: number): string {
  * Calculate remaining recovery time
  */
 export function getRemainingRecoveryTime(state: CircuitBreakerState): number {
-  if (state.current !== "open" || !state.recoveryTime) {
+  if (state.current !== "open" || state.recoveryTime == null) {
     return 0;
   }
   return Math.max(0, state.recoveryTime - Date.now());
@@ -35,7 +35,11 @@ export function getRemainingRecoveryTime(state: CircuitBreakerState): number {
  * Check if recovery countdown should be shown
  */
 export function shouldShowRecoveryTime(state: CircuitBreakerState): boolean {
-  return state.current === "open" && state.recoveryTime != null && getRemainingRecoveryTime(state) > 0;
+  return (
+    state.current === "open" &&
+    state.recoveryTime != null &&
+    getRemainingRecoveryTime(state) > 0
+  );
 }
 
 /**

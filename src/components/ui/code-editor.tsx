@@ -2,16 +2,16 @@
 
 import { useEffect, useRef, useState } from "react";
 
-import type { SpecTemplateKey } from "@/lib/spec-templates";
 import { cn } from "@/lib/utils";
 
-import { 
+import {
   EDITOR_DEFAULTS,
   calculateTextMetrics,
-  isWordCountOver,
   createTemplateHandler,
-  getEditorStyles
+  getEditorStyles,
+  isWordCountOver,
 } from "./code-editor-config";
+
 import { EditorHeader, StatusBar } from "./code-editor-parts";
 import { TooltipProvider } from "./tooltip";
 
@@ -41,7 +41,10 @@ export function CodeEditor({
   showTemplates = EDITOR_DEFAULTS.showTemplates,
 }: CodeEditorProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const [{ wordCount, charCount }, setTextMetrics] = useState({ wordCount: 0, charCount: 0 });
+  const [{ wordCount, charCount }, setTextMetrics] = useState({
+    wordCount: 0,
+    charCount: 0,
+  });
   const [showTemplateMenu, setShowTemplateMenu] = useState(false);
 
   useEffect(() => {
@@ -49,7 +52,9 @@ export function CodeEditor({
   }, [value]);
 
   const isOverLimit = isWordCountOver(wordCount, maxWords);
-  const handleTemplateSelect = createTemplateHandler(onChange, () => setShowTemplateMenu(false));
+  const handleTemplateSelect = createTemplateHandler(onChange, () =>
+    setShowTemplateMenu(false)
+  );
 
   return (
     <TooltipProvider>

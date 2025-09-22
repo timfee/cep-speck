@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 /**
  * Spinner animation configurations and utilities
  */
@@ -32,7 +33,7 @@ export const ANIMATION_CONFIGS = {
  */
 export function getAnimationStyles(size: number, type: "dot" | "bar") {
   const isDot = type === "dot";
-  
+
   return {
     className: isDot
       ? "rounded-full bg-current text-current"

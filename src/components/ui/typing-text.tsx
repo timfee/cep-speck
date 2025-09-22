@@ -5,8 +5,13 @@ import { motion } from "framer-motion";
 import { UI_CONSTANTS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
-import { useTypingAnimation, TYPING_CONSTANTS } from "./typing-animation-hooks";
-import { CursorBlink, TerminalHeader, getTerminalStyles } from "./terminal-components";
+import {
+  CursorBlink,
+  TerminalHeader,
+  getTerminalStyles,
+} from "./terminal-components";
+
+import { TYPING_CONSTANTS, useTypingAnimation } from "./typing-animation-hooks";
 
 export interface TypingTextProps {
   text: string;
@@ -27,7 +32,11 @@ export function TypingText({
   onComplete,
   streaming = false,
 }: TypingTextProps) {
-  const { displayedText, isComplete } = useTypingAnimation(text, typingSpeed, onComplete);
+  const { displayedText, isComplete } = useTypingAnimation(
+    text,
+    typingSpeed,
+    onComplete
+  );
   const finalText = streaming ? text : displayedText;
 
   return (

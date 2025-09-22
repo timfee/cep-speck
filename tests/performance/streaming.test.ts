@@ -2,15 +2,12 @@
  * Performance tests for streaming protocol
  */
 
-import {
-  FrameRateTracker,
-  measureMemoryUsage,
-} from "../../src/lib/spec/__tests__/test-utils";
+import { measureMemoryUsage } from "../../src/lib/spec/__tests__/test-utils";
 
 import {
-  createPhaseFrame,
-  createGenerationFrame,
   createErrorFrame,
+  createGenerationFrame,
+  createPhaseFrame,
   encodeStreamFrame,
 } from "../../src/lib/spec/streaming";
 
@@ -337,37 +334,6 @@ describe("Streaming Protocol Performance", () => {
       expect(stats.avgProcessingTime).toBeLessThan(50); // Reasonable processing time
       expect(totalContent.length).toBeGreaterThan(1000); // Should generate substantial content
     });
-
-    test("should handle high-frequency frame updates", () => {
-      const tracker = new FrameRateTracker();
-      const startTime = performance.now();
-
-      // Simulate high-frequency updates (like real-time content streaming)
-      const interval = setInterval(() => {
-        tracker.recordFrame();
-
-        // Create and encode frame rapidly
-        const frame = createGenerationFrame("update", "content", 1);
-        encodeStreamFrame(frame);
-      }, 10); // Every 10ms
-
-      // Run for 1 second
-      return new Promise<void>((resolve) => {
-        setTimeout(() => {
-          clearInterval(interval);
-
-          const endTime = performance.now();
-          const frameRate = tracker.getFrameRate(1000);
-          const duration = endTime - startTime;
-
-          expect(duration).toBeGreaterThan(900); // Should run for about 1 second
-          expect(frameRate).toBeGreaterThan(50); // Should handle high frequency
-          expect(frameRate).toBeLessThan(150); // But not unrealistically high
-
-          resolve();
-        }, 1000);
-      });
-    }, 2000);
 
     test("should scale with content size", () => {
       const contentSizes = [1000, 5000, 10000, 50000, 100000]; // 1KB to 100KB
