@@ -10,7 +10,7 @@ import type { Issue } from '@/lib/spec/types';
 import { StreamProcessor, getProgressForPhase } from '@/lib/streaming/stream-processor';
 import type { StructuredWorkflowState } from '@/types/workflow';
 
-export function usePrdGeneration() {
+export function usePrdGeneration(onGenerationComplete?: (generatedPrd: string) => void) {
   const [generatedPrd, setGeneratedPrd] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [phase, setPhase] = useState('');
@@ -18,6 +18,16 @@ export function usePrdGeneration() {
   const [attempt, setAttempt] = useState(0);
   const [validationIssues, setValidationIssues] = useState<Issue[]>([]);
   const [error, setError] = useState<string | null>(null);
+  
+  // Helper function to handle completion
+  const handleGenerationComplete = useCallback((finalDraft: string) => {
+    setGeneratedPrd(finalDraft);
+    setProgress(100);
+    setPhase('done');
+    if (onGenerationComplete) {
+      onGenerationComplete(finalDraft);
+    }
+  }, [onGenerationComplete]);
   
   const generatePrd = useCallback(async (state: StructuredWorkflowState) => {
     setIsGenerating(true);
@@ -71,9 +81,7 @@ export function usePrdGeneration() {
               
             case 'result':
               if (frame.data.finalDraft) {
-                setGeneratedPrd(frame.data.finalDraft);
-                setProgress(100);
-                setPhase('done');
+                handleGenerationComplete(frame.data.finalDraft);
               }
               break;
               
@@ -100,9 +108,7 @@ export function usePrdGeneration() {
       const finalFrames = processor.flush();
       for (const frame of finalFrames) {
         if (frame.type === 'result' && frame.data.finalDraft) {
-          setGeneratedPrd(frame.data.finalDraft);
-          setProgress(100);
-          setPhase('done');
+          handleGenerationComplete(frame.data.finalDraft);
         }
       }
       
@@ -114,7 +120,7 @@ export function usePrdGeneration() {
     } finally {
       setIsGenerating(false);
     }
-  }, []);
+  }, [handleGenerationComplete]);
   
   const resetGeneration = useCallback(() => {
     setGeneratedPrd('');

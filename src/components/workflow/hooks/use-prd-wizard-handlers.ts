@@ -5,7 +5,7 @@ import {
   useGenerationState,
 } from "@/components/workflow/hooks/use-generation-state";
 
-import { useStructuredWorkflow } from "@/hooks/use-structured-workflow";
+import { useStructuredWorkflowContext } from "@/contexts/structured-workflow-context";
 
 /**
  * Hook to manage PRD wizard handlers and auto-generation logic
@@ -25,7 +25,7 @@ export function usePrdWizardHandlers() {
     generateContentOutlineForPrompt,
     serializeToSpecText,
     goToNextStep,
-  } = useStructuredWorkflow();
+  } = useStructuredWorkflowContext();
 
   // Track generation attempts to prevent infinite loops
   const [generationAttempted, setGenerationAttempted] = React.useState<
