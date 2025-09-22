@@ -1,4 +1,4 @@
-import { Edit3, Plus } from "lucide-react";
+import { Edit3, Plus, Trash2 } from "lucide-react";
 import React from "react";
 
 import { Button } from "@/components/ui/button";
@@ -67,8 +67,13 @@ export function ItemCard({
             </Button>
           )}
           {onDelete && (
-            <Button size="sm" variant="ghost" onClick={() => onDelete(id)}>
-              <span className="h-4 w-4">×</span>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => onDelete(id)}
+              aria-label={`Delete ${title}`}
+            >
+              <Trash2 className="h-4 w-4" />
             </Button>
           )}
         </div>

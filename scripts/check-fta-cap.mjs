@@ -2,7 +2,7 @@
 import fs from "node:fs";
 import path from "node:path";
 
-const CAP = Number(process.env.FTA_HARD_CAP || 60);
+const CAP = Number(process.env.FTA_HARD_CAP || 50);
 const JSON_PATH = path.resolve("reports/fta.json");
 
 if (!fs.existsSync(JSON_PATH)) {

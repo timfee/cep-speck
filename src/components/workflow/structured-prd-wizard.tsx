@@ -52,7 +52,14 @@ export function StructuredPrdWizard() {
     addMilestone,
   } = useStructuredWorkflow();
 
+  // Track generation attempts to prevent infinite loops
+  const [generationAttempted, setGenerationAttempted] = React.useState<
+    Set<string>
+  >(new Set());
+
   const handleRegenerateOutline = async () => {
+    // Clear the generation attempt tracking when manually regenerating
+    setGenerationAttempted(new Set());
     await generateContentOutlineForPrompt(state.initialPrompt);
   };
 
@@ -89,7 +96,15 @@ export function StructuredPrdWizard() {
   // Auto-generate content outline when prompt is ready and we're on outline step
   React.useEffect(() => {
     async function autoGenerateOutline() {
+      const promptKey = `${state.currentStep}-${state.initialPrompt}`;
+
+      // Prevent infinite loops by tracking generation attempts
+      if (generationAttempted.has(promptKey)) {
+        return;
+      }
+
       try {
+        setGenerationAttempted((prev) => new Set(prev).add(promptKey));
         await generateContentOutlineForPrompt(state.initialPrompt);
       } catch (error) {
         console.error("Failed to auto-generate content outline:", error);
@@ -102,8 +117,11 @@ export function StructuredPrdWizard() {
       state.contentOutline.functionalRequirements.length === 0 &&
       !state.isLoading
     ) {
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      autoGenerateOutline();
+      // Handle promise without await (since this is inside useEffect callback)
+      // eslint-disable-next-line promise/prefer-await-to-then
+      autoGenerateOutline().catch((error) => {
+        console.error("Auto-generation failed:", error);
+      });
     }
   }, [
     state.currentStep,
@@ -111,6 +129,7 @@ export function StructuredPrdWizard() {
     state.contentOutline.functionalRequirements.length,
     state.isLoading,
     generateContentOutlineForPrompt,
+    generationAttempted,
   ]);
 
   const handleNext = () => {
