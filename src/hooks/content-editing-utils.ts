@@ -6,152 +6,158 @@ import type {
   SuccessMetric,
 } from "@/types/workflow";
 
+type ContentType = "functionalRequirements" | "successMetrics" | "milestones";
+type ContentItem = FunctionalRequirement | SuccessMetric | Milestone;
+
 /**
- * Utility function to update functional requirements in content outline
+ * Generic utility to update items in content outline arrays
  */
-export function updateFunctionalRequirementInOutline(
+function updateItemInArray<T extends ContentItem>(
+  items: T[],
+  id: string,
+  updates: Partial<T>
+): T[] {
+  return items.map((item) => (item.id === id ? { ...item, ...updates } : item));
+}
+
+/**
+ * Generic utility to delete items from content outline arrays
+ */
+function deleteItemFromArray<T extends ContentItem>(
+  items: T[],
+  id: string
+): T[] {
+  return items.filter((item) => item.id !== id);
+}
+
+/**
+ * Generic utility to add items to content outline arrays
+ */
+function addItemToArray<T extends ContentItem>(items: T[], newItem: T): T[] {
+  return [...items, newItem];
+}
+
+/**
+ * Generic content outline updater
+ */
+function updateContentOutline<T extends ContentItem>(
+  contentOutline: ContentOutline,
+  contentType: ContentType,
+  operation: "update" | "delete" | "add",
+  id?: string,
+  itemOrUpdates?: T | Partial<T>
+): ContentOutline {
+  const currentItems = contentOutline[contentType] as T[];
+
+  let newItems: T[];
+  if (
+    operation === "update" &&
+    id !== undefined &&
+    id !== "" &&
+    itemOrUpdates
+  ) {
+    newItems = updateItemInArray(currentItems, id, itemOrUpdates as Partial<T>);
+  } else if (operation === "delete" && id !== undefined && id !== "") {
+    newItems = deleteItemFromArray(currentItems, id);
+  } else if (operation === "add" && itemOrUpdates) {
+    newItems = addItemToArray(currentItems, itemOrUpdates as T);
+  } else {
+    newItems = currentItems;
+  }
+
+  return { ...contentOutline, [contentType]: newItems };
+}
+
+// Specific functions for each content type
+export const updateFunctionalRequirementInOutline = (
   contentOutline: ContentOutline,
   id: string,
   updates: Partial<FunctionalRequirement>
-): ContentOutline {
-  return {
-    ...contentOutline,
-    functionalRequirements: contentOutline.functionalRequirements.map((req) =>
-      req.id === id ? { ...req, ...updates } : req
-    ),
-  };
-}
+): ContentOutline =>
+  updateContentOutline(
+    contentOutline,
+    "functionalRequirements",
+    "update",
+    id,
+    updates
+  );
 
-/**
- * Utility function to delete functional requirement from content outline
- */
-export function deleteFunctionalRequirementFromOutline(
+export const deleteFunctionalRequirementFromOutline = (
   contentOutline: ContentOutline,
   id: string
-): ContentOutline {
-  return {
-    ...contentOutline,
-    functionalRequirements: contentOutline.functionalRequirements.filter(
-      (req) => req.id !== id
-    ),
-  };
-}
+): ContentOutline =>
+  updateContentOutline(contentOutline, "functionalRequirements", "delete", id);
 
-/**
- * Utility function to add functional requirement to content outline
- */
-export function addFunctionalRequirementToOutline(
+export const addFunctionalRequirementToOutline = (
   contentOutline: ContentOutline,
   requirement: FunctionalRequirement
-): ContentOutline {
-  return {
-    ...contentOutline,
-    functionalRequirements: [
-      ...contentOutline.functionalRequirements,
-      requirement,
-    ],
-  };
-}
+): ContentOutline =>
+  updateContentOutline(
+    contentOutline,
+    "functionalRequirements",
+    "add",
+    undefined,
+    requirement
+  );
 
-/**
- * Utility function to update success metrics in content outline
- */
-export function updateSuccessMetricInOutline(
+export const updateSuccessMetricInOutline = (
   contentOutline: ContentOutline,
   id: string,
   updates: Partial<SuccessMetric>
-): ContentOutline {
-  return {
-    ...contentOutline,
-    successMetrics: contentOutline.successMetrics.map((metric) =>
-      metric.id === id ? { ...metric, ...updates } : metric
-    ),
-  };
-}
+): ContentOutline =>
+  updateContentOutline(contentOutline, "successMetrics", "update", id, updates);
 
-/**
- * Utility function to delete success metric from content outline
- */
-export function deleteSuccessMetricFromOutline(
+export const deleteSuccessMetricFromOutline = (
   contentOutline: ContentOutline,
   id: string
-): ContentOutline {
-  return {
-    ...contentOutline,
-    successMetrics: contentOutline.successMetrics.filter(
-      (metric) => metric.id !== id
-    ),
-  };
-}
+): ContentOutline =>
+  updateContentOutline(contentOutline, "successMetrics", "delete", id);
 
-/**
- * Utility function to add success metric to content outline
- */
-export function addSuccessMetricToOutline(
+export const addSuccessMetricToOutline = (
   contentOutline: ContentOutline,
   metric: SuccessMetric
-): ContentOutline {
-  return {
-    ...contentOutline,
-    successMetrics: [...contentOutline.successMetrics, metric],
-  };
-}
+): ContentOutline =>
+  updateContentOutline(
+    contentOutline,
+    "successMetrics",
+    "add",
+    undefined,
+    metric
+  );
 
-/**
- * Utility function to update milestones in content outline
- */
-export function updateMilestoneInOutline(
+export const updateMilestoneInOutline = (
   contentOutline: ContentOutline,
   id: string,
   updates: Partial<Milestone>
-): ContentOutline {
-  return {
-    ...contentOutline,
-    milestones: contentOutline.milestones.map((milestone) =>
-      milestone.id === id ? { ...milestone, ...updates } : milestone
-    ),
-  };
-}
+): ContentOutline =>
+  updateContentOutline(contentOutline, "milestones", "update", id, updates);
 
-/**
- * Utility function to delete milestone from content outline
- */
-export function deleteMilestoneFromOutline(
+export const deleteMilestoneFromOutline = (
   contentOutline: ContentOutline,
   id: string
-): ContentOutline {
-  return {
-    ...contentOutline,
-    milestones: contentOutline.milestones.filter(
-      (milestone) => milestone.id !== id
-    ),
-  };
-}
+): ContentOutline =>
+  updateContentOutline(contentOutline, "milestones", "delete", id);
 
-/**
- * Utility function to add milestone to content outline
- */
-export function addMilestoneToOutline(
+export const addMilestoneToOutline = (
   contentOutline: ContentOutline,
   milestone: Milestone
-): ContentOutline {
-  return {
-    ...contentOutline,
-    milestones: [...contentOutline.milestones, milestone],
-  };
-}
+): ContentOutline =>
+  updateContentOutline(
+    contentOutline,
+    "milestones",
+    "add",
+    undefined,
+    milestone
+  );
 
 /**
  * Generic state updater for content outline changes
  */
-export function updateStateWithContentOutline(
+export const updateStateWithContentOutline = (
   setState: (
     updater: (prev: StructuredWorkflowState) => StructuredWorkflowState
   ) => void,
   newContentOutline: ContentOutline
-): void {
-  setState((prev) => ({
-    ...prev,
-    contentOutline: newContentOutline,
-  }));
-}
+): void => {
+  setState((prev) => ({ ...prev, contentOutline: newContentOutline }));
+};

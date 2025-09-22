@@ -11,110 +11,139 @@ export interface SpinnerProps {
   className?: string;
 }
 
-const spinnerVariants = {
-  default: {
-    animate: { rotate: 360 },
-    transition: { duration: 1, repeat: Infinity, ease: "linear" as const },
-  },
-  ring: {
-    animate: { rotate: 360 },
-    transition: { duration: 1.5, repeat: Infinity, ease: "linear" as const },
-  },
-  ellipsis: {
-    animate: { x: [0, 10, 0] },
-    transition: { duration: 1.2, repeat: Infinity, ease: "easeInOut" as const },
-  },
+const TIMING = {
+  DOT_DURATION: 1.2,
+  BAR_DURATION: 0.8,
+  DEFAULT_DURATION: 1,
+  RING_DURATION: 1.5,
+  ELLIPSIS_DURATION: 1.2,
+  INFINITE_DURATION: 2,
+} as const;
+
+const ANIMATION_CONFIGS = {
+  default: { rotate: 360, duration: TIMING.DEFAULT_DURATION },
+  ring: { rotate: 360, duration: TIMING.RING_DURATION },
+  ellipsis: { x: [0, 10, 0], duration: TIMING.ELLIPSIS_DURATION },
   bars: {
-    animate: { scaleY: [1, UI_CONSTANTS.ANIMATION_SCALE_LARGE, 1] },
-    transition: { duration: 0.8, repeat: Infinity, ease: "easeInOut" as const },
+    scaleY: [1, UI_CONSTANTS.ANIMATION_SCALE_LARGE, 1],
+    duration: TIMING.BAR_DURATION,
   },
   infinite: {
-    animate: {
-      rotate: 360,
-      scale: [1, UI_CONSTANTS.ANIMATION_SCALE_MEDIUM, 1],
-    },
-    transition: { duration: 2, repeat: Infinity, ease: "linear" as const },
+    rotate: 360,
+    scale: [1, UI_CONSTANTS.ANIMATION_SCALE_MEDIUM, 1],
+    duration: TIMING.INFINITE_DURATION,
   },
+} as const;
+
+const TIMING = {
+  DOT_DURATION: 1.2,
+  BAR_DURATION: 0.8,
+} as const;
+
+const createAnimationProps = (
+  size: number,
+  index: number,
+  type: "dot" | "bar"
+) => {
+  const baseStyle =
+    type === "dot"
+      ? {
+          width: size / UI_CONSTANTS.ICON_SIZE,
+          height: size / UI_CONSTANTS.ICON_SIZE,
+        }
+      : { width: size / UI_CONSTANTS.ICON_SIZE, height: size / 2 };
+
+  const baseTransition = {
+    duration: type === "dot" ? TIMING.DOT_DURATION : TIMING.BAR_DURATION,
+    repeat: Infinity,
+    ease: "easeInOut" as const,
+  };
+  const delayMultiplier =
+    type === "dot"
+      ? UI_CONSTANTS.ANIMATION_OPACITY_MEDIUM
+      : UI_CONSTANTS.ANIMATION_OPACITY;
+
+  return {
+    key: index,
+    className:
+      type === "dot"
+        ? "rounded-full bg-current text-current"
+        : "bg-current text-current",
+    style: baseStyle,
+    animate:
+      type === "dot"
+        ? {
+            opacity: [
+              UI_CONSTANTS.ANIMATION_SCALE_SMALL,
+              1,
+              UI_CONSTANTS.ANIMATION_SCALE_SMALL,
+            ],
+          }
+        : { scaleY: [1, UI_CONSTANTS.ANIMATION_SCALE_LARGE, 1] },
+    transition: { ...baseTransition, delay: index * delayMultiplier },
+  };
 };
 
-export function Spinner({
-  variant = "default",
-  size = 16,
+const SpinnerDots = ({
+  size,
   className,
-}: SpinnerProps) {
-  const baseClass = "text-current";
+}: {
+  size: number;
+  className?: string;
+}) => (
+  <div
+    className={cn("flex space-x-1", className)}
+    style={{ width: size * 2, height: size }}
+  >
+    {[0, 1, 2].map((i) => (
+      <motion.div key={i} {...createAnimationProps(size, i, "dot")} />
+    ))}
+  </div>
+);
 
-  if (variant === "ellipsis") {
-    return (
-      <div
-        className={cn("flex space-x-1", className)}
-        style={{ width: size * 2, height: size }}
-      >
-        {[0, 1, 2].map((i) => (
-          <motion.div
-            key={i}
-            className={cn("rounded-full bg-current", baseClass)}
-            style={{
-              width: size / UI_CONSTANTS.ICON_SIZE,
-              height: size / UI_CONSTANTS.ICON_SIZE,
-            }}
-            animate={{
-              opacity: [
-                UI_CONSTANTS.ANIMATION_SCALE_SMALL,
-                1,
-                UI_CONSTANTS.ANIMATION_SCALE_SMALL,
-              ],
-            }}
-            transition={{
-              duration: 1.2,
-              repeat: Infinity,
-              delay: i * UI_CONSTANTS.ANIMATION_OPACITY_MEDIUM,
-              ease: "easeInOut",
-            }}
-          />
-        ))}
-      </div>
-    );
-  }
+const SpinnerBars = ({
+  size,
+  className,
+}: {
+  size: number;
+  className?: string;
+}) => (
+  <div
+    className={cn("flex space-x-1 items-end", className)}
+    style={{ width: size, height: size }}
+  >
+    {[0, 1, 2].map((i) => (
+      <motion.div key={i} {...createAnimationProps(size, i, "bar")} />
+    ))}
+  </div>
+);
 
-  if (variant === "bars") {
-    return (
-      <div
-        className={cn("flex space-x-1 items-end", className)}
-        style={{ width: size, height: size }}
-      >
-        {[0, 1, 2].map((i) => (
-          <motion.div
-            key={i}
-            className={cn("bg-current", baseClass)}
-            style={{ width: size / UI_CONSTANTS.ICON_SIZE, height: size / 2 }}
-            animate={{ scaleY: [1, UI_CONSTANTS.ANIMATION_SCALE_LARGE, 1] }}
-            transition={{
-              duration: 0.8,
-              repeat: Infinity,
-              delay: i * UI_CONSTANTS.ANIMATION_OPACITY,
-              ease: "easeInOut",
-            }}
-          />
-        ))}
-      </div>
-    );
-  }
-
-  // Ring and default variants
+const SpinnerSVG = ({
+  variant,
+  size,
+  className,
+}: {
+  variant: string;
+  size: number;
+  className?: string;
+}) => {
   const isRing = variant === "ring";
   const strokeWidth = isRing ? 2 : RETRY_LIMITS.DEFAULT_MAX_ATTEMPTS;
-  const config = spinnerVariants[variant];
+  const config = ANIMATION_CONFIGS[variant as keyof typeof ANIMATION_CONFIGS];
 
   return (
     <motion.svg
-      className={cn(baseClass, className)}
+      className={cn("text-current", className)}
       width={size}
       height={size}
       viewBox="0 0 24 24"
       fill="none"
-      animate={config.animate}
-      transition={config.transition}
+      animate={config}
+      transition={{
+        duration: config.duration,
+        repeat: Infinity,
+        ease: "linear",
+      }}
     >
       {isRing ? (
         <>
@@ -152,4 +181,16 @@ export function Spinner({
       )}
     </motion.svg>
   );
+};
+
+export function Spinner({
+  variant = "default",
+  size = 16,
+  className,
+}: SpinnerProps) {
+  if (variant === "ellipsis")
+    return <SpinnerDots size={size} className={className} />;
+  if (variant === "bars")
+    return <SpinnerBars size={size} className={className} />;
+  return <SpinnerSVG variant={variant} size={size} className={className} />;
 }

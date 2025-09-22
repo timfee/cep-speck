@@ -21,6 +21,9 @@ interface UseOutlineStepHandlersProps {
   onAddMilestone?: (milestone: Milestone) => void;
 }
 
+type ContentHandler<T> = (newItem: T) => void;
+type EditHandler = (id: string) => void;
+
 export function useOutlineStepHandlers({
   contentOutline,
   onChange,
@@ -28,67 +31,58 @@ export function useOutlineStepHandlers({
   onAddSuccessMetric,
   onAddMilestone,
 }: UseOutlineStepHandlersProps) {
-  const handleAddFunctionalRequirement = useCallback(() => {
-    const newReq = createNewFunctionalRequirement();
-    if (onAddFunctionalRequirement) {
-      onAddFunctionalRequirement(newReq);
-    } else {
-      onChange({
-        ...contentOutline,
-        functionalRequirements: [
-          ...contentOutline.functionalRequirements,
-          newReq,
-        ],
-      });
-    }
-  }, [contentOutline, onChange, onAddFunctionalRequirement]);
+  // Generic add handler factory
+  const createAddHandler = useCallback(
+    <T>(
+      creator: () => T,
+      customHandler?: ContentHandler<T>,
+      arrayKey: keyof ContentOutline
+    ) => {
+      return () => {
+        const newItem = creator();
+        if (customHandler) {
+          customHandler(newItem);
+        } else {
+          onChange({
+            ...contentOutline,
+            [arrayKey]: [...(contentOutline[arrayKey] as T[]), newItem],
+          });
+        }
+      };
+    },
+    [contentOutline, onChange]
+  );
 
-  const handleAddSuccessMetric = useCallback(() => {
-    const newMetric = createNewSuccessMetric();
-    if (onAddSuccessMetric) {
-      onAddSuccessMetric(newMetric);
-    } else {
-      onChange({
-        ...contentOutline,
-        successMetrics: [...contentOutline.successMetrics, newMetric],
-      });
-    }
-  }, [contentOutline, onChange, onAddSuccessMetric]);
-
-  const handleAddMilestone = useCallback(() => {
-    const newMilestone = createNewMilestone();
-    if (onAddMilestone) {
-      onAddMilestone(newMilestone);
-    } else {
-      onChange({
-        ...contentOutline,
-        milestones: [...contentOutline.milestones, newMilestone],
-      });
-    }
-  }, [contentOutline, onChange, onAddMilestone]);
-
-  // Edit handlers - for now just console log to test the connection
-  const handleEditFunctionalRequirement = useCallback((id: string) => {
-    console.log("Edit functional requirement:", id);
-    // TODO: Open edit dialog
-  }, []);
-
-  const handleEditSuccessMetric = useCallback((id: string) => {
-    console.log("Edit success metric:", id);
-    // TODO: Open edit dialog
-  }, []);
-
-  const handleEditMilestone = useCallback((id: string) => {
-    console.log("Edit milestone:", id);
-    // TODO: Open edit dialog
-  }, []);
+  // Create edit handler factory
+  const createEditHandler = useCallback(
+    (itemType: string): EditHandler =>
+      (id: string) => {
+        console.log(`Edit ${itemType}:`, id);
+        // TODO: Open edit dialog
+      },
+    []
+  );
 
   return {
-    handleAddFunctionalRequirement,
-    handleEditFunctionalRequirement,
-    handleAddSuccessMetric,
-    handleEditSuccessMetric,
-    handleAddMilestone,
-    handleEditMilestone,
+    handleAddFunctionalRequirement: createAddHandler(
+      createNewFunctionalRequirement,
+      onAddFunctionalRequirement,
+      "functionalRequirements"
+    ),
+    handleEditFunctionalRequirement: createEditHandler(
+      "functional requirement"
+    ),
+    handleAddSuccessMetric: createAddHandler(
+      createNewSuccessMetric,
+      onAddSuccessMetric,
+      "successMetrics"
+    ),
+    handleEditSuccessMetric: createEditHandler("success metric"),
+    handleAddMilestone: createAddHandler(
+      createNewMilestone,
+      onAddMilestone,
+      "milestones"
+    ),
+    handleEditMilestone: createEditHandler("milestone"),
   };
 }

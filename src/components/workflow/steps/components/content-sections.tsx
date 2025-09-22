@@ -2,7 +2,13 @@ import { BarChart3, Calendar, Target } from "lucide-react";
 import React from "react";
 
 import { Badge } from "@/components/ui/badge";
-import type { ContentOutline } from "@/types/workflow";
+
+import type {
+  ContentOutline,
+  FunctionalRequirement,
+  SuccessMetric,
+  Milestone,
+} from "@/types/workflow";
 
 import { ContentSection } from "./content-section";
 
@@ -19,101 +25,127 @@ interface ContentSectionsProps {
   onDeleteMilestone?: (id: string) => void;
 }
 
-export function ContentSections({
-  contentOutline,
-  handleAddFunctionalRequirement,
-  handleEditFunctionalRequirement,
-  onDeleteFunctionalRequirement,
-  handleAddSuccessMetric,
-  handleEditSuccessMetric,
-  onDeleteSuccessMetric,
-  handleAddMilestone,
-  handleEditMilestone,
-  onDeleteMilestone,
-}: ContentSectionsProps) {
+const createPriorityBadge = (priority: string) => (
+  <Badge
+    variant={
+      priority === "P0"
+        ? "destructive"
+        : priority === "P1"
+          ? "default"
+          : "secondary"
+    }
+  >
+    {priority}
+  </Badge>
+);
+
+const createUserStoryExtra = (userStory?: string) =>
+  (userStory ?? "").length > 0 ? (
+    <div className="text-xs bg-gray-50 p-2 rounded border-l-2 border-blue-500">
+      <strong>User Story:</strong> {userStory}
+    </div>
+  ) : undefined;
+
+const createMetricExtra = (target?: string, measurement?: string) =>
+  (target ?? "").length > 0 ? (
+    <div className="text-xs bg-green-50 p-2 rounded border-l-2 border-green-500">
+      <strong>Target:</strong> {target}
+      {(measurement ?? "").length > 0 && (
+        <span className="ml-2">
+          <strong>Measurement:</strong> {measurement}
+        </span>
+      )}
+    </div>
+  ) : undefined;
+
+const createDateExtra = (estimatedDate?: string) =>
+  (estimatedDate ?? "").length > 0 ? (
+    <div className="text-xs bg-purple-50 p-2 rounded border-l-2 border-purple-500">
+      <strong>Estimated Date:</strong> {estimatedDate}
+    </div>
+  ) : undefined;
+
+const SECTION_CONFIGS = {
+  requirements: {
+    title: "Functional Requirements",
+    icon: <Target className="h-5 w-5 text-green-600" />,
+    emptyMessage:
+      'No functional requirements generated. Click "Add Functional" to create one.',
+    renderer: (req: FunctionalRequirement) => ({
+      id: req.id,
+      title: req.title,
+      description: req.description,
+      badge: createPriorityBadge(req.priority),
+      extra: createUserStoryExtra(req.userStory),
+    }),
+  },
+  metrics: {
+    title: "Success Metrics",
+    icon: <BarChart3 className="h-5 w-5 text-blue-600" />,
+    emptyMessage:
+      'No success metrics generated. Click "Add Success" to create one.',
+    renderer: (metric: SuccessMetric) => ({
+      id: metric.id,
+      title: metric.name,
+      description: metric.description,
+      badge: <Badge variant="outline">{metric.type}</Badge>,
+      extra: createMetricExtra(metric.target, metric.measurement),
+    }),
+  },
+  milestones: {
+    title: "Milestones & Timeline",
+    icon: <Calendar className="h-5 w-5 text-purple-600" />,
+    emptyMessage:
+      'No milestones generated. Click "Add Milestones" to create one.',
+    renderer: (milestone: Milestone) => ({
+      id: milestone.id,
+      title: milestone.title,
+      description: milestone.description,
+      badge: <Badge variant="outline">{milestone.phase}</Badge>,
+      extra: createDateExtra(milestone.estimatedDate),
+    }),
+  },
+} as const;
+
+export function ContentSections(props: ContentSectionsProps) {
+  const {
+    contentOutline,
+    handleAddFunctionalRequirement,
+    handleEditFunctionalRequirement,
+    onDeleteFunctionalRequirement,
+    handleAddSuccessMetric,
+    handleEditSuccessMetric,
+    onDeleteSuccessMetric,
+    handleAddMilestone,
+    handleEditMilestone,
+    onDeleteMilestone,
+  } = props;
+
   return (
     <>
       <ContentSection
-        title="Functional Requirements"
-        icon={<Target className="h-5 w-5 text-green-600" />}
+        {...SECTION_CONFIGS.requirements}
         items={contentOutline.functionalRequirements}
         onAdd={handleAddFunctionalRequirement}
         onEdit={handleEditFunctionalRequirement}
         onDelete={onDeleteFunctionalRequirement}
-        emptyMessage='No functional requirements generated. Click "Add Functional" to create one.'
-        renderItem={(req) => ({
-          id: req.id,
-          title: req.title,
-          description: req.description,
-          badge: (
-            <Badge
-              variant={
-                req.priority === "P0"
-                  ? "destructive"
-                  : req.priority === "P1"
-                    ? "default"
-                    : "secondary"
-              }
-            >
-              {req.priority}
-            </Badge>
-          ),
-          extra:
-            (req.userStory ?? "").length > 0 ? (
-              <div className="text-xs bg-gray-50 p-2 rounded border-l-2 border-blue-500">
-                <strong>User Story:</strong> {req.userStory}
-              </div>
-            ) : undefined,
-        })}
+        renderItem={SECTION_CONFIGS.requirements.renderer}
       />
-
       <ContentSection
-        title="Success Metrics"
-        icon={<BarChart3 className="h-5 w-5 text-blue-600" />}
+        {...SECTION_CONFIGS.metrics}
         items={contentOutline.successMetrics}
         onAdd={handleAddSuccessMetric}
         onEdit={handleEditSuccessMetric}
         onDelete={onDeleteSuccessMetric}
-        emptyMessage='No success metrics generated. Click "Add Success" to create one.'
-        renderItem={(metric) => ({
-          id: metric.id,
-          title: metric.name,
-          description: metric.description,
-          badge: <Badge variant="outline">{metric.type}</Badge>,
-          extra:
-            (metric.target ?? "").length > 0 ? (
-              <div className="text-xs bg-green-50 p-2 rounded border-l-2 border-green-500">
-                <strong>Target:</strong> {metric.target}
-                {(metric.measurement ?? "").length > 0 && (
-                  <span className="ml-2">
-                    <strong>Measurement:</strong> {metric.measurement}
-                  </span>
-                )}
-              </div>
-            ) : undefined,
-        })}
+        renderItem={SECTION_CONFIGS.metrics.renderer}
       />
-
       <ContentSection
-        title="Milestones & Timeline"
-        icon={<Calendar className="h-5 w-5 text-purple-600" />}
+        {...SECTION_CONFIGS.milestones}
         items={contentOutline.milestones}
         onAdd={handleAddMilestone}
         onEdit={handleEditMilestone}
         onDelete={onDeleteMilestone}
-        emptyMessage='No milestones generated. Click "Add Milestones" to create one.'
-        renderItem={(milestone) => ({
-          id: milestone.id,
-          title: milestone.title,
-          description: milestone.description,
-          badge: <Badge variant="outline">{milestone.phase}</Badge>,
-          extra:
-            (milestone.estimatedDate ?? "").length > 0 ? (
-              <div className="text-xs bg-purple-50 p-2 rounded border-l-2 border-purple-500">
-                <strong>Estimated Date:</strong> {milestone.estimatedDate}
-              </div>
-            ) : undefined,
-        })}
+        renderItem={SECTION_CONFIGS.milestones.renderer}
       />
     </>
   );
