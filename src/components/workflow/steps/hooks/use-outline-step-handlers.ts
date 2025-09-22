@@ -35,8 +35,8 @@ export function useOutlineStepHandlers({
   const createAddHandler = useCallback(
     <T>(
       creator: () => T,
-      customHandler?: ContentHandler<T>,
-      arrayKey: keyof ContentOutline
+      arrayKey: keyof ContentOutline,
+      customHandler?: ContentHandler<T>
     ) => {
       return () => {
         const newItem = creator();
@@ -66,22 +66,22 @@ export function useOutlineStepHandlers({
   return {
     handleAddFunctionalRequirement: createAddHandler(
       createNewFunctionalRequirement,
-      onAddFunctionalRequirement,
-      "functionalRequirements"
+      "functionalRequirements",
+      onAddFunctionalRequirement
     ),
     handleEditFunctionalRequirement: createEditHandler(
       "functional requirement"
     ),
     handleAddSuccessMetric: createAddHandler(
       createNewSuccessMetric,
-      onAddSuccessMetric,
-      "successMetrics"
+      "successMetrics",
+      onAddSuccessMetric
     ),
     handleEditSuccessMetric: createEditHandler("success metric"),
     handleAddMilestone: createAddHandler(
       createNewMilestone,
-      onAddMilestone,
-      "milestones"
+      "milestones",
+      onAddMilestone
     ),
     handleEditMilestone: createEditHandler("milestone"),
   };

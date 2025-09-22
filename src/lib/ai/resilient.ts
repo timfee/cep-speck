@@ -1,245 +1,9 @@
 import { google } from "@ai-sdk/google";
-import { streamText, type CoreMessage, type StreamTextResult } from "ai";
-import type { z } from "zod";
 
 import { AI_MODEL_PRIMARY } from "@/lib/config";
-import { CIRCUIT_BREAKER, RETRY_LIMITS } from "@/lib/constants";
 
-import {
-  attemptObjectWithProvider,
-  attemptWithProvider,
-  getNextProviderIndex,
-} from "./retry-helpers";
-
-/**
- * Abstract AI provider interface for multi-provider architecture
- */
-export interface AIProvider {
-  name: string;
-  generate(
-    messages: CoreMessage[]
-  ): Promise<StreamTextResult<Record<string, never>, never>>;
-  isAvailable(): Promise<boolean>;
-}
-
-/**
- * Circuit breaker states
- */
-enum CircuitState {
-  CLOSED = "closed",
-  OPEN = "open",
-  HALF_OPEN = "half-open",
-}
-
-/**
- * Circuit breaker for AI provider resilience
- */
-class CircuitBreaker {
-  private state = CircuitState.CLOSED;
-  private failureCount = 0;
-  private nextAttempt = Date.now();
-
-  constructor(
-    private readonly failureThreshold: number = CIRCUIT_BREAKER.FAILURE_THRESHOLD,
-    private readonly recoveryTimeout: number = CIRCUIT_BREAKER.RECOVERY_TIMEOUT,
-    private readonly successThreshold: number = CIRCUIT_BREAKER.SUCCESS_THRESHOLD
-  ) {}
-
-  async execute<T>(operation: () => Promise<T>): Promise<T> {
-    if (this.state === CircuitState.OPEN) {
-      if (Date.now() < this.nextAttempt) {
-        throw new Error(
-          `Circuit breaker is OPEN. Next attempt at ${new Date(
-            this.nextAttempt
-          ).toISOString()}`
-        );
-      }
-      this.state = CircuitState.HALF_OPEN;
-    }
-
-    try {
-      const result = await operation();
-      this.onSuccess();
-      return result;
-    } catch (error) {
-      this.onFailure();
-      throw error;
-    }
-  }
-
-  private onSuccess() {
-    this.failureCount = 0;
-    this.state = CircuitState.CLOSED;
-  }
-
-  private onFailure() {
-    this.failureCount++;
-    if (this.failureCount >= this.failureThreshold) {
-      this.state = CircuitState.OPEN;
-      this.nextAttempt = Date.now() + this.recoveryTimeout;
-    }
-  }
-
-  getState() {
-    return this.state;
-  }
-}
-
-/**
- * Gemini AI provider implementation
- */
-class GeminiProvider implements AIProvider {
-  name = "gemini";
-  private readonly circuitBreaker = new CircuitBreaker();
-
-  async generate(
-    messages: CoreMessage[]
-  ): Promise<StreamTextResult<Record<string, never>, never>> {
-    return await this.circuitBreaker.execute(async () => {
-      return Promise.resolve(
-        streamText({
-          model: google(AI_MODEL_PRIMARY),
-          messages,
-        })
-      );
-    });
-  }
-
-  async isAvailable(): Promise<boolean> {
-    if ((process.env.GOOGLE_GENERATIVE_AI_API_KEY ?? "").length === 0) {
-      return false;
-    }
-
-    try {
-      // Simple health check
-      await this.circuitBreaker.execute(async () => {
-        const result = streamText({
-          model: google(AI_MODEL_PRIMARY),
-          messages: [{ role: "user", content: "Hi" }],
-        });
-        // We don't need to wait for the stream, just creating it tests the API
-        return Promise.resolve(result);
-      });
-      return true;
-    } catch (healthCheckError) {
-      // Health check failed - provider not available
-      console.warn("AI provider health check failed:", {
-        error:
-          healthCheckError instanceof Error
-            ? healthCheckError.message
-            : String(healthCheckError),
-      });
-      return false;
-    }
-  }
-}
-
-/**
- * Resilient AI service with retry logic and multiple providers
- */
-export class ResilientAI {
-  private readonly providers: AIProvider[] = [];
-  private currentProviderIndex = 0;
-
-  constructor() {
-    // Initialize providers
-    this.providers.push(new GeminiProvider());
-    // Future: Add more providers like OpenAI, Anthropic, etc.
-  }
-
-  async generateWithFallback(
-    messages: CoreMessage[],
-    maxRetries: number = RETRY_LIMITS.DEFAULT_MAX_ATTEMPTS,
-    retryDelay: number = 1000
-  ): Promise<StreamTextResult<Record<string, never>, never>> {
-    let lastError: Error | null = null;
-    const retryConfig = { maxRetries, retryDelay };
-
-    // Try each provider with explicit indexing for provider rotation
-    for (const [_providerAttempt] of this.providers.entries()) {
-      const provider = this.providers[this.currentProviderIndex];
-
-      const result = await attemptWithProvider(provider, messages, retryConfig);
-
-      if (result.success && result.result) {
-        return result.result;
-      }
-
-      if (result.error) {
-        lastError = result.error;
-      }
-
-      // Move to next provider
-      this.currentProviderIndex = getNextProviderIndex(
-        this.currentProviderIndex,
-        this.providers.length
-      );
-    }
-
-    // All providers failed
-    throw new Error(
-      `All AI providers failed. Last error: ${lastError?.message}`
-    );
-  }
-
-  async generateObjectWithFallback<T>(options: {
-    prompt: string;
-    schema: z.ZodSchema<T>;
-    maxRetries?: number;
-    retryDelay?: number;
-  }): Promise<{ object: T }> {
-    const {
-      prompt,
-      schema,
-      maxRetries = RETRY_LIMITS.DEFAULT_MAX_ATTEMPTS,
-      retryDelay = 1000,
-    } = options;
-    let lastError: Error | null = null;
-    const retryConfig = { maxRetries, retryDelay };
-
-    // Try each provider with retries using explicit indexing for provider rotation
-    for (const [_providerAttempt] of this.providers.entries()) {
-      const provider = this.providers[this.currentProviderIndex];
-
-      const result = await attemptObjectWithProvider(
-        provider,
-        prompt,
-        schema,
-        retryConfig
-      );
-
-      if (result.success && result.result) {
-        return result.result;
-      }
-
-      if (result.error) {
-        lastError = result.error;
-      }
-
-      // Move to next provider
-      this.currentProviderIndex = getNextProviderIndex(
-        this.currentProviderIndex,
-        this.providers.length
-      );
-    }
-
-    // All providers failed
-    throw new Error(
-      `All AI providers failed for generateObject. Last error: ${lastError?.message}`
-    );
-  }
-
-  private delay(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
-
-  getProviderStatus(): { name: string; available: boolean }[] {
-    return this.providers.map((provider) => ({
-      name: provider.name,
-      available: false, // Would need async check
-    }));
-  }
-}
+import { GeminiProvider } from "./providers";
+import { ResilientAI } from "./resilient-service";
 
 /**
  * Singleton instance for the application
@@ -247,7 +11,12 @@ export class ResilientAI {
 let resilientAI: ResilientAI | null = null;
 
 export function getResilientAI(): ResilientAI {
-  resilientAI ??= new ResilientAI();
+  if (!resilientAI) {
+    // Initialize providers
+    const providers = [new GeminiProvider()];
+    // Future: Add more providers like OpenAI, Anthropic, etc.
+    resilientAI = new ResilientAI(providers);
+  }
   return resilientAI;
 }
 
@@ -257,3 +26,8 @@ export function getResilientAI(): ResilientAI {
 export function geminiModel() {
   return google(AI_MODEL_PRIMARY);
 }
+
+// Re-export types and classes for external use
+export type { AIProvider } from "./providers";
+export { CircuitState } from "./circuit-breaker";
+export { ResilientAI } from "./resilient-service";
