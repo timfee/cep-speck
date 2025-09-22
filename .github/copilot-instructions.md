@@ -33,16 +33,56 @@ pnpm --version  # Should be 10.x or higher
 
 **CRITICAL TIMING**: All commands complete quickly. Set appropriate timeouts and NEVER CANCEL.
 
+**⚠️ IMPORTANT: Early Error Detection**
+This project now includes **comprehensive early error detection** to surface lint errors and complexity violations before commit/merge time:
+
+**Lint Errors:**
+
+- **`pnpm dev`** - Now includes a pre-dev lint check (fails fast if lint errors exist)
+- **`pnpm test`** - Now includes linting as part of the test suite
+- **`pnpm build`** - Now includes linting before building
+- **`pnpm dev:lint-watch`** - Runs development server with real-time lint watching
+
+**FTA Complexity Analysis:**
+
+- **`pnpm test`** - Now includes FTA complexity check (fails if files exceed cap of 50)
+- **`pnpm build`** - Now includes FTA complexity check
+- **`pnpm fta:check`** - Dedicated FTA complexity validation
+- **`pnpm fta:quick`** - Quick FTA table view of all complexity scores
+- **`pnpm verify`** - Comprehensive validation (lint + test + FTA + build)
+
+**Current FTA Status:** ⚠️ **18 files currently exceed complexity cap of 50** - these need refactoring:
+
+- `lib/spec/streaming.test.ts` (54.15) - Test file needs simplification
+- `components/ui/metrics-dashboard-components.tsx` (54.08) - UI component needs breakdown
+- `components/workflow/steps/idea-capture-step.tsx` (53.94) - Complex workflow step
+- `components/error/error-view-components.tsx` (53.83) - Error handling complexity
+- And 14 others (see `pnpm fta:quick` for full list)
+
+**Recommended Development Workflow:**
+
+1. Start with `pnpm verify` to ensure clean state (catches lint + FTA issues early)
+2. Use `pnpm dev:lint-watch` for development with real-time linting
+3. Run `pnpm fta:quick` periodically to monitor complexity
+4. Run `pnpm verify` before committing changes
+
 - **Install dependencies** (8.1s validated) - NEVER CANCEL, set timeout to 5+ minutes:
 
   ```bash
   pnpm install
   ```
 
+- **Verify project health** (RECOMMENDED FIRST STEP):
+
+  ```bash
+  pnpm verify    # Runs lint + test + complexity + build
+  ```
+
 - **Lint the code** (2.7s validated) - NEVER CANCEL, set timeout to 2+ minutes:
 
   ```bash
-  pnpm lint
+  pnpm lint           # Full linting
+  pnpm lint:quick     # Fast linting with cache
   ```
 
 - **Format the code** (recommended before committing):
@@ -61,12 +101,15 @@ pnpm --version  # Should be 10.x or higher
 - **Run development server**:
 
   ```bash
-  pnpm dev
+  pnpm dev              # Standard dev server (includes pre-dev lint check)
+  pnpm dev:lint-watch   # Dev server + real-time lint watching (RECOMMENDED)
   ```
 
   - Accesses: http://localhost:3000
   - Ready in ~1 second (validated)
   - Requires API key for full functionality
+  - **NEW**: `pnpm dev` now fails fast if lint errors exist
+  - **NEW**: `pnpm dev:lint-watch` provides real-time lint feedback during development
 
 - **Run production server** (KNOWN ISSUE):
 
@@ -111,10 +154,14 @@ pnpm --version  # Should be 10.x or higher
 Always run before committing changes:
 
 ```bash
-pnpm lint    # Must pass (2.7s)
-pnpm build   # Must pass (26.7s)
-pnpm format  # Apply formatting (recommended)
+pnpm verify   # RECOMMENDED: Comprehensive check (lint + test + complexity + build)
+# OR run individual commands:
+pnpm lint     # Must pass (2.7s)
+pnpm build    # Must pass (26.7s)
+pnpm format   # Apply formatting (recommended)
 ```
+
+**NEW**: The `pnpm verify` command now provides the most comprehensive validation and is the recommended pre-commit check.
 
 All must pass successfully or CI will fail.
 
@@ -330,11 +377,18 @@ npm install -g pnpm  # Only if pnpm not available
 pnpm install
 echo "GOOGLE_GENERATIVE_AI_API_KEY=your_key" > .env.local
 
-# Development workflow
-pnpm lint    # Always run before committing
-pnpm build   # Test production build
-pnpm format  # Apply code formatting (prettier)
-pnpm dev     # Start development server
+# Enhanced development workflow (with early error detection)
+pnpm verify           # RECOMMENDED: Comprehensive validation first
+pnpm dev:lint-watch   # RECOMMENDED: Dev server + real-time linting
+pnpm dev              # Standard dev server (includes pre-lint check)
+pnpm test             # Run tests (includes linting)
+pnpm build            # Production build (includes linting)
+pnpm format           # Apply code formatting (prettier)
+
+# Individual commands
+pnpm lint             # Full linting
+pnpm lint:quick       # Fast linting with cache
+pnpm verify           # Comprehensive validation (lint + test + complexity + build)
 
 # Testing validation
 # 1. Navigate to http://localhost:3000
