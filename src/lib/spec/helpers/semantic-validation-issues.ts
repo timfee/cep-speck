@@ -1,4 +1,4 @@
-import type { Issue } from "../../types";
+import type { Issue } from "../types";
 
 export const MAX_EVIDENCE_ITEMS = 3;
 

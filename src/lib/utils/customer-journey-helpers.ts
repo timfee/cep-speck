@@ -1,11 +1,11 @@
 import type { CustomerJourney, CustomerJourneyStep } from "@/types/workflow";
 
-import { createOutlineId } from "./outline-id";
-
 import {
   normalizeOptionalString,
   requireMeaningfulField,
 } from "./outline-text-utils";
+
+import { createOutlineId } from "../../components/workflow/steps/outline-id";
 
 export interface CustomerJourneyInput
   extends Pick<CustomerJourney, "title" | "role" | "goal">,

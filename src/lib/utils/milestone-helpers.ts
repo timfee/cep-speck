@@ -1,11 +1,11 @@
 import type { Milestone } from "@/types/workflow";
 
-import { createOutlineId } from "./outline-id";
-
 import {
   normalizeOptionalString,
   requireMeaningfulField,
 } from "./outline-text-utils";
+
+import { createOutlineId } from "../../components/workflow/steps/outline-id";
 
 export interface MilestoneInput
   extends Pick<Milestone, "title" | "description">,
