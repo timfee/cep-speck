@@ -67,24 +67,7 @@ export function OutlineMetadataPanel({
     [metadata, onChange]
   );
 
-  const getMetadataListField = (key: string): OutlineMetadataListSelection => {
-    switch (key) {
-      case "secondaryPersonas":
-        return metadata.secondaryPersonas;
-      case "valuePropositions":
-        return metadata.valuePropositions;
-      case "targetUsers":
-        return metadata.targetUsers;
-      case "platforms":
-        return metadata.platforms;
-      case "regions":
-        return metadata.regions;
-      case "strategicRisks":
-        return metadata.strategicRisks;
-      default:
-        throw new Error(`Unknown metadata key: ${key}`);
-    }
-  };
+  // Removed getMetadataListField; use type-safe indexed access instead.
 
   const togglePresetSelection = React.useCallback(
     (field: MetadataListKey, optionId: string, checked: boolean) => {
