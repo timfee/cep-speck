@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 
 import { useClipboard } from "@/hooks/use-clipboard";
-import { getPhaseDescription } from "@/lib/streaming/stream-processor";
+import { getPhaseDescription } from "@/lib/spec/helpers/phase-processing";
 import type { StructuredWorkflowState } from "@/types/workflow";
 
 import { useDeterministicIssues } from "./prd-generation-context";

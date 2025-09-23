@@ -1,4 +1,4 @@
-import { formatOutlineEnumerationsForPrompt } from "@/lib/constants/outline-enumerations";
+import { formatOutlineEnumerationsForPrompt } from "@/lib/spec/helpers/outline-enumerations";
 
 import type {
   SerializedWorkflowOutline,

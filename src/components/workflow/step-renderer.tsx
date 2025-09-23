@@ -5,7 +5,8 @@ import { ContentOutlineStep } from "@/components/workflow/steps/content-outline-
 import { EnterpriseParametersStep } from "@/components/workflow/steps/enterprise-parameters-step";
 import { GenerateStep } from "@/components/workflow/steps/generate-step";
 import { IdeaCaptureStep } from "@/components/workflow/steps/idea-capture-step";
-import { useStructuredWorkflowContext } from "@/contexts/structured-workflow-context";
+
+import { useStructuredWorkflowContext } from "./structured-workflow-context";
 
 interface StepRendererProps {
   handleRegenerateOutline: () => Promise<void>;

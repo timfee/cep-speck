@@ -1,7 +1,8 @@
 import React from "react";
 
-import { useStructuredWorkflowContext } from "@/contexts/structured-workflow-context";
 import { MIN_PROMPT_LENGTH } from "@/hooks/progress-calculation";
+
+import { useStructuredWorkflowContext } from "../structured-workflow-context";
 
 /**
  * Hook to manage auto-generation of content outline

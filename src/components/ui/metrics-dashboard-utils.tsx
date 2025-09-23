@@ -1,5 +1,5 @@
 import { UI_CONSTANTS } from "@/lib/constants";
-import { getProgressForPhase as getStreamPhaseProgress } from "@/lib/streaming/stream-processor";
+import { getProgressForPhase as getStreamPhaseProgress } from "@/lib/spec/helpers/phase-processing";
 
 export function getPhaseProgress(phase: string): number {
   return getStreamPhaseProgress(phase);

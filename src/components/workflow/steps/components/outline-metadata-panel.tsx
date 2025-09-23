@@ -5,15 +5,9 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 
 import {
-  type OutlineOption,
-  PLATFORM_OPTIONS,
+  METADATA_LIST_FIELDS,
   PRIMARY_PERSONA_OPTIONS,
-  REGION_OPTIONS,
-  SECONDARY_PERSONA_OPTIONS,
-  STRATEGIC_RISK_OPTIONS,
-  TARGET_USER_OPTIONS,
-  VALUE_PROPOSITION_OPTIONS,
-} from "@/lib/constants/outline-enumerations";
+} from "@/lib/spec/helpers/outline-enumerations";
 
 import type {
   OutlineMetadata,
@@ -27,64 +21,21 @@ import {
   formSectionClass,
 } from "../hooks/outline-form-shared";
 
-type MetadataListKey =
-  | "secondaryPersonas"
-  | "valuePropositions"
-  | "targetUsers"
-  | "platforms"
-  | "regions"
-  | "strategicRisks";
-
 interface OutlineMetadataPanelProps {
   metadata: OutlineMetadata;
   onChange: (updates: Partial<OutlineMetadata>) => void;
 }
 
-interface MetadataListFieldConfig {
-  key: MetadataListKey;
-  label: string;
-  options: OutlineOption[];
-  hint?: string;
-}
-
-const listFields: MetadataListFieldConfig[] = [
-  {
-    key: "secondaryPersonas",
-    label: "Secondary Personas",
-    hint: "Select supporting personas that influence delivery",
-    options: SECONDARY_PERSONA_OPTIONS,
-  },
-  {
-    key: "valuePropositions",
-    label: "Value Propositions",
-    hint: "Highlight the differentiating benefits for the drafter",
-    options: VALUE_PROPOSITION_OPTIONS,
-  },
-  {
-    key: "targetUsers",
-    label: "Target Users",
-    hint: "Role archetypes or segments expected to adopt the solution",
-    options: TARGET_USER_OPTIONS,
-  },
-  {
-    key: "platforms",
-    label: "Supported Platforms",
-    hint: "Browsers, operating systems, or key surfaces to prioritize",
-    options: PLATFORM_OPTIONS,
-  },
-  {
-    key: "regions",
-    label: "Target Regions",
-    hint: "Geographies in scope for the release or pilot",
-    options: REGION_OPTIONS,
-  },
-  {
-    key: "strategicRisks",
-    label: "Strategic Risks",
-    hint: "Critical risks the drafter should monitor",
-    options: STRATEGIC_RISK_OPTIONS,
-  },
-];
+// Type for metadata list keys to ensure type safety
+type MetadataListKey = keyof Pick<
+  OutlineMetadata,
+  | "secondaryPersonas"
+  | "valuePropositions"
+  | "targetUsers"
+  | "platforms"
+  | "regions"
+  | "strategicRisks"
+>;
 
 const parseCustomListInput = (value: string): string[] =>
   value
@@ -115,6 +66,25 @@ export function OutlineMetadataPanel({
     },
     [metadata, onChange]
   );
+
+  const getMetadataListField = (key: string): OutlineMetadataListSelection => {
+    switch (key) {
+      case "secondaryPersonas":
+        return metadata.secondaryPersonas;
+      case "valuePropositions":
+        return metadata.valuePropositions;
+      case "targetUsers":
+        return metadata.targetUsers;
+      case "platforms":
+        return metadata.platforms;
+      case "regions":
+        return metadata.regions;
+      case "strategicRisks":
+        return metadata.strategicRisks;
+      default:
+        throw new Error(`Unknown metadata key: ${key}`);
+    }
+  };
 
   const togglePresetSelection = React.useCallback(
     (field: MetadataListKey, optionId: string, checked: boolean) => {
@@ -264,7 +234,7 @@ export function OutlineMetadataPanel({
           </LabeledField>
         </div>
         <div className="grid gap-4 md:grid-cols-2">
-          {listFields.map(({ key, label, hint, options }) => (
+          {METADATA_LIST_FIELDS.map(({ key, label, hint, options }) => (
             <div key={key} className="flex flex-col gap-3">
               <fieldset className="rounded-md border border-border p-3">
                 <legend className="px-1 text-sm font-medium">{label}</legend>
@@ -273,7 +243,8 @@ export function OutlineMetadataPanel({
                 ) : null}
                 <div className="mt-2 flex flex-col gap-2">
                   {options.map((option) => {
-                    const checked = metadata[key].presetIds.includes(option.id);
+                    const fieldData = getMetadataListField(key);
+                    const checked = fieldData.presetIds.includes(option.id);
                     return (
                       <label
                         key={option.id}
@@ -285,7 +256,7 @@ export function OutlineMetadataPanel({
                           checked={checked}
                           onChange={(event) =>
                             togglePresetSelection(
-                              key,
+                              key as MetadataListKey,
                               option.id,
                               event.target.checked
                             )
@@ -311,9 +282,12 @@ export function OutlineMetadataPanel({
               >
                 <Textarea
                   id={`metadata-${key}-custom`}
-                  value={deriveCustomTextareaValue(metadata[key])}
+                  value={deriveCustomTextareaValue(getMetadataListField(key))}
                   onChange={(event) =>
-                    handleCustomListChange(key, event.target.value)
+                    handleCustomListChange(
+                      key as MetadataListKey,
+                      event.target.value
+                    )
                   }
                   placeholder="Enter one value per line"
                 />

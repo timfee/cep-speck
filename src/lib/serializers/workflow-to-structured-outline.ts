@@ -1,4 +1,4 @@
-import { OUTLINE_METADATA_OPTION_LOOKUP } from "@/lib/constants/outline-enumerations";
+import { OUTLINE_METADATA_OPTION_LOOKUP } from "@/lib/spec/helpers/outline-enumerations";
 
 import type {
   SerializedListSelection,
