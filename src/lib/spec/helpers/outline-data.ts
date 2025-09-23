@@ -1,3 +1,7 @@
+/**
+ * Enumeration data arrays extracted from outline-enumerations.ts for complexity management
+ */
+
 export interface OutlineOption {
   id: string;
   label: string;
@@ -120,5 +124,52 @@ export const STRATEGIC_RISK_OPTIONS: OutlineOption[] = [
     label: "Competitive risk",
     description:
       "Market alternatives may erode differentiation or pricing power.",
+  },
+];
+
+// Metadata form configuration for simplified UI components
+export interface MetadataFieldConfig {
+  key: string;
+  label: string;
+  options: OutlineOption[];
+  hint?: string;
+}
+
+export const METADATA_LIST_FIELDS: MetadataFieldConfig[] = [
+  {
+    key: "secondaryPersonas",
+    label: "Secondary Personas",
+    hint: "Select supporting personas that influence delivery",
+    options: SECONDARY_PERSONA_OPTIONS,
+  },
+  {
+    key: "valuePropositions",
+    label: "Value Propositions",
+    hint: "Highlight the differentiating benefits for the drafter",
+    options: VALUE_PROPOSITION_OPTIONS,
+  },
+  {
+    key: "targetUsers",
+    label: "Target Users",
+    hint: "Role archetypes or segments expected to adopt the solution",
+    options: TARGET_USER_OPTIONS,
+  },
+  {
+    key: "platforms",
+    label: "Supported Platforms",
+    hint: "Browsers, operating systems, or key surfaces to prioritize",
+    options: PLATFORM_OPTIONS,
+  },
+  {
+    key: "regions",
+    label: "Target Regions",
+    hint: "Geographies in scope for the release or pilot",
+    options: REGION_OPTIONS,
+  },
+  {
+    key: "strategicRisks",
+    label: "Strategic Risks",
+    hint: "Critical risks the drafter should monitor",
+    options: STRATEGIC_RISK_OPTIONS,
   },
 ];

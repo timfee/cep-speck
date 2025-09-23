@@ -3,8 +3,8 @@
 import { motion } from "framer-motion";
 import { useMemo } from "react";
 
+import { summarizePhaseStatus } from "@/lib/spec/helpers/phase-processing";
 import type { StreamPhase } from "@/lib/spec/types";
-import { summarizePhaseStatus } from "@/lib/streaming/phase-labels";
 import { cn } from "@/lib/utils";
 
 import { IssuesSummary } from "./metrics/issues-summary";

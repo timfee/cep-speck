@@ -1,5 +1,4 @@
-import { useStructuredWorkflowContext } from "@/contexts/structured-workflow-context";
-
+import { useStructuredWorkflowContext } from "../structured-workflow-context";
 import { GenerateStepView } from "./generate-step-view";
 import { useGenerateStep } from "../hooks/use-generate-step";
 

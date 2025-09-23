@@ -7,14 +7,14 @@ import { ProgressTimeline } from "@/components/workflow/progress-timeline";
 import { StepRenderer } from "@/components/workflow/step-renderer";
 import { WizardNavigation } from "@/components/workflow/wizard-navigation";
 
-import {
-  StructuredWorkflowProvider,
-  useStructuredWorkflowContext,
-} from "@/contexts/structured-workflow-context";
-
 import { PrdGenerationProvider } from "./hooks/prd-generation-context";
 import { usePrdGenerationState } from "./hooks/prd-generation-context";
 import { useAutoGeneration } from "./hooks/use-auto-generation";
+
+import {
+  StructuredWorkflowProvider,
+  useStructuredWorkflowContext,
+} from "./structured-workflow-context";
 
 function StructuredPrdWizardContent() {
   const { state, generateContentOutlineForPrompt } =

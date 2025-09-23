@@ -1,23 +1,32 @@
+/**
+ * Outline enumeration options and utilities
+ * Consolidated from lib/constants/outline-enumerations*
+ */
+
 import {
   type OutlineOption,
-  PLATFORM_OPTIONS,
   PRIMARY_PERSONA_OPTIONS,
-  REGION_OPTIONS,
   SECONDARY_PERSONA_OPTIONS,
-  STRATEGIC_RISK_OPTIONS,
-  TARGET_USER_OPTIONS,
   VALUE_PROPOSITION_OPTIONS,
-} from "./outline-enumerations-data";
+  TARGET_USER_OPTIONS,
+  PLATFORM_OPTIONS,
+  REGION_OPTIONS,
+  STRATEGIC_RISK_OPTIONS,
+  METADATA_LIST_FIELDS,
+  type MetadataFieldConfig,
+} from "./outline-data";
 
 export {
   type OutlineOption,
-  PLATFORM_OPTIONS,
   PRIMARY_PERSONA_OPTIONS,
-  REGION_OPTIONS,
   SECONDARY_PERSONA_OPTIONS,
-  STRATEGIC_RISK_OPTIONS,
-  TARGET_USER_OPTIONS,
   VALUE_PROPOSITION_OPTIONS,
+  TARGET_USER_OPTIONS,
+  PLATFORM_OPTIONS,
+  REGION_OPTIONS,
+  STRATEGIC_RISK_OPTIONS,
+  METADATA_LIST_FIELDS,
+  type MetadataFieldConfig,
 };
 
 export const OUTLINE_METADATA_OPTION_LOOKUP: Record<string, OutlineOption> =

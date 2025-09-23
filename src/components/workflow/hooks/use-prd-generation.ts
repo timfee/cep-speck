@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 
-import { getProgressForPhase } from "@/lib/streaming/stream-processor";
+import { getProgressForPhase } from "@/lib/spec/helpers/phase-processing";
 import type { StructuredWorkflowState } from "@/types/workflow";
 
 import {

@@ -5,7 +5,7 @@ import {
 } from "@/lib/serializers/workflow-to-spec";
 
 import { serializeWorkflowToOutlinePayload } from "@/lib/serializers/workflow-to-structured-outline";
-import prdPack from "@/lib/spec/packs/prd-v1.json";
+import prdPack from "@/lib/spec/prd-v1.json";
 import type { SpecItemDef, SpecPack } from "@/lib/spec/types";
 import { validateAll } from "@/lib/spec/validate";
 import type { StructuredWorkflowState } from "@/types/workflow";

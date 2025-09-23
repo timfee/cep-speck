@@ -2,7 +2,8 @@ import { ArrowLeft, ArrowRight, Wand2 } from "lucide-react";
 import React from "react";
 
 import { Button } from "@/components/ui/button";
-import { useStructuredWorkflowContext } from "@/contexts/structured-workflow-context";
+
+import { useStructuredWorkflowContext } from "./structured-workflow-context";
 
 interface WizardNavigationProps {
   handleRegenerateOutline: () => Promise<void>;

@@ -49,6 +49,7 @@ export interface Milestone {
 export interface OutlineMetadataPersonaSelection {
   presetId?: string;
   customValue: string;
+  useCustom?: boolean;
 }
 
 export interface OutlineMetadataListSelection {

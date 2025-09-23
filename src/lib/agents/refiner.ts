@@ -1,7 +1,7 @@
 import type { StreamTextResult } from "ai";
 
 import { getResilientAI } from "@/lib/ai/resilient";
-import { formatOutlineEnumerationsForPrompt } from "@/lib/constants/outline-enumerations";
+import { formatOutlineEnumerationsForPrompt } from "@/lib/spec/helpers/outline-enumerations";
 import type { Issue } from "@/lib/spec/types";
 
 import type { RefinerConfig, RefinerResult } from "./agent-types";

@@ -1,4 +1,4 @@
-import { StreamProcessor } from "@/lib/streaming/stream-processor";
+import { StreamProcessor } from "@/lib/spec/helpers/streaming";
 
 import type {
   SerializedWorkflowOutline,

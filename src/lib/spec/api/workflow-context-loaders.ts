@@ -1,5 +1,5 @@
-import { readKnowledgeDirectory } from "@/lib/knowledge/reader";
-import { performCompetitorResearch } from "@/lib/research/web-search";
+import { readKnowledgeDirectory } from "@/lib/knowledge";
+import { performCompetitorResearch } from "@/lib/research";
 
 import {
   createPhaseFrame,

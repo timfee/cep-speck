@@ -1,4 +1,16 @@
+/**
+ * Phase processing utilities
+ * Uses phase labels and constants from phase-labels.ts
+ */
+
 import type { StreamPhase } from "@/lib/spec/types";
+
+import {
+  PHASE_LABELS,
+  TIMELINE_LABELS,
+  PHASE_PROGRESS_MAP,
+  PHASE_DESCRIPTIONS,
+} from "./phase-labels";
 
 const TRACKED_PHASES: StreamPhase[] = [
   "generating",
@@ -7,35 +19,20 @@ const TRACKED_PHASES: StreamPhase[] = [
   "healing",
 ];
 
-const PHASE_LABELS: Partial<Record<StreamPhase, string>> = {
-  "loading-knowledge": "Loading",
-  "performing-research": "Research",
-  generating: "Generating",
-  validating: "Validating",
-  evaluating: "Evaluating",
-  healing: "Refining",
-  "self-reviewing": "Self review",
-  done: "Complete",
-  failed: "Failed",
-  error: "Error",
-};
-
-const TIMELINE_LABELS: Partial<Record<StreamPhase, string>> = {
-  "loading-knowledge": "Loading knowledge",
-  "performing-research": "Researching context",
-  generating: "Generating draft",
-  validating: "Validating output",
-  evaluating: "Evaluating quality",
-  healing: "Refining draft",
-  "self-reviewing": "Self review",
-};
-
 export function formatPhaseLabel(phase: StreamPhase): string {
   return PHASE_LABELS[phase] ?? phase;
 }
 
 export function getTimelinePhaseLabel(phase: StreamPhase): string {
   return TIMELINE_LABELS[phase] ?? formatPhaseLabel(phase);
+}
+
+export function getProgressForPhase(phase: string): number {
+  return PHASE_PROGRESS_MAP[phase] ?? 0;
+}
+
+export function getPhaseDescription(phase: string): string {
+  return PHASE_DESCRIPTIONS[phase] ?? `Processing ${phase}...`;
 }
 
 type PhaseStatusRecord = {

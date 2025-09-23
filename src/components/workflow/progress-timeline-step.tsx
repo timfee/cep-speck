@@ -2,7 +2,7 @@
 
 import { Circle } from "lucide-react";
 
-import { getTimelinePhaseLabel } from "@/lib/streaming/phase-labels";
+import { getTimelinePhaseLabel } from "@/lib/spec/helpers/phase-processing";
 import { cn } from "@/lib/utils";
 import type { WorkflowProgress, WORKFLOW_STEPS } from "@/types/workflow";
 

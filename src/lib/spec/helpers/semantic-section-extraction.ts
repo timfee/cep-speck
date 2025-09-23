@@ -1,4 +1,5 @@
-import { PATTERNS, extractSection } from "../../helpers";
+import { PATTERNS } from "./constants";
+import { extractSection } from "./validation";
 
 export interface ExtractedSections {
   tldr: string | null;
