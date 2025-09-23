@@ -5,7 +5,11 @@
  * including streaming frame handling and timeline progress indicators.
  */
 
-import { serializeWorkflowToSpec } from "@/lib/serializers/workflow-to-spec";
+import {
+  serializeWorkflowToSpec,
+  serializeWorkflowToLegacySpecText,
+} from "@/lib/serializers/workflow-to-spec";
+
 import { serializeWorkflowToOutlinePayload } from "@/lib/serializers/workflow-to-structured-outline";
 
 import {
@@ -29,6 +33,8 @@ import type {
   FunctionalRequirement,
   SuccessMetric,
   CustomerJourney,
+  Milestone,
+  WorkflowProgress,
   SerializedWorkflowOutline,
   SerializedWorkflowSpec,
 } from "@/types/workflow";
@@ -161,40 +167,51 @@ function createTestWorkflowState(
     title: "Security Incident Response",
     description: "How security teams respond to detected threats",
     steps: [
-      { order: 1, action: "Alert received", actor: "Security Analyst" },
-      { order: 2, action: "Incident investigation", actor: "Security Analyst" },
-      { order: 3, action: "Response coordination", actor: "Security Lead" },
+      { id: "step1", description: "Alert received" },
+      { id: "step2", description: "Incident investigation" },
+      { id: "step3", description: "Response coordination" },
     ],
   };
 
+  const defaultMilestone: Milestone = {
+    id: "m1",
+    title: "Phase 1 - Core Implementation",
+    description: "Basic monitoring infrastructure",
+    phase: "development",
+    estimatedDate: "Q1 2024",
+    deliverables: ["Alert system", "Basic dashboard"],
+  };
+
   return {
-    currentStep: "content-outline",
+    currentStep: "outline",
     initialPrompt: "Develop enterprise security monitoring capabilities",
     contentOutline: {
-      projectName: "Advanced Security Monitoring",
-      targetSku: "premium",
-      supportLevel: "full",
-      rolloutStrategy: "phased",
-      milestones: [
-        {
-          id: "m1",
-          name: "Phase 1 - Core Implementation",
-          description: "Basic monitoring infrastructure",
-          timeline: "Q1 2024",
-          deliverables: ["Alert system", "Basic dashboard"],
-        },
-      ],
+      metadata: defaultMetadata,
+      functionalRequirements: [defaultFunctionalRequirement],
+      successMetrics: [defaultSuccessMetric],
+      milestones: [defaultMilestone],
+      customerJourneys: [defaultCustomerJourney],
+      metricSchemas: [],
     },
     enterpriseParameters: {
-      complianceFrameworks: ["SOC2", "ISO27001"],
-      securityRequirements: ["Data encryption", "Access controls"],
-      integrationConstraints: ["SAML SSO", "Active Directory"],
+      targetSku: "premium",
+      deploymentModel: "cloud",
+      securityRequirements: ["sso", "compliance"],
+      integrations: ["active-directory"],
+      supportLevel: "premium",
+      rolloutStrategy: "phased",
     },
-    functionalRequirements: [defaultFunctionalRequirement],
-    successMetrics: [defaultSuccessMetric],
-    customerJourneys: [defaultCustomerJourney],
-    outlineMetadata: defaultMetadata,
+    selectedSections: [],
+    sectionContents: {},
+    sectionOrder: [],
     finalPrd: "",
+    progress: {
+      currentStep: "outline",
+      completedSteps: [],
+      totalSteps: 4,
+      percentComplete: 25,
+    } as WorkflowProgress,
+    isLoading: false,
     ...overrides,
   };
 }
@@ -315,40 +332,43 @@ describe("Outline Editing and Serialization Integration", () => {
     // Simulate editing outline metadata (personas, platforms, custom entries)
     const editedState: StructuredWorkflowState = {
       ...workflowState,
-      outlineMetadata: {
-        ...workflowState.outlineMetadata,
-        primaryPersona: {
-          presetId: "compliance-officer",
-          customValue: "",
-          useCustom: false,
+      contentOutline: {
+        ...workflowState.contentOutline,
+        metadata: {
+          ...workflowState.contentOutline.metadata,
+          primaryPersona: {
+            presetId: "compliance-officer",
+            customValue: "",
+            useCustom: false,
+          },
+          platforms: {
+            presetIds: ["chrome", "edge", "safari"],
+            customValues: ["Custom Enterprise Browser", "Legacy IE Support"],
+          },
+          strategicRisks: {
+            presetIds: ["adoption", "operational"],
+            customValues: [
+              "Regulatory compliance risk",
+              "Training adoption challenges",
+            ],
+          },
         },
-        platforms: {
-          presetIds: ["chrome", "edge", "safari"],
-          customValues: ["Custom Enterprise Browser", "Legacy IE Support"],
-        },
-        strategicRisks: {
-          presetIds: ["adoption", "operational"],
-          customValues: [
-            "Regulatory compliance risk",
-            "Training adoption challenges",
-          ],
-        },
+        functionalRequirements: [
+          ...workflowState.contentOutline.functionalRequirements,
+          {
+            id: "fr-002",
+            title: "Compliance Reporting",
+            description: "Automated compliance report generation",
+            priority: "P1",
+            userStory: "As a compliance officer, I want automated reports",
+            acceptanceCriteria: [
+              "Report templates",
+              "Scheduled generation",
+              "Audit trails",
+            ],
+          },
+        ],
       },
-      functionalRequirements: [
-        ...workflowState.functionalRequirements,
-        {
-          id: "fr-002",
-          title: "Compliance Reporting",
-          description: "Automated compliance report generation",
-          priority: "P1",
-          userStory: "As a compliance officer, I want automated reports",
-          acceptanceCriteria: [
-            "Report templates",
-            "Scheduled generation",
-            "Audit trails",
-          ],
-        },
-      ],
     };
 
     // Serialize to outline payload
@@ -356,24 +376,28 @@ describe("Outline Editing and Serialization Integration", () => {
       serializeWorkflowToOutlinePayload(editedState);
 
     // Verify outline payload structure matches expected contract
-    expect(outlinePayload.projectName).toBe("Advanced Security Monitoring");
-    expect(outlinePayload.targetSku).toBe("premium");
+    expect(outlinePayload.metadata.projectName).toBe(
+      "Advanced Security Monitoring"
+    );
+    expect(outlinePayload.enterprise.targetSku).toBe("premium");
     expect(outlinePayload.metadata).toBeDefined();
     expect(outlinePayload.metadata.primaryPersona).toEqual({
-      id: "compliance-officer",
-      label: "Compliance officer",
-      isCustom: false,
-      customValue: "",
+      preset: {
+        id: "compliance-officer",
+        label: "Compliance officer",
+        description:
+          "Ensures regulatory alignment and drives audit readiness across programs.",
+      },
     });
 
     // Verify custom entries are preserved
-    expect(outlinePayload.metadata.platforms.customEntries).toContain(
+    expect(outlinePayload.metadata.platforms.custom).toContain(
       "Custom Enterprise Browser"
     );
-    expect(outlinePayload.metadata.platforms.customEntries).toContain(
+    expect(outlinePayload.metadata.platforms.custom).toContain(
       "Legacy IE Support"
     );
-    expect(outlinePayload.metadata.strategicRisks.customEntries).toContain(
+    expect(outlinePayload.metadata.strategicRisks.custom).toContain(
       "Regulatory compliance risk"
     );
 
@@ -386,22 +410,26 @@ describe("Outline Editing and Serialization Integration", () => {
     // Serialize to spec format for backward compatibility
     const specPayload: SerializedWorkflowSpec =
       serializeWorkflowToSpec(editedState);
+    const legacySpecText = serializeWorkflowToLegacySpecText(editedState);
 
     // Verify spec payload contains outline payload
-    expect(specPayload.outlinePayload).toEqual(outlinePayload);
-    expect(specPayload.specText).toContain("Advanced Security Monitoring");
-    expect(specPayload.specText).toContain("premium");
+    expect(specPayload.outline).toEqual(outlinePayload);
+    expect(legacySpecText).toContain("Compliance Reporting");
+    expect(legacySpecText).toContain("Premium");
   });
 
   test("validates persona selection propagates through serialization", () => {
     // Test primary persona selection
     const workflowWithPrimaryPersona = createTestWorkflowState({
-      outlineMetadata: {
-        ...createTestWorkflowState().outlineMetadata,
-        primaryPersona: {
-          presetId: "product-manager",
-          customValue: "",
-          useCustom: false,
+      contentOutline: {
+        ...createTestWorkflowState().contentOutline,
+        metadata: {
+          ...createTestWorkflowState().contentOutline.metadata,
+          primaryPersona: {
+            presetId: "product-manager",
+            customValue: "",
+            useCustom: false,
+          },
         },
       },
     });
@@ -409,17 +437,24 @@ describe("Outline Editing and Serialization Integration", () => {
     const serialized = serializeWorkflowToOutlinePayload(
       workflowWithPrimaryPersona
     );
-    expect(serialized.metadata.primaryPersona.id).toBe("product-manager");
-    expect(serialized.metadata.primaryPersona.label).toBe("Product manager");
+    expect(serialized.metadata.primaryPersona.preset?.id).toBe(
+      "product-manager"
+    );
+    expect(serialized.metadata.primaryPersona.preset?.label).toBe(
+      "Product manager"
+    );
 
     // Test custom primary persona
     const workflowWithCustomPersona = createTestWorkflowState({
-      outlineMetadata: {
-        ...createTestWorkflowState().outlineMetadata,
-        primaryPersona: {
-          presetId: "",
-          customValue: "Chief Security Officer",
-          useCustom: true,
+      contentOutline: {
+        ...createTestWorkflowState().contentOutline,
+        metadata: {
+          ...createTestWorkflowState().contentOutline.metadata,
+          primaryPersona: {
+            presetId: "",
+            customValue: "Chief Security Officer",
+            useCustom: true,
+          },
         },
       },
     });
@@ -427,7 +462,7 @@ describe("Outline Editing and Serialization Integration", () => {
     const customSerialized = serializeWorkflowToOutlinePayload(
       workflowWithCustomPersona
     );
-    expect(customSerialized.metadata.primaryPersona.isCustom).toBe(true);
+    expect(customSerialized.metadata.primaryPersona.preset).toBeUndefined();
     expect(customSerialized.metadata.primaryPersona.customValue).toBe(
       "Chief Security Officer"
     );
@@ -435,18 +470,21 @@ describe("Outline Editing and Serialization Integration", () => {
 
   test("validates platform and region selections with custom entries", () => {
     const workflowWithCustomPlatforms = createTestWorkflowState({
-      outlineMetadata: {
-        ...createTestWorkflowState().outlineMetadata,
-        platforms: {
-          presetIds: ["chrome", "windows"],
-          customValues: ["Embedded Browser", "Mobile WebView"],
-        },
-        regions: {
-          presetIds: ["asia-pacific"],
-          customValues: [
-            "Antarctica Research Stations",
-            "International Waters",
-          ],
+      contentOutline: {
+        ...createTestWorkflowState().contentOutline,
+        metadata: {
+          ...createTestWorkflowState().contentOutline.metadata,
+          platforms: {
+            presetIds: ["chrome", "windows"],
+            customValues: ["Embedded Browser", "Mobile WebView"],
+          },
+          regions: {
+            presetIds: ["asia-pacific"],
+            customValues: [
+              "Antarctica Research Stations",
+              "International Waters",
+            ],
+          },
         },
       },
     });
@@ -456,18 +494,18 @@ describe("Outline Editing and Serialization Integration", () => {
     );
 
     // Verify preset selections
-    expect(serialized.metadata.platforms.presetOptions).toEqual([
+    expect(serialized.metadata.platforms.presets).toEqual([
       { id: "chrome", label: "Chrome" },
       { id: "windows", label: "Windows" },
     ]);
 
     // Verify custom entries
-    expect(serialized.metadata.platforms.customEntries).toEqual([
+    expect(serialized.metadata.platforms.custom).toEqual([
       "Embedded Browser",
       "Mobile WebView",
     ]);
 
-    expect(serialized.metadata.regions.customEntries).toEqual([
+    expect(serialized.metadata.regions.custom).toEqual([
       "Antarctica Research Stations",
       "International Waters",
     ]);
@@ -483,54 +521,62 @@ describe("End-to-End Workflow Integration", () => {
     const editedState = createTestWorkflowState({
       contentOutline: {
         ...initialState.contentOutline,
-        projectName: "Next-Gen Security Platform",
+        metadata: {
+          ...initialState.contentOutline.metadata,
+          projectName: "Next-Gen Security Platform",
+        },
+        functionalRequirements: [
+          {
+            id: "fr-001",
+            title: "Multi-Tenant Security",
+            description: "Tenant isolation and security boundaries",
+            priority: "P0",
+            userStory: "As an enterprise admin, I want tenant isolation",
+            acceptanceCriteria: [
+              "Data separation",
+              "Access isolation",
+              "Audit boundaries",
+            ],
+          },
+        ],
+        successMetrics: [
+          {
+            id: "sm-001",
+            name: "Tenant Isolation Effectiveness",
+            description: "Percentage of cross-tenant access attempts blocked",
+            type: "performance",
+            target: "99.9%",
+            measurement: "Cross-tenant access attempts blocked",
+            frequency: "Monthly",
+            owner: "Security Monitoring System",
+          },
+        ],
+      },
+      enterpriseParameters: {
+        ...initialState.enterpriseParameters,
         targetSku: "enterprise",
       },
-      functionalRequirements: [
-        {
-          id: "fr-001",
-          title: "Multi-Tenant Security",
-          description: "Tenant isolation and security boundaries",
-          priority: "P0",
-          userStory: "As an enterprise admin, I want tenant isolation",
-          acceptanceCriteria: [
-            "Data separation",
-            "Access isolation",
-            "Audit boundaries",
-          ],
-        },
-      ],
-      successMetrics: [
-        {
-          id: "sm-001",
-          name: "Tenant Isolation Effectiveness",
-          description: "Percentage of cross-tenant access attempts blocked",
-          type: "performance",
-          target: "99.9%",
-          measurement: "Cross-tenant access attempts blocked",
-          frequency: "Monthly",
-          owner: "Security Monitoring System",
-        },
-      ],
     });
 
     // 3. Serialize final state
     const outlinePayload = serializeWorkflowToOutlinePayload(editedState);
-    const specPayload = serializeWorkflowToSpec(editedState);
+    const legacySpecText = serializeWorkflowToLegacySpecText(editedState);
 
     // 4. Verify serialized data matches prompt contract expectations
-    expect(outlinePayload.projectName).toBe("Next-Gen Security Platform");
-    expect(outlinePayload.targetSku).toBe("enterprise");
+    expect(outlinePayload.metadata.projectName).toBe(
+      "Next-Gen Security Platform"
+    );
+    expect(outlinePayload.enterprise.targetSku).toBe("enterprise");
     expect(outlinePayload.functionalRequirements[0].title).toBe(
       "Multi-Tenant Security"
     );
     expect(outlinePayload.successMetrics[0].target).toBe("99.9%");
 
     // 5. Verify spec text contains key elements for drafter
-    expect(specPayload.specText).toContain("Next-Gen Security Platform");
-    expect(specPayload.specText).toContain("enterprise");
-    expect(specPayload.specText).toContain("Multi-Tenant Security");
-    expect(specPayload.specText).toContain("99.9%");
+    expect(legacySpecText).toContain("Multi-Tenant Security");
+    expect(legacySpecText).toContain("Enterprise");
+    expect(legacySpecText).toContain("Multi-Tenant Security");
+    expect(legacySpecText).toContain("99.9%");
 
     // 6. Simulate streaming workflow with mock drafter
     const mockDrafter = new MockDrafter();
