@@ -1,7 +1,18 @@
 #!/usr/bin/env sh
 set -e
 
-printf "\n\033[1;36m[husky] pre-push: lint + typecheck\033[0m\n"
-# pnpm lint
+printf "\n\033[1;36m[husky] pre-push: lint + tests + build + FTA\033[0m\n"
+
+printf "[husky] running lint...\n"
+pnpm lint
+
+printf "\n[husky] running unit tests...\n"
+pnpm jest
+
+printf "\n[husky] enforcing FTA cap...\n"
+pnpm fta:check
+
+printf "\n[husky] verifying build...\n"
 pnpm build
+
 printf "\n\033[1;32m[husky] pre-push passed.\033[0m\n\n"

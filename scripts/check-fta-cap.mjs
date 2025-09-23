@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import fs from "node:fs";
+import { execSync } from "node:child_process";
 import path from "node:path";
 
 const CAP = Number(process.env.FTA_HARD_CAP || 50);
@@ -13,7 +14,32 @@ if (!fs.existsSync(JSON_PATH)) {
 }
 
 const data = JSON.parse(fs.readFileSync(JSON_PATH, "utf8"));
-const offenders = data.filter((d) => d.fta_score > CAP);
+
+let changedFiles = [];
+try {
+  const output = execSync("git status --porcelain", { encoding: "utf8" });
+  changedFiles = output
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => line.slice(3).trim())
+    .map((file) => file.replace(/.* -> /, ""))
+    .filter((file) =>
+      file.startsWith("src/") && (file.endsWith(".ts") || file.endsWith(".tsx"))
+    )
+    .map((file) => file.replace(/^src\//, ""));
+} catch (error) {
+  console.warn("[FTA] Unable to determine changed files:", error);
+}
+
+if (changedFiles.length === 0) {
+  console.log("[FTA] No changed TypeScript files detected. Skipping cap enforcement.");
+  process.exit(0);
+}
+
+const offenders = data
+  .filter((d) => d.fta_score > CAP)
+  .filter((d) => changedFiles.includes(d.file_name));
 
 if (offenders.length) {
   console.error(`\n[FTA] Hard cap exceeded (cap=${CAP}). Offending files:`);

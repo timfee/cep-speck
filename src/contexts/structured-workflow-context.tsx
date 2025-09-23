@@ -3,14 +3,15 @@
 import React, { createContext, useContext, type ReactNode } from "react";
 
 import { useStructuredWorkflow } from "@/hooks/use-structured-workflow";
-import type { 
-  StructuredWorkflowState, 
-  WorkflowStep, 
-  ContentOutline, 
+
+import type {
+  StructuredWorkflowState,
+  WorkflowStep,
+  ContentOutline,
   EnterpriseParameters,
   FunctionalRequirement,
   SuccessMetric,
-  Milestone 
+  Milestone,
 } from "@/types/workflow";
 
 // Define the context type
@@ -19,7 +20,10 @@ interface StructuredWorkflowContextType {
   setInitialPrompt: (prompt: string) => void;
   setContentOutline: (outline: ContentOutline) => void;
   setEnterpriseParameters: (params: EnterpriseParameters) => void;
-  updateFunctionalRequirement: (id: string, updates: Partial<FunctionalRequirement>) => void;
+  updateFunctionalRequirement: (
+    id: string,
+    updates: Partial<FunctionalRequirement>
+  ) => void;
   deleteFunctionalRequirement: (id: string) => void;
   addFunctionalRequirement: (requirement: FunctionalRequirement) => void;
   updateSuccessMetric: (id: string, updates: Partial<SuccessMetric>) => void;
@@ -38,14 +42,17 @@ interface StructuredWorkflowContextType {
 }
 
 // Create the context
-const StructuredWorkflowContext = createContext<StructuredWorkflowContextType | null>(null);
+const StructuredWorkflowContext =
+  createContext<StructuredWorkflowContextType | null>(null);
 
 // Provider component
 interface StructuredWorkflowProviderProps {
   children: ReactNode;
 }
 
-export function StructuredWorkflowProvider({ children }: StructuredWorkflowProviderProps) {
+export function StructuredWorkflowProvider({
+  children,
+}: StructuredWorkflowProviderProps) {
   const workflowData = useStructuredWorkflow();
 
   return (
@@ -59,7 +66,9 @@ export function StructuredWorkflowProvider({ children }: StructuredWorkflowProvi
 export function useStructuredWorkflowContext(): StructuredWorkflowContextType {
   const context = useContext(StructuredWorkflowContext);
   if (!context) {
-    throw new Error("useStructuredWorkflowContext must be used within a StructuredWorkflowProvider. Wrap your component tree with <StructuredWorkflowProvider>.");
+    throw new Error(
+      "useStructuredWorkflowContext must be used within a StructuredWorkflowProvider. Wrap your component tree with <StructuredWorkflowProvider>."
+    );
   }
   return context;
 }
