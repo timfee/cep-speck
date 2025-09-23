@@ -5,6 +5,9 @@ import { validateAll } from "@/lib/spec/validate";
 import type { StructuredWorkflowState } from "@/types/workflow";
 import "@/lib/spec/items";
 
+const DEFAULT_HEADER_REGEX = "^#\\s+\\d+\\.";
+const STRUCTURE_VALIDATOR_IDS = new Set(["section-count", "label-pattern"]);
+
 function createBaseState(
   overrides: Partial<StructuredWorkflowState> = {}
 ): StructuredWorkflowState {
@@ -177,9 +180,9 @@ describe("serializeWorkflowToSpec", () => {
 });
 
 function withCorrectedStructureRegex(pack: SpecPack): SpecPack {
-  const headerRegex = "^#\\s+\\d+\\.";
+  const headerRegex = DEFAULT_HEADER_REGEX;
   const patchItem = <P>(item: SpecItemDef<P>): SpecItemDef<P> => {
-    if (item.id === "section-count" || item.id === "label-pattern") {
+    if (shouldOverrideHeaderRegex(item)) {
       return {
         ...item,
         params: {
@@ -195,4 +198,19 @@ function withCorrectedStructureRegex(pack: SpecPack): SpecPack {
     ...pack,
     items: pack.items.map(patchItem),
   };
+}
+
+function shouldOverrideHeaderRegex<P>(item: SpecItemDef<P>): boolean {
+  if (!item.params || typeof item.params !== "object") {
+    return false;
+  }
+
+  if (STRUCTURE_VALIDATOR_IDS.has(item.id)) {
+    return true;
+  }
+
+  return (
+    "headerRegex" in item.params &&
+    typeof (item.params as { headerRegex?: unknown }).headerRegex === "string"
+  );
 }

@@ -15,6 +15,7 @@ const PROJECT_NAME_MAX_LENGTH = 50;
 const PROJECT_NAME_TRUNCATE_LENGTH = 47;
 const MIN_SPEC_TEXT_LENGTH = 200;
 const METRIC_SUMMARY_LIMIT = 3;
+const SUMMARY_SEPARATOR = " - ";
 
 /**
  * Serialize structured workflow state to spec text format
@@ -104,7 +105,7 @@ function extractProjectName(prompt: string): string {
   // Try to extract a project name from the prompt
   const lines = prompt.split("\n");
   const projectLine = lines.find((l) => l.toLowerCase().includes("project"));
-  if (typeof projectLine === "string") {
+  if (projectLine !== undefined) {
     return projectLine.replace(/project[:\s]*/i, "").trim();
   }
 
@@ -481,7 +482,7 @@ function summarizeMetrics(metrics: SuccessMetric[]): string[] {
     ) {
       parts.push(`Measurement: ${metric.measurement}`);
     }
-    return parts.join(" — ");
+    return parts.join(SUMMARY_SEPARATOR);
   });
 }
 
@@ -545,7 +546,7 @@ function formatMilestone(milestone: Milestone): string {
     parts.push(`ETA: ${milestone.estimatedDate}`);
   }
   parts.push(milestone.description);
-  return parts.join(" — ");
+  return parts.join(SUMMARY_SEPARATOR);
 }
 
 function formatList(items: string[], emptyValue: string): string {
