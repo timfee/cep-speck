@@ -1,13 +1,57 @@
+/**
+ * Workflow state management utilities
+ */
+
 import { useCallback } from "react";
 
 import type {
   ContentOutline,
   EnterpriseParameters,
   StructuredWorkflowState,
+  WorkflowProgress,
+  WorkflowStep,
 } from "@/types/workflow";
 
+import { WORKFLOW_STEPS } from "@/types/workflow";
+
+// Get step IDs for easier manipulation
+const STEP_IDS = WORKFLOW_STEPS.map((step) => step.id) as WorkflowStep[];
+
 /**
- * Simple state setters for the workflow
+ * Calculate workflow progress
+ */
+export function calculateProgress(
+  currentStep: WorkflowStep,
+  completedSteps: WorkflowStep[]
+): WorkflowProgress {
+  const totalSteps = STEP_IDS.length;
+  const completedCount = completedSteps.length;
+  const currentStepIndex = STEP_IDS.indexOf(currentStep);
+
+  return {
+    step: currentStepIndex + 1,
+    totalSteps,
+    stepName: currentStep,
+    completion: Math.round((completedCount / totalSteps) * 100),
+    canGoBack: currentStepIndex > 0,
+    canGoNext: currentStepIndex < totalSteps - 1,
+  };
+}
+
+/**
+ * Check if step can be navigated to
+ */
+export function canNavigateToStep(
+  targetStep: WorkflowStep,
+  completedSteps: WorkflowStep[]
+): boolean {
+  const targetIndex = STEP_IDS.indexOf(targetStep);
+  const maxAllowedIndex = Math.max(0, completedSteps.length);
+  return targetIndex <= maxAllowedIndex;
+}
+
+/**
+ * State setter hooks
  */
 export function useWorkflowSetters(
   setState: (
@@ -35,37 +79,6 @@ export function useWorkflowSetters(
     [setState]
   );
 
-  const setSelectedSections = useCallback(
-    (sectionIds: string[]) => {
-      setState((prev) => ({
-        ...prev,
-        selectedSections: sectionIds,
-        sectionOrder: sectionIds,
-      }));
-    },
-    [setState]
-  );
-
-  const updateSectionContent = useCallback(
-    (sectionId: string, content: string) => {
-      setState((prev) => ({
-        ...prev,
-        sectionContents: {
-          ...prev.sectionContents,
-          [sectionId]: content,
-        },
-      }));
-    },
-    [setState]
-  );
-
-  const reorderSections = useCallback(
-    (newOrder: string[]) => {
-      setState((prev) => ({ ...prev, sectionOrder: newOrder }));
-    },
-    [setState]
-  );
-
   const setLoading = useCallback(
     (loading: boolean) => {
       setState((prev) => ({ ...prev, isLoading: loading }));
@@ -80,23 +93,12 @@ export function useWorkflowSetters(
     [setState]
   );
 
-  const setFinalPrd = useCallback(
-    (prd: string) => {
-      setState((prev) => ({ ...prev, finalPrd: prd }));
-    },
-    [setState]
-  );
-
   return {
     setInitialPrompt,
     setContentOutline,
     setEnterpriseParameters,
-    setSelectedSections,
-    updateSectionContent,
-    reorderSections,
     setLoading,
     setError,
-    setFinalPrd,
   };
 }
 

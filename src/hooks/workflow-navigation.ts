@@ -1,16 +1,46 @@
+/**
+ * Workflow navigation utilities
+ */
+
 import { useCallback } from "react";
 
 import type { StructuredWorkflowState, WorkflowStep } from "@/types/workflow";
+import { WORKFLOW_STEPS } from "@/types/workflow";
 
-import {
-  canNavigateBack,
-  canNavigateNext,
-  findNextStep,
-  findPreviousStep,
-} from "./navigation-state";
+// Get step IDs for easier manipulation
+const STEP_IDS = WORKFLOW_STEPS.map((step) => step.id) as WorkflowStep[];
 
 /**
- * Navigation functions for the workflow
+ * Navigation helper functions
+ */
+export function canNavigateNext(canGoNext: boolean): boolean {
+  return canGoNext;
+}
+
+export function canNavigateBack(canGoBack: boolean): boolean {
+  return canGoBack;
+}
+
+export function findNextStep(currentStep: WorkflowStep): WorkflowStep | null {
+  const currentIndex = STEP_IDS.indexOf(currentStep);
+  if (currentIndex >= 0 && currentIndex < STEP_IDS.length - 1) {
+    return STEP_IDS[currentIndex + 1];
+  }
+  return null;
+}
+
+export function findPreviousStep(
+  currentStep: WorkflowStep
+): WorkflowStep | null {
+  const currentIndex = STEP_IDS.indexOf(currentStep);
+  if (currentIndex > 0) {
+    return STEP_IDS[currentIndex - 1];
+  }
+  return null;
+}
+
+/**
+ * Navigation hooks
  */
 export function useWorkflowNavigation(
   state: StructuredWorkflowState,
@@ -31,21 +61,21 @@ export function useWorkflowNavigation(
   const goToPreviousStep = useCallback(() => {
     if (!canNavigateBack(state.progress.canGoBack)) return;
 
-    const prevStep = findPreviousStep(state.currentStep);
-    if (prevStep) {
-      setState((prev) => ({ ...prev, currentStep: prevStep }));
+    const previousStep = findPreviousStep(state.currentStep);
+    if (previousStep) {
+      setState((prev) => ({ ...prev, currentStep: previousStep }));
     }
   }, [state.progress.canGoBack, state.currentStep, setState]);
 
   const goToStep = useCallback(
-    (step: WorkflowStep) => {
-      setState((prev) => ({ ...prev, currentStep: step }));
+    (targetStep: WorkflowStep) => {
+      setState((prev) => ({ ...prev, currentStep: targetStep }));
     },
     [setState]
   );
 
   const resetWorkflow = useCallback(() => {
-    setState(() => initialState);
+    setState(initialState);
   }, [setState, initialState]);
 
   return {
