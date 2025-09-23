@@ -25,12 +25,14 @@ Chrome Enterprise Premium is Google's flagship enterprise browser solution, prov
 ### Enterprise Browser Landscape
 
 **Primary Competitors:**
+
 - **Zscaler Browser Isolation:** Cloud-based isolation, SASE integration
 - **Island Enterprise Browser:** Application-specific controls, DLP focus
 - **Talon Cyber:** Secure browser workspace, malware protection
 - **Microsoft Edge for Business:** Enterprise controls, Microsoft 365 integration
 
 **Key Evaluation Criteria:**
+
 - Security posture and threat protection capabilities
 - Administrative overhead and deployment complexity
 - User experience impact and productivity
@@ -40,21 +42,25 @@ Chrome Enterprise Premium is Google's flagship enterprise browser solution, prov
 ## Anti-Patterns to Avoid
 
 **Buzzwords and Marketing Speak:**
+
 - Avoid: "revolutionary", "game-changing", "seamless", "robust", "comprehensive"
 - Avoid: "portal", "dashboard" (use specific terms like "admin console", "management interface")
 - Avoid: "significant improvement" (use specific metrics: "25% reduction in...")
 
 **Quality Theater Metrics:**
+
 - Avoid: NPS, satisfaction scores, happiness indices, engagement scores
 - Focus on: Operational metrics, time-to-value, error rates, adoption curves
 
 **Vague Quantification:**
+
 - Avoid: "many users", "significantly faster", "substantial improvement"
 - Use: "X% of admins", "Y seconds faster", "Z% reduction in incidents"
 
 ## PRD Structure Requirements
 
 ### Required Sections (9 total):
+
 1. **TL;DR** - Executive summary with key metrics and timeline
 2. **People Problems** - Specific user pain points with evidence
 3. **Goals** - Measurable objectives aligned to business outcomes
@@ -66,34 +72,40 @@ Chrome Enterprise Premium is Google's flagship enterprise browser solution, prov
 9. **Go-to-Market** - Launch strategy and rollout plan
 
 ### Header Format:
+
 - Use pattern: `# {n}. {title}` (e.g., "# 1. TL;DR", "# 2. People Problems")
 - Maintain consistent numbering throughout
 
 ## Content Generation Guidelines
 
 ### Research and Validation
+
 - Perform competitor research using current data
 - Include specific citations and timeframes
 - Validate technical feasibility claims
 - Cross-reference with Chrome policy documentation
 
 ### Metrics and Quantification
+
 - Every metric requires: units, timeframe, and source of truth (SoT)
 - Use realistic adoption curves (10-20% month 1, 40-60% month 3)
 - Never claim 100% adoption for human behavior
 - Include baseline measurements for performance claims
 
 ### SKU Differentiation
+
 - Explicitly state: Core, Premium, or Both for each feature
 - Justify Premium features (complexity, cost, advanced use case)
 - Explain upgrade path for Core features
 
 ### Placeholder Quality
+
 - Structure placeholders with specific context
 - Bad: `[PM_INPUT_NEEDED: metric]`
 - Good: `[PM_INPUT_NEEDED: baseline median time to first security policy deployment in minutes from CBCM telemetry]`
 
 ### Technical Realism
+
 - Account for engineering, testing, and rollout phases
 - Include dependency validation and critical path analysis
 - Provide fallback plans for external dependencies

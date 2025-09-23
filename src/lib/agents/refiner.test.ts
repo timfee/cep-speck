@@ -5,8 +5,8 @@
 import { getResilientAI } from "@/lib/ai/resilient";
 import type { Issue } from "@/lib/spec/types";
 
-import { loadPrompt } from "../prompt-loader";
-import { runRefinerAgent } from "../refiner";
+import { loadPrompt } from "./prompt-loader";
+import { runRefinerAgent } from "./refiner";
 
 // Mock the AI infrastructure
 jest.mock("@/lib/ai/resilient", () => ({
@@ -15,7 +15,7 @@ jest.mock("@/lib/ai/resilient", () => ({
   })),
 }));
 
-jest.mock("../prompt-loader", () => ({
+jest.mock("./prompt-loader", () => ({
   loadPrompt: jest.fn(),
 }));
 
@@ -23,7 +23,7 @@ describe("Refiner Agent", () => {
   const mockResilientAI = getResilientAI as jest.MockedFunction<
     typeof getResilientAI
   >;
-  const mockLoadPrompt = loadPrompt as jest.MockedFunction<typeof loadPrompt>;
+  const mockLoadPrompt = loadPrompt;
 
   const sampleIssues: Issue[] = [
     {

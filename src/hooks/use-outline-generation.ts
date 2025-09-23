@@ -2,7 +2,7 @@ import { useCallback } from "react";
 
 import { generateContentOutlineFromPrompt } from "@/lib/services/content-outline-service";
 
-import type { WorkflowSetters } from "./workflow-setters";
+import type { WorkflowSetters } from "./workflow-state";
 
 export function useOutlineGeneration(setters: WorkflowSetters) {
   return useCallback(

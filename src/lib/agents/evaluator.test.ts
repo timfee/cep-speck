@@ -4,8 +4,8 @@
 
 import { getResilientAI } from "@/lib/ai/resilient";
 
-import { runSemanticEvaluator } from "../evaluator";
-import { loadPrompt } from "../prompt-loader";
+import { runSemanticEvaluator } from "./evaluator";
+import { loadPrompt } from "./prompt-loader";
 
 // Mock the AI infrastructure
 jest.mock("@/lib/ai/resilient", () => ({
@@ -14,7 +14,7 @@ jest.mock("@/lib/ai/resilient", () => ({
   })),
 }));
 
-jest.mock("../prompt-loader", () => ({
+jest.mock("./prompt-loader", () => ({
   loadPrompt: jest.fn(),
 }));
 
@@ -22,7 +22,7 @@ describe("Semantic Evaluator Agent", () => {
   const mockResilientAI = getResilientAI as jest.MockedFunction<
     typeof getResilientAI
   >;
-  const mockLoadPrompt = loadPrompt as jest.MockedFunction<typeof loadPrompt>;
+  const mockLoadPrompt = loadPrompt;
 
   beforeEach(() => {
     jest.clearAllMocks();

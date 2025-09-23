@@ -5,7 +5,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CopyButton } from "@/components/ui/copy-button";
 import type { ErrorSeverityLevels } from "@/lib/error/types";
 
-import { TechnicalContext, StackTrace, ReproductionSteps } from "./error-view-helpers";
+import {
+  TechnicalContext,
+  StackTrace,
+  ReproductionSteps,
+} from "./error-view-helpers";
 
 interface TechnicalViewProps {
   errorLevels: ErrorSeverityLevels;
@@ -63,7 +67,10 @@ export function SupportView({ errorLevels, supportData }: SupportViewProps) {
               <li>Browser: {errorLevels.support.environment.userAgent}</li>
               <li>URL: {errorLevels.support.environment.url}</li>
               <li>Timestamp: {errorLevels.support.environment.timestamp}</li>
-              <li>API Key Present: {errorLevels.support.environment.apiKeyPresent ? "Yes" : "No"}</li>
+              <li>
+                API Key Present:{" "}
+                {errorLevels.support.environment.apiKeyPresent ? "Yes" : "No"}
+              </li>
             </ul>
           </div>
         </div>

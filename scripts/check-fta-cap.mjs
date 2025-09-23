@@ -24,8 +24,10 @@ try {
     .filter(Boolean)
     .map((line) => line.slice(3).trim())
     .map((file) => file.replace(/.* -> /, ""))
-    .filter((file) =>
-      file.startsWith("src/") && (file.endsWith(".ts") || file.endsWith(".tsx"))
+    .filter(
+      (file) =>
+        file.startsWith("src/") &&
+        (file.endsWith(".ts") || file.endsWith(".tsx"))
     )
     .map((file) => file.replace(/^src\//, ""));
 } catch (error) {
@@ -33,7 +35,9 @@ try {
 }
 
 if (changedFiles.length === 0) {
-  console.log("[FTA] No changed TypeScript files detected. Skipping cap enforcement.");
+  console.log(
+    "[FTA] No changed TypeScript files detected. Skipping cap enforcement."
+  );
   process.exit(0);
 }
 

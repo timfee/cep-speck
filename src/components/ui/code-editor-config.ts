@@ -22,7 +22,7 @@ export const EDITOR_DEFAULTS = {
 export function calculateTextMetrics(value: string) {
   const words = value.trim() ? value.trim().split(/\s+/).length : 0;
   const chars = value.length;
-  
+
   return { wordCount: words, charCount: chars };
 }
 

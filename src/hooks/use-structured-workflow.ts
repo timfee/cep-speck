@@ -8,7 +8,7 @@ import { useWorkflowStateWithProgress } from "./use-workflow-progress";
 import { useWorkflowSerializers } from "./use-workflow-serializers";
 import { initialWorkflowState } from "./workflow-initial-state";
 import { useWorkflowNavigation } from "./workflow-navigation";
-import { useWorkflowSetters } from "./workflow-setters";
+import { useWorkflowSetters } from "./workflow-state";
 
 export const useStructuredWorkflow = () => {
   const [state, setState] =

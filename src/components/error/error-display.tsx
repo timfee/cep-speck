@@ -15,7 +15,10 @@ import {
   ViewLevelTabs,
 } from "./error-view-components";
 
-import { ERROR_SEVERITY_STYLES, getRecoveryActions } from "./recovery-strategies";
+import {
+  ERROR_SEVERITY_STYLES,
+  getRecoveryActions,
+} from "./recovery-strategies";
 
 interface ErrorDisplayProps {
   error: ErrorDetails;

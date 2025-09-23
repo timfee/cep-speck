@@ -2,8 +2,6 @@
  * Performance tests for streaming protocol
  */
 
-import { measureMemoryUsage } from "../../src/lib/spec/__tests__/test-utils";
-
 import {
   createErrorFrame,
   createGenerationFrame,
@@ -11,6 +9,7 @@ import {
   encodeStreamFrame,
 } from "../../src/lib/spec/streaming";
 
+import { measureMemoryUsage } from "../../src/lib/spec/test-utils/test-utils";
 import type { StreamFrame, StreamPhase } from "../../src/lib/spec/types";
 
 import {

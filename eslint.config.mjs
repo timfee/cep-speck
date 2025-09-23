@@ -242,8 +242,8 @@ const eslintConfig = [
       "unicorn/filename-case": [
         "error", // Enforced: All files must be kebab-case
         {
-          case: "kebabCase"
-        }
+          case: "kebabCase",
+        },
       ],
 
       // ============ RULE 19: No VoidUnused Helper ============
@@ -304,7 +304,7 @@ const eslintConfig = [
       "**/spec/selfReview.ts",
       "**/spec/validate.ts",
       "**/spec/helpers/**/*.ts",
-      "**/spec/__tests__/**/*.ts",
+      "**/spec/test-utils/**/*.ts",
     ],
     rules: {
       "custom/consistent-error-handling-pattern": "off",
@@ -334,6 +334,8 @@ const eslintConfig = [
       "**/*.spec.tsx",
       "**/tests/**/*.ts",
       "**/__tests__/**/*.ts",
+      "**/test-utils/**/*.ts",
+      "**/agents/*.test.ts",
     ],
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
@@ -343,6 +345,9 @@ const eslintConfig = [
       "@typescript-eslint/strict-boolean-expressions": "off",
       "@typescript-eslint/no-unsafe-assignment": "off",
       "@typescript-eslint/no-unsafe-argument": "off",
+      "@typescript-eslint/no-unsafe-call": "off",
+      "@typescript-eslint/no-unsafe-member-access": "off",
+      "@typescript-eslint/no-unnecessary-type-assertion": "off",
       "@typescript-eslint/restrict-template-expressions": "off",
       "@typescript-eslint/no-unnecessary-condition": "off",
       "@typescript-eslint/prefer-nullish-coalescing": "off",
