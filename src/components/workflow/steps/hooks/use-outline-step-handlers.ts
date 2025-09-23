@@ -2,9 +2,11 @@ import { useCallback, useMemo } from "react";
 
 import type {
   ContentOutline,
+  CustomerJourney,
   FunctionalRequirement,
   Milestone,
   SuccessMetric,
+  SuccessMetricSchema,
 } from "@/types/workflow";
 
 import type { SubmitCallbackMap } from "./outline-editor-callbacks";
@@ -22,6 +24,16 @@ interface UseOutlineStepHandlersProps {
   onEditSuccessMetric?: (id: string, updates: Partial<SuccessMetric>) => void;
   onAddMilestone?: (milestone: Milestone) => void;
   onEditMilestone?: (id: string, updates: Partial<Milestone>) => void;
+  onAddCustomerJourney?: (journey: CustomerJourney) => void;
+  onEditCustomerJourney?: (
+    id: string,
+    updates: Partial<CustomerJourney>
+  ) => void;
+  onAddMetricSchema?: (schema: SuccessMetricSchema) => void;
+  onEditMetricSchema?: (
+    id: string,
+    updates: Partial<SuccessMetricSchema>
+  ) => void;
 }
 
 type SubmitCallbackDependencies = Pick<
@@ -32,6 +44,10 @@ type SubmitCallbackDependencies = Pick<
   | "onEditSuccessMetric"
   | "onAddMilestone"
   | "onEditMilestone"
+  | "onAddCustomerJourney"
+  | "onEditCustomerJourney"
+  | "onAddMetricSchema"
+  | "onEditMetricSchema"
 >;
 
 const createSubmitCallbackMap = ({
@@ -41,6 +57,10 @@ const createSubmitCallbackMap = ({
   onEditSuccessMetric,
   onAddMilestone,
   onEditMilestone,
+  onAddCustomerJourney,
+  onEditCustomerJourney,
+  onAddMetricSchema,
+  onEditMetricSchema,
 }: SubmitCallbackDependencies): SubmitCallbackMap => ({
   functionalRequirement: {
     onAdd: onAddFunctionalRequirement,
@@ -54,6 +74,14 @@ const createSubmitCallbackMap = ({
     onAdd: onAddMilestone,
     onEdit: onEditMilestone,
   },
+  customerJourney: {
+    onAdd: onAddCustomerJourney,
+    onEdit: onEditCustomerJourney,
+  },
+  metricSchema: {
+    onAdd: onAddMetricSchema,
+    onEdit: onEditMetricSchema,
+  },
 });
 
 export function useOutlineStepHandlers(props: UseOutlineStepHandlersProps) {
@@ -66,6 +94,10 @@ export function useOutlineStepHandlers(props: UseOutlineStepHandlersProps) {
     onEditSuccessMetric,
     onAddMilestone,
     onEditMilestone,
+    onAddCustomerJourney,
+    onEditCustomerJourney,
+    onAddMetricSchema,
+    onEditMetricSchema,
   } = props;
 
   const submitCallbacks = useMemo(
@@ -77,6 +109,10 @@ export function useOutlineStepHandlers(props: UseOutlineStepHandlersProps) {
         onEditSuccessMetric,
         onAddMilestone,
         onEditMilestone,
+        onAddCustomerJourney,
+        onEditCustomerJourney,
+        onAddMetricSchema,
+        onEditMetricSchema,
       }),
     [
       onAddFunctionalRequirement,
@@ -85,6 +121,10 @@ export function useOutlineStepHandlers(props: UseOutlineStepHandlersProps) {
       onEditFunctionalRequirement,
       onEditMilestone,
       onEditSuccessMetric,
+      onAddCustomerJourney,
+      onEditCustomerJourney,
+      onAddMetricSchema,
+      onEditMetricSchema,
     ]
   );
 
@@ -118,6 +158,22 @@ export function useOutlineStepHandlers(props: UseOutlineStepHandlersProps) {
     ),
     handleEditMilestone: useCallback(
       (id: string) => openEditor("milestone", "edit", id),
+      [openEditor]
+    ),
+    handleAddCustomerJourney: useCallback(
+      () => openEditor("customerJourney", "create"),
+      [openEditor]
+    ),
+    handleEditCustomerJourney: useCallback(
+      (id: string) => openEditor("customerJourney", "edit", id),
+      [openEditor]
+    ),
+    handleAddMetricSchema: useCallback(
+      () => openEditor("metricSchema", "create"),
+      [openEditor]
+    ),
+    handleEditMetricSchema: useCallback(
+      (id: string) => openEditor("metricSchema", "edit", id),
       [openEditor]
     ),
     editorState,

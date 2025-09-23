@@ -1,87 +1,59 @@
-import type { StructuredWorkflowState } from "@/types/workflow";
-
-import {
-  MIN_SPEC_TEXT_LENGTH,
-  REQUIRED_HEADERS,
-} from "./workflow-to-spec/constants";
-
-import { buildMetadataBlock } from "./workflow-to-spec/metadata";
-
-import {
-  buildNormalizedSectionMap,
-  pickOverride,
-} from "./workflow-to-spec/normalization";
-
-import { placeholder } from "./workflow-to-spec/placeholders";
-import { SECTION_DEFINITIONS } from "./workflow-to-spec/sections";
+import { serializeWorkflowToOutlinePayload } from "@/lib/serializers/workflow-to-structured-outline";
 
 import type {
-  SectionContentMap,
-  SectionDefinition,
-} from "./workflow-to-spec/types";
+  SerializedWorkflowSpec,
+  StructuredWorkflowState,
+} from "@/types/workflow";
+
+const SPEC_VERSION: SerializedWorkflowSpec["version"] = "phase-4";
 
 export function serializeWorkflowToSpec(
   state: StructuredWorkflowState
-): string {
-  const overrides = buildNormalizedSectionMap(state.sectionContents);
-  const output: string[] = [...buildMetadataBlock(state), ""];
-
-  let index = 0;
-  for (const definition of SECTION_DEFINITIONS) {
-    appendSection(output, definition, index, state, overrides);
-    index += 1;
-  }
-
-  return output.join("\n").trim();
-}
-
-function appendSection(
-  output: string[],
-  definition: SectionDefinition,
-  index: number,
-  state: StructuredWorkflowState,
-  overrides: SectionContentMap
-): void {
-  const overrideContent = pickOverride(overrides, definition.overrideKeys);
-  const builtContent =
-    overrideContent ?? definition.build(state, overrides) ?? "";
-  const trimmedContent = builtContent.trim();
-
-  output.push(`# ${index + 1}. ${definition.title}`);
-  output.push(
-    trimmedContent.length > 0
-      ? trimmedContent
-      : placeholder(definition.placeholder)
-  );
-  output.push("");
-}
-
-export function validateSerializedSpec(specText: string): {
-  isValid: boolean;
-  issues: string[];
-} {
-  const issues: string[] = [];
-
-  if (!specText.includes("Project:")) {
-    issues.push("Missing project metadata");
-  }
-
-  if (!specText.includes("Target SKU:")) {
-    issues.push("Missing target SKU");
-  }
-
-  for (const header of REQUIRED_HEADERS) {
-    if (!specText.includes(header)) {
-      issues.push(`Missing section: ${header}`);
-    }
-  }
-
-  if (specText.length < MIN_SPEC_TEXT_LENGTH) {
-    issues.push("Spec text is too short");
-  }
+): SerializedWorkflowSpec {
+  const outline = serializeWorkflowToOutlinePayload(state);
+  const overrides = buildOverrides(state.sectionContents);
+  const finalDraft = state.finalPrd.trim();
 
   return {
-    isValid: issues.length === 0,
-    issues,
+    version: SPEC_VERSION,
+    generatedAt: new Date().toISOString(),
+    outline,
+    workflow: {
+      initialPrompt: state.initialPrompt,
+      selectedSections: [...state.selectedSections],
+      sectionOrder: [...state.sectionOrder],
+      finalPrd: finalDraft.length > 0 ? finalDraft : undefined,
+      openIssues: collectOpenIssues(state),
+    },
+    overrides,
   };
 }
+
+function buildOverrides(
+  sectionContents: StructuredWorkflowState["sectionContents"]
+): Record<string, string> {
+  const overrides: Record<string, string> = {};
+  for (const [sectionId, content] of Object.entries(sectionContents)) {
+    if (typeof content !== "string") continue;
+    const trimmed = content.trim();
+    if (trimmed.length === 0) continue;
+    overrides[sectionId] = trimmed;
+  }
+  return overrides;
+}
+
+function collectOpenIssues(state: StructuredWorkflowState): string[] {
+  const issues: string[] = [];
+  if (typeof state.error === "string") {
+    const trimmed = state.error.trim();
+    if (trimmed.length > 0) {
+      issues.push(trimmed);
+    }
+  }
+  return issues;
+}
+
+export {
+  serializeWorkflowToLegacySpecText,
+  validateLegacySpecText,
+} from "./workflow-to-spec-legacy";

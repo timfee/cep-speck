@@ -4,6 +4,11 @@
 
 import type { StreamTextResult } from "ai";
 
+import type {
+  SerializedWorkflowOutline,
+  SerializedWorkflowSpec,
+} from "@/types/workflow";
+
 import { buildDrafterMessages } from "./drafter-messages";
 
 import type {
@@ -119,11 +124,15 @@ export async function runDrafterAgent(
   userInput: string,
   pack: SpecPack,
   knowledgeContext?: string,
-  researchContext?: string
+  researchContext?: string,
+  structuredSpec?: SerializedWorkflowSpec,
+  outlinePayload?: SerializedWorkflowOutline
 ): Promise<StreamTextResult<Record<string, never>, never>> {
   const drafter = new DrafterAgent();
   return await drafter.executeStreaming({
     userInput,
+    structuredSpec,
+    outlinePayload,
     pack,
     knowledgeContext,
     researchContext,

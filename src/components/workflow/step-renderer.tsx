@@ -8,20 +8,10 @@ import { IdeaCaptureStep } from "@/components/workflow/steps/idea-capture-step";
 import { useStructuredWorkflowContext } from "@/contexts/structured-workflow-context";
 
 interface StepRendererProps {
-  _generatedPrd: string;
-  _isGenerating: boolean;
-  _error: string | null;
   handleRegenerateOutline: () => Promise<void>;
-  _handleGeneratePrd: () => Promise<void>;
 }
 
-export function StepRenderer({
-  _generatedPrd,
-  _isGenerating,
-  _error,
-  handleRegenerateOutline,
-  _handleGeneratePrd,
-}: StepRendererProps) {
+export function StepRenderer({ handleRegenerateOutline }: StepRendererProps) {
   const {
     state,
     setInitialPrompt,
@@ -36,6 +26,13 @@ export function StepRenderer({
     updateMilestone,
     deleteMilestone,
     addMilestone,
+    updateOutlineMetadata,
+    updateCustomerJourney,
+    deleteCustomerJourney,
+    addCustomerJourney,
+    updateMetricSchema,
+    deleteMetricSchema,
+    addMetricSchema,
   } = useStructuredWorkflowContext();
 
   switch (state.currentStep) {
@@ -64,6 +61,13 @@ export function StepRenderer({
           onEditMilestone={updateMilestone}
           onDeleteMilestone={deleteMilestone}
           onAddMilestone={addMilestone}
+          onUpdateMetadata={updateOutlineMetadata}
+          onEditCustomerJourney={updateCustomerJourney}
+          onDeleteCustomerJourney={deleteCustomerJourney}
+          onAddCustomerJourney={addCustomerJourney}
+          onEditMetricSchema={updateMetricSchema}
+          onDeleteMetricSchema={deleteMetricSchema}
+          onAddMetricSchema={addMetricSchema}
         />
       );
 

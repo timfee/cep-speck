@@ -1,4 +1,4 @@
-import type { Issue } from "@/lib/spec/types";
+import type { Issue, StreamPhase } from "@/lib/spec/types";
 
 import {
   createFrameHandler,
@@ -26,6 +26,12 @@ interface StreamHandlerOptions {
   setGeneratedPrd: (draft: string) => void;
   completeGeneration: (draft: string) => void;
   setValidationIssues: (issues: Issue[]) => void;
+  updatePhaseStatus: (
+    phase: StreamPhase,
+    attempt: number | undefined,
+    message?: string
+  ) => void;
+  recordPhaseIssues: (phase: StreamPhase, issues: Issue[]) => void;
 }
 
 export function createGenerationStreamHandler({
@@ -34,13 +40,16 @@ export function createGenerationStreamHandler({
   setGeneratedPrd,
   completeGeneration,
   setValidationIssues,
+  updatePhaseStatus,
+  recordPhaseIssues,
 }: StreamHandlerOptions) {
   const contentRef = { current: "" };
 
   return createFrameHandler(
     createGenerationCallbacks({
-      onPhase: (nextPhase, nextAttempt) => {
+      onPhase: (nextPhase, nextAttempt, message) => {
         setPhaseWithProgress(nextPhase);
+        updatePhaseStatus(nextPhase as StreamPhase, nextAttempt, message);
         if (typeof nextAttempt === "number") {
           setAttempt(nextAttempt);
         }
@@ -51,7 +60,10 @@ export function createGenerationStreamHandler({
         setGeneratedPrd(nextDraft);
       },
       onResult: completeGeneration,
-      onValidation: setValidationIssues,
+      onValidation: (issues) => {
+        setValidationIssues(issues);
+        recordPhaseIssues("validating", issues);
+      },
       onSelfReview: () => undefined,
       onError: (message) => {
         throw new Error(sanitizeStreamError(message));

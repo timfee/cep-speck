@@ -1,0 +1,34 @@
+# Refactor TODO
+
+- [x] Fix streaming frame handling so incremental PRD text renders while `/api/run` streams delta/total payloads. (See `src/components/workflow/hooks/use-generation-state.ts`.)
+- [x] Spinner components compile without legacy constants; verified `src/components/ui/spinner-components.tsx` and related helpers only rely on imported animation utilities.
+- [x] Outline section editors are wired to real add/edit callbacks via `useOutlineStepHandlers` and `useContentEditing`.
+- [x] Update workflow progress so the “Generate” step cannot advance when `state.finalPrd` is empty (`src/hooks/progress-calculation.ts`).
+- [x] Expand `serializeToSpecText` to include support level, rollout strategy, and milestone details (`src/hooks/workflow-serialization.ts`).
+- [x] Stabilize streaming/progress/editing/serialization as baseline for richer UX.
+- [x] Extend `StructuredWorkflowState` and outline UI to mirror the structured JSON spec (project metadata, CUJs, metrics schema, etc.). _(Metadata + customer journey + metric schema sections now editable; remaining work involves richer metadata enums and serialization plumbing.)_
+- [x] Bind spec enumerations (personas, platforms, value props, etc.) to editable controls and persist them in state.
+  - [x] Introduce a shared `outline-enumerations` module that exports the canonical option sets for personas, platforms, value props, regions, and strategic risks so the UI and prompt builders stay in sync.
+  - [x] Replace the free-form textarea inputs in `OutlineMetadataPanel` with multi-select checklists backed by the new enumerations while still allowing custom entries where necessary.
+  - [x] Persist structured selections inside `OutlineMetadata` (e.g., split between enumerated values and custom notes) so serialization can distinguish curated options from freeform additions.
+  - [x] Surface enumerated selections in serialization/prompt payloads so downstream agents receive the curated labels alongside custom entries.
+  - [x] Add regression tests that assert checkbox/radio selections and custom entries propagate through `updateOutlineMetadata` into serializer output.
+- [x] Add CUJ and success-metric schema editors (nested accordions, step arrays) backed by state helpers.
+- [x] Replace the text-centric serializer with JSON output feeding Outline Initialization / PRD prompts.
+  - [x] Reuse `serializeWorkflowToOutlinePayload` to emit the outline block and wrap it with enterprise + workflow metadata expected by Phase 4 prompts.
+  - [x] Update downstream consumers (`serializeWorkflowToSpec`, drafter prompts, tests) to validate the structured payload instead of raw markdown.
+- [x] Update `handleGeneratePrd` to send the structured JSON to the drafter/refiner endpoints.
+  - [x] POST both `outlinePayload` and the legacy `specText` (for backward compatibility) until the server is migrated.
+  - [x] Ensure the streaming helpers consume the new field and keep `state.finalPrd` in sync.
+- [x] Retire the legacy PRD wizard generation hook in favor of the shared generation store and outline handler utilities.
+- [x] Extract reusable outline generation and progress hooks so the structured workflow stays under the FTA cap.
+- [x] Surface streaming progress across the metrics dashboard and phase timeline using the corrected stream handler.
+  - [x] Wire the stream-processor phase callbacks into `ProgressTimeline` so step indicators animate during generation.
+  - [x] Display per-phase attempt count and issue summaries in the dashboard cards.
+- [x] Provide post-generation review tools exposing warnings and retry/refine actions.
+  - [x] Surface deterministic issues beside the generated draft with retry/refine buttons wired to the refiner agent.
+- [x] Centralize long option lists for reuse across UI and prompt builder.
+  - [x] Update drafter and refiner prompt builders to import the shared `outline-enumerations` constants instead of duplicating literals.
+- [ ] Add integration tests covering streaming payloads and outline editing/serialization flows.
+  - [ ] Simulate a full outline edit session (personas, platforms, custom entries) and assert the serialized JSON matches the prompt contract.
+  - [ ] Verify streaming frames update the timeline progress indicators while the mock drafter emits delta frames.

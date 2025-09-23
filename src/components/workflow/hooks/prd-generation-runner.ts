@@ -1,5 +1,10 @@
 import { StreamProcessor } from "@/lib/streaming/stream-processor";
 
+import type {
+  SerializedWorkflowOutline,
+  SerializedWorkflowSpec,
+} from "@/types/workflow";
+
 import type { StreamFrameHandler } from "./prd-stream-utils";
 import { consumeStream } from "./prd-stream-utils";
 
@@ -9,8 +14,14 @@ interface GenerationRequestOptions {
 
 const DEFAULT_MAX_ATTEMPTS = 3;
 
+interface GenerationRequestPayload {
+  structuredSpec: SerializedWorkflowSpec;
+  outlinePayload: SerializedWorkflowOutline;
+  legacySpecText: string;
+}
+
 export async function runGenerationRequest(
-  specText: string,
+  payload: GenerationRequestPayload,
   frameHandler: StreamFrameHandler,
   options: GenerationRequestOptions = {}
 ): Promise<void> {
@@ -18,7 +29,9 @@ export async function runGenerationRequest(
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      specText,
+      specText: payload.legacySpecText,
+      structuredSpec: payload.structuredSpec,
+      outlinePayload: payload.outlinePayload,
       maxAttempts: options.maxAttempts ?? DEFAULT_MAX_ATTEMPTS,
     }),
   });

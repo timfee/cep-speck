@@ -4,6 +4,11 @@
 
 import type { StreamTextResult } from "ai";
 
+import type {
+  SerializedWorkflowOutline,
+  SerializedWorkflowSpec,
+} from "@/types/workflow";
+
 import type { SpecPack } from "../spec/types";
 
 /**
@@ -12,6 +17,10 @@ import type { SpecPack } from "../spec/types";
 export interface AgentContext {
   /** User-provided specification text */
   userInput: string;
+  /** Structured workflow spec payload */
+  structuredSpec?: SerializedWorkflowSpec;
+  /** Serialized outline payload */
+  outlinePayload?: SerializedWorkflowOutline;
   /** Validation pack configuration */
   pack: SpecPack;
   /** Additional context from knowledge base */

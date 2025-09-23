@@ -4,11 +4,16 @@
 
 import type { StreamTextResult, CoreMessage } from "ai";
 
+import { EMPTY_OUTLINE_METADATA } from "@/lib/services/content-outline-schemas";
+
 import type {
   ContentOutline,
+  CustomerJourney,
   FunctionalRequirement,
-  SuccessMetric,
   Milestone,
+  OutlineMetadata,
+  SuccessMetric,
+  SuccessMetricSchema,
 } from "@/types/workflow";
 
 import {
@@ -54,6 +59,7 @@ export function parseContentOutlineResponse(response: string): ContentOutline {
     if (typeof parsed === "object" && parsed !== null) {
       const obj = parsed as Record<string, unknown>;
       return {
+        metadata: mergeMetadata(obj.metadata),
         functionalRequirements: Array.isArray(obj.functionalRequirements)
           ? (obj.functionalRequirements as FunctionalRequirement[])
           : [],
@@ -63,14 +69,23 @@ export function parseContentOutlineResponse(response: string): ContentOutline {
         milestones: Array.isArray(obj.milestones)
           ? (obj.milestones as Milestone[])
           : [],
+        customerJourneys: Array.isArray(obj.customerJourneys)
+          ? (obj.customerJourneys as CustomerJourney[])
+          : [],
+        metricSchemas: Array.isArray(obj.metricSchemas)
+          ? (obj.metricSchemas as SuccessMetricSchema[])
+          : [],
       };
     }
 
     // Return empty outline if parsed is not an object
     return {
+      metadata: { ...EMPTY_OUTLINE_METADATA },
       functionalRequirements: [],
       successMetrics: [],
       milestones: [],
+      customerJourneys: [],
+      metricSchemas: [],
     };
   } catch (error) {
     console.error("Failed to parse AI content outline response:", error);
@@ -78,9 +93,23 @@ export function parseContentOutlineResponse(response: string): ContentOutline {
 
     // Return empty outline on parse failure
     return {
+      metadata: { ...EMPTY_OUTLINE_METADATA },
       functionalRequirements: [],
       successMetrics: [],
       milestones: [],
+      customerJourneys: [],
+      metricSchemas: [],
     };
   }
+}
+
+function mergeMetadata(source: unknown): OutlineMetadata {
+  if (typeof source !== "object" || source === null) {
+    return { ...EMPTY_OUTLINE_METADATA };
+  }
+
+  return {
+    ...EMPTY_OUTLINE_METADATA,
+    ...(source as Partial<OutlineMetadata>),
+  };
 }

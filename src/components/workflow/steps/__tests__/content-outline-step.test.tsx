@@ -12,17 +12,34 @@ import React from "react";
 
 import type {
   ContentOutline,
+  CustomerJourney,
   FunctionalRequirement,
   Milestone,
   SuccessMetric,
+  SuccessMetricSchema,
 } from "@/types/workflow";
 
 import { ContentOutlineStep } from "../content-outline-step";
 
 const baseOutline: ContentOutline = {
+  metadata: {
+    projectName: "",
+    projectTagline: "",
+    problemStatement: "",
+    primaryPersona: { presetId: undefined, customValue: "" },
+    secondaryPersonas: { presetIds: [], customValues: [] },
+    valuePropositions: { presetIds: [], customValues: [] },
+    targetUsers: { presetIds: [], customValues: [] },
+    platforms: { presetIds: [], customValues: [] },
+    regions: { presetIds: [], customValues: [] },
+    strategicRisks: { presetIds: [], customValues: [] },
+    notes: "",
+  },
   functionalRequirements: [],
   successMetrics: [],
   milestones: [],
+  customerJourneys: [],
+  metricSchemas: [],
 };
 
 function assertIsHTMLElement(
@@ -38,12 +55,27 @@ function renderOutlineStep(options: {
   onAddRequirement?: (requirement: FunctionalRequirement) => void;
   onEditMetric?: (id: string, metric: Partial<SuccessMetric>) => void;
   onDeleteMilestone?: (id: string) => void;
+  onAddJourney?: (journey: CustomerJourney) => void;
+  onEditMetricSchema?: (
+    id: string,
+    updates: Partial<SuccessMetricSchema>
+  ) => void;
 }) {
   const user = userEvent.setup();
   const outline = options.outline ?? baseOutline;
-  const onAddRequirement = options.onAddRequirement ?? jest.fn();
-  const onEditMetric = options.onEditMetric ?? jest.fn();
-  const onDeleteMilestone = options.onDeleteMilestone ?? jest.fn();
+  const onAddRequirement =
+    options.onAddRequirement ??
+    jest.fn<(requirement: FunctionalRequirement) => void>();
+  const onEditMetric =
+    options.onEditMetric ??
+    jest.fn<(id: string, metric: Partial<SuccessMetric>) => void>();
+  const onDeleteMilestone =
+    options.onDeleteMilestone ?? jest.fn<(id: string) => void>();
+  const onAddJourney =
+    options.onAddJourney ?? jest.fn<(journey: CustomerJourney) => void>();
+  const onEditMetricSchema =
+    options.onEditMetricSchema ??
+    jest.fn<(id: string, updates: Partial<SuccessMetricSchema>) => void>();
 
   render(
     <ContentOutlineStep
@@ -54,10 +86,19 @@ function renderOutlineStep(options: {
       onAddFunctionalRequirement={onAddRequirement}
       onEditSuccessMetric={onEditMetric}
       onDeleteMilestone={onDeleteMilestone}
+      onAddCustomerJourney={onAddJourney}
+      onEditMetricSchema={onEditMetricSchema}
     />
   );
 
-  return { user, onAddRequirement, onEditMetric, onDeleteMilestone };
+  return {
+    user,
+    onAddRequirement,
+    onEditMetric,
+    onDeleteMilestone,
+    onAddJourney,
+    onEditMetricSchema,
+  };
 }
 
 describe("ContentOutlineStep interactions", () => {
@@ -168,5 +209,122 @@ describe("ContentOutlineStep interactions", () => {
     );
 
     expect(onDeleteMilestone).toHaveBeenCalledWith("ms-1");
+  });
+
+  it("collects input when adding a customer journey", async () => {
+    const { user, onAddJourney } = renderOutlineStep({});
+
+    await user.click(screen.getByRole("button", { name: /add journey/i }));
+
+    const formRegion = screen
+      .getByRole("heading", { name: /add customer journey/i })
+      .closest("div");
+    expect(formRegion).not.toBeNull();
+    assertIsHTMLElement(formRegion);
+
+    await user.type(
+      within(formRegion).getByLabelText(/journey title/i),
+      "New Onboarding"
+    );
+    await user.type(
+      within(formRegion).getByLabelText(/persona \/ role/i),
+      "First-time admin"
+    );
+    await user.type(
+      within(formRegion).getByLabelText(/persona goal/i),
+      "Configure the product for their organization"
+    );
+    await user.type(
+      within(formRegion).getByRole("textbox", { name: /step 1$/i }),
+      "Visit the setup wizard"
+    );
+
+    await user.click(
+      within(formRegion).getByRole("button", { name: /add journey/i })
+    );
+
+    expect(onAddJourney).toHaveBeenCalledTimes(1);
+    expect(onAddJourney).toHaveBeenCalledWith(
+      expect.objectContaining({
+        title: "New Onboarding",
+        role: "First-time admin",
+        goal: "Configure the product for their organization",
+      })
+    );
+    const typedJourneyMock = onAddJourney as jest.MockedFunction<
+      (journey: CustomerJourney) => void
+    >;
+    const [firstJourneyCall] = typedJourneyMock.mock.calls as
+      | [CustomerJourney[]]
+      | [];
+    expect(firstJourneyCall).toBeDefined();
+    if (!firstJourneyCall) {
+      throw new Error(
+        "Expected a customer journey to be passed to the handler"
+      );
+    }
+    const [journey] = firstJourneyCall;
+    expect(journey).toBeDefined();
+    if (!journey) {
+      throw new Error(
+        "Expected a customer journey to be passed to the handler"
+      );
+    }
+    expect(journey.steps).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ description: "Visit the setup wizard" }),
+      ])
+    );
+  });
+
+  it("opens an editor for existing metric schemas", async () => {
+    const schema: SuccessMetricSchema = {
+      id: "schema-1",
+      title: "Activation Signals",
+      description: "Track activation milestones",
+      fields: [
+        {
+          id: "field-1",
+          name: "Completed onboarding",
+          description: "Whether the customer completed onboarding",
+          dataType: "boolean",
+          required: true,
+        },
+      ],
+    };
+
+    const outline: ContentOutline = {
+      ...baseOutline,
+      metricSchemas: [schema],
+    };
+
+    const { user, onEditMetricSchema } = renderOutlineStep({
+      outline,
+      onEditMetricSchema: jest.fn(),
+    });
+
+    await user.click(
+      screen.getByRole("button", { name: /edit activation signals/i })
+    );
+
+    const formRegion = screen
+      .getByRole("heading", { name: /edit metric schema/i })
+      .closest("div");
+    expect(formRegion).not.toBeNull();
+    assertIsHTMLElement(formRegion);
+
+    const titleField = within(formRegion).getByLabelText(/schema title/i);
+    await user.clear(titleField);
+    await user.type(titleField, "Activation KPIs");
+
+    await user.click(
+      within(formRegion).getByRole("button", { name: /save metric schema/i })
+    );
+
+    expect(onEditMetricSchema).toHaveBeenCalledTimes(1);
+    expect(onEditMetricSchema).toHaveBeenCalledWith(
+      "schema-1",
+      expect.objectContaining({ title: "Activation KPIs" })
+    );
   });
 });

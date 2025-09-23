@@ -99,3 +99,5 @@ export function useWorkflowSetters(
     setFinalPrd,
   };
 }
+
+export type WorkflowSetters = ReturnType<typeof useWorkflowSetters>;

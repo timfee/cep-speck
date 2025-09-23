@@ -1,76 +1,51 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 
+import type { StreamPhase } from "@/lib/spec/types";
+import { summarizePhaseStatus } from "@/lib/streaming/phase-labels";
 import { cn } from "@/lib/utils";
 
-import {
-  IssuesSummary,
-  MetricCard,
-  METRIC_CONFIGS,
-  ProgressBar,
-  getValidationScoreColor,
-} from "./metrics-dashboard-components";
-
-import {
-  createAnimationConfig,
-  getPhaseProgress,
-} from "./metrics-dashboard-utils";
-
-export interface WorkflowMetrics {
-  wordCount: number;
-  validationScore: number;
-  iterationAttempts: number;
-  elapsedTime: number;
-  estimatedCompletion?: number;
-  issuesFound: number;
-  phase: string;
-}
+import { IssuesSummary } from "./metrics/issues-summary";
+import { MetricCard } from "./metrics/metric-card";
+import { METRIC_CONFIGS } from "./metrics/metric-configs";
+import { PhaseMetricCards } from "./metrics/phase-metric-cards";
+import { ProgressBar } from "./metrics/progress-bar";
+import { useAnimatedWordCount } from "./metrics/use-animated-word-count";
+import { getPhaseProgress } from "./metrics-dashboard-utils";
 
 export interface MetricsDashboardProps {
-  metrics: WorkflowMetrics;
+  wordCount: number;
+  phase: string;
+  phaseStatus: Partial<
+    Record<
+      StreamPhase,
+      {
+        attempts: number;
+        issues: number;
+        lastMessage?: string;
+      }
+    >
+  >;
   streaming?: boolean;
   className?: string;
 }
 
 export function MetricsDashboard({
-  metrics,
+  wordCount,
+  phase,
+  phaseStatus,
   streaming = false,
   className,
 }: MetricsDashboardProps) {
-  const [animatedWordCount, setAnimatedWordCount] = useState(0);
-  const [animatedValidationScore, setAnimatedValidationScore] = useState(0);
+  const animatedWordCount = useAnimatedWordCount(wordCount);
 
-  // Animate numbers for visual appeal
-  useEffect(() => {
-    const config = createAnimationConfig(
-      metrics.wordCount,
-      metrics.validationScore
-    );
-    let step = 0;
-
-    const interval = setInterval(() => {
-      step++;
-      setAnimatedWordCount(
-        Math.min(Math.floor(config.wordCountStep * step), metrics.wordCount)
-      );
-      setAnimatedValidationScore(
-        Math.min(
-          Math.floor(config.validationStep * step),
-          metrics.validationScore
-        )
-      );
-
-      if (step >= config.animationSteps) {
-        clearInterval(interval);
-      }
-    }, config.intervalDelay);
-
-    return () => clearInterval(interval);
-  }, [metrics.wordCount, metrics.validationScore]);
-
-  const progress = getPhaseProgress(metrics.phase);
+  const progress = getPhaseProgress(phase);
+  const activePhases = useMemo(
+    () => summarizePhaseStatus(phaseStatus),
+    [phaseStatus]
+  );
 
   return (
     <motion.div
@@ -79,33 +54,17 @@ export function MetricsDashboard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      {/* Main Metrics Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <MetricCard
           {...METRIC_CONFIGS.wordCount}
-          value={streaming ? animatedWordCount : metrics.wordCount}
+          value={streaming ? animatedWordCount : wordCount}
         />
-        <MetricCard
-          {...METRIC_CONFIGS.validationScore}
-          value={`${streaming ? animatedValidationScore : metrics.validationScore}%`}
-          colorClass={`${METRIC_CONFIGS.validationScore.colorClass} [&>div:nth-child(2)]:${getValidationScoreColor(metrics.validationScore)}`}
-        />
-        <MetricCard
-          {...METRIC_CONFIGS.iterationAttempts}
-          value={metrics.iterationAttempts}
-        />
-        <MetricCard
-          {...METRIC_CONFIGS.elapsedTime}
-          value={`${metrics.elapsedTime}s`}
-        />
+        <PhaseMetricCards phases={activePhases} />
       </div>
 
-      <ProgressBar
-        progress={progress}
-        estimatedCompletion={metrics.estimatedCompletion}
-      />
+      <ProgressBar progress={progress} />
 
-      <IssuesSummary issuesFound={metrics.issuesFound} />
+      <IssuesSummary issuesFound={phaseStatus["validating"]?.issues ?? 0} />
     </motion.div>
   );
 }

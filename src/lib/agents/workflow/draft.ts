@@ -26,7 +26,9 @@ export async function executeDraftPhase(
     context.specText,
     context.pack,
     context.knowledgeContext,
-    context.researchContext
+    context.researchContext,
+    context.structuredSpec,
+    context.outlinePayload
   );
   return await streamDraftContent(context, drafterResult, totalTokens);
 }

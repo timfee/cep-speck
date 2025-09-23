@@ -1,26 +1,60 @@
 "use client";
 
-import { Check, Circle } from "lucide-react";
-import React from "react";
+import React, { useMemo } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import type { StreamPhase } from "@/lib/spec/types";
 import { cn } from "@/lib/utils";
 import { WORKFLOW_STEPS } from "@/types/workflow";
 import type { WorkflowProgress } from "@/types/workflow";
 
+import {
+  type GeneratePhaseDetails,
+  TimelineStep,
+  getPhaseLabel,
+} from "./progress-timeline-step";
+
 interface ProgressTimelineProps {
   progress: WorkflowProgress;
   className?: string;
+  streamingPhase?: string;
+  isGenerating?: boolean;
+  attempt?: number;
+  phaseStatus?: Partial<
+    Record<
+      StreamPhase,
+      { attempts: number; issues: number; lastMessage?: string }
+    >
+  >;
 }
 
 export function ProgressTimeline({
   progress,
   className,
+  streamingPhase,
+  isGenerating = false,
+  attempt,
+  phaseStatus,
 }: ProgressTimelineProps) {
+  const hasStreamingPhase =
+    typeof streamingPhase === "string" && streamingPhase.length > 0;
+
+  const activePhaseDetails = useMemo<GeneratePhaseDetails | undefined>(() => {
+    if (!hasStreamingPhase) {
+      return undefined;
+    }
+
+    const status = phaseStatus?.[streamingPhase as StreamPhase];
+    return {
+      label: status?.lastMessage ?? getPhaseLabel(streamingPhase),
+      attempts: status?.attempts ?? attempt,
+      issues: status?.issues ?? 0,
+    };
+  }, [attempt, hasStreamingPhase, phaseStatus, streamingPhase]);
+
   return (
     <div className={cn("space-y-4", className)}>
-      {/* Overall Progress */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold">Progress</h3>
@@ -34,77 +68,22 @@ export function ProgressTimeline({
         </p>
       </div>
 
-      {/* Step Timeline */}
       <div className="space-y-3">
-        {WORKFLOW_STEPS.map((step, index) => {
-          const stepNumber = index + 1;
-          const isActive = stepNumber === progress.step;
-          const isCompleted = stepNumber < progress.step;
-          const isUpcoming = stepNumber > progress.step;
-
-          return (
-            <div
-              key={step.id}
-              className={cn(
-                "flex items-center space-x-3 p-3 rounded-lg transition-all",
-                isActive && "bg-primary/5 border border-primary/20",
-                isCompleted && "bg-green-50 border border-green-200",
-                isUpcoming && "bg-gray-50 border border-gray-200"
-              )}
-            >
-              {/* Step indicator */}
-              <div
-                className={cn(
-                  "flex h-8 w-8 items-center justify-center rounded-full",
-                  "transition-all duration-200",
-                  isCompleted && "bg-green-500 text-white",
-                  isActive && "bg-primary text-primary-foreground",
-                  isUpcoming && "bg-gray-200 text-gray-500"
-                )}
-              >
-                {isCompleted ? (
-                  <Check className="h-4 w-4" />
-                ) : (
-                  <span className="text-sm font-medium">{stepNumber}</span>
-                )}
-              </div>
-
-              {/* Step content */}
-              <div className="flex-1 min-w-0">
-                <h4
-                  className={cn(
-                    "text-sm font-medium",
-                    isActive && "text-primary",
-                    isCompleted && "text-green-700",
-                    isUpcoming && "text-gray-500"
-                  )}
-                >
-                  {step.name}
-                </h4>
-                <p
-                  className={cn(
-                    "text-xs",
-                    isActive && "text-primary/70",
-                    isCompleted && "text-green-600",
-                    isUpcoming && "text-gray-400"
-                  )}
-                >
-                  {step.description}
-                </p>
-              </div>
-
-              {/* Current progress indicator */}
-              {isActive && (
-                <div className="flex-shrink-0">
-                  <Circle className="h-4 w-4 text-primary animate-pulse" />
-                </div>
-              )}
-            </div>
-          );
-        })}
+        {WORKFLOW_STEPS.map((step, index) => (
+          <TimelineStep
+            key={step.id}
+            step={step}
+            index={index}
+            progress={progress}
+            generatePhase={
+              step.id === "generate" && isGenerating && hasStreamingPhase
+                ? activePhaseDetails
+                : undefined
+            }
+          />
+        ))}
       </div>
 
-      {/* Time estimates */}
       {(progress.timeEstimate ?? 0) > 0 && (
         <div className="text-xs text-muted-foreground text-center">
           Estimated time remaining: ~{progress.timeEstimate} minutes

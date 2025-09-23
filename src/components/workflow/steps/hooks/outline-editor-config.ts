@@ -1,23 +1,31 @@
 import {
   addFunctionalRequirementToOutline,
+  addCustomerJourneyToOutline,
   addMilestoneToOutline,
   addSuccessMetricToOutline,
+  addMetricSchemaToOutline,
   updateFunctionalRequirementInOutline,
+  updateCustomerJourneyInOutline,
   updateMilestoneInOutline,
   updateSuccessMetricInOutline,
+  updateMetricSchemaInOutline,
 } from "@/hooks/content-editing-utils";
 
 import type {
   ContentOutline,
+  CustomerJourney,
   FunctionalRequirement,
   Milestone,
   SuccessMetric,
+  SuccessMetricSchema,
 } from "@/types/workflow";
 
 import {
   createNewFunctionalRequirement,
   createNewMilestone,
   createNewSuccessMetric,
+  createNewCustomerJourney,
+  createNewSuccessMetricSchema,
 } from "../content-outline-helpers";
 
 import type {
@@ -147,10 +155,91 @@ const milestoneConfig: ConfigEntry<Milestone, DraftForKind<"milestone">> = {
   findById: (outline, id) => outline.milestones.find((item) => item.id === id),
 };
 
+const customerJourneyConfig: ConfigEntry<
+  CustomerJourney,
+  DraftForKind<"customerJourney">
+> = {
+  defaultDraft: () => ({
+    title: "",
+    role: "",
+    goal: "",
+    steps: [],
+    painPoints: [],
+  }),
+  toDraft: (item) => ({
+    id: item.id,
+    title: item.title,
+    role: item.role,
+    goal: item.goal,
+    successCriteria: item.successCriteria,
+    steps: item.steps.map((step) => ({
+      id: step.id,
+      description: step.description,
+    })),
+    painPoints: item.painPoints ?? [],
+  }),
+  buildItem: (draft, fallbackId) => {
+    const created = createNewCustomerJourney({
+      title: draft.title,
+      role: draft.role,
+      goal: draft.goal,
+      successCriteria: draft.successCriteria,
+      steps: draft.steps,
+      painPoints: draft.painPoints,
+    });
+    const id = draft.id ?? fallbackId ?? created.id;
+    return { ...created, id };
+  },
+  addToOutline: addCustomerJourneyToOutline,
+  updateInOutline: updateCustomerJourneyInOutline,
+  findById: (outline, id) =>
+    outline.customerJourneys.find((journey) => journey.id === id),
+};
+
+const metricSchemaConfig: ConfigEntry<
+  SuccessMetricSchema,
+  DraftForKind<"metricSchema">
+> = {
+  defaultDraft: () => ({
+    title: "",
+    description: "",
+    fields: [],
+  }),
+  toDraft: (item) => ({
+    id: item.id,
+    title: item.title,
+    description: item.description,
+    fields: item.fields.map((field) => ({
+      id: field.id,
+      name: field.name,
+      description: field.description,
+      dataType: field.dataType,
+      required: field.required,
+      allowedValues: field.allowedValues,
+      sourceSystem: field.sourceSystem,
+    })),
+  }),
+  buildItem: (draft, fallbackId) => {
+    const created = createNewSuccessMetricSchema({
+      title: draft.title,
+      description: draft.description,
+      fields: draft.fields,
+    });
+    const id = draft.id ?? fallbackId ?? created.id;
+    return { ...created, id };
+  },
+  addToOutline: addMetricSchemaToOutline,
+  updateInOutline: updateMetricSchemaInOutline,
+  findById: (outline, id) =>
+    outline.metricSchemas.find((schema) => schema.id === id),
+};
+
 const CONFIG_MAP = {
   functionalRequirement: requirementConfig,
   successMetric: successMetricConfig,
   milestone: milestoneConfig,
+  customerJourney: customerJourneyConfig,
+  metricSchema: metricSchemaConfig,
 } as const;
 
 const getConfigFor = <K extends EditorKind>(

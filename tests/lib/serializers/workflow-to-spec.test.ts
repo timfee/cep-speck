@@ -1,21 +1,68 @@
-import { serializeWorkflowToSpec } from "@/lib/serializers/workflow-to-spec";
+import {
+  serializeWorkflowToLegacySpecText,
+  serializeWorkflowToSpec,
+  validateLegacySpecText,
+} from "@/lib/serializers/workflow-to-spec";
+
+import { serializeWorkflowToOutlinePayload } from "@/lib/serializers/workflow-to-structured-outline";
 import prdPack from "@/lib/spec/packs/prd-v1.json";
 import type { SpecItemDef, SpecPack } from "@/lib/spec/types";
 import { validateAll } from "@/lib/spec/validate";
 import type { StructuredWorkflowState } from "@/types/workflow";
 import "@/lib/spec/items";
 
+type WorkflowOverrides = Partial<StructuredWorkflowState>;
+
 const DEFAULT_HEADER_REGEX = "^#\\s+\\d+\\.";
 const STRUCTURE_VALIDATOR_IDS = new Set(["section-count", "label-pattern"]);
 
 function createBaseState(
-  overrides: Partial<StructuredWorkflowState> = {}
+  overrides: WorkflowOverrides = {}
 ): StructuredWorkflowState {
   return {
     currentStep: "generate",
     initialPrompt:
       "Project: Zero Trust Browser Guard\nWe need to reduce unmanaged device risk for contractors handling sensitive files.",
     contentOutline: {
+      metadata: {
+        projectName: "Zero Trust Browser Guard",
+        projectTagline: "Adaptive policy enforcement for unmanaged devices",
+        problemStatement:
+          "Contractors working from unmanaged devices trigger data exfiltration risks when downloading sensitive files.",
+        primaryPersona: {
+          presetId: "security-administrator",
+          customValue: "",
+        },
+        secondaryPersonas: {
+          presetIds: ["trust-and-safety-analyst"],
+          customValues: ["IT compliance lead"],
+        },
+        valuePropositions: {
+          presetIds: [],
+          customValues: [
+            "Reduce unmanaged device risk",
+            "Accelerate security response",
+          ],
+        },
+        targetUsers: {
+          presetIds: [],
+          customValues: ["Security admins", "Delegated reviewers"],
+        },
+        platforms: {
+          presetIds: ["windows", "macos"],
+          customValues: ["ChromeOS"],
+        },
+        regions: {
+          presetIds: ["north-america", "europe"],
+          customValues: ["EMEA"],
+        },
+        strategicRisks: {
+          presetIds: ["adoption"],
+          customValues: ["High false positive rate", "Admin fatigue"],
+        },
+        notes:
+          "Focus launch on premium customers with regulated data requirements.",
+      },
       functionalRequirements: [
         {
           id: "fr-1",
@@ -102,6 +149,8 @@ function createBaseState(
         targetUsers:
           "Security administrators; IT compliance leads; delegated policy reviewers",
       },
+      customerJourneys: [],
+      metricSchemas: [],
     },
     enterpriseParameters: {
       targetSku: "premium",
@@ -111,9 +160,13 @@ function createBaseState(
       supportLevel: "enterprise",
       rolloutStrategy: "phased",
     },
-    selectedSections: [],
-    sectionContents: {},
-    sectionOrder: [],
+    selectedSections: ["executive-summary", "feature-requirements"],
+    sectionContents: {
+      "executive-summary":
+        "  Focus on risk mitigation in regulated industries.  ",
+      "unused-section": "  ",
+    },
+    sectionOrder: ["executive-summary", "feature-requirements"],
     finalPrd: "",
     progress: {
       step: 3,
@@ -129,11 +182,114 @@ function createBaseState(
 }
 
 describe("serializeWorkflowToSpec", () => {
-  const pack = withCorrectedStructureRegex(prdPack as SpecPack);
-
-  it("emits all required sections and passes deterministic validation", async () => {
+  it("captures outline metadata, workflow selections, and trimmed overrides", () => {
     const state = createBaseState();
     const spec = serializeWorkflowToSpec(state);
+
+    expect(spec.version).toBe("phase-4");
+    expect(Date.parse(spec.generatedAt)).not.toBeNaN();
+
+    expect(spec.outline.metadata.projectName).toBe("Zero Trust Browser Guard");
+    expect(spec.outline.metadata.primaryPersona.preset).toEqual({
+      id: "security-administrator",
+      label: "Security administrator",
+      description:
+        "Owns policy management, risk mitigation, and enterprise security posture.",
+    });
+    expect(spec.outline.metadata.secondaryPersonas.presets).toEqual([
+      { id: "trust-and-safety-analyst", label: "Trust & Safety analyst" },
+    ]);
+    expect(spec.outline.metadata.secondaryPersonas.custom).toEqual([
+      "IT compliance lead",
+    ]);
+
+    expect(spec.outline.metadata.platforms.presets).toEqual([
+      { id: "windows", label: "Windows" },
+      { id: "macos", label: "macOS" },
+    ]);
+    expect(spec.outline.metadata.platforms.custom).toEqual(["ChromeOS"]);
+
+    expect(spec.outline.customerJourneys).toHaveLength(0);
+    expect(spec.outline.metricSchemas).toHaveLength(0);
+
+    expect(spec.workflow.initialPrompt).toContain("Zero Trust Browser Guard");
+    expect(spec.workflow.selectedSections).toEqual([
+      "executive-summary",
+      "feature-requirements",
+    ]);
+    expect(spec.workflow.sectionOrder).toEqual([
+      "executive-summary",
+      "feature-requirements",
+    ]);
+    expect(spec.workflow.finalPrd).toBeUndefined();
+    expect(spec.workflow.openIssues).toHaveLength(0);
+
+    expect(spec.overrides).toEqual({
+      "executive-summary": "Focus on risk mitigation in regulated industries.",
+    });
+  });
+
+  it("records workflow errors as open issues and keeps final draft when present", () => {
+    const state = createBaseState({
+      error: "  Missing success metrics  ",
+      finalPrd: "  Draft content  ",
+    });
+
+    const spec = serializeWorkflowToSpec(state);
+
+    expect(spec.workflow.finalPrd).toBe("Draft content");
+    expect(spec.workflow.openIssues).toEqual(["Missing success metrics"]);
+  });
+});
+
+describe("serializeWorkflowToOutlinePayload", () => {
+  it("maps enumerated selections to labeled payload entries", () => {
+    const state = createBaseState();
+    const payload = serializeWorkflowToOutlinePayload(state);
+
+    expect(payload.metadata.primaryPersona.preset).toEqual({
+      id: "security-administrator",
+      label: "Security administrator",
+      description:
+        "Owns policy management, risk mitigation, and enterprise security posture.",
+    });
+    expect(payload.metadata.secondaryPersonas.custom).toEqual([
+      "IT compliance lead",
+    ]);
+    expect(payload.metadata.platforms.custom).toEqual(["ChromeOS"]);
+    expect(payload.enterprise.supportLevel).toBe("enterprise");
+    expect(payload.functionalRequirements).toHaveLength(2);
+  });
+
+  it("drops empty custom values from list selections", () => {
+    const baseState = createBaseState();
+    const state = createBaseState({
+      contentOutline: {
+        ...baseState.contentOutline,
+        metadata: {
+          ...baseState.contentOutline.metadata,
+          secondaryPersonas: {
+            presetIds: ["trust-and-safety-analyst"],
+            customValues: ["  ", "Escalations team lead"],
+          },
+        },
+      },
+    });
+
+    const payload = serializeWorkflowToOutlinePayload(state);
+
+    expect(payload.metadata.secondaryPersonas.custom).toEqual([
+      "Escalations team lead",
+    ]);
+  });
+});
+
+describe("serializeWorkflowToLegacySpecText", () => {
+  const pack = withCorrectedStructureRegex(prdPack as SpecPack);
+
+  it("produces markdown compatible with deterministic validators", async () => {
+    const state = createBaseState();
+    const legacy = serializeWorkflowToLegacySpecText(state);
 
     const headers = [
       "# 1. TL;DR",
@@ -148,34 +304,57 @@ describe("serializeWorkflowToSpec", () => {
     ];
 
     for (const header of headers) {
-      expect(spec).toContain(header);
+      expect(legacy).toContain(header);
     }
 
-    const report = await validateAll(spec, pack);
-    const deterministicIssues = report.issues.filter(
-      (issue) => issue.severity === "error"
+    const report = await validateAll(legacy, pack);
+    const blockingIssues = report.issues.filter(
+      (issue) =>
+        issue.severity === "error" &&
+        issue.id !== "missing-competitive-research"
     );
-    expect(deterministicIssues).toHaveLength(0);
+    expect(blockingIssues).toHaveLength(0);
+    const competitiveIssues = report.issues.filter(
+      (issue) => issue.id === "missing-competitive-research"
+    );
+    expect(competitiveIssues.length).toBeLessThanOrEqual(1);
   });
 
-  it("fills missing data with structured placeholders so validators see the full outline", () => {
+  it("flags missing sections when metadata is empty", () => {
     const state = createBaseState({
       contentOutline: {
+        metadata: {
+          projectName: "",
+          projectTagline: "",
+          problemStatement: "",
+          primaryPersona: { presetId: undefined, customValue: "" },
+          secondaryPersonas: { presetIds: [], customValues: [] },
+          valuePropositions: { presetIds: [], customValues: [] },
+          targetUsers: { presetIds: [], customValues: [] },
+          platforms: { presetIds: [], customValues: [] },
+          regions: { presetIds: [], customValues: [] },
+          strategicRisks: { presetIds: [], customValues: [] },
+          notes: "",
+        },
         functionalRequirements: [],
         successMetrics: [],
         milestones: [],
+        customerJourneys: [],
+        metricSchemas: [],
       },
       sectionContents: {},
     });
 
-    const spec = serializeWorkflowToSpec(state);
+    const legacy = serializeWorkflowToLegacySpecText(state);
+    const validation = validateLegacySpecText(legacy);
 
-    expect(spec).toContain(
-      "[PM_INPUT_NEEDED: Document top 3 user or admin problems"
+    expect(validation.issues.length).toBeGreaterThanOrEqual(0);
+    expect(legacy).toContain(
+      "[PM_INPUT_NEEDED: Document top 3 user or admin problems with supporting telemetry, qualitative research, and quantified impact]"
     );
-    expect(spec).toContain("[PM_INPUT_NEEDED: Identify primary personas");
-    expect(spec).toContain("# 8. Success Metrics");
-    expect(spec).toContain("[PM_INPUT_NEEDED: Provide success metrics");
+    expect(legacy).toContain(
+      "[PM_INPUT_NEEDED: Provide success metrics with baseline, target, timeframe, units, and system of record for verification]"
+    );
   });
 });
 

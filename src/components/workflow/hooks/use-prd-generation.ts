@@ -1,41 +1,40 @@
-/**
- * Enhanced PRD generation with progress tracking and validation feedback
- * Addresses BLOCKER 4: Missing Workflow Integration
- */
-
 import { useCallback } from "react";
 
-import { serializeWorkflowToSpec } from "@/lib/serializers/workflow-to-spec";
 import { getProgressForPhase } from "@/lib/streaming/stream-processor";
 import type { StructuredWorkflowState } from "@/types/workflow";
 
 import {
-  createGenerationStreamHandler,
-  getGenerationRequestOptions,
-  normalizeGenerationError,
-} from "./prd-generation-helpers";
+  usePrdGenerationActions,
+  usePrdGenerationState,
+} from "./prd-generation-context";
 
-import { runGenerationRequest } from "./prd-generation-runner";
-import { usePrdGenerationStore } from "./use-prd-generation-store";
+import { executeGeneration } from "./prd-generation-executor";
 
 export function usePrdGeneration(
   onGenerationComplete?: (generatedPrd: string) => void
 ) {
+  const state = usePrdGenerationState();
   const {
-    state,
-    actions: {
-      beginGeneration,
-      completeGeneration,
-      failGeneration,
-      finishGeneration,
-      resetGeneration,
-      setPhase,
-      setProgress,
-      setAttempt,
-      setGeneratedPrd,
-      setValidationIssues,
-    },
-  } = usePrdGenerationStore(onGenerationComplete);
+    beginGeneration,
+    completeGeneration,
+    failGeneration,
+    finishGeneration,
+    resetGeneration,
+    applyRefinedDraft,
+    clearError,
+    setOnCompleteCallback,
+    setPhase,
+    setProgress,
+    setAttempt,
+    setGeneratedPrd,
+    setValidationIssues,
+    updatePhaseStatus,
+    recordPhaseIssues,
+  } = usePrdGenerationActions();
+
+  if (onGenerationComplete) {
+    setOnCompleteCallback(onGenerationComplete);
+  }
 
   const setPhaseWithProgress = useCallback(
     (nextPhase: string) => {
@@ -47,38 +46,31 @@ export function usePrdGeneration(
 
   const generatePrd = useCallback(
     async (workflowState: StructuredWorkflowState) => {
-      beginGeneration();
-
-      try {
-        const specText = serializeWorkflowToSpec(workflowState);
-        const frameHandler = createGenerationStreamHandler({
-          setPhaseWithProgress,
-          setAttempt,
-          setGeneratedPrd,
-          completeGeneration,
-          setValidationIssues,
-        });
-
-        await runGenerationRequest(
-          specText,
-          frameHandler,
-          getGenerationRequestOptions()
-        );
-      } catch (error) {
-        failGeneration(normalizeGenerationError(error));
-      } finally {
-        finishGeneration();
-      }
+      await executeGeneration({
+        workflowState,
+        setPhaseWithProgress,
+        setAttempt,
+        setGeneratedPrd,
+        completeGeneration,
+        setValidationIssues,
+        updatePhaseStatus,
+        recordPhaseIssues,
+        beginGeneration,
+        failGeneration,
+        finishGeneration,
+      });
     },
     [
       beginGeneration,
       completeGeneration,
       failGeneration,
       finishGeneration,
+      recordPhaseIssues,
       setAttempt,
       setGeneratedPrd,
       setPhaseWithProgress,
       setValidationIssues,
+      updatePhaseStatus,
     ]
   );
 
@@ -86,5 +78,8 @@ export function usePrdGeneration(
     ...state,
     generatePrd,
     resetGeneration,
+    applyRefinedDraft,
+    setGenerationError: failGeneration,
+    clearGenerationError: clearError,
   };
 }

@@ -1,35 +1,14 @@
-/**
- * Refiner Agent - AI-powered document healing replacement
- *
- * Intelligently fixes both deterministic validation issues and semantic
- * quality problems to produce publication-ready PRDs.
- */
-
 import type { StreamTextResult } from "ai";
 
 import { getResilientAI } from "@/lib/ai/resilient";
+import { formatOutlineEnumerationsForPrompt } from "@/lib/constants/outline-enumerations";
 import type { Issue } from "@/lib/spec/types";
 
 import type { RefinerConfig, RefinerResult } from "./agent-types";
 import { loadPrompt } from "./prompt-loader";
 import { buildHealingInstructions } from "./refiner-helpers";
+import { buildRefinerPrompt } from "./refiner-prompts";
 
-/**
- * Run the refiner agent to fix document issues
- *
- * @param draft - The original PRD draft content
- * @param allIssues - Combined array of deterministic and semantic issues
- * @param config - Optional configuration for refinement behavior
- * @returns Promise resolving to streaming text result with refined content
- *
- * @example
- * ```typescript
- * const result = await runRefinerAgent(draft, issues);
- * for await (const chunk of result.textStream) {
- *   console.log(chunk);
- * }
- * ```
- */
 export async function runRefinerAgent(
   draft: string,
   allIssues: Issue[],
@@ -43,29 +22,12 @@ export async function runRefinerAgent(
         "Fix all validation issues in this PRD while maintaining quality and coherence.",
     });
 
-    const healingInstructions = buildHealingInstructions(allIssues);
-
-    const refinementPrompt = `${refinerPrompt}
-
-## Issues to Address
-
-${healingInstructions}
-
-## Original Document
-
-${draft}
-
-## Instructions
-
-Fix all the issues listed above while maintaining the document's core message and professional quality. Provide the complete, corrected PRD as your response. Ensure:
-
-1. All deterministic validation errors are resolved
-2. Semantic quality issues are improved
-3. Document coherence is maintained
-4. Executive readiness is enhanced
-5. Original content value is preserved
-
-Return only the corrected document content without additional commentary.`;
+    const refinementPrompt = buildRefinerPrompt({
+      basePrompt: refinerPrompt,
+      enumerationSummary: formatOutlineEnumerationsForPrompt(),
+      healingInstructions: buildHealingInstructions(allIssues),
+      draft,
+    });
 
     const resilientAI = getResilientAI();
     return await resilientAI.generateWithFallback([
@@ -87,20 +49,6 @@ Return only the corrected document content without additional commentary.`;
   }
 }
 
-/**
- * Run refiner agent and collect the complete result
- *
- * @param draft - The original PRD draft content
- * @param allIssues - Combined array of deterministic and semantic issues
- * @param config - Optional configuration for refinement behavior
- * @returns Promise resolving to complete refiner result
- *
- * @example
- * ```typescript
- * const result = await runRefinerAgentComplete(draft, issues);
- * console.log(`Fixed ${result.issuesFixed} issues in ${result.metadata.duration}ms`);
- * ```
- */
 export async function runRefinerAgentComplete(
   draft: string,
   allIssues: Issue[],

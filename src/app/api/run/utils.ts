@@ -4,6 +4,11 @@
 
 import { DEFAULT_SPEC_PACK } from "@/lib/config";
 
+import type {
+  SerializedWorkflowOutline,
+  SerializedWorkflowSpec,
+} from "@/types/workflow";
+
 // Re-export modular utilities for cleaner organization
 export {
   createErrorResponse,
@@ -26,17 +31,42 @@ const pack = DEFAULT_SPEC_PACK;
 
 export interface RunRequestBody {
   specText: string;
+  structuredSpec?: SerializedWorkflowSpec;
+  outlinePayload?: SerializedWorkflowOutline;
   maxAttempts?: number;
 }
 
 export function isValidRunRequest(body: unknown): body is RunRequestBody {
+  if (typeof body !== "object" || body === null || !("specText" in body)) {
+    return false;
+  }
+
+  const candidate = body as {
+    specText?: unknown;
+    structuredSpec?: unknown;
+    outlinePayload?: unknown;
+    maxAttempts?: unknown;
+  };
+
+  const maxAttemptsValid =
+    candidate.maxAttempts === undefined ||
+    typeof candidate.maxAttempts === "number";
+
+  const structuredSpecValid =
+    candidate.structuredSpec === undefined ||
+    (typeof candidate.structuredSpec === "object" &&
+      candidate.structuredSpec !== null);
+
+  const outlinePayloadValid =
+    candidate.outlinePayload === undefined ||
+    (typeof candidate.outlinePayload === "object" &&
+      candidate.outlinePayload !== null);
+
   return (
-    typeof body === "object" &&
-    body !== null &&
-    "specText" in body &&
-    typeof (body as RunRequestBody).specText === "string" &&
-    ((body as RunRequestBody).maxAttempts === undefined ||
-      typeof (body as RunRequestBody).maxAttempts === "number")
+    typeof candidate.specText === "string" &&
+    maxAttemptsValid &&
+    structuredSpecValid &&
+    outlinePayloadValid
   );
 }
 
