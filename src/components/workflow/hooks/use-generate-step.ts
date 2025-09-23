@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from "react";
 
+import { useClipboard } from "@/hooks/use-clipboard";
 import { getPhaseDescription } from "@/lib/streaming/stream-processor";
 import type { StructuredWorkflowState } from "@/types/workflow";
 
@@ -18,6 +19,7 @@ export function useGenerateStep({
 }: UseGenerateStepParams) {
   const generation = usePrdGeneration(onComplete);
   const deterministicIssues = useDeterministicIssues();
+  const { copy: copyToClipboardApi } = useClipboard();
   const { refine, isRefining } = useRefineDraft({
     generatedPrd: generation.generatedPrd,
     deterministicIssues,
@@ -37,18 +39,8 @@ export function useGenerateStep({
     if (content.length === 0) {
       return;
     }
-
-    if (typeof navigator.clipboard === "undefined") {
-      console.warn("Clipboard API unavailable in this environment");
-      return;
-    }
-
-    try {
-      await navigator.clipboard.writeText(content);
-    } catch (copyError) {
-      console.error("Failed to copy to clipboard:", copyError);
-    }
-  }, [generation.generatedPrd]);
+    await copyToClipboardApi(content);
+  }, [copyToClipboardApi, generation.generatedPrd]);
 
   const hasGeneratedPrd = generation.generatedPrd.length > 0;
   const wordCount = useMemo(() => {

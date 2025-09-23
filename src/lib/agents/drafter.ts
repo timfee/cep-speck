@@ -120,15 +120,28 @@ export class DrafterAgent implements StreamingAgent {
 /**
  * Convenience function to run the Drafter agent
  */
+export interface DrafterRunOptions {
+  knowledgeContext?: string;
+  researchContext?: string;
+  structuredSpec?: SerializedWorkflowSpec;
+  outlinePayload?: SerializedWorkflowOutline;
+  config?: Partial<DrafterConfig>;
+}
+
 export async function runDrafterAgent(
   userInput: string,
   pack: SpecPack,
-  knowledgeContext?: string,
-  researchContext?: string,
-  structuredSpec?: SerializedWorkflowSpec,
-  outlinePayload?: SerializedWorkflowOutline
+  options: DrafterRunOptions = {}
 ): Promise<StreamTextResult<Record<string, never>, never>> {
-  const drafter = new DrafterAgent();
+  const {
+    knowledgeContext,
+    researchContext,
+    structuredSpec,
+    outlinePayload,
+    config,
+  } = options;
+
+  const drafter = new DrafterAgent(config);
   return await drafter.executeStreaming({
     userInput,
     structuredSpec,

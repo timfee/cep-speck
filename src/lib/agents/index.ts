@@ -5,6 +5,7 @@
 export {
   DrafterAgent,
   runDrafterAgent,
+  type DrafterRunOptions,
   FALLBACK_MASTER_PROMPT,
 } from "./drafter";
 export { buildDrafterMessages } from "./drafter-messages";

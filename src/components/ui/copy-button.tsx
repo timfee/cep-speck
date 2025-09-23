@@ -1,9 +1,10 @@
 "use client";
 
 import { Check, Copy } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { useClipboard } from "@/hooks/use-clipboard";
 import { TIMEOUTS } from "@/lib/constants";
 
 interface CopyButtonProps {
@@ -14,17 +15,18 @@ interface CopyButtonProps {
 
 export function CopyButton({ text, className, onCopy }: CopyButtonProps) {
   const [copied, setCopied] = useState(false);
+  const { copy, isSupported } = useClipboard();
 
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopied(true);
-      onCopy?.();
-      setTimeout(() => setCopied(false), TIMEOUTS.SHORT_DELAY);
-    } catch (err) {
-      console.error("Failed to copy text: ", err);
+  const handleCopy = useCallback(async () => {
+    const copiedSuccessfully = await copy(text);
+    if (!copiedSuccessfully) {
+      return;
     }
-  };
+
+    setCopied(true);
+    onCopy?.();
+    setTimeout(() => setCopied(false), TIMEOUTS.SHORT_DELAY);
+  }, [copy, onCopy, text]);
 
   return (
     <Button
@@ -32,6 +34,7 @@ export function CopyButton({ text, className, onCopy }: CopyButtonProps) {
       size="sm"
       onClick={handleCopy}
       className={className}
+      disabled={!isSupported}
     >
       {copied ? (
         <>

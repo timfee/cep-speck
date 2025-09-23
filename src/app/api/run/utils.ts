@@ -2,6 +2,8 @@
  * API route utilities for streaming workflow requests
  */
 
+import { z } from "zod";
+
 import { DEFAULT_SPEC_PACK } from "@/lib/config";
 
 import type {
@@ -29,45 +31,40 @@ export { validateApiKey, validateSpecPack } from "./api-validation";
 // The pack is validated at runtime via assertValidSpecPack() to ensure type safety
 const pack = DEFAULT_SPEC_PACK;
 
-export interface RunRequestBody {
-  specText: string;
-  structuredSpec?: SerializedWorkflowSpec;
-  outlinePayload?: SerializedWorkflowOutline;
-  maxAttempts?: number;
-}
+const isSerializableObject = (
+  value: unknown
+): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null;
 
-export function isValidRunRequest(body: unknown): body is RunRequestBody {
-  if (typeof body !== "object" || body === null || !("specText" in body)) {
+const serializedSpecSchema = z.custom<SerializedWorkflowSpec>((value) => {
+  if (!isSerializableObject(value)) {
     return false;
   }
 
-  const candidate = body as {
-    specText?: unknown;
-    structuredSpec?: unknown;
-    outlinePayload?: unknown;
-    maxAttempts?: unknown;
-  };
+  return true;
+}, "structuredSpec must be an object");
 
-  const maxAttemptsValid =
-    candidate.maxAttempts === undefined ||
-    typeof candidate.maxAttempts === "number";
+const outlinePayloadSchema = z.custom<SerializedWorkflowOutline>((value) => {
+  if (!isSerializableObject(value)) {
+    return false;
+  }
 
-  const structuredSpecValid =
-    candidate.structuredSpec === undefined ||
-    (typeof candidate.structuredSpec === "object" &&
-      candidate.structuredSpec !== null);
+  return true;
+}, "outlinePayload must be an object");
 
-  const outlinePayloadValid =
-    candidate.outlinePayload === undefined ||
-    (typeof candidate.outlinePayload === "object" &&
-      candidate.outlinePayload !== null);
+export const runRequestBodySchema = z
+  .object({
+    specText: z.string(),
+    structuredSpec: serializedSpecSchema.optional(),
+    outlinePayload: outlinePayloadSchema.optional(),
+    maxAttempts: z.number().optional(),
+  })
+  .strict();
 
-  return (
-    typeof candidate.specText === "string" &&
-    maxAttemptsValid &&
-    structuredSpecValid &&
-    outlinePayloadValid
-  );
+export type RunRequestBody = z.infer<typeof runRequestBodySchema>;
+
+export function isValidRunRequest(body: unknown): body is RunRequestBody {
+  return runRequestBodySchema.safeParse(body).success;
 }
 
 // Export pack for consistent access
