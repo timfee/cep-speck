@@ -1,5 +1,7 @@
 import type { Milestone } from "@/types/workflow";
 
+import { createOutlineId } from "./outline-id";
+
 import {
   normalizeOptionalString,
   requireMeaningfulField,
@@ -23,7 +25,7 @@ export function createNewMilestone(input: MilestoneInput): Milestone {
   });
 
   return {
-    id: `ms-${Date.now()}`,
+    id: createOutlineId("ms"),
     title,
     description,
     phase: input.phase ?? "development",

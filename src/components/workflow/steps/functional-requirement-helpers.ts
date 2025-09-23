@@ -1,5 +1,7 @@
 import type { FunctionalRequirement } from "@/types/workflow";
 
+import { createOutlineId } from "./outline-id";
+
 import {
   normalizeOptionalString,
   requireMeaningfulField,
@@ -26,7 +28,7 @@ export function createNewFunctionalRequirement(
   });
 
   return {
-    id: `fr-${Date.now()}`,
+    id: createOutlineId("fr"),
     title,
     description,
     priority: input.priority ?? "P1",

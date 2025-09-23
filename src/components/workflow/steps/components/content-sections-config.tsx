@@ -2,7 +2,6 @@
  * Content sections configuration and renderers
  */
 import { BarChart3, Calendar, Target } from "lucide-react";
-import React, { createElement } from "react";
 
 import { Badge } from "@/components/ui/badge";
 
@@ -64,7 +63,7 @@ export const createDateExtra = (estimatedDate?: string) =>
 export const SECTION_CONFIGS = {
   requirements: {
     title: "Functional Requirements",
-    icon: createElement(Target, { className: "h-5 w-5 text-green-600" }),
+    icon: <Target className="h-5 w-5 text-green-600" />,
     addLabel: "Add Requirement",
     itemLabel: "Functional Requirement",
     emptyMessage:
@@ -79,7 +78,7 @@ export const SECTION_CONFIGS = {
   },
   metrics: {
     title: "Success Metrics",
-    icon: createElement(BarChart3, { className: "h-5 w-5 text-blue-600" }),
+    icon: <BarChart3 className="h-5 w-5 text-blue-600" />,
     addLabel: "Add Metric",
     itemLabel: "Success Metric",
     emptyMessage:
@@ -94,7 +93,7 @@ export const SECTION_CONFIGS = {
   },
   milestones: {
     title: "Milestones & Timeline",
-    icon: createElement(Calendar, { className: "h-5 w-5 text-purple-600" }),
+    icon: <Calendar className="h-5 w-5 text-purple-600" />,
     addLabel: "Add Milestone",
     itemLabel: "Milestone",
     emptyMessage:

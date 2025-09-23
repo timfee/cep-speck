@@ -1,5 +1,7 @@
 import type { SuccessMetric } from "@/types/workflow";
 
+import { createOutlineId } from "./outline-id";
+
 import {
   normalizeOptionalString,
   requireMeaningfulField,
@@ -26,7 +28,7 @@ export function createNewSuccessMetric(
   });
 
   return {
-    id: `sm-${Date.now()}`,
+    id: createOutlineId("sm"),
     name,
     description,
     type: input.type ?? "engagement",

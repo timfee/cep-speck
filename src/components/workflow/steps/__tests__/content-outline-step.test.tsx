@@ -25,6 +25,14 @@ const baseOutline: ContentOutline = {
   milestones: [],
 };
 
+function assertIsHTMLElement(
+  element: Element | null
+): asserts element is HTMLElement {
+  if (!(element instanceof HTMLElement)) {
+    throw new Error("Expected an HTMLElement in the outline test harness");
+  }
+}
+
 function renderOutlineStep(options: {
   outline?: ContentOutline;
   onAddRequirement?: (requirement: FunctionalRequirement) => void;
@@ -61,8 +69,9 @@ describe("ContentOutlineStep interactions", () => {
     const formRegion = screen
       .getByRole("heading", { name: /add functional requirement/i })
       .closest("div");
-    expect(formRegion).toBeInTheDocument();
-    const form = formRegion!;
+    expect(formRegion).not.toBeNull();
+    assertIsHTMLElement(formRegion);
+    const form = formRegion;
 
     await user.type(
       within(form).getByLabelText(/title/i),
@@ -88,7 +97,7 @@ describe("ContentOutlineStep interactions", () => {
     );
     expect(
       screen.queryByRole("heading", { name: /add functional requirement/i })
-    ).not.toBeInTheDocument();
+    ).toBeNull();
   });
 
   it("surfaces an inline form for editing success metrics", async () => {
@@ -114,13 +123,14 @@ describe("ContentOutlineStep interactions", () => {
     const formRegion = screen
       .getByRole("heading", { name: /edit success metric/i })
       .closest("div");
-    expect(formRegion).toBeInTheDocument();
-    const nameField = within(formRegion!).getByLabelText(/name/i);
+    expect(formRegion).not.toBeNull();
+    assertIsHTMLElement(formRegion);
+    const nameField = within(formRegion).getByLabelText(/name/i);
     await user.clear(nameField);
     await user.type(nameField, "Activation Rate");
 
     await user.click(
-      within(formRegion!).getByRole("button", { name: /save metric/i })
+      within(formRegion).getByRole("button", { name: /save metric/i })
     );
 
     expect(onEditMetric).toHaveBeenCalledTimes(1);
