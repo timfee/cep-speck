@@ -46,10 +46,106 @@ export interface Milestone {
   deliverables?: string[];
 }
 
+export interface OutlineMetadataPersonaSelection {
+  presetId?: string;
+  customValue: string;
+}
+
+export interface OutlineMetadataListSelection {
+  presetIds: string[];
+  customValues: string[];
+}
+
+export interface SerializedPresetSelection {
+  id: string;
+  label: string;
+  description?: string;
+}
+
+export interface SerializedListSelection {
+  presets: SerializedPresetSelection[];
+  custom: string[];
+}
+
+export interface SerializedPrimaryPersonaSelection {
+  preset?: SerializedPresetSelection;
+  customValue?: string;
+}
+
+export interface SerializedOutlineMetadata {
+  projectName: string;
+  projectTagline: string;
+  problemStatement: string;
+  notes: string;
+  primaryPersona: SerializedPrimaryPersonaSelection;
+  secondaryPersonas: SerializedListSelection;
+  valuePropositions: SerializedListSelection;
+  targetUsers: SerializedListSelection;
+  platforms: SerializedListSelection;
+  regions: SerializedListSelection;
+  strategicRisks: SerializedListSelection;
+}
+
+export interface OutlineMetadata {
+  projectName: string;
+  projectTagline: string;
+  problemStatement: string;
+  primaryPersona: OutlineMetadataPersonaSelection;
+  secondaryPersonas: OutlineMetadataListSelection;
+  valuePropositions: OutlineMetadataListSelection;
+  targetUsers: OutlineMetadataListSelection;
+  platforms: OutlineMetadataListSelection;
+  regions: OutlineMetadataListSelection;
+  strategicRisks: OutlineMetadataListSelection;
+  notes: string;
+}
+
+export interface CustomerJourneyStep {
+  id: string;
+  description: string;
+}
+
+export interface CustomerJourney {
+  id: string;
+  title: string;
+  role: string;
+  goal: string;
+  successCriteria?: string;
+  steps: CustomerJourneyStep[];
+  painPoints?: string[];
+}
+
+export type MetricFieldType =
+  | "string"
+  | "number"
+  | "percentage"
+  | "boolean"
+  | "enum";
+
+export interface SuccessMetricField {
+  id: string;
+  name: string;
+  description: string;
+  dataType: MetricFieldType;
+  required: boolean;
+  allowedValues?: string[];
+  sourceSystem?: string;
+}
+
+export interface SuccessMetricSchema {
+  id: string;
+  title: string;
+  description: string;
+  fields: SuccessMetricField[];
+}
+
 export interface ContentOutline {
+  metadata: OutlineMetadata;
   functionalRequirements: FunctionalRequirement[];
   successMetrics: SuccessMetric[];
   milestones: Milestone[];
+  customerJourneys: CustomerJourney[];
+  metricSchemas: SuccessMetricSchema[];
   executiveSummary?: {
     problemStatement: string;
     proposedSolution: string;
@@ -102,6 +198,37 @@ export interface StructuredWorkflowState {
   progress: WorkflowProgress;
   isLoading: boolean;
   error?: string;
+}
+
+export interface SerializedWorkflowOutline {
+  initialPrompt: string;
+  enterprise: EnterpriseParameters;
+  metadata: SerializedOutlineMetadata;
+  functionalRequirements: FunctionalRequirement[];
+  successMetrics: SuccessMetric[];
+  milestones: Milestone[];
+  customerJourneys: CustomerJourney[];
+  metricSchemas: SuccessMetricSchema[];
+}
+
+export interface SerializedWorkflowSpec {
+  version: "phase-4";
+  generatedAt: string;
+  outline: SerializedWorkflowOutline;
+  workflow: {
+    initialPrompt: string;
+    selectedSections: string[];
+    sectionOrder: string[];
+    finalPrd?: string;
+    openIssues: string[];
+  };
+  overrides: Record<string, string>;
+}
+
+export interface StructuredGenerationRequestBody {
+  structuredSpec: SerializedWorkflowSpec;
+  outlinePayload: SerializedWorkflowOutline;
+  legacySpecText: string;
 }
 
 export interface SectionStructureResponse {

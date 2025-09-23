@@ -9,12 +9,22 @@ export {
   createNewSuccessMetric,
   type SuccessMetricInput,
 } from "./success-metric-helpers";
+export {
+  createNewCustomerJourney,
+  type CustomerJourneyInput,
+} from "./customer-journey-helpers";
+export {
+  createNewSuccessMetricSchema,
+  type SuccessMetricSchemaInput,
+} from "./metric-schema-helpers";
 
 export function calculateTotalItems(contentOutline: ContentOutline): number {
   return (
     contentOutline.functionalRequirements.length +
     contentOutline.successMetrics.length +
-    contentOutline.milestones.length
+    contentOutline.milestones.length +
+    contentOutline.customerJourneys.length +
+    contentOutline.metricSchemas.length
   );
 }
 
@@ -24,5 +34,7 @@ export function getOutlineSummary(contentOutline: ContentOutline) {
     functionalRequirements: contentOutline.functionalRequirements.length,
     successMetrics: contentOutline.successMetrics.length,
     milestones: contentOutline.milestones.length,
+    customerJourneys: contentOutline.customerJourneys.length,
+    metricSchemas: contentOutline.metricSchemas.length,
   };
 }

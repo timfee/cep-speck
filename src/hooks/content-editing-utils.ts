@@ -1,13 +1,25 @@
 import type {
   ContentOutline,
+  CustomerJourney,
   FunctionalRequirement,
   Milestone,
   StructuredWorkflowState,
   SuccessMetric,
+  SuccessMetricSchema,
 } from "@/types/workflow";
 
-type ContentType = "functionalRequirements" | "successMetrics" | "milestones";
-type ContentItem = FunctionalRequirement | SuccessMetric | Milestone;
+type ContentType =
+  | "functionalRequirements"
+  | "successMetrics"
+  | "milestones"
+  | "customerJourneys"
+  | "metricSchemas";
+type ContentItem =
+  | FunctionalRequirement
+  | SuccessMetric
+  | Milestone
+  | CustomerJourney
+  | SuccessMetricSchema;
 
 /**
  * Generic utility to update items in content outline arrays
@@ -148,6 +160,62 @@ export const addMilestoneToOutline = (
     "add",
     undefined,
     milestone
+  );
+
+export const updateCustomerJourneyInOutline = (
+  contentOutline: ContentOutline,
+  id: string,
+  updates: Partial<CustomerJourney>
+): ContentOutline =>
+  updateContentOutline(
+    contentOutline,
+    "customerJourneys",
+    "update",
+    id,
+    updates
+  );
+
+export const deleteCustomerJourneyFromOutline = (
+  contentOutline: ContentOutline,
+  id: string
+): ContentOutline =>
+  updateContentOutline(contentOutline, "customerJourneys", "delete", id);
+
+export const addCustomerJourneyToOutline = (
+  contentOutline: ContentOutline,
+  customerJourney: CustomerJourney
+): ContentOutline =>
+  updateContentOutline(
+    contentOutline,
+    "customerJourneys",
+    "add",
+    undefined,
+    customerJourney
+  );
+
+export const updateMetricSchemaInOutline = (
+  contentOutline: ContentOutline,
+  id: string,
+  updates: Partial<SuccessMetricSchema>
+): ContentOutline =>
+  updateContentOutline(contentOutline, "metricSchemas", "update", id, updates);
+
+export const deleteMetricSchemaFromOutline = (
+  contentOutline: ContentOutline,
+  id: string
+): ContentOutline =>
+  updateContentOutline(contentOutline, "metricSchemas", "delete", id);
+
+export const addMetricSchemaToOutline = (
+  contentOutline: ContentOutline,
+  metricSchema: SuccessMetricSchema
+): ContentOutline =>
+  updateContentOutline(
+    contentOutline,
+    "metricSchemas",
+    "add",
+    undefined,
+    metricSchema
   );
 
 /**

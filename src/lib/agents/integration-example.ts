@@ -25,12 +25,10 @@ export async function exampleDrafterIntegration(
   console.log("🔄 Using Drafter agent for generation...");
 
   // NEW: Single call to Drafter agent replaces the multi-step process
-  const streamResult = await runDrafterAgent(
-    specText,
-    pack,
+  const streamResult = await runDrafterAgent(specText, pack, {
     knowledgeContext,
-    researchContext
-  );
+    researchContext,
+  });
 
   console.log("✅ Drafter agent streaming result ready");
   return streamResult;
@@ -58,7 +56,7 @@ export function integrationComparison() {
 
     drafter: {
       steps: [
-        "1. Call runDrafterAgent(input, pack, knowledge, research)",
+        "1. Call runDrafterAgent(input, pack, { knowledgeContext, researchContext })",
         "2. Get streaming result directly",
       ],
       files: [
@@ -90,12 +88,10 @@ const messages = buildContextualMessages(
 const result = await ai.generateWithFallback(messages);
 
 // AFTER: With Drafter agent
-const result = await runDrafterAgent(
-  specText,
-  pack,
-  knowledgeContext, 
-  researchContext
-);
+const result = await runDrafterAgent(specText, pack, {
+  knowledgeContext,
+  researchContext,
+});
 
 // Same streaming interface, enhanced functionality!
   `;

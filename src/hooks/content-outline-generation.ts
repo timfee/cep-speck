@@ -7,6 +7,7 @@ import {
   parseContentOutlineResponse,
 } from "@/lib/agents/content-outline-agent";
 
+import { EMPTY_OUTLINE_METADATA } from "@/lib/services/content-outline-schemas";
 import type { ContentOutline } from "@/types/workflow";
 
 import {
@@ -60,9 +61,12 @@ function generateFallbackOutline(prompt: string): ContentOutline {
     contextKeywords.includes("data loss")
   ) {
     return {
+      metadata: { ...EMPTY_OUTLINE_METADATA, problemStatement: prompt },
       functionalRequirements: generateDLPRequirements(),
       successMetrics: generateDLPMetrics(),
       milestones: generateDLPMilestones(),
+      customerJourneys: [],
+      metricSchemas: [],
     };
   }
 
@@ -71,16 +75,22 @@ function generateFallbackOutline(prompt: string): ContentOutline {
     contextKeywords.includes("nudge")
   ) {
     return {
+      metadata: { ...EMPTY_OUTLINE_METADATA, problemStatement: prompt },
       functionalRequirements: generateOnboardingRequirements(),
       successMetrics: generateGenericMetrics(),
       milestones: generateGenericMilestones(),
+      customerJourneys: [],
+      metricSchemas: [],
     };
   }
 
   // Generic fallback
   return {
+    metadata: { ...EMPTY_OUTLINE_METADATA, problemStatement: prompt },
     functionalRequirements: generateGenericRequirements(prompt),
     successMetrics: generateGenericMetrics(),
     milestones: generateGenericMilestones(),
+    customerJourneys: [],
+    metricSchemas: [],
   };
 }

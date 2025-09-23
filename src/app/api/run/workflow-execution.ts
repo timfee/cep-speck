@@ -10,6 +10,11 @@ import {
   performResearch,
 } from "@/lib/spec/api/workflow-context";
 
+import type {
+  SerializedWorkflowOutline,
+  SerializedWorkflowSpec,
+} from "@/types/workflow";
+
 // Constants for magic numbers
 const MAX_ALLOWED_ATTEMPTS = 5;
 const DEFAULT_HEAL_ATTEMPTS = 3; // Default attempts for hybrid workflow
@@ -27,17 +32,23 @@ export function calculateMaxAttempts(maxOverride?: number): number {
 
 export async function prepareWorkflowContext({
   specText,
+  structuredSpec,
+  outlinePayload,
   maxAttempts,
   startTime,
   streamController,
 }: {
   specText: string;
+  structuredSpec?: SerializedWorkflowSpec;
+  outlinePayload?: SerializedWorkflowOutline;
   maxAttempts: number;
   startTime: number;
   streamController: { enqueue: (frame: Uint8Array) => void };
 }) {
   const workflowContext = {
     specText,
+    structuredSpec,
+    outlinePayload,
     pack,
     maxAttempts,
     startTime,
@@ -52,17 +63,23 @@ export async function prepareWorkflowContext({
 
 export async function executeHybridWorkflow({
   specText,
+  structuredSpec,
+  outlinePayload,
   maxAttempts,
   startTime,
   streamController,
 }: {
   specText: string;
+  structuredSpec?: SerializedWorkflowSpec;
+  outlinePayload?: SerializedWorkflowOutline;
   maxAttempts: number;
   startTime: number;
   streamController: { enqueue: (frame: Uint8Array) => void };
 }) {
   const { knowledgeContext, researchContext } = await prepareWorkflowContext({
     specText,
+    structuredSpec,
+    outlinePayload,
     maxAttempts,
     startTime,
     streamController,
@@ -70,6 +87,8 @@ export async function executeHybridWorkflow({
 
   await runGenerationLoop({
     specText,
+    structuredSpec,
+    outlinePayload,
     knowledgeContext,
     researchContext,
     pack,

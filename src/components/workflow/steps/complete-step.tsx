@@ -1,16 +1,21 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
+import { useClipboard } from "@/hooks/use-clipboard";
 
 interface CompleteStepProps {
   generatedPrd: string;
 }
 
 export function CompleteStep({ generatedPrd }: CompleteStepProps) {
+  const { copy, isSupported } = useClipboard();
+
   const handleCopyToClipboard = async () => {
-    try {
-      await navigator.clipboard.writeText(generatedPrd);
-    } catch (error) {
-      console.error("Failed to copy to clipboard:", error);
+    if (generatedPrd.length === 0) {
+      return;
     }
+
+    await copy(generatedPrd);
   };
 
   return (
@@ -27,7 +32,11 @@ export function CompleteStep({ generatedPrd }: CompleteStepProps) {
         <div className="space-y-4">
           <div className="flex justify-between items-center">
             <h3 className="text-lg font-semibold">Final PRD:</h3>
-            <Button variant="outline" onClick={handleCopyToClipboard}>
+            <Button
+              variant="outline"
+              onClick={handleCopyToClipboard}
+              disabled={!isSupported}
+            >
               Copy to Clipboard
             </Button>
           </div>

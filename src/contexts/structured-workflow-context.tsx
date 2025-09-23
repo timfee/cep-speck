@@ -12,6 +12,11 @@ import type {
   FunctionalRequirement,
   SuccessMetric,
   Milestone,
+  OutlineMetadata,
+  CustomerJourney,
+  SuccessMetricSchema,
+  SerializedWorkflowOutline,
+  SerializedWorkflowSpec,
 } from "@/types/workflow";
 
 // Define the context type
@@ -32,12 +37,27 @@ interface StructuredWorkflowContextType {
   updateMilestone: (id: string, updates: Partial<Milestone>) => void;
   deleteMilestone: (id: string) => void;
   addMilestone: (milestone: Milestone) => void;
+  updateOutlineMetadata: (updates: Partial<OutlineMetadata>) => void;
+  updateCustomerJourney: (
+    id: string,
+    updates: Partial<CustomerJourney>
+  ) => void;
+  deleteCustomerJourney: (id: string) => void;
+  addCustomerJourney: (journey: CustomerJourney) => void;
+  updateMetricSchema: (
+    id: string,
+    updates: Partial<SuccessMetricSchema>
+  ) => void;
+  deleteMetricSchema: (id: string) => void;
+  addMetricSchema: (schema: SuccessMetricSchema) => void;
   goToNextStep: () => void;
   goToPreviousStep: () => void;
   goToStep: (step: WorkflowStep) => void;
   resetWorkflow: () => void;
   generateContentOutlineForPrompt: (prompt: string) => Promise<void>;
-  serializeToSpecText: () => string;
+  serializeToSpecPayload: () => SerializedWorkflowSpec;
+  serializeToLegacySpecText: () => string;
+  serializeToOutlinePayload: () => SerializedWorkflowOutline;
   setFinalPrd: (prd: string) => void;
 }
 

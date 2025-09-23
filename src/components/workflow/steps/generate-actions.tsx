@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 export interface GenerateActionsProps {
   showGenerate: boolean;
   showRegenerate: boolean;
-  onGenerate: () => Promise<void>;
+  onGenerate: () => void | Promise<void>;
 }
 
 export function GenerateActions({

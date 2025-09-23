@@ -1,3 +1,10 @@
+import { formatOutlineEnumerationsForPrompt } from "@/lib/constants/outline-enumerations";
+
+import type {
+  SerializedWorkflowOutline,
+  SerializedWorkflowSpec,
+} from "@/types/workflow";
+
 import { invokeItemToPrompt } from "./registry";
 import type { SpecPack } from "./types";
 
@@ -28,12 +35,38 @@ export function buildSystemPrompt(pack: SpecPack): string {
   )}`;
 }
 
+export interface UserPromptPayload {
+  specText: string;
+  structuredSpec?: SerializedWorkflowSpec;
+  outlinePayload?: SerializedWorkflowOutline;
+}
+
 /**
- * Build user prompt containing the spec input text
- *
- * @param specText - The input specification text from the user
- * @returns Formatted user prompt
+ * Build user prompt containing structured and legacy spec inputs
  */
-export function buildUserPrompt(specText: string): string {
-  return `Inputs/spec:\n${specText}`;
+export function buildUserPrompt({
+  specText,
+  structuredSpec,
+  outlinePayload,
+}: UserPromptPayload): string {
+  const sections: string[] = [];
+
+  if (structuredSpec) {
+    sections.push(
+      `Inputs/structured_spec_json:\n${JSON.stringify(structuredSpec, null, 2)}`
+    );
+  }
+
+  if (outlinePayload) {
+    sections.push(
+      `Inputs/outline_payload_json:\n${JSON.stringify(outlinePayload, null, 2)}`
+    );
+  }
+
+  const enumerationSummary = formatOutlineEnumerationsForPrompt();
+  sections.push(`Inputs/outline_enumerations:\n${enumerationSummary}`);
+
+  sections.push(`Inputs/legacy_spec_text:\n${specText}`);
+
+  return sections.join("\n\n");
 }

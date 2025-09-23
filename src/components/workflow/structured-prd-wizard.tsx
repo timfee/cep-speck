@@ -6,23 +6,29 @@ import { Card } from "@/components/ui/card";
 import { ProgressTimeline } from "@/components/workflow/progress-timeline";
 import { StepRenderer } from "@/components/workflow/step-renderer";
 import { WizardNavigation } from "@/components/workflow/wizard-navigation";
-import { StructuredWorkflowProvider, useStructuredWorkflowContext } from "@/contexts/structured-workflow-context";
 
+import {
+  StructuredWorkflowProvider,
+  useStructuredWorkflowContext,
+} from "@/contexts/structured-workflow-context";
+
+import { PrdGenerationProvider } from "./hooks/prd-generation-context";
+import { usePrdGenerationState } from "./hooks/prd-generation-context";
 import { useAutoGeneration } from "./hooks/use-auto-generation";
-import { usePrdWizardHandlers } from "./hooks/use-prd-wizard-handlers";
 
 function StructuredPrdWizardContent() {
-  const { state } = useStructuredWorkflowContext();
+  const { state, generateContentOutlineForPrompt } =
+    useStructuredWorkflowContext();
+  const generationState = usePrdGenerationState();
 
-  const {
-    generatedPrd,
-    isGenerating,
-    error,
-    generationAttempted,
-    setGenerationAttempted,
-    handleRegenerateOutline,
-    handleGeneratePrd,
-  } = usePrdWizardHandlers();
+  const [generationAttempted, setGenerationAttempted] = React.useState<
+    Set<string>
+  >(new Set());
+
+  const handleRegenerateOutline = React.useCallback(async () => {
+    setGenerationAttempted(new Set());
+    await generateContentOutlineForPrompt(state.initialPrompt);
+  }, [generateContentOutlineForPrompt, state.initialPrompt]);
 
   // Auto-generation effect
   useAutoGeneration(generationAttempted, setGenerationAttempted);
@@ -41,18 +47,18 @@ function StructuredPrdWizardContent() {
 
       {/* Progress timeline */}
       <Card className="p-4">
-        <ProgressTimeline progress={state.progress} />
+        <ProgressTimeline
+          progress={state.progress}
+          streamingPhase={generationState.phase}
+          isGenerating={generationState.isGenerating}
+          attempt={generationState.attempt}
+          phaseStatus={generationState.phaseStatus}
+        />
       </Card>
 
       {/* Step content */}
       <Card className="p-6 min-h-[600px]">
-        <StepRenderer
-          _generatedPrd={generatedPrd}
-          _isGenerating={isGenerating}
-          _error={error}
-          handleRegenerateOutline={handleRegenerateOutline}
-          _handleGeneratePrd={handleGeneratePrd}
-        />
+        <StepRenderer handleRegenerateOutline={handleRegenerateOutline} />
       </Card>
 
       {/* Navigation */}
@@ -72,7 +78,9 @@ function StructuredPrdWizardContent() {
 export function StructuredPrdWizard() {
   return (
     <StructuredWorkflowProvider>
-      <StructuredPrdWizardContent />
+      <PrdGenerationProvider>
+        <StructuredPrdWizardContent />
+      </PrdGenerationProvider>
     </StructuredWorkflowProvider>
   );
 }

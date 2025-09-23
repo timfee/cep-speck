@@ -12,6 +12,8 @@ interface OutlineHeaderProps {
     functionalRequirements: number;
     successMetrics: number;
     milestones: number;
+    customerJourneys: number;
+    metricSchemas: number;
   };
   onRegenerateOutline: () => void;
   isLoading: boolean;
@@ -28,9 +30,9 @@ export function OutlineHeader({
       <div className="text-center space-y-2">
         <h2 className="text-2xl font-bold">Review Content Outline</h2>
         <p className="text-muted-foreground">
-          AI has generated functional requirements, metrics, and milestones
-          based on your product description. Review and customize these before
-          generating the final PRD.
+          AI has generated functional requirements, metrics, milestones, and
+          customer journeys based on your product description. Review and
+          customize these structured sections before generating the final PRD.
         </p>
       </div>
 
@@ -72,6 +74,12 @@ export function OutlineHeader({
             </Badge>
             <Badge variant="outline">
               {outlineSummary.milestones} milestones
+            </Badge>
+            <Badge variant="outline">
+              {outlineSummary.customerJourneys} customer journeys
+            </Badge>
+            <Badge variant="outline">
+              {outlineSummary.metricSchemas} metric schemas
             </Badge>
           </div>
         </div>

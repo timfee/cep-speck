@@ -1,15 +1,20 @@
 /**
  * Content sections configuration and renderers
  */
-import { BarChart3, Calendar, Target } from "lucide-react";
+import { BarChart3, Calendar, ListChecks, Route, Target } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 
 import type {
+  CustomerJourney,
   FunctionalRequirement,
-  SuccessMetric,
   Milestone,
+  SuccessMetric,
+  SuccessMetricSchema,
 } from "@/types/workflow";
+
+const JOURNEY_STEP_PREVIEW_LIMIT = 3;
+const METRIC_FIELD_PREVIEW_LIMIT = 3;
 
 /**
  * Badge creation helpers
@@ -105,5 +110,81 @@ export const SECTION_CONFIGS = {
       badge: <Badge variant="outline">{milestone.phase}</Badge>,
       extra: createDateExtra(milestone.estimatedDate),
     }),
+  },
+  customerJourneys: {
+    title: "Customer Journeys",
+    icon: <Route className="h-5 w-5 text-amber-600" />,
+    addLabel: "Add Journey",
+    itemLabel: "Customer Journey",
+    emptyMessage:
+      'No customer journeys captured. Click "Add Journey" to document one.',
+    renderer: (journey: CustomerJourney) => {
+      const stepsPreview = journey.steps.slice(0, JOURNEY_STEP_PREVIEW_LIMIT);
+      const remainingSteps = journey.steps.length - stepsPreview.length;
+      const successCriteria = journey.successCriteria;
+      const hasSuccessCriteria =
+        typeof successCriteria === "string" && successCriteria.length > 0;
+      return {
+        id: journey.id,
+        title: journey.title,
+        description: journey.goal,
+        badge: <Badge variant="outline">{journey.role}</Badge>,
+        extra:
+          stepsPreview.length > 0 ? (
+            <div className="text-xs bg-amber-50 p-2 rounded border-l-2 border-amber-500 space-y-1">
+              <strong>Steps:</strong>
+              <ol className="ml-4 list-decimal space-y-1">
+                {stepsPreview.map((step) => (
+                  <li key={step.id}>{step.description}</li>
+                ))}
+              </ol>
+              {remainingSteps > 0 ? (
+                <div className="text-amber-700">
+                  +{remainingSteps} more step{remainingSteps === 1 ? "" : "s"}
+                </div>
+              ) : null}
+              {hasSuccessCriteria ? (
+                <div>
+                  <strong>Success:</strong> {successCriteria}
+                </div>
+              ) : null}
+            </div>
+          ) : undefined,
+      };
+    },
+  },
+  metricSchemas: {
+    title: "Metric Schemas",
+    icon: <ListChecks className="h-5 w-5 text-sky-600" />,
+    addLabel: "Add Metric Schema",
+    itemLabel: "Metric Schema",
+    emptyMessage:
+      'No metric schemas defined. Click "Add Metric Schema" to capture one.',
+    renderer: (schema: SuccessMetricSchema) => {
+      const fieldNames = schema.fields.map((field) => field.name);
+      const preview = fieldNames
+        .slice(0, METRIC_FIELD_PREVIEW_LIMIT)
+        .join(", ");
+      const remaining =
+        fieldNames.length -
+        Math.min(fieldNames.length, METRIC_FIELD_PREVIEW_LIMIT);
+      return {
+        id: schema.id,
+        title: schema.title,
+        description: schema.description,
+        badge: (
+          <Badge variant="outline">
+            {schema.fields.length} field{schema.fields.length === 1 ? "" : "s"}
+          </Badge>
+        ),
+        extra:
+          fieldNames.length > 0 ? (
+            <div className="text-xs bg-sky-50 p-2 rounded border-l-2 border-sky-500">
+              <strong>Fields:</strong> {preview}
+              {remaining > 0 ? ` (+${remaining} more)` : ""}
+            </div>
+          ) : undefined,
+      };
+    },
   },
 } as const;

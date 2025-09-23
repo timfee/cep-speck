@@ -2,7 +2,14 @@
  * API route utilities for streaming workflow requests
  */
 
+import { z } from "zod";
+
 import { DEFAULT_SPEC_PACK } from "@/lib/config";
+
+import type {
+  SerializedWorkflowOutline,
+  SerializedWorkflowSpec,
+} from "@/types/workflow";
 
 // Re-export modular utilities for cleaner organization
 export {
@@ -24,20 +31,40 @@ export { validateApiKey, validateSpecPack } from "./api-validation";
 // The pack is validated at runtime via assertValidSpecPack() to ensure type safety
 const pack = DEFAULT_SPEC_PACK;
 
-export interface RunRequestBody {
-  specText: string;
-  maxAttempts?: number;
-}
+const isSerializableObject = (
+  value: unknown
+): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null;
+
+const serializedSpecSchema = z.custom<SerializedWorkflowSpec>((value) => {
+  if (!isSerializableObject(value)) {
+    return false;
+  }
+
+  return true;
+}, "structuredSpec must be an object");
+
+const outlinePayloadSchema = z.custom<SerializedWorkflowOutline>((value) => {
+  if (!isSerializableObject(value)) {
+    return false;
+  }
+
+  return true;
+}, "outlinePayload must be an object");
+
+export const runRequestBodySchema = z
+  .object({
+    specText: z.string(),
+    structuredSpec: serializedSpecSchema.optional(),
+    outlinePayload: outlinePayloadSchema.optional(),
+    maxAttempts: z.number().optional(),
+  })
+  .strict();
+
+export type RunRequestBody = z.infer<typeof runRequestBodySchema>;
 
 export function isValidRunRequest(body: unknown): body is RunRequestBody {
-  return (
-    typeof body === "object" &&
-    body !== null &&
-    "specText" in body &&
-    typeof (body as RunRequestBody).specText === "string" &&
-    ((body as RunRequestBody).maxAttempts === undefined ||
-      typeof (body as RunRequestBody).maxAttempts === "number")
-  );
+  return runRequestBodySchema.safeParse(body).success;
 }
 
 // Export pack for consistent access

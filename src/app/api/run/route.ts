@@ -11,6 +11,7 @@ import {
   handleStreamError,
   isValidRunRequest,
   pack,
+  type RunRequestBody,
   validateApiKey,
   validateSpecPack,
 } from "./utils";
@@ -24,11 +25,18 @@ export async function POST(req: NextRequest) {
     return createErrorResponse("Invalid request body");
   }
 
-  const { specText, maxAttempts: maxOverride } = requestBody;
+  const {
+    specText,
+    structuredSpec,
+    outlinePayload,
+    maxAttempts: maxOverride,
+  } = requestBody;
   const maxAttempts = calculateMaxAttempts(maxOverride);
 
   const stream = createHybridWorkflowStream({
     specText,
+    structuredSpec,
+    outlinePayload,
     maxAttempts,
     startTime: Date.now(),
   });
@@ -38,10 +46,14 @@ export async function POST(req: NextRequest) {
 
 function createHybridWorkflowStream({
   specText,
+  structuredSpec,
+  outlinePayload,
   maxAttempts,
   startTime,
 }: {
   specText: string;
+  structuredSpec?: RunRequestBody["structuredSpec"];
+  outlinePayload?: RunRequestBody["outlinePayload"];
   maxAttempts: number;
   startTime: number;
 }) {
@@ -50,6 +62,8 @@ function createHybridWorkflowStream({
       const streamController = createStreamController(controller);
       await processWorkflowRequest(streamController, {
         specText,
+        structuredSpec,
+        outlinePayload,
         maxAttempts,
         startTime,
       });
@@ -59,16 +73,19 @@ function createHybridWorkflowStream({
 
 async function processWorkflowRequest(
   streamController: ReturnType<typeof createStreamController>,
-  params: { specText: string; maxAttempts: number; startTime: number }
+  params: {
+    specText: string;
+    structuredSpec?: RunRequestBody["structuredSpec"];
+    outlinePayload?: RunRequestBody["outlinePayload"];
+    maxAttempts: number;
+    startTime: number;
+  }
 ) {
   try {
     if (!validateApiKey(streamController)) return;
     if (!validateSpecPack(pack, streamController)) return;
 
-    await executeHybridWorkflow({
-      ...params,
-      streamController,
-    });
+    await executeHybridWorkflow({ ...params, streamController });
 
     streamController.close();
   } catch (e: unknown) {

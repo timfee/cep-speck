@@ -57,7 +57,10 @@ function getStepCompletion(state: StructuredWorkflowState): {
       return { canGoNext: true, completion: 100 }; // Optional step
 
     case "generate":
-      return { canGoNext: true, completion: state.finalPrd ? 100 : 0 };
+      if (state.finalPrd.trim().length === 0) {
+        return { canGoNext: false, completion: 0 };
+      }
+      return { canGoNext: true, completion: 100 };
 
     case "complete":
       return { canGoNext: false, completion: 100 };

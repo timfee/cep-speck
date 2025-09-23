@@ -16,7 +16,7 @@ function assertNever(_value: never, message: string): never {
 }
 
 interface GenerationCallbackHandlers {
-  onPhase: (phase: string, attempt?: number) => void;
+  onPhase: (phase: string, attempt?: number, message?: string) => void;
   onGeneration: (delta: string) => void;
   onResult: (finalDraft: string) => void;
   onValidation: (issues: Issue[]) => void;
@@ -87,7 +87,12 @@ export function createGenerationCallbacks(
   handlers: GenerationCallbackHandlers
 ): FrameCallbacks {
   return {
-    onPhase: (frame) => handlers.onPhase(frame.data.phase, frame.data.attempt),
+    onPhase: (frame) =>
+      handlers.onPhase(
+        frame.data.phase,
+        frame.data.attempt,
+        frame.data.message
+      ),
     onGeneration: (frame) => handlers.onGeneration(frame.data.delta),
     onResult: (frame) => handlers.onResult(frame.data.finalDraft),
     onValidation: (frame) => handlers.onValidation(mapValidationIssues(frame)),

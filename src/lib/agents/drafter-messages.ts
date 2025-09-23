@@ -27,7 +27,14 @@ export async function buildDrafterMessages(
   config: DrafterConfig,
   fallbackPrompt: string
 ): Promise<CoreMessage[]> {
-  const { userInput, pack, knowledgeContext, researchContext } = context;
+  const {
+    userInput,
+    structuredSpec,
+    outlinePayload,
+    pack,
+    knowledgeContext,
+    researchContext,
+  } = context;
 
   // Load master prompt
   const masterPrompt = await loadPrompt({
@@ -54,7 +61,14 @@ export async function buildDrafterMessages(
 
   return [
     { role: "system", content: systemPrompt },
-    { role: "user", content: buildUserPrompt(userInput) },
+    {
+      role: "user",
+      content: buildUserPrompt({
+        specText: userInput,
+        structuredSpec,
+        outlinePayload,
+      }),
+    },
   ];
 }
 

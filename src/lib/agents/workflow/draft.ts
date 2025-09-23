@@ -22,12 +22,12 @@ export async function executeDraftPhase(
   totalTokens: number
 ): Promise<{ draft: string; updatedTokens: number }> {
   sendDraftPhaseNotification(context, attempt);
-  const drafterResult = await runDrafterAgent(
-    context.specText,
-    context.pack,
-    context.knowledgeContext,
-    context.researchContext
-  );
+  const drafterResult = await runDrafterAgent(context.specText, context.pack, {
+    knowledgeContext: context.knowledgeContext,
+    researchContext: context.researchContext,
+    structuredSpec: context.structuredSpec,
+    outlinePayload: context.outlinePayload,
+  });
   return await streamDraftContent(context, drafterResult, totalTokens);
 }
 

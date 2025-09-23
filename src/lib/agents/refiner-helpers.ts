@@ -1,28 +1,22 @@
-/**
- * Helper functions for refiner agent
- */
-
 import type { Issue } from "@/lib/spec/types";
-
-/**
- * Issue classification patterns for grouping
- */
 const ISSUE_PATTERNS = {
   semantic: ["semantic", "quality"],
   structural: ["structure", "section"],
 } as const;
 
-/**
- * Group issues by type and build healing instructions
- */
-export function buildHealingInstructions(issues: Issue[]): string {
-  const groups = {
-    deterministic: [] as Issue[],
-    semantic: [] as Issue[],
-    structural: [] as Issue[],
+export interface ClassifiedIssues {
+  deterministic: Issue[];
+  semantic: Issue[];
+  structural: Issue[];
+}
+
+export function classifyIssues(issues: Issue[]): ClassifiedIssues {
+  const groups: ClassifiedIssues = {
+    deterministic: [],
+    semantic: [],
+    structural: [],
   };
 
-  // Classify issues
   for (const issue of issues) {
     if (
       ISSUE_PATTERNS.semantic.some((pattern) => issue.itemId.includes(pattern))
@@ -39,7 +33,12 @@ export function buildHealingInstructions(issues: Issue[]): string {
     }
   }
 
-  // Build sections
+  return groups;
+}
+
+export function buildHealingInstructions(issues: Issue[]): string {
+  const groups = classifyIssues(issues);
+
   const sections = [
     {
       title: "Deterministic Issues to Fix",
@@ -66,9 +65,6 @@ export function buildHealingInstructions(issues: Issue[]): string {
     .join("");
 }
 
-/**
- * Build a section of healing instructions for a specific issue type
- */
 function buildIssueSection(
   title: string,
   issues: Issue[],

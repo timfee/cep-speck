@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 
 export interface PrdPreviewProps {
   content: string;
-  onCopy: () => Promise<void>;
+  onCopy: () => void | Promise<void>;
 }
 
 export function PrdPreview({ content, onCopy }: PrdPreviewProps) {
