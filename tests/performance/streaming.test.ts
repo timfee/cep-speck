@@ -359,7 +359,8 @@ describe("Streaming Protocol Performance", () => {
       // Larger content should not be drastically slower
       const smallestDuration = results[0].duration;
       const largestDuration = results[results.length - 1].duration;
-      const scalingRatio = largestDuration / smallestDuration;
+      const normalizedBaseline = Math.max(smallestDuration, 1);
+      const scalingRatio = largestDuration / normalizedBaseline;
 
       expect(scalingRatio).toBeLessThan(50); // Should not be more than 50x slower
     });

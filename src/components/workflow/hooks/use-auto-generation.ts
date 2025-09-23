@@ -1,7 +1,7 @@
 import React from "react";
 
-import { MIN_PROMPT_LENGTH } from "@/hooks/progress-calculation";
 import { useStructuredWorkflowContext } from "@/contexts/structured-workflow-context";
+import { MIN_PROMPT_LENGTH } from "@/hooks/progress-calculation";
 
 /**
  * Hook to manage auto-generation of content outline
@@ -10,7 +10,8 @@ export function useAutoGeneration(
   generationAttempted: Set<string>,
   setGenerationAttempted: React.Dispatch<React.SetStateAction<Set<string>>>
 ) {
-  const { state, generateContentOutlineForPrompt } = useStructuredWorkflowContext();
+  const { state, generateContentOutlineForPrompt } =
+    useStructuredWorkflowContext();
 
   // Auto-generate content outline when prompt is ready and we're on outline step
   React.useEffect(() => {

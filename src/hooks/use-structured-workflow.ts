@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 
-import { generateContentOutlineFromPrompt } from "@/lib/services/content-outline-service";
 import { serializeWorkflowToSpec } from "@/lib/serializers/workflow-to-spec";
+import { generateContentOutlineFromPrompt } from "@/lib/services/content-outline-service";
 import type { StructuredWorkflowState } from "@/types/workflow";
 
 import { calculateStepProgress } from "./progress-calculation";
