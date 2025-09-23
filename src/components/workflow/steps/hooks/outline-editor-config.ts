@@ -20,13 +20,11 @@ import type {
   SuccessMetricSchema,
 } from "@/types/workflow";
 
-import {
-  createNewFunctionalRequirement,
-  createNewMilestone,
-  createNewSuccessMetric,
-  createNewCustomerJourney,
-  createNewSuccessMetricSchema,
-} from "../content-outline-helpers";
+import { createNewCustomerJourney } from "../customer-journey-helpers";
+import { createNewFunctionalRequirement } from "../functional-requirement-helpers";
+import { createNewSuccessMetricSchema } from "../metric-schema-helpers";
+import { createNewMilestone } from "../milestone-helpers";
+import { createNewSuccessMetric } from "../success-metric-helpers";
 
 import type {
   DraftForKind,

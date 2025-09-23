@@ -69,9 +69,9 @@ export function createSecurityToggleHandler(
 ) {
   return (value: string) => {
     const current = parameters.securityRequirements;
-    const updated = current.includes(value as (typeof current)[0])
+    const updated = current.includes(value)
       ? current.filter((item) => item !== value)
-      : [...current, value as (typeof current)[0]];
+      : [...current, value];
     onChange({ ...parameters, securityRequirements: updated });
   };
 }
@@ -85,9 +85,9 @@ export function createIntegrationToggleHandler(
 ) {
   return (value: string) => {
     const current = parameters.integrations;
-    const updated = current.includes(value as (typeof current)[0])
+    const updated = current.includes(value)
       ? current.filter((item) => item !== value)
-      : [...current, value as (typeof current)[0]];
+      : [...current, value];
     onChange({ ...parameters, integrations: updated });
   };
 }

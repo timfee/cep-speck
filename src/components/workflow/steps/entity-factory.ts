@@ -54,10 +54,10 @@ export function createEntityFactory<
       Object.assign(result, config.transform(input));
     }
 
-    // Copy other fields with optional string normalization
+    // Copy other fields with optional string normalization, overriding defaults
     for (const [key, value] of Object.entries(input)) {
       if (
-        !Object.prototype.hasOwnProperty.call(result, key) &&
+        !config.requiredFields.some((field) => field.field === key) &&
         value !== undefined
       ) {
         result[key] =

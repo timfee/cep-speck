@@ -1,22 +1,8 @@
-import type { ContentOutline } from "@/types/workflow";
+/**
+ * Content outline utility functions
+ */
 
-export {
-  createNewFunctionalRequirement,
-  type FunctionalRequirementInput,
-} from "./functional-requirement-helpers";
-export { createNewMilestone, type MilestoneInput } from "./milestone-helpers";
-export {
-  createNewSuccessMetric,
-  type SuccessMetricInput,
-} from "./success-metric-helpers";
-export {
-  createNewCustomerJourney,
-  type CustomerJourneyInput,
-} from "./customer-journey-helpers";
-export {
-  createNewSuccessMetricSchema,
-  type SuccessMetricSchemaInput,
-} from "./metric-schema-helpers";
+import type { ContentOutline } from "@/types/workflow";
 
 export function calculateTotalItems(contentOutline: ContentOutline): number {
   return (
