@@ -89,8 +89,7 @@ export function createAnalyticsRequirement(): FunctionalRequirement {
     title: "Analytics & Reporting",
     description: "Comprehensive analytics and reporting capabilities",
     priority: "P2" as const,
-    userStory:
-      "As a stakeholder, I want to track usage and measure success",
+    userStory: "As a stakeholder, I want to track usage and measure success",
     acceptanceCriteria: [
       "Usage tracking",
       "Custom reports",

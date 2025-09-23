@@ -57,11 +57,7 @@ export function ErrorTerminal({
           valueColor="text-red-400"
         />
 
-        <TerminalLine
-          label="Message"
-          value={error.message}
-          delay={200}
-        />
+        <TerminalLine label="Message" value={error.message} delay={200} />
 
         <ConditionalTerminalLine
           condition={(context?.phase ?? "").length > 0}
