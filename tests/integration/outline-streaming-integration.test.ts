@@ -575,7 +575,6 @@ describe("End-to-End Workflow Integration", () => {
     // 5. Verify spec text contains key elements for drafter
     expect(legacySpecText).toContain("Multi-Tenant Security");
     expect(legacySpecText).toContain("Enterprise");
-    expect(legacySpecText).toContain("Multi-Tenant Security");
     expect(legacySpecText).toContain("99.9%");
 
     // 6. Simulate streaming workflow with mock drafter
