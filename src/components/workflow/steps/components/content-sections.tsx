@@ -4,6 +4,19 @@ import type { ContentOutline } from "@/types/workflow";
 
 import { ContentSection } from "./content-section";
 import { SECTION_CONFIGS } from "./content-sections-config";
+import type { FormComponentProps } from "./inline-editor-panel";
+import { FunctionalRequirementForm } from "../hooks/functional-requirement-form";
+import { MilestoneForm } from "../hooks/milestone-form";
+
+import {
+  type DraftForKind,
+  type EditorKind,
+  type EditorState,
+  type EditorValues,
+  type StateForKind,
+} from "../hooks/outline-editor-types";
+
+import { SuccessMetricForm } from "../hooks/success-metric-form";
 
 interface ContentSectionsProps {
   contentOutline: ContentOutline;
@@ -16,6 +29,9 @@ interface ContentSectionsProps {
   handleAddMilestone: () => void;
   handleEditMilestone: (id: string) => void;
   onDeleteMilestone?: (id: string) => void;
+  editorState: EditorState | null;
+  onCancelEditor: () => void;
+  onSubmitEditor: (values: EditorValues) => void;
 }
 
 export function ContentSections(props: ContentSectionsProps) {
@@ -30,7 +46,27 @@ export function ContentSections(props: ContentSectionsProps) {
     handleAddMilestone,
     handleEditMilestone,
     onDeleteMilestone,
+    editorState,
+    onCancelEditor,
+    onSubmitEditor,
   } = props;
+
+  const resolveEditorProps = <K extends EditorKind>(
+    kind: K
+  ): FormComponentProps<DraftForKind<K>> | undefined => {
+    if (editorState?.kind !== kind) {
+      return undefined;
+    }
+
+    const typedState = editorState as StateForKind<K>;
+    const initialValues = typedState.data as DraftForKind<K>;
+    return {
+      mode: typedState.mode,
+      initialValues,
+      onCancel: onCancelEditor,
+      onSubmit: (values: DraftForKind<K>) => onSubmitEditor(values),
+    };
+  };
 
   return (
     <>
@@ -41,6 +77,8 @@ export function ContentSections(props: ContentSectionsProps) {
         onEdit={handleEditFunctionalRequirement}
         onDelete={onDeleteFunctionalRequirement}
         renderItem={SECTION_CONFIGS.requirements.renderer}
+        editor={resolveEditorProps("functionalRequirement")}
+        FormComponent={FunctionalRequirementForm}
       />
       <ContentSection
         {...SECTION_CONFIGS.metrics}
@@ -49,6 +87,8 @@ export function ContentSections(props: ContentSectionsProps) {
         onEdit={handleEditSuccessMetric}
         onDelete={onDeleteSuccessMetric}
         renderItem={SECTION_CONFIGS.metrics.renderer}
+        editor={resolveEditorProps("successMetric")}
+        FormComponent={SuccessMetricForm}
       />
       <ContentSection
         {...SECTION_CONFIGS.milestones}
@@ -57,6 +97,8 @@ export function ContentSections(props: ContentSectionsProps) {
         onEdit={handleEditMilestone}
         onDelete={onDeleteMilestone}
         renderItem={SECTION_CONFIGS.milestones.renderer}
+        editor={resolveEditorProps("milestone")}
+        FormComponent={MilestoneForm}
       />
     </>
   );

@@ -2,7 +2,7 @@
  * Content sections configuration and renderers
  */
 import { BarChart3, Calendar, Target } from "lucide-react";
-import React from "react";
+import React, { createElement } from "react";
 
 import { Badge } from "@/components/ui/badge";
 
@@ -64,9 +64,11 @@ export const createDateExtra = (estimatedDate?: string) =>
 export const SECTION_CONFIGS = {
   requirements: {
     title: "Functional Requirements",
-    icon: <Target className="h-5 w-5 text-green-600" />,
+    icon: createElement(Target, { className: "h-5 w-5 text-green-600" }),
+    addLabel: "Add Requirement",
+    itemLabel: "Functional Requirement",
     emptyMessage:
-      'No functional requirements generated. Click "Add Functional" to create one.',
+      'No functional requirements generated. Click "Add Requirement" to create one.',
     renderer: (req: FunctionalRequirement) => ({
       id: req.id,
       title: req.title,
@@ -77,9 +79,11 @@ export const SECTION_CONFIGS = {
   },
   metrics: {
     title: "Success Metrics",
-    icon: <BarChart3 className="h-5 w-5 text-blue-600" />,
+    icon: createElement(BarChart3, { className: "h-5 w-5 text-blue-600" }),
+    addLabel: "Add Metric",
+    itemLabel: "Success Metric",
     emptyMessage:
-      'No success metrics generated. Click "Add Success" to create one.',
+      'No success metrics generated. Click "Add Metric" to create one.',
     renderer: (metric: SuccessMetric) => ({
       id: metric.id,
       title: metric.name,
@@ -90,9 +94,11 @@ export const SECTION_CONFIGS = {
   },
   milestones: {
     title: "Milestones & Timeline",
-    icon: <Calendar className="h-5 w-5 text-purple-600" />,
+    icon: createElement(Calendar, { className: "h-5 w-5 text-purple-600" }),
+    addLabel: "Add Milestone",
+    itemLabel: "Milestone",
     emptyMessage:
-      'No milestones generated. Click "Add Milestones" to create one.',
+      'No milestones generated. Click "Add Milestone" to create one.',
     renderer: (milestone: Milestone) => ({
       id: milestone.id,
       title: milestone.title,
