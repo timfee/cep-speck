@@ -2,13 +2,11 @@ import React from "react";
 
 import { Card } from "@/components/ui/card";
 
-import {
-  EmptyState,
-  ItemCard,
-  SectionHeader,
-} from "./content-section-components";
+import { type FormComponentProps } from "./inline-editor-panel";
+import { SectionHeader } from "./section-header";
+import { SectionItems } from "./section-items";
 
-interface ContentSectionProps<T> {
+interface ContentSectionProps<T, Draft> {
   title: string;
   icon: React.ReactNode;
   items: T[];
@@ -23,9 +21,13 @@ interface ContentSectionProps<T> {
     badge: React.ReactNode;
     extra?: React.ReactNode;
   };
+  addLabel: string;
+  itemLabel: string;
+  FormComponent: React.ComponentType<FormComponentProps<Draft>>;
+  editor?: FormComponentProps<Draft>;
 }
 
-export function ContentSection<T>({
+export function ContentSection<T, Draft>({
   title,
   icon,
   items,
@@ -34,31 +36,30 @@ export function ContentSection<T>({
   onDelete,
   emptyMessage,
   renderItem,
-}: ContentSectionProps<T>) {
+  addLabel,
+  itemLabel,
+  FormComponent,
+  editor,
+}: ContentSectionProps<T, Draft>) {
   return (
     <Card className="p-4">
-      <SectionHeader title={title} icon={icon} onAdd={onAdd} />
-      <div className="space-y-3">
-        {items.length === 0 ? (
-          <EmptyState message={emptyMessage} />
-        ) : (
-          items.map((item) => {
-            const rendered = renderItem(item);
-            return (
-              <ItemCard
-                key={rendered.id}
-                id={rendered.id}
-                title={rendered.title}
-                description={rendered.description}
-                badge={rendered.badge}
-                extra={rendered.extra}
-                onEdit={onEdit}
-                onDelete={onDelete}
-              />
-            );
-          })
-        )}
-      </div>
+      <SectionHeader
+        title={title}
+        icon={icon}
+        onAdd={onAdd}
+        addLabel={addLabel}
+        disableAdd={Boolean(editor)}
+      />
+      <SectionItems
+        items={items}
+        emptyMessage={emptyMessage}
+        renderItem={renderItem}
+        itemLabel={itemLabel}
+        FormComponent={FormComponent}
+        editor={editor}
+        onEdit={onEdit}
+        onDelete={onDelete}
+      />
     </Card>
   );
 }

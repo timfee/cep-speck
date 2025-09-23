@@ -42,14 +42,29 @@ export function ContentOutlineStep({
   onChange,
   onRegenerateOutline,
   isLoading = false,
+  onEditFunctionalRequirement,
   onDeleteFunctionalRequirement,
   onAddFunctionalRequirement,
+  onEditSuccessMetric,
   onDeleteSuccessMetric,
   onAddSuccessMetric,
+  onEditMilestone,
   onDeleteMilestone,
   onAddMilestone,
 }: ContentOutlineStepProps) {
   const outlineSummary = getOutlineSummary(contentOutline);
+
+  const outlineHandlers: ReturnType<typeof useOutlineStepHandlers> =
+    useOutlineStepHandlers({
+      contentOutline,
+      onChange,
+      onAddFunctionalRequirement,
+      onEditFunctionalRequirement,
+      onAddSuccessMetric,
+      onEditSuccessMetric,
+      onAddMilestone,
+      onEditMilestone,
+    });
 
   const {
     handleAddFunctionalRequirement,
@@ -58,13 +73,10 @@ export function ContentOutlineStep({
     handleEditSuccessMetric,
     handleAddMilestone,
     handleEditMilestone,
-  } = useOutlineStepHandlers({
-    contentOutline,
-    onChange,
-    onAddFunctionalRequirement,
-    onAddSuccessMetric,
-    onAddMilestone,
-  });
+    editorState,
+    cancelEditor,
+    submitEditor,
+  } = outlineHandlers;
 
   return (
     <div className="space-y-6">
@@ -86,6 +98,9 @@ export function ContentOutlineStep({
         handleAddMilestone={handleAddMilestone}
         handleEditMilestone={handleEditMilestone}
         onDeleteMilestone={onDeleteMilestone}
+        editorState={editorState}
+        onCancelEditor={cancelEditor}
+        onSubmitEditor={submitEditor}
       />
 
       <CompletionStatus totalItems={outlineSummary.totalItems} />

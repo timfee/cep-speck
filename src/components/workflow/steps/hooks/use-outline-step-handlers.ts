@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 
 import type {
   ContentOutline,
@@ -7,82 +7,121 @@ import type {
   SuccessMetric,
 } from "@/types/workflow";
 
-import {
-  createNewFunctionalRequirement,
-  createNewMilestone,
-  createNewSuccessMetric,
-} from "../content-outline-helpers";
+import type { SubmitCallbackMap } from "./outline-editor-callbacks";
+import { useOutlineEditorManager } from "./outline-editor-manager";
 
 interface UseOutlineStepHandlersProps {
   contentOutline: ContentOutline;
   onChange: (outline: ContentOutline) => void;
   onAddFunctionalRequirement?: (requirement: FunctionalRequirement) => void;
+  onEditFunctionalRequirement?: (
+    id: string,
+    updates: Partial<FunctionalRequirement>
+  ) => void;
   onAddSuccessMetric?: (metric: SuccessMetric) => void;
+  onEditSuccessMetric?: (id: string, updates: Partial<SuccessMetric>) => void;
   onAddMilestone?: (milestone: Milestone) => void;
+  onEditMilestone?: (id: string, updates: Partial<Milestone>) => void;
 }
 
-type ContentHandler<T> = (newItem: T) => void;
-type EditHandler = (id: string) => void;
+type SubmitCallbackDependencies = Pick<
+  UseOutlineStepHandlersProps,
+  | "onAddFunctionalRequirement"
+  | "onEditFunctionalRequirement"
+  | "onAddSuccessMetric"
+  | "onEditSuccessMetric"
+  | "onAddMilestone"
+  | "onEditMilestone"
+>;
 
-export function useOutlineStepHandlers({
-  contentOutline,
-  onChange,
+const createSubmitCallbackMap = ({
   onAddFunctionalRequirement,
+  onEditFunctionalRequirement,
   onAddSuccessMetric,
+  onEditSuccessMetric,
   onAddMilestone,
-}: UseOutlineStepHandlersProps) {
-  // Generic add handler factory
-  const createAddHandler = useCallback(
-    <T>(
-      creator: () => T,
-      arrayKey: keyof ContentOutline,
-      customHandler?: ContentHandler<T>
-    ) => {
-      return () => {
-        const newItem = creator();
-        if (customHandler) {
-          customHandler(newItem);
-        } else {
-          onChange({
-            ...contentOutline,
-            [arrayKey]: [...(contentOutline[arrayKey] as T[]), newItem],
-          });
-        }
-      };
-    },
-    [contentOutline, onChange]
+  onEditMilestone,
+}: SubmitCallbackDependencies): SubmitCallbackMap => ({
+  functionalRequirement: {
+    onAdd: onAddFunctionalRequirement,
+    onEdit: onEditFunctionalRequirement,
+  },
+  successMetric: {
+    onAdd: onAddSuccessMetric,
+    onEdit: onEditSuccessMetric,
+  },
+  milestone: {
+    onAdd: onAddMilestone,
+    onEdit: onEditMilestone,
+  },
+});
+
+export function useOutlineStepHandlers(props: UseOutlineStepHandlersProps) {
+  const {
+    contentOutline,
+    onChange,
+    onAddFunctionalRequirement,
+    onEditFunctionalRequirement,
+    onAddSuccessMetric,
+    onEditSuccessMetric,
+    onAddMilestone,
+    onEditMilestone,
+  } = props;
+
+  const submitCallbacks = useMemo(
+    () =>
+      createSubmitCallbackMap({
+        onAddFunctionalRequirement,
+        onEditFunctionalRequirement,
+        onAddSuccessMetric,
+        onEditSuccessMetric,
+        onAddMilestone,
+        onEditMilestone,
+      }),
+    [
+      onAddFunctionalRequirement,
+      onAddMilestone,
+      onAddSuccessMetric,
+      onEditFunctionalRequirement,
+      onEditMilestone,
+      onEditSuccessMetric,
+    ]
   );
 
-  // Create edit handler factory
-  const createEditHandler = useCallback(
-    (itemType: string): EditHandler =>
-      (id: string) => {
-        console.log(`Edit ${itemType}:`, id);
-        // TODO: Open edit dialog
-      },
-    []
-  );
+  const { editorState, openEditor, closeEditor, submitEditor } =
+    useOutlineEditorManager({
+      contentOutline,
+      onChange,
+      submitCallbacks,
+    });
 
   return {
-    handleAddFunctionalRequirement: createAddHandler(
-      createNewFunctionalRequirement,
-      "functionalRequirements",
-      onAddFunctionalRequirement
+    handleAddFunctionalRequirement: useCallback(
+      () => openEditor("functionalRequirement", "create"),
+      [openEditor]
     ),
-    handleEditFunctionalRequirement: createEditHandler(
-      "functional requirement"
+    handleEditFunctionalRequirement: useCallback(
+      (id: string) => openEditor("functionalRequirement", "edit", id),
+      [openEditor]
     ),
-    handleAddSuccessMetric: createAddHandler(
-      createNewSuccessMetric,
-      "successMetrics",
-      onAddSuccessMetric
+    handleAddSuccessMetric: useCallback(
+      () => openEditor("successMetric", "create"),
+      [openEditor]
     ),
-    handleEditSuccessMetric: createEditHandler("success metric"),
-    handleAddMilestone: createAddHandler(
-      createNewMilestone,
-      "milestones",
-      onAddMilestone
+    handleEditSuccessMetric: useCallback(
+      (id: string) => openEditor("successMetric", "edit", id),
+      [openEditor]
     ),
-    handleEditMilestone: createEditHandler("milestone"),
-  };
+    handleAddMilestone: useCallback(
+      () => openEditor("milestone", "create"),
+      [openEditor]
+    ),
+    handleEditMilestone: useCallback(
+      (id: string) => openEditor("milestone", "edit", id),
+      [openEditor]
+    ),
+    editorState,
+    cancelEditor: closeEditor,
+    submitEditor,
+  } as const;
 }
