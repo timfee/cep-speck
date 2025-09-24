@@ -1,23 +1,12 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useReducer, useRef } from "react";
 
 import type { Issue, StreamPhase } from "@/lib/spec/types";
 
-interface PhaseStatus {
-  attempts: number;
-  issues: number;
-  lastMessage?: string;
-}
-
-interface GenerationState {
-  generatedPrd: string;
-  isGenerating: boolean;
-  phase: string;
-  progress: number;
-  attempt: number;
-  validationIssues: Issue[];
-  error: string | null;
-  phaseStatus: Partial<Record<StreamPhase, PhaseStatus>>;
-}
+import {
+  generationReducer,
+  createGenerationState,
+  type GenerationState,
+} from "./generation-reducer";
 
 interface GenerationActions {
   beginGeneration: () => void;
@@ -51,16 +40,9 @@ interface GenerationStore {
 export function usePrdGenerationStore(
   onGenerationComplete?: (generatedPrd: string) => void
 ): GenerationStore {
-  const [generatedPrd, setGeneratedPrd] = useState("");
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [phase, setPhase] = useState("");
-  const [progress, setProgress] = useState(0);
-  const [attempt, setAttempt] = useState(0);
-  const [validationIssues, setValidationIssues] = useState<Issue[]>([]);
-  const [error, setError] = useState<string | null>(null);
-  const [phaseStatus, setPhaseStatus] = useState<
-    Partial<Record<StreamPhase, PhaseStatus>>
-  >({});
+  const [state, dispatch] = useReducer(generationReducer, undefined, () =>
+    createGenerationState()
+  );
   const onCompleteRef =
     useRef<(draft: string) => void | undefined>(onGenerationComplete);
 
@@ -69,42 +51,44 @@ export function usePrdGenerationStore(
   }, [onGenerationComplete]);
 
   const beginGeneration = useCallback(() => {
-    setIsGenerating(true);
-    setError(null);
-    setGeneratedPrd("");
-    setProgress(0);
-    setPhase("");
-    setAttempt(0);
-    setValidationIssues([]);
-    setPhaseStatus({});
+    dispatch({ type: "BEGIN_GENERATION" });
   }, []);
 
   const completeGeneration = useCallback((draft: string) => {
-    setGeneratedPrd(draft);
-    setProgress(100);
-    setPhase("done");
+    dispatch({ type: "COMPLETE_GENERATION", draft });
     onCompleteRef.current?.(draft);
   }, []);
 
   const failGeneration = useCallback((message: string) => {
-    setError(message);
-    setPhase("error");
-    setProgress(0);
+    dispatch({ type: "FAIL_GENERATION", message });
   }, []);
 
   const finishGeneration = useCallback(() => {
-    setIsGenerating(false);
+    dispatch({ type: "FINISH_GENERATION" });
   }, []);
 
   const resetGeneration = useCallback(() => {
-    setGeneratedPrd("");
-    setIsGenerating(false);
-    setPhase("");
-    setProgress(0);
-    setAttempt(0);
-    setValidationIssues([]);
-    setError(null);
-    setPhaseStatus({});
+    dispatch({ type: "RESET_GENERATION" });
+  }, []);
+
+  const setPhase = useCallback((value: string) => {
+    dispatch({ type: "SET_PHASE", phase: value });
+  }, []);
+
+  const setProgress = useCallback((value: number) => {
+    dispatch({ type: "SET_PROGRESS", progress: value });
+  }, []);
+
+  const setAttempt = useCallback((value: number) => {
+    dispatch({ type: "SET_ATTEMPT", attempt: value });
+  }, []);
+
+  const setGeneratedPrd = useCallback((value: string) => {
+    dispatch({ type: "SET_GENERATED_PRD", draft: value });
+  }, []);
+
+  const setValidationIssues = useCallback((issues: Issue[]) => {
+    dispatch({ type: "SET_VALIDATION_ISSUES", issues });
   }, []);
 
   const setOnCompleteCallback = useCallback(
@@ -115,84 +99,29 @@ export function usePrdGenerationStore(
   );
 
   const clearError = useCallback(() => {
-    setError(null);
+    dispatch({ type: "CLEAR_ERROR" });
   }, []);
 
   const updatePhaseStatus = useCallback(
     (phase: StreamPhase, attempt: number | undefined, message?: string) => {
-      setPhaseStatus((previous) => {
-        const prior = previous[phase] ?? { attempts: 0, issues: 0 };
-        const normalizedAttempt = attempt ?? prior.attempts + 1;
-        const safeAttempt = normalizedAttempt <= 0 ? 1 : normalizedAttempt;
-
-        return {
-          ...previous,
-          [phase]: {
-            attempts: Math.max(prior.attempts, safeAttempt),
-            issues: prior.issues,
-            lastMessage: message ?? prior.lastMessage,
-          },
-        };
-      });
+      dispatch({ type: "UPDATE_PHASE_STATUS", phase, attempt, message });
     },
     []
   );
 
   const recordPhaseIssues = useCallback(
     (phase: StreamPhase, issues: Issue[]) => {
-      setPhaseStatus((previous) => {
-        const prior = previous[phase] ?? { attempts: 0, issues: 0 };
-        return {
-          ...previous,
-          [phase]: {
-            ...prior,
-            issues: issues.length,
-          },
-        };
-      });
+      dispatch({ type: "RECORD_PHASE_ISSUES", phase, issues });
     },
     []
   );
 
   const applyRefinedDraft = useCallback((draft: string) => {
-    setGeneratedPrd(draft);
-    setIsGenerating(false);
-    setPhase("done");
-    setProgress(100);
-    setValidationIssues([]);
-    setPhaseStatus((previous) => ({
-      ...previous,
-      validating: (() => {
-        const status = previous["validating"];
-        return {
-          attempts: status?.attempts ?? 0,
-          issues: 0,
-          lastMessage: status?.lastMessage,
-        };
-      })(),
-      healing: (() => {
-        const status = previous["healing"];
-        return {
-          attempts: Math.max(status?.attempts ?? 0, 1),
-          issues: status?.issues ?? 0,
-          lastMessage: "Refinement applied",
-        };
-      })(),
-    }));
+    dispatch({ type: "APPLY_REFINED_DRAFT", draft });
   }, []);
 
-  return {
-    state: {
-      generatedPrd,
-      isGenerating,
-      phase,
-      progress,
-      attempt,
-      validationIssues,
-      error,
-      phaseStatus,
-    },
-    actions: {
+  const actions = useMemo(
+    () => ({
       beginGeneration,
       completeGeneration,
       failGeneration,
@@ -208,6 +137,28 @@ export function usePrdGenerationStore(
       recordPhaseIssues,
       applyRefinedDraft,
       clearError,
-    },
+    }),
+    [
+      applyRefinedDraft,
+      beginGeneration,
+      clearError,
+      completeGeneration,
+      failGeneration,
+      finishGeneration,
+      recordPhaseIssues,
+      resetGeneration,
+      setAttempt,
+      setGeneratedPrd,
+      setOnCompleteCallback,
+      setPhase,
+      setProgress,
+      setValidationIssues,
+      updatePhaseStatus,
+    ]
+  );
+
+  return {
+    state,
+    actions,
   };
 }
