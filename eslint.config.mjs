@@ -183,24 +183,25 @@ const eslintConfig = [
         {
           patterns: [
             {
-              group: ["*/items/*", "!*/items", "!*/items/index"],
+              group: ["*/spec/helpers", "*/spec/helpers/index"],
               message:
-                "Import from the items barrel file (index.ts) instead of individual files",
+                "Import helper utilities directly from their source modules instead of the helpers barrel",
             },
             {
-              group: ["*/helpers/*", "!*/helpers", "!*/helpers/index"],
+              group: ["*/spec/items", "*/spec/items/index"],
               message:
-                "Import from the helpers barrel file (index.ts) instead of individual files",
+                "Import validator items directly from their source modules instead of the items barrel",
             },
             {
               group: [
                 "*/spec/*/*",
-                "!*/spec/*/index",
+                "!*/spec/helpers/*",
+                "!*/spec/items/*",
                 "!*/spec/types",
                 "!*/spec/registry",
                 "!*/spec/streaming",
               ],
-              message: "Use module barrel exports or explicitly allowed files",
+              message: "Use concrete module paths under spec or explicitly allowed files",
             },
           ],
         },

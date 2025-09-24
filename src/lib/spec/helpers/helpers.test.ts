@@ -2,6 +2,8 @@
  * Tests for shared validation helpers
  */
 
+import { PATTERNS } from "./constants";
+
 import {
   extractSection,
   extractBulletPoints,
@@ -10,8 +12,7 @@ import {
   doesMetricReferenceFeature,
   countSections,
   validateHeaderPattern,
-  PATTERNS,
-} from "./index";
+} from "./validation";
 
 describe("Validation Helpers", () => {
   describe("extractSection", () => {

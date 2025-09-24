@@ -1,4 +1,4 @@
-import { PATTERNS, LIMITS } from "../helpers";
+import { PATTERNS, LIMITS } from "../helpers/constants";
 import type { Issue } from "../types";
 
 export const itemId = "placeholder-quality";

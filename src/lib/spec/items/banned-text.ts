@@ -1,4 +1,8 @@
-import { createWordBoundaryRegex, createFlexibleRegex } from "../helpers";
+import {
+  createWordBoundaryRegex,
+  createFlexibleRegex,
+} from "../helpers/patterns";
+
 import type { Issue, SpecPack } from "../types";
 
 export const itemId = "banned-text";

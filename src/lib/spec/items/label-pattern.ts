@@ -1,4 +1,4 @@
-import { validateHeaderPattern } from "../helpers";
+import { validateHeaderPattern } from "../helpers/validation";
 import type { Issue } from "../types";
 
 export const itemId = "label-pattern";
