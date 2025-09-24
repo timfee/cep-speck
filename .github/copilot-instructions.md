@@ -1,6 +1,6 @@
 # CEP Spec Validation App
 
-A Next.js application that uses AI to generate and validate Chrome Enterprise Premium (CEP) Product Requirements Documents with a self-healing validation loop using Google Gemini and modular validation system.
+A Next.js application that uses AI to generate and validate Chrome Enterprise Premium (CEP) Product Requirements Documents with a hybrid agentic refinement loop using Google Gemini and modular validation system.
 
 **ALWAYS reference these instructions first and fallback to search or bash commands ONLY when you encounter unexpected information that does not match the info here.**
 
@@ -45,19 +45,15 @@ This project now includes **comprehensive early error detection** to surface lin
 
 **FTA Complexity Analysis:**
 
-- **`pnpm test`** - Now includes FTA complexity check (fails if files exceed cap of 50)
+- **`pnpm test`** - Now includes FTA complexity check (fails if files exceed cap of 65)
 - **`pnpm build`** - Now includes FTA complexity check
 - **`pnpm fta:check`** - Dedicated FTA complexity validation
 - **`pnpm fta:quick`** - Quick FTA table view of all complexity scores
 - **`pnpm verify`** - Comprehensive validation (lint + test + FTA + build)
 
-**Current FTA Status:** ⚠️ **18 files currently exceed complexity cap of 50** - these need refactoring:
+**Current FTA Status:** ⚠️ **Several files currently exceed complexity cap of 65** - these need refactoring.
 
-- `lib/spec/streaming.test.ts` (54.15) - Test file needs simplification
-- `components/ui/metrics-dashboard-components.tsx` (54.08) - UI component needs breakdown
-- `components/workflow/steps/idea-capture-step.tsx` (53.94) - Complex workflow step
-- `components/error/error-view-components.tsx` (53.83) - Error handling complexity
-- And 14 others (see `pnpm fta:quick` for full list)
+Use `pnpm fta:quick` to see current complexity scores and identify files that need attention.
 
 **Recommended Development Workflow:**
 
@@ -135,7 +131,7 @@ This project now includes **comprehensive early error detection** to surface lin
 4. **Test complete generate-validate-heal workflow**:
    - Application will generate a comprehensive PRD document
    - Validation system will identify issues (banned text, word count, etc.)
-   - Self-healing will trigger (attempt counter increases)
+   - Hybrid agentic refinement will trigger (attempt counter increases)
    - Multiple iterations will refine the document
    - **Validated behavior**: Complete workflow takes 30-60 seconds total
 5. **Verify validation issues display**:
@@ -143,7 +139,7 @@ This project now includes **comprehensive early error detection** to surface lin
    - Common issues: banned text patterns, word budget exceeded, missing metrics attributes
 6. **Test with API key** (if available):
    - Set `GOOGLE_GENERATIVE_AI_API_KEY` in `.env.local`
-   - Run complete generate-validate-heal workflow
+   - Run complete generate-validate-refine workflow
    - Verify draft content appears in right panel with competitive research
    - Verify validation issues display correctly
 7. **Test without API key**:
@@ -171,11 +167,10 @@ All must pass successfully or CI will fail.
 
 ### Core Concept
 
-**Modular validation system** where each validation rule is a self-contained module with three functions:
+**Modular validation system** where each validation rule is a self-contained module with two functions:
 
 - `toPrompt(params, pack)` - Contributes to initial AI prompt
-- `validate(draft, params, pack)` - Validates generated content
-- `heal(issues, params, pack)` - Provides healing instructions for retry
+- `validate(draft, params, pack)` - Validates generated content (async)
 
 ## Application Functionality
 
@@ -185,16 +180,15 @@ All must pass successfully or CI will fail.
 
 - Generates comprehensive PRD documents using Google Gemini AI
 - Performs competitive research with real data (Zscaler, Island, Talon, Microsoft Edge)
-- Implements self-healing validation loop with multiple validation attempts
+- Implements hybrid agentic refinement loop with multiple validation attempts
 - Shows real-time phase indicators and streaming content
-- Validates against 10 modular validation rules:
+- Validates against 9 modular validation rules:
   - **bannedText**: Prevents buzzwords and forbidden terms
   - **competitorResearch**: Ensures competitive analysis
   - **labelPattern**: Validates section numbering format
   - **metricsRequired**: Validates metrics have units/timeframe/SoT
   - **placeholderQuality**: Detects placeholder content
   - **sectionCount**: Ensures minimum section count
-  - **semanticPolicyValidator**: AI-powered policy compliance
   - **skuDifferentiation**: Validates SKU-specific features
   - **technicalFeasibility**: Validates technical requirements
   - **wordBudget**: Enforces word count limits (1800 words max)
@@ -204,14 +198,14 @@ All must pass successfully or CI will fail.
 
 - **Phase 1: Generate** - AI creates initial content (10-20 seconds)
 - **Phase 2: Validate** - Modular rules check content (1-2 seconds)
-- **Phase 3: Heal** - If issues found, retry with healing instructions (10-20 seconds per attempt)
+- **Phase 3: Refine** - If issues found, hybrid agentic workflow improves content (10-20 seconds per attempt)
 - **Total Time**: 30-60 seconds for complete workflow with 2-3 attempts typical
 
-### Self-Healing Validation Loop
+### Hybrid Agentic Refinement Loop
 
 1. **Generate** - AI creates initial content using Gemini
 2. **Validate** - All modular validation items check the content
-3. **Heal** - If issues found, aggregate healing instructions and retry
+3. **Refine** - If issues found, evaluator and refiner agents improve content
 4. **Repeat** - Continue until validation passes or max attempts reached (3)
 
 ### Key Files & Directories
@@ -350,19 +344,17 @@ src/
     knowledge/            # Knowledge base files
     research/             # Web search capabilities
     spec/
-      items/              # 10 validation modules:
+      items/              # 9 validation modules:
         bannedText.ts     # Prevents buzzwords and forbidden terms
         competitorResearch.ts # Ensures competitive analysis
         labelPattern.ts   # Validates section numbering format
         metricsRequired.ts # Validates metrics have units/timeframe/SoT
         placeholderQuality.ts # Detects placeholder content
         sectionCount.ts   # Ensures minimum section count
-        semanticPolicyValidator.ts # AI-powered policy compliance
         skuDifferentiation.ts # Validates SKU-specific features
         technicalFeasibility.ts # Validates technical requirements
         wordBudget.ts     # Enforces word count limits
       packs/              # SpecPack JSON configurations
-      healing/            # Healing aggregation
       prompt.ts           # System prompt builder
       registry.ts         # Item registration
       types.ts            # TypeScript interfaces

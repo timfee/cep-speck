@@ -1,57 +1,40 @@
-# Va### Module Creation Guidelines
+# Validation Items Instructions
+
+This directory contains individual validation modules that implement the modular validation system.
+
+## Module Creation Guidelines
 
 ### Required Module Structure
 
 Every validation item module MUST follow this exact pattern:
 
 ```typescript
-import type { Issue, SpecPack } from "../types";
+import type { Issue } from "../types";
 
 export const itemId = "kebab-case-id";
 export type Params = {
   // Parameter interface - use 'void' if no params needed
 };
 
-async function toPrompt(params: Params, pack?: SpecPack): Promise<string> {
+function toPrompt(params: Params, pack?: unknown): string {
   // Return single line rule description for AI
+  return "Your validation rule description";
 }
 
 async function validate(
   draft: string,
   params: Params,
-  pack?: SpecPack
+  pack?: unknown
 ): Promise<Issue[]> {
   // Deterministic validation logic - NO network calls
-  return [];
-}
-
-async function heal(
-  issues: Issue[],
-  params: Params,
-  pack?: SpecPack
-): Promise<string | null> {
-  // Optional healing instructions
-  return null;
+  const issues: Issue[] = [];
+  // ... validation logic
+  return issues;
 }
 
 // REQUIRED: Export as module object for registry system
-export const itemModule = { itemId, toPrompt, validate, heal };
+export const itemModule = { itemId, toPrompt, validate };
 ```
-
-### Required Exportsation Items Instructions
-
-This directory contains individual validation modules that implement the modular validation system.
-
-## Module Creation Guidelines
-
-### Required Exports
-
-Every validation item module MUST export an `itemModule` object with:
-
-- `itemId`: kebab-case string identifier
-- `toPrompt()`: Contributes to AI system prompt (async)
-- `validate()`: Performs deterministic validation (async)
-- `heal()`: Optional healing instructions (async)
 
 ### Function Signatures (Strict)
 
@@ -61,20 +44,15 @@ export type Params = {
   /* interface */
 };
 
-async function toPrompt(params: Params, pack?: SpecPack): Promise<string>;
+function toPrompt(params: Params, pack?: unknown): string;
 async function validate(
   draft: string,
   params: Params,
-  pack?: SpecPack
+  pack?: unknown
 ): Promise<Issue[]>;
-async function heal(
-  issues: Issue[],
-  params: Params,
-  pack?: SpecPack
-): Promise<string | null>;
 
 // REQUIRED: Export as module object
-export const itemModule = { itemId, toPrompt, validate, heal };
+export const itemModule = { itemId, toPrompt, validate };
 ```
 
 ### Implementation Standards
@@ -93,14 +71,6 @@ export const itemModule = { itemId, toPrompt, validate, heal };
 - Return empty array `[]` if no issues found
 - Use clear, specific issue IDs and messages
 - Provide evidence strings for debugging
-
-#### heal() Function
-
-- Only implement if deterministic transformation exists
-- Return `null` if healing not possible/safe
-- Use imperative verbs ("Add", "Replace", "Annotate")
-- Provide explicit formatting patterns
-- Never ask AI to generate unverifiable claims
 
 ### Issue Creation Pattern
 
@@ -151,7 +121,7 @@ pnpm dev
 
 ## Current Validation Modules
 
-The following deterministic validation modules are currently implemented:
+The following validation modules are currently implemented:
 
 - `bannedText` - Detects forbidden terms and buzzwords
 - `competitorResearch` - Validates competitive analysis inclusion
@@ -163,4 +133,4 @@ The following deterministic validation modules are currently implemented:
 - `technicalFeasibility` - Validates technical requirements
 - `wordBudget` - Enforces word count limits
 
-**Note:** Semantic analysis is now handled by the AI Evaluator agent in the hybrid workflow.
+**Note:** Content refinement is handled by the hybrid agentic workflow (evaluator and refiner agents) rather than traditional healing functions.

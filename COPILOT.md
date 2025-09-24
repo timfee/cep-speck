@@ -23,8 +23,8 @@ Out of Scope:
 
 ## 2. Core Concepts
 
-**Spec Pack**: Configuration describing validation items, heal policy, and composition constraints (see `src/lib/spec/packs/*`).
-**Validation Item**: Module implementing `toPrompt`, `validate`, and optionally `heal` (see `src/lib/spec/items/`).
+**Spec Pack**: Configuration describing validation items, refinement policy, and composition constraints (see `src/lib/spec/packs/*`).
+**Validation Item**: Module implementing `toPrompt` and async `validate` functions (see `src/lib/spec/items/`).
 **Issue**: Structured validation finding `{ id, itemId, severity, message, evidence?, hints? }`.
 **System Prompt**: Aggregated instruction block produced by `buildSystemPrompt` in `src/lib/spec/prompt.ts` + (upcoming) critical validation rules block.
 
@@ -58,21 +58,26 @@ When asking Copilot to author or refine PRDs:
 
 Current registered items (see `src/lib/spec/items/index.ts`):
 
-- `section-count`: Enforces expected section presence/quantity.
-- `metrics-required`: Ensures metrics include timeframe, units, and SoT (param-driven).
 - `banned-text`: Blocks prohibited phrases / fluff.
-- `label-pattern`: Governs header label formatting.
-- `word-budget`: Enforces section or total length constraints.
 - `competitor-research`: Ensures competitor insights appear when required.
-- `executive-quality`: Style/voice constraints for leadership tone.
+- `label-pattern`: Governs header label formatting.
+- `metrics-required`: Ensures metrics include timeframe, units, and SoT (param-driven).
+- `placeholder-quality`: Ensures placeholders are specific and informative.
+- `section-count`: Enforces expected section presence/quantity.
+- `sku-differentiation`: Validates Target SKU specification for features.
+- `technical-feasibility`: Validates technical requirements and implementation approach.
+- `word-budget`: Enforces section or total length constraints.
 
-Planned / Open Issues (Created):
+Implemented (previously planned):
+
+- ✅ `placeholder-quality` (#4)
+- ✅ `sku-differentiation` (#5)
+- ✅ `technical-feasibility` (#2)
+
+Remaining planned items:
 
 - #1 `cross-section-consistency`
-- #2 `technical-feasibility`
 - #3 `traceability-complete`
-- #4 `placeholder-quality`
-- #5 `sku-differentiation`
 - #6 System prompt critical rules block
 - #7 `persona-coverage`
 - #8 `executive-summary-coherence`
@@ -82,9 +87,9 @@ Planned / Open Issues (Created):
 - `error`: Must fix before sign-off / generation pass considered valid.
 - `warn`: Advisory; may defer if rationale documented.
 
-### 4.2 Healing Philosophy
+### 4.2 Refinement Philosophy
 
-Healing attempts are deterministic, minimal-diff modifications. Avoid semantic inflation. If uncertain, insert explicit placeholders instead of guessing.
+The system now uses a hybrid agentic workflow instead of traditional healing. When validation fails, the system employs specialized AI agents (evaluator, refiner) to iteratively improve content. This approach provides more sophisticated refinement than simple template-based healing.
 
 ---
 
@@ -92,17 +97,18 @@ Healing attempts are deterministic, minimal-diff modifications. Avoid semantic i
 
 ### Architecture Overview
 
-The validation system is a **two-layer async pipeline**:
+The validation system is a **single-layer async pipeline** where all validation modules run in parallel:
 
-1. **Deterministic Layer (`kind: 'linter'` or `'structure'`):** Fast, synchronous logic (e.g., regex, word count) that runs first. If it returns an `error`, the pipeline FAILS FAST.
-2. **Semantic Layer (`kind: 'policy'`):** Slow, `async` AI-driven checks that run second. These use `generateObject` to validate meaning, coherence, and realism.
+- All validation items use `async function validate()` for consistency
+- Fast deterministic checks (regex, word count) run alongside AI-powered semantic checks
+- Results are aggregated and used by the hybrid agentic workflow for refinement
 
 ### Adding a New Validation Item
 
 1. Create file in `src/lib/spec/items/`:
    - Export `itemId`.
    - Implement `toPrompt(params, pack?)` returning single-line imperative rule.
-   - Your `validate` and `heal` functions **MUST** be `async`:
+   - Your `validate` function **MUST** be `async`:
 
      ```typescript
      // src/lib/spec/items/myNewCheck.ts
@@ -110,27 +116,21 @@ The validation system is a **two-layer async pipeline**:
 
      export const itemId = "my-new-check";
 
-     export function toPrompt(params: any): string {
+     function toPrompt(params: any): string {
        return "This is the prompt fragment.";
      }
 
-     export async function validate(
-       draft: string,
-       params: any
-     ): Promise<Issue[]> {
+     async function validate(draft: string, params: any): Promise<Issue[]> {
        // validation logic
        return [];
      }
 
-     export async function heal(issues: Issue[]): Promise<string | null> {
-       if (!issues.length) return null;
-       return "Fix the bad word.";
-     }
+     export const itemModule = { itemId, toPrompt, validate };
      ```
 
-2. **IMPORTANT:** If your check is semantic (e.g., "is this section logical?"), do NOT add a new validator. Instead, **add your logic to the central `semantic-policy-validator.ts`** module. Add your check to its `MegaValidationSchema` and its `validate` function. This prevents the N+1 AI call bottleneck.
-3. Register your _new_ deterministic item in `src/lib/spec/items/index.ts`.
-4. Add your _new_ deterministic item to `src/lib/spec/packs/prd-v1.json` with the correct `kind`.
+2. **IMPORTANT:** If your check is semantic (e.g., "is this section logical?"), consider whether it should be added to a central semantic validator instead of creating a new module to avoid N+1 AI call bottleneck.
+3. Register your item in `src/lib/spec/items/index.ts` by importing the `itemModule` and calling `registerItem(createValidatorModule(yourModule))`.
+4. Add your item to `src/lib/spec/packs/prd-v1.json` with appropriate parameters.
 5. Update documentation (this file) if conceptually new.
 6. (Optional) Provide sample failing + passing snippet in issue description or fixture file.
 
@@ -138,19 +138,21 @@ The validation system is a **two-layer async pipeline**:
 
 ```ts
 import type { Issue } from "../types";
+
 export const itemId = "example-id";
 export type Params = {
   /* param types */
 };
-export function toPrompt(p: Params): string {
+
+function toPrompt(p: Params): string {
   return "Single line rule description.";
 }
-export function validate(draft: string, p: Params): Issue[] {
+
+async function validate(draft: string, p: Params): Promise<Issue[]> {
   return [];
 }
-export function heal(issues: Issue[], p: Params): string | null {
-  return null;
-}
+
+export const itemModule = { itemId, toPrompt, validate };
 ```
 
 ### 5.2 Issue ID Naming
@@ -228,16 +230,15 @@ If Premium only: justify on one axis (cost-to-serve, advanced use case, risk red
 
 ---
 
-## 12. Healing Policies
+## 12. Hybrid Agentic Refinement
 
-Heal operations should:
+The system no longer uses traditional healing patterns. Instead, it employs a hybrid agentic workflow:
 
-- Modify only lines implicated by issues.
-- Preserve author voice where possible.
-- Add clarifying metrics instead of deleting ambiguous lines when salvageable.
-- Insert placeholders if hard data is missing.
+- **Evaluator Agent**: Performs semantic analysis and identifies improvement opportunities
+- **Refiner Agent**: Makes sophisticated content improvements based on evaluation results
+- **Validation Loop**: Continues refinement until validation passes or max attempts reached
 
-Refusal Conditions: If healing would require fabricating unverifiable competitive data, respond with placeholder insertion instructions.
+This approach provides more nuanced and effective content improvement than template-based healing instructions.
 
 ---
 
