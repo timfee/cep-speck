@@ -3,6 +3,8 @@
  */
 
 import "@testing-library/jest-dom";
+import { createContentOutlineFixture } from "@/tests/lib/workflow-fixtures";
+
 import type {
   ContentOutline,
   CustomerJourney,
@@ -11,9 +13,6 @@ import type {
   SuccessMetric,
   SuccessMetricSchema,
 } from "@/types/workflow";
-
-import { createContentOutlineFixture } from "../../../../../tests/lib/workflow-fixtures";
-
 
 import {
   addItemToOutline,

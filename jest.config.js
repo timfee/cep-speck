@@ -5,6 +5,7 @@ module.exports = {
   testMatch: ["**/*.(test|spec).+(ts|tsx|js)"],
   testPathIgnorePatterns: ["/setup\\.ts$"],
   moduleNameMapper: {
+    "^@/tests/(.*)$": "<rootDir>/tests/$1",
     "^@/(.*)$": "<rootDir>/src/$1",
   },
   transform: {

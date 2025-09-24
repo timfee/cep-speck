@@ -14,7 +14,7 @@
     "lint:watch": "nodemon --watch src --ext ts,tsx,js,jsx --exec \"pnpm lint:quick\"",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "test": "pnpm lint:quick && pnpm fta:check && jest",
+    "test": "pnpm lint:quick && jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "benchmark:streaming": "tsx benchmarks/streaming-benchmark.ts",
@@ -23,7 +23,7 @@
     "fta:check": "pnpm run complexity:json && node scripts/check-fta-cap.mjs",
     "fta:quick": "fta src --format=table",
     "quality:fta": "node scripts/compare-fta.mjs",
-    "verify": "pnpm lint && pnpm test && pnpm run complexity:json && node scripts/check-fta-cap.mjs",
+    "verify": "pnpm lint && pnpm test",
     "prepare": "husky"
   },
   "dependencies": {

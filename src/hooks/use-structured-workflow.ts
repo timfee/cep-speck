@@ -1,11 +1,12 @@
 import { useCallback, useMemo, useState } from "react";
 
-import { generateContentOutlineFromPrompt } from "@/lib/services/content-outline-service";
 import {
   serializeWorkflowToLegacySpecText,
   serializeWorkflowToSpec,
 } from "@/lib/serializers/workflow-to-spec";
+
 import { serializeWorkflowToOutlinePayload } from "@/lib/serializers/workflow-to-structured-outline";
+import { generateContentOutlineFromPrompt } from "@/lib/services/content-outline-service";
 
 import type {
   ContentOutline,

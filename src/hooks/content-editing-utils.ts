@@ -68,3 +68,73 @@ export function mutateOutline<K extends OutlineCollectionKey>(
     [kind]: updatedItems,
   } as ContentOutline;
 }
+
+// Trivial wrapper functions - to be removed in refactoring
+export const addFunctionalRequirementToOutline = (
+  outline: ContentOutline,
+  item: OutlineCollectionItem<"functionalRequirements">
+): ContentOutline =>
+  mutateOutline(outline, "functionalRequirements", { type: "add", item });
+
+export const updateFunctionalRequirementInOutline = (
+  outline: ContentOutline,
+  id: string,
+  updates: Partial<OutlineCollectionItem<"functionalRequirements">>
+): ContentOutline =>
+  mutateOutline(outline, "functionalRequirements", {
+    type: "update",
+    id,
+    updates,
+  });
+
+export const addSuccessMetricToOutline = (
+  outline: ContentOutline,
+  item: OutlineCollectionItem<"successMetrics">
+): ContentOutline =>
+  mutateOutline(outline, "successMetrics", { type: "add", item });
+
+export const updateSuccessMetricInOutline = (
+  outline: ContentOutline,
+  id: string,
+  updates: Partial<OutlineCollectionItem<"successMetrics">>
+): ContentOutline =>
+  mutateOutline(outline, "successMetrics", { type: "update", id, updates });
+
+export const addMilestoneToOutline = (
+  outline: ContentOutline,
+  item: OutlineCollectionItem<"milestones">
+): ContentOutline =>
+  mutateOutline(outline, "milestones", { type: "add", item });
+
+export const updateMilestoneInOutline = (
+  outline: ContentOutline,
+  id: string,
+  updates: Partial<OutlineCollectionItem<"milestones">>
+): ContentOutline =>
+  mutateOutline(outline, "milestones", { type: "update", id, updates });
+
+export const addCustomerJourneyToOutline = (
+  outline: ContentOutline,
+  item: OutlineCollectionItem<"customerJourneys">
+): ContentOutline =>
+  mutateOutline(outline, "customerJourneys", { type: "add", item });
+
+export const updateCustomerJourneyInOutline = (
+  outline: ContentOutline,
+  id: string,
+  updates: Partial<OutlineCollectionItem<"customerJourneys">>
+): ContentOutline =>
+  mutateOutline(outline, "customerJourneys", { type: "update", id, updates });
+
+export const addMetricSchemaToOutline = (
+  outline: ContentOutline,
+  item: OutlineCollectionItem<"metricSchemas">
+): ContentOutline =>
+  mutateOutline(outline, "metricSchemas", { type: "add", item });
+
+export const updateMetricSchemaInOutline = (
+  outline: ContentOutline,
+  id: string,
+  updates: Partial<OutlineCollectionItem<"metricSchemas">>
+): ContentOutline =>
+  mutateOutline(outline, "metricSchemas", { type: "update", id, updates });
