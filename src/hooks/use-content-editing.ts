@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 
 import type {
   CustomerJourney,
@@ -10,217 +10,141 @@ import type {
 } from "@/types/workflow";
 
 import {
-  addCustomerJourneyToOutline,
-  addFunctionalRequirementToOutline,
-  addMetricSchemaToOutline,
-  addMilestoneToOutline,
-  addSuccessMetricToOutline,
-  deleteCustomerJourneyFromOutline,
-  deleteFunctionalRequirementFromOutline,
-  deleteMetricSchemaFromOutline,
-  deleteMilestoneFromOutline,
-  deleteSuccessMetricFromOutline,
-  updateCustomerJourneyInOutline,
-  updateFunctionalRequirementInOutline,
-  updateMetricSchemaInOutline,
-  updateMilestoneInOutline,
-  updateSuccessMetricInOutline,
+  type OutlineCollectionItem,
+  type OutlineCollectionKey,
+  type OutlineMutation,
+  mutateOutline,
 } from "./content-editing-utils";
 
 import type { WorkflowStateSetter } from "./workflow-state";
 
-/**
- * Hook for content editing operations
- * Extracted from use-structured-workflow to reduce complexity
- */
-export function useContentEditing(setState: WorkflowStateSetter) {
-  // Functional requirement operations
-  const updateFunctionalRequirement = useCallback(
-    (id: string, updates: Partial<FunctionalRequirement>) => {
+type OutlineActionConfig<K extends OutlineCollectionKey, Item> = {
+  kind: K;
+  __itemType?: Item;
+};
+
+export const outlineActionRegistry = {
+  FunctionalRequirement: { kind: "functionalRequirements" },
+  SuccessMetric: { kind: "successMetrics" },
+  Milestone: { kind: "milestones" },
+  CustomerJourney: { kind: "customerJourneys" },
+  MetricSchema: { kind: "metricSchemas" },
+} as const satisfies {
+  FunctionalRequirement: OutlineActionConfig<
+    "functionalRequirements",
+    FunctionalRequirement
+  >;
+  SuccessMetric: OutlineActionConfig<"successMetrics", SuccessMetric>;
+  Milestone: OutlineActionConfig<"milestones", Milestone>;
+  CustomerJourney: OutlineActionConfig<"customerJourneys", CustomerJourney>;
+  MetricSchema: OutlineActionConfig<"metricSchemas", SuccessMetricSchema>;
+};
+
+type OutlineRegistry = typeof outlineActionRegistry;
+type OutlineRegistryKey = keyof OutlineRegistry;
+export type { OutlineRegistry as OutlineActionRegistry };
+
+type OutlineHandlers = {
+  [K in OutlineRegistryKey as `add${K & string}`]: (
+    item: OutlineCollectionItem<OutlineRegistry[K]["kind"]>
+  ) => void;
+} & {
+  [K in OutlineRegistryKey as `update${K & string}`]: (
+    id: string,
+    updates: Partial<OutlineCollectionItem<OutlineRegistry[K]["kind"]>>
+  ) => void;
+} & {
+  [K in OutlineRegistryKey as `delete${K & string}`]: (id: string) => void;
+};
+
+export type ContentEditingActions = OutlineHandlers & {
+  updateOutlineMetadata: (updates: Partial<OutlineMetadata>) => void;
+};
+
+type MutationBuilder<K extends OutlineCollectionKey, Args extends unknown[]> = (
+  ...args: Args
+) => OutlineMutation<K>;
+
+type OutlineItemFor<K extends OutlineRegistryKey> = OutlineCollectionItem<
+  OutlineRegistry[K]["kind"]
+>;
+
+type HandlerGroupKey<K extends OutlineRegistryKey> =
+  | `add${K & string}`
+  | `update${K & string}`
+  | `delete${K & string}`;
+
+type HandlerGroup<K extends OutlineRegistryKey> = Pick<
+  OutlineHandlers,
+  HandlerGroupKey<K>
+>;
+
+const outlineActionKeys = Object.keys(
+  outlineActionRegistry
+) as OutlineRegistryKey[];
+
+function createHandlerGroup<K extends OutlineRegistryKey>(
+  createHandler: <T extends OutlineCollectionKey, Args extends unknown[]>(
+    kind: T,
+    builder: MutationBuilder<T, Args>
+  ) => (...args: Args) => void,
+  name: K
+): HandlerGroup<K> {
+  const { kind } = outlineActionRegistry[name];
+
+  return {
+    [`add${name}`]: createHandler(kind, (item: OutlineItemFor<K>) => ({
+      type: "add",
+      item,
+    })),
+    [`update${name}`]: createHandler(
+      kind,
+      (id: string, updates: Partial<OutlineItemFor<K>>) => ({
+        type: "update",
+        id,
+        updates,
+      })
+    ),
+    [`delete${name}`]: createHandler(kind, (id: string) => ({
+      type: "delete",
+      id,
+    })),
+  } as HandlerGroup<K>;
+}
+
+export function useContentEditing(
+  setState: WorkflowStateSetter
+): ContentEditingActions {
+  const commitMutation = useCallback(
+    <K extends OutlineCollectionKey>(kind: K, mutation: OutlineMutation<K>) => {
       setState((prev) => ({
         ...prev,
-        contentOutline: updateFunctionalRequirementInOutline(
-          prev.contentOutline,
-          id,
-          updates
-        ),
+        contentOutline: mutateOutline(prev.contentOutline, kind, mutation),
       }));
     },
     [setState]
   );
 
-  const deleteFunctionalRequirement = useCallback(
-    (id: string) => {
-      setState((prev) => ({
-        ...prev,
-        contentOutline: deleteFunctionalRequirementFromOutline(
-          prev.contentOutline,
-          id
-        ),
-      }));
-    },
-    [setState]
+  const createHandler = useCallback(
+    <K extends OutlineCollectionKey, Args extends unknown[]>(
+      kind: K,
+      builder: MutationBuilder<K, Args>
+    ) =>
+      (...args: Args) => {
+        commitMutation(kind, builder(...args));
+      },
+    [commitMutation]
   );
 
-  const addFunctionalRequirement = useCallback(
-    (requirement: FunctionalRequirement) => {
-      setState((prev) => ({
-        ...prev,
-        contentOutline: addFunctionalRequirementToOutline(
-          prev.contentOutline,
-          requirement
-        ),
-      }));
-    },
-    [setState]
-  );
+  const collectionHandlers = useMemo<OutlineHandlers>(() => {
+    const handlers = {} as OutlineHandlers;
 
-  // Success metric operations
-  const updateSuccessMetric = useCallback(
-    (id: string, updates: Partial<SuccessMetric>) => {
-      setState((prev) => ({
-        ...prev,
-        contentOutline: updateSuccessMetricInOutline(
-          prev.contentOutline,
-          id,
-          updates
-        ),
-      }));
-    },
-    [setState]
-  );
+    for (const name of outlineActionKeys) {
+      Object.assign(handlers, createHandlerGroup(createHandler, name));
+    }
 
-  const deleteSuccessMetric = useCallback(
-    (id: string) => {
-      setState((prev) => ({
-        ...prev,
-        contentOutline: deleteSuccessMetricFromOutline(prev.contentOutline, id),
-      }));
-    },
-    [setState]
-  );
-
-  const addSuccessMetric = useCallback(
-    (metric: SuccessMetric) => {
-      setState((prev) => ({
-        ...prev,
-        contentOutline: addSuccessMetricToOutline(prev.contentOutline, metric),
-      }));
-    },
-    [setState]
-  );
-
-  // Milestone operations
-  const updateMilestone = useCallback(
-    (id: string, updates: Partial<Milestone>) => {
-      setState((prev) => ({
-        ...prev,
-        contentOutline: updateMilestoneInOutline(
-          prev.contentOutline,
-          id,
-          updates
-        ),
-      }));
-    },
-    [setState]
-  );
-
-  const deleteMilestone = useCallback(
-    (id: string) => {
-      setState((prev) => ({
-        ...prev,
-        contentOutline: deleteMilestoneFromOutline(prev.contentOutline, id),
-      }));
-    },
-    [setState]
-  );
-
-  const addMilestone = useCallback(
-    (milestone: Milestone) => {
-      setState((prev) => ({
-        ...prev,
-        contentOutline: addMilestoneToOutline(prev.contentOutline, milestone),
-      }));
-    },
-    [setState]
-  );
-
-  const updateCustomerJourney = useCallback(
-    (id: string, updates: Partial<CustomerJourney>) => {
-      setState((prev) => ({
-        ...prev,
-        contentOutline: updateCustomerJourneyInOutline(
-          prev.contentOutline,
-          id,
-          updates
-        ),
-      }));
-    },
-    [setState]
-  );
-
-  const deleteCustomerJourney = useCallback(
-    (id: string) => {
-      setState((prev) => ({
-        ...prev,
-        contentOutline: deleteCustomerJourneyFromOutline(
-          prev.contentOutline,
-          id
-        ),
-      }));
-    },
-    [setState]
-  );
-
-  const addCustomerJourney = useCallback(
-    (customerJourney: CustomerJourney) => {
-      setState((prev) => ({
-        ...prev,
-        contentOutline: addCustomerJourneyToOutline(
-          prev.contentOutline,
-          customerJourney
-        ),
-      }));
-    },
-    [setState]
-  );
-
-  const updateMetricSchema = useCallback(
-    (id: string, updates: Partial<SuccessMetricSchema>) => {
-      setState((prev) => ({
-        ...prev,
-        contentOutline: updateMetricSchemaInOutline(
-          prev.contentOutline,
-          id,
-          updates
-        ),
-      }));
-    },
-    [setState]
-  );
-
-  const deleteMetricSchema = useCallback(
-    (id: string) => {
-      setState((prev) => ({
-        ...prev,
-        contentOutline: deleteMetricSchemaFromOutline(prev.contentOutline, id),
-      }));
-    },
-    [setState]
-  );
-
-  const addMetricSchema = useCallback(
-    (metricSchema: SuccessMetricSchema) => {
-      setState((prev) => ({
-        ...prev,
-        contentOutline: addMetricSchemaToOutline(
-          prev.contentOutline,
-          metricSchema
-        ),
-      }));
-    },
-    [setState]
-  );
+    return handlers;
+  }, [createHandler]);
 
   const updateOutlineMetadata = useCallback(
     (updates: Partial<OutlineMetadata>) => {
@@ -235,22 +159,11 @@ export function useContentEditing(setState: WorkflowStateSetter) {
     [setState]
   );
 
-  return {
-    updateFunctionalRequirement,
-    deleteFunctionalRequirement,
-    addFunctionalRequirement,
-    updateSuccessMetric,
-    deleteSuccessMetric,
-    addSuccessMetric,
-    updateMilestone,
-    deleteMilestone,
-    addMilestone,
-    updateOutlineMetadata,
-    updateCustomerJourney,
-    deleteCustomerJourney,
-    addCustomerJourney,
-    updateMetricSchema,
-    deleteMetricSchema,
-    addMetricSchema,
-  };
+  return useMemo(
+    () => ({
+      ...collectionHandlers,
+      updateOutlineMetadata,
+    }),
+    [collectionHandlers, updateOutlineMetadata]
+  );
 }

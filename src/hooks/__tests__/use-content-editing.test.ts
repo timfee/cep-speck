@@ -7,6 +7,11 @@ import { act, renderHook } from "@testing-library/react/pure";
 import type { RenderHookResult } from "@testing-library/react/pure";
 import { useState } from "react";
 
+import type {
+  ContentEditingActions,
+  OutlineActionRegistry,
+} from "@/hooks/use-content-editing";
+
 import { useContentEditing } from "@/hooks/use-content-editing";
 import { createWorkflowStateFixture } from "@/test-utils/workflow-fixtures";
 
@@ -20,8 +25,6 @@ import type {
 } from "@/types/workflow";
 
 type ContentEditingState = ReturnType<typeof createWorkflowStateFixture>;
-type ContentEditingActions = ReturnType<typeof useContentEditing>;
-
 type ContentEditingHookResult = {
   state: ContentEditingState;
   editing: ContentEditingActions;
@@ -101,218 +104,134 @@ const createNewSchema = (): SuccessMetricSchema => ({
   ],
 });
 
+type OutlineRegistryKey = keyof OutlineActionRegistry;
+
+type OutlineCollection = ContentEditingState["contentOutline"];
+
+const outlineHandlerTestCases = [
+  {
+    name: "FunctionalRequirement",
+    addKey: "addFunctionalRequirement",
+    updateKey: "updateFunctionalRequirement",
+    deleteKey: "deleteFunctionalRequirement",
+    collection: (outline: OutlineCollection) => outline.functionalRequirements,
+    createItem: createNewFunctionalRequirement,
+    updateId: "fr-existing",
+    updates: { title: "Support enterprise SSO with audit logs" },
+  },
+  {
+    name: "SuccessMetric",
+    addKey: "addSuccessMetric",
+    updateKey: "updateSuccessMetric",
+    deleteKey: "deleteSuccessMetric",
+    collection: (outline: OutlineCollection) => outline.successMetrics,
+    createItem: createNewSuccessMetric,
+    updateId: "sm-existing",
+    updates: { target: "90%", owner: "VP Growth" },
+  },
+  {
+    name: "Milestone",
+    addKey: "addMilestone",
+    updateKey: "updateMilestone",
+    deleteKey: "deleteMilestone",
+    collection: (outline: OutlineCollection) => outline.milestones,
+    createItem: createNewMilestone,
+    updateId: "ms-existing",
+    updates: {
+      description: "Finalize security review and mitigation plan.",
+    },
+  },
+  {
+    name: "CustomerJourney",
+    addKey: "addCustomerJourney",
+    updateKey: "updateCustomerJourney",
+    deleteKey: "deleteCustomerJourney",
+    collection: (outline: OutlineCollection) => outline.customerJourneys,
+    createItem: createNewJourney,
+    updateId: "cjs-existing",
+    updates: { goal: "Enable SSO with automated monitoring" },
+  },
+  {
+    name: "MetricSchema",
+    addKey: "addMetricSchema",
+    updateKey: "updateMetricSchema",
+    deleteKey: "deleteMetricSchema",
+    collection: (outline: OutlineCollection) => outline.metricSchemas,
+    createItem: createNewSchema,
+    updateId: "metric-schema-existing",
+    updates: {
+      description: "Schema capturing activation and quality metrics",
+    },
+  },
+] as const satisfies ReadonlyArray<{
+  name: OutlineRegistryKey;
+  addKey: keyof ContentEditingActions;
+  updateKey: keyof ContentEditingActions;
+  deleteKey: keyof ContentEditingActions;
+  collection: (outline: OutlineCollection) => Array<{ id: string }>;
+  createItem: () => { id: string };
+  updateId: string;
+  updates: Record<string, unknown>;
+}>;
+
 describe("useContentEditing", () => {
-  it("manages functional requirements through add, update, and delete operations", () => {
-    const { result } = renderUseContentEditing();
-    const newRequirement = createNewFunctionalRequirement();
+  it.each(outlineHandlerTestCases)(
+    "manages $name entries through generated handlers",
+    ({
+      addKey,
+      updateKey,
+      deleteKey,
+      collection,
+      createItem,
+      updateId,
+      updates,
+    }) => {
+      const { result } = renderUseContentEditing();
+      const newItem = createItem();
 
-    act(() => {
-      result.current.editing.addFunctionalRequirement(newRequirement);
-    });
-
-    expect(
-      result.current.state.contentOutline.functionalRequirements.some(
-        (item: FunctionalRequirement) => item.id === newRequirement.id
-      )
-    ).toBe(true);
-
-    act(() => {
-      result.current.editing.updateFunctionalRequirement("fr-existing", {
-        title: "Support enterprise SSO with audit logs",
+      act(() => {
+        (result.current.editing[addKey] as (item: typeof newItem) => void)(
+          newItem
+        );
       });
-    });
 
-    expect(
-      result.current.state.contentOutline.functionalRequirements.find(
-        (item: FunctionalRequirement) => item.id === "fr-existing"
-      )?.title
-    ).toBe("Support enterprise SSO with audit logs");
+      expect(
+        collection(result.current.state.contentOutline).some(
+          (item) => item.id === newItem.id
+        )
+      ).toBe(true);
 
-    act(() => {
-      result.current.editing.deleteFunctionalRequirement("fr-existing");
-    });
-
-    expect(
-      result.current.state.contentOutline.functionalRequirements.some(
-        (item: FunctionalRequirement) => item.id === newRequirement.id
-      )
-    ).toBe(true);
-    expect(
-      result.current.state.contentOutline.functionalRequirements.some(
-        (item: FunctionalRequirement) => item.id === "fr-existing"
-      )
-    ).toBe(false);
-  });
-
-  it("manages success metrics through add, update, and delete operations", () => {
-    const { result } = renderUseContentEditing();
-    const newMetric = createNewSuccessMetric();
-
-    act(() => {
-      result.current.editing.addSuccessMetric(newMetric);
-    });
-
-    expect(
-      result.current.state.contentOutline.successMetrics.some(
-        (item: SuccessMetric) => item.id === newMetric.id
-      )
-    ).toBe(true);
-
-    act(() => {
-      result.current.editing.updateSuccessMetric("sm-existing", {
-        target: "90%",
-        owner: "VP Growth",
+      act(() => {
+        (
+          result.current.editing[updateKey] as (
+            id: string,
+            updates: typeof updates
+          ) => void
+        )(updateId, updates);
       });
-    });
 
-    const updatedMetric =
-      result.current.state.contentOutline.successMetrics.find(
-        (item: SuccessMetric) => item.id === "sm-existing"
+      const updatedItem = collection(result.current.state.contentOutline).find(
+        (item) => item.id === updateId
       );
-    expect(updatedMetric?.target).toBe("90%");
-    expect(updatedMetric?.owner).toBe("VP Growth");
+      expect(updatedItem).toMatchObject(updates);
 
-    act(() => {
-      result.current.editing.deleteSuccessMetric("sm-existing");
-    });
-
-    expect(
-      result.current.state.contentOutline.successMetrics.some(
-        (item: SuccessMetric) => item.id === newMetric.id
-      )
-    ).toBe(true);
-    expect(
-      result.current.state.contentOutline.successMetrics.some(
-        (item: SuccessMetric) => item.id === "sm-existing"
-      )
-    ).toBe(false);
-  });
-
-  it("manages milestones through add, update, and delete operations", () => {
-    const { result } = renderUseContentEditing();
-    const newMilestone = createNewMilestone();
-
-    act(() => {
-      result.current.editing.addMilestone(newMilestone);
-    });
-
-    expect(
-      result.current.state.contentOutline.milestones.some(
-        (item: Milestone) => item.id === newMilestone.id
-      )
-    ).toBe(true);
-
-    act(() => {
-      result.current.editing.updateMilestone("ms-existing", {
-        description: "Finalize security review and mitigation plan.",
+      act(() => {
+        (result.current.editing[deleteKey] as (id: string) => void)(updateId);
       });
-    });
 
-    expect(
-      result.current.state.contentOutline.milestones.find(
-        (item: Milestone) => item.id === "ms-existing"
-      )?.description
-    ).toBe("Finalize security review and mitigation plan.");
+      expect(
+        collection(result.current.state.contentOutline).some(
+          (item) => item.id === updateId
+        )
+      ).toBe(false);
 
-    act(() => {
-      result.current.editing.deleteMilestone("ms-existing");
-    });
-
-    expect(
-      result.current.state.contentOutline.milestones.some(
-        (item: Milestone) => item.id === newMilestone.id
-      )
-    ).toBe(true);
-    expect(
-      result.current.state.contentOutline.milestones.some(
-        (item: Milestone) => item.id === "ms-existing"
-      )
-    ).toBe(false);
-  });
-
-  it("manages customer journeys through add, update, and delete operations", () => {
-    const { result } = renderUseContentEditing();
-    const newJourney = createNewJourney();
-
-    act(() => {
-      result.current.editing.addCustomerJourney(newJourney);
-    });
-
-    expect(
-      result.current.state.contentOutline.customerJourneys.some(
-        (item: CustomerJourney) => item.id === newJourney.id
-      )
-    ).toBe(true);
-
-    act(() => {
-      result.current.editing.updateCustomerJourney("cjs-existing", {
-        goal: "Enable SSO with automated monitoring",
-      });
-    });
-
-    expect(
-      result.current.state.contentOutline.customerJourneys.find(
-        (item: CustomerJourney) => item.id === "cjs-existing"
-      )?.goal
-    ).toBe("Enable SSO with automated monitoring");
-
-    act(() => {
-      result.current.editing.deleteCustomerJourney("cjs-existing");
-    });
-
-    expect(
-      result.current.state.contentOutline.customerJourneys.some(
-        (item: CustomerJourney) => item.id === newJourney.id
-      )
-    ).toBe(true);
-    expect(
-      result.current.state.contentOutline.customerJourneys.some(
-        (item: CustomerJourney) => item.id === "cjs-existing"
-      )
-    ).toBe(false);
-  });
-
-  it("manages metric schemas through add, update, and delete operations", () => {
-    const { result } = renderUseContentEditing();
-    const newSchema = createNewSchema();
-
-    act(() => {
-      result.current.editing.addMetricSchema(newSchema);
-    });
-
-    expect(
-      result.current.state.contentOutline.metricSchemas.some(
-        (item: SuccessMetricSchema) => item.id === newSchema.id
-      )
-    ).toBe(true);
-
-    act(() => {
-      result.current.editing.updateMetricSchema("metric-schema-existing", {
-        description: "Schema capturing activation and quality metrics",
-      });
-    });
-
-    expect(
-      result.current.state.contentOutline.metricSchemas.find(
-        (item: SuccessMetricSchema) => item.id === "metric-schema-existing"
-      )?.description
-    ).toBe("Schema capturing activation and quality metrics");
-
-    act(() => {
-      result.current.editing.deleteMetricSchema("metric-schema-existing");
-    });
-
-    expect(
-      result.current.state.contentOutline.metricSchemas.some(
-        (item: SuccessMetricSchema) => item.id === newSchema.id
-      )
-    ).toBe(true);
-    expect(
-      result.current.state.contentOutline.metricSchemas.some(
-        (item: SuccessMetricSchema) => item.id === "metric-schema-existing"
-      )
-    ).toBe(false);
-  });
+      expect(
+        collection(result.current.state.contentOutline).some(
+          (item) => item.id === newItem.id
+        )
+      ).toBe(true);
+    }
+  );
 
   it("updates outline metadata", () => {
     const { result } = renderUseContentEditing();
