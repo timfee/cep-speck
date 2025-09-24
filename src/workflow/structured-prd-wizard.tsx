@@ -3,9 +3,9 @@
 import React from "react";
 
 import { Card } from "@/components/ui/card";
-import { ProgressTimeline } from "@/components/workflow/progress-timeline";
-import { StepRenderer } from "@/components/workflow/step-renderer";
-import { WizardNavigation } from "@/components/workflow/wizard-navigation";
+import { ProgressTimeline } from "@/workflow/progress-timeline";
+import { StepRenderer } from "@/workflow/step-renderer";
+import { WizardNavigation } from "@/workflow/wizard-navigation";
 
 import { PrdGenerationProvider } from "./hooks/prd-generation-context";
 import { usePrdGenerationState } from "./hooks/prd-generation-context";

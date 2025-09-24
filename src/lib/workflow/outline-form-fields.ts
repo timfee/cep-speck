@@ -6,7 +6,7 @@ import type {
   OutlineDraftSelectOption,
   OutlineDraftTextareaField,
   OutlineDraftTextField,
-} from "@/components/workflow/forms/use-outline-draft-form";
+} from "@/workflow/forms/use-outline-draft-form";
 
 type FieldOptions<TDraft> = {
   id: string;

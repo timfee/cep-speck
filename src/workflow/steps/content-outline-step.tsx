@@ -2,7 +2,6 @@
 
 import React from "react";
 
-import { useOutlineStepHandlers } from "@/components/workflow/hooks/use-outline-step-handlers";
 import type { EditorKind } from "@/lib/workflow/outline-editor-types";
 
 import type {
@@ -14,6 +13,8 @@ import type {
   SuccessMetric,
   SuccessMetricSchema,
 } from "@/types/workflow";
+
+import { useOutlineStepHandlers } from "@/workflow/hooks/use-outline-step-handlers";
 
 import { CompletionStatus } from "./components/completion-status";
 import { ContentSections } from "./components/content-sections";

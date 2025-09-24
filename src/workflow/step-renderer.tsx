@@ -1,10 +1,10 @@
 import React from "react";
 
-import { CompleteStep } from "@/components/workflow/steps/complete-step";
-import { ContentOutlineStep } from "@/components/workflow/steps/content-outline-step";
-import { EnterpriseParametersStep } from "@/components/workflow/steps/enterprise-parameters-step";
-import { GenerateStep } from "@/components/workflow/steps/generate-step";
-import { IdeaCaptureStep } from "@/components/workflow/steps/idea-capture-step";
+import { CompleteStep } from "@/workflow/steps/complete-step";
+import { ContentOutlineStep } from "@/workflow/steps/content-outline-step";
+import { EnterpriseParametersStep } from "@/workflow/steps/enterprise-parameters-step";
+import { GenerateStep } from "@/workflow/steps/generate-step";
+import { IdeaCaptureStep } from "@/workflow/steps/idea-capture-step";
 
 import { useStructuredWorkflowContext } from "./structured-workflow-context";
 

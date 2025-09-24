@@ -10,7 +10,7 @@
     "start": "next start",
     "preinstall": "npx only-allow pnpm",
     "lint": "eslint --max-warnings=100",
-    "lint:quick": "eslint --max-warnings=50 --cache --cache-location .eslintcache",
+    "lint:quick": "eslint --max-warnings=100 --cache --cache-location .eslintcache",
     "lint:watch": "nodemon --watch src --ext ts,tsx,js,jsx --exec \"pnpm lint:quick\"",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

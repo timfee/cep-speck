@@ -4,7 +4,6 @@ import { act, renderHook } from "@testing-library/react/pure";
 
 import { generateContentOutlineFromPrompt } from "@/lib/services/content-outline-service";
 import { initialWorkflowState } from "@/lib/utils/workflow-initial-state";
-
 import type { ContentOutline } from "@/types/workflow";
 
 jest.mock("@/lib/services/content-outline-service", () => ({

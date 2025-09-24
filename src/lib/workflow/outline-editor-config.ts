@@ -1,7 +1,7 @@
 
-import type { OutlineEntityMetadata } from "@/components/workflow/steps/outline-entity-descriptor";
-import { outlineEntityMetadata } from "@/components/workflow/steps/outline-entity-metadata";
 import type { ContentOutline } from "@/types/workflow";
+import type { OutlineEntityMetadata } from "@/workflow/steps/outline-entity-descriptor";
+import { outlineEntityMetadata } from "@/workflow/steps/outline-entity-metadata";
 
 import type {
   DraftForKind,

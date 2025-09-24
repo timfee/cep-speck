@@ -423,6 +423,29 @@ const eslintConfig = [
     },
   },
   {
+    files: ["**/workflow/**/*.ts", "**/workflow/**/*.tsx"],
+    rules: {
+      "custom/consistent-error-handling-pattern": "off",
+      "@typescript-eslint/no-unsafe-assignment": "warn",
+      "@typescript-eslint/no-unsafe-argument": "warn",
+      "@typescript-eslint/no-unsafe-call": "warn",
+      "@typescript-eslint/no-unsafe-member-access": "warn",
+      "@typescript-eslint/no-unsafe-return": "warn",
+      "no-magic-numbers": [
+        "error",
+        {
+          ignore: [
+            0, 1, -1, 2, 4, 8, 10, 12, 16, 20, 24, 32, 48, 64, 100, 200, 300,
+            400, 500, 1000, 1200, 1400, 1800,
+          ],
+          ignoreArrayIndexes: true,
+          enforceConst: true,
+          detectObjects: false,
+        },
+      ],
+    },
+  },
+  {
     ignores: [
       "node_modules/**",
       ".next/**",

@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 
 import { Button } from "@/components/ui/button";
-import type { OutlineDraftRenderArgs } from "@/components/workflow/forms/use-outline-draft-form";
+import type { OutlineDraftRenderArgs } from "@/workflow/forms/use-outline-draft-form";
 
 import { MetricFieldEditor } from "./metric-field-editor";
 

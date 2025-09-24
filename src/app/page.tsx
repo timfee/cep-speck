@@ -1,6 +1,6 @@
 "use client";
 
-import { StructuredPrdWizard } from "@/components/workflow/structured-prd-wizard";
+import { StructuredPrdWizard } from "@/workflow/structured-prd-wizard";
 
 export default function Page() {
   return (

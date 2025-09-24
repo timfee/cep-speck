@@ -1,6 +1,5 @@
 import React from "react";
 
-import type { OutlineEditorHandlerMap } from "@/components/workflow/hooks/use-outline-step-handlers";
 
 import {
   EDITOR_KINDS,
@@ -13,6 +12,7 @@ import {
 } from "@/lib/workflow/outline-editor-types";
 
 import type { ContentOutline } from "@/types/workflow";
+import type { OutlineEditorHandlerMap } from "@/workflow/hooks/use-outline-step-handlers";
 
 import { ContentSection } from "./content-section";
 import { SECTION_CONFIGS } from "./content-sections-config";
