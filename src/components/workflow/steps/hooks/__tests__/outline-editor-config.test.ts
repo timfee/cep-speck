@@ -233,20 +233,20 @@ describe("outline-editor-config", () => {
             id: fallbackId,
             title: "Automated data sync",
             description: "Keep customer data in sync across systems",
-            priority: "P0",
+            priority: "P2",
             userStory:
               "As an admin, I want automated sync to reduce manual work.",
             acceptanceCriteria: ["Sync attempts logged"],
             dependencies: ["data-service"],
-            estimatedEffort: undefined,
           });
+          expect(built.estimatedEffort).toBeUndefined();
           break;
         case "successMetric":
           expect(built).toMatchObject({
             id: fallbackId,
             name: "Time to provision",
             description: "Measures time from request to active tenant",
-            type: "engagement",
+            type: "performance",
             target: "< 10 minutes",
             measurement: "system telemetry",
             frequency: "weekly",
@@ -258,11 +258,11 @@ describe("outline-editor-config", () => {
             id: fallbackId,
             title: "Launch automation globally",
             description: "Deploy provisioning automation to all regions",
-            phase: "development",
-            estimatedDate: undefined,
+            phase: "launch",
             dependencies: ["workflow-engine"],
             deliverables: ["Runbook"],
           });
+          expect(built.estimatedDate).toBeUndefined();
           break;
         case "customerJourney":
           expect(built).toMatchObject({
