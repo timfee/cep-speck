@@ -14,6 +14,11 @@ export interface AIProvider {
     messages: CoreMessage[]
   ): Promise<StreamTextResult<Record<string, never>, never>>;
   isAvailable(): Promise<boolean>;
+  getAvailabilityStatus?(): Promise<{
+    available: boolean;
+    reason?: string;
+    actionRequired?: string;
+  }>;
 }
 
 /**
@@ -37,7 +42,8 @@ export class GeminiProvider implements AIProvider {
   }
 
   async isAvailable(): Promise<boolean> {
-    if ((process.env.GOOGLE_GENERATIVE_AI_API_KEY ?? "").length === 0) {
+    const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY ?? "";
+    if (apiKey.length === 0) {
       return false;
     }
 
@@ -61,6 +67,51 @@ export class GeminiProvider implements AIProvider {
             : String(healthCheckError),
       });
       return false;
+    }
+  }
+
+  /**
+   * Get detailed availability status with reason
+   */
+  async getAvailabilityStatus(): Promise<{
+    available: boolean;
+    reason?: string;
+    actionRequired?: string;
+  }> {
+    const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY ?? "";
+
+    if (apiKey.length === 0) {
+      return {
+        available: false,
+        reason: "Missing Google Generative AI API key",
+        actionRequired:
+          "Add GOOGLE_GENERATIVE_AI_API_KEY to .env.local and restart the development server",
+      };
+    }
+
+    try {
+      // Simple health check
+      await this.circuitBreaker.execute(async () => {
+        const result = streamText({
+          model: google(AI_MODEL_PRIMARY),
+          messages: [{ role: "user", content: "Hi" }],
+        });
+        return Promise.resolve(result);
+      });
+
+      return { available: true };
+    } catch (healthCheckError) {
+      const errorMessage =
+        healthCheckError instanceof Error
+          ? healthCheckError.message
+          : String(healthCheckError);
+
+      return {
+        available: false,
+        reason: `API health check failed: ${errorMessage}`,
+        actionRequired:
+          "Check your API key is valid and you have internet connectivity",
+      };
     }
   }
 }

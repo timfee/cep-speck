@@ -110,4 +110,45 @@ export class ResilientAI {
       available: false, // Would need async check
     }));
   }
+
+  /**
+   * Get detailed provider status with reasons
+   */
+  async getDetailedProviderStatus(): Promise<
+    Array<{
+      name: string;
+      available: boolean;
+      reason?: string;
+      actionRequired?: string;
+    }>
+  > {
+    const statusPromises = this.providers.map(async (provider) => {
+      try {
+        if (provider.getAvailabilityStatus) {
+          const status = await provider.getAvailabilityStatus();
+          return {
+            name: provider.name,
+            available: status.available,
+            reason: status.reason,
+            actionRequired: status.actionRequired,
+          };
+        }
+
+        const available = await provider.isAvailable();
+        return {
+          name: provider.name,
+          available,
+          reason: available ? undefined : "Provider not available",
+        };
+      } catch (error) {
+        return {
+          name: provider.name,
+          available: false,
+          reason: error instanceof Error ? error.message : String(error),
+        };
+      }
+    });
+
+    return Promise.all(statusPromises);
+  }
 }
