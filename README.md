@@ -4,36 +4,35 @@ A Next.js application that uses AI to generate and validate Chrome Enterprise Pr
 
 ## Architecture
 
-This application implements the original vision of **modular spec components** where each validation rule is a self-contained module with three key functions:
+This application implements the original vision of **modular spec components** where each validation rule is a self-contained module with two key functions:
 
 - **`toPrompt(params, pack)`** - Contributes to the initial AI prompt
-- **`validate(draft, params, pack)`** - Validates the generated content
-- **`heal(issues, params, pack)`** - Provides healing instructions when validation fails
+- **`validate(draft, params, pack)`** - Validates the generated content (async)
 
 The core concept is to **define validation logic once** so you don't need to adjust AI prompts, code, and linters separately every time you make a change. Each validation item is completely modular and self-contained.
 
 ## Self-Healing Validation Loop
 
-The application implements a sophisticated **generate-validate-heal cycle**:
+The application implements a sophisticated **generate-validate-refine cycle**:
 
 1. **Generate** - AI creates initial content using Gemini
 2. **Validate** - All modular validation items check the content
-3. **Heal** - If issues found, aggregate healing instructions and retry
+3. **Refine** - If issues found, use hybrid agentic workflow to improve content
 4. **Repeat** - Continue until validation passes or max attempts reached
 
-This ensures high-quality output through deterministic validation with AI-powered healing.
+This ensures high-quality output through deterministic validation with AI-powered refinement.
 
 ## Quick Start
 
 ### Prerequisites
 
-- Node.js (via nvm recommended)
-- npm or pnpm package manager
+- Node.js 20+ (tested with v20.19.5)
+- **pnpm** package manager (required - this project uses pnpm exclusively)
 
 ### Setup
 
 ```bash
-npm install
+pnpm install
 ```
 
 ### Environment
@@ -47,7 +46,7 @@ GOOGLE_GENERATIVE_AI_API_KEY=your_gemini_api_key_here
 ### Run
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
 Open `http://localhost:3000`
@@ -59,7 +58,7 @@ Open `http://localhost:3000`
 3. **Watch the phases**:
    - 🔄 **Generating** - AI creates initial content
    - 🔍 **Validating** - Modular rules check the content
-   - 🩹 **Healing** - System provides follow-up prompts to fix issues
+   - 🩹 **Refining** - System uses hybrid agentic workflow to improve content
    - ✅ **Complete** - Validation passes or max attempts reached
 
 The right panel shows the streaming draft and any validation issues in real-time.
@@ -69,17 +68,21 @@ The right panel shows the streaming draft and any validation issues in real-time
 The modular architecture makes it easy to add new validation rules. Create a new file in `src/lib/spec/items/yourItem.ts`:
 
 ```typescript
-import type { SpecPack, Issue } from '../types';
+import type { Issue } from '../types';
 
 export const itemId = 'your-item';
 export type Params = { /* your parameters */ };
 
-export function toPrompt(params: Params, pack?: SpecPack): string {
+function toPrompt(params: Params, pack?: unknown): string {
   // Return string to include in the initial AI prompt
   return `Your validation requirement for the AI to follow...`;
 }
 
-export function validate(draft: string, params: Params, pack?: SpecPack): Issue[] {
+async function validate(
+  draft: string,
+  params: Params,
+  pack?: unknown
+): Promise<Issue[]> {
   // Check the generated content and return issues
   const issues: Issue[] = [];
 
@@ -96,20 +99,16 @@ export function validate(draft: string, params: Params, pack?: SpecPack): Issue[
   return issues;
 }
 
-export function heal(issues: Issue[], params?: Params, pack?: SpecPack): string | null {
-  if (!issues.length) return null;
-  // Return healing instruction for the AI
-  return `Fix the issues by doing X, Y, and Z...`;
-}
+export const itemModule = { itemId, toPrompt, validate };
 ```
 
 Then register it in `src/lib/spec/items/index.ts`:
 
 ```typescript
-import * as yourItem from './yourItem';
+import { itemModule as yourItem } from "./yourItem";
 
-// Add to the array
-[sectionCount, metricsRequired, bannedText, labelPattern, wordBudget, yourItem].forEach(...)
+// Add to the imports and registration
+registerItem(createValidatorModule(yourItem));
 ```
 
 Finally, add it to your SpecPack configuration in `src/lib/spec/packs/prd-v1.json`:
@@ -128,12 +127,15 @@ Finally, add it to your SpecPack configuration in `src/lib/spec/packs/prd-v1.jso
 
 ## Current Validation Items
 
-- **Section Count** - Ensures exactly 9 sections with proper headers
+- **Banned Text** - Prevents use of banned terms (exact matches and regex patterns)
+- **Competitor Research** - Validates competitive analysis in TL;DR and citations
 - **Label Pattern** - Validates section headers follow "# {n}. {title}" format
 - **Metrics Required** - Checks metrics include units, timeframes, and Source of Truth
-- **Banned Text** - Prevents use of banned terms (exact matches and regex patterns)
+- **Placeholder Quality** - Ensures placeholders are specific and informative
+- **Section Count** - Ensures exactly 9 sections with proper headers
+- **SKU Differentiation** - Validates Target SKU specification for features
+- **Technical Feasibility** - Validates technical requirements and implementation approach
 - **Word Budget** - Enforces target word count with compression suggestions
-- **Competitor Research** - Validates competitive analysis in TL;DR and citations
 
 ## SpecPack Configuration
 
@@ -204,13 +206,13 @@ The application now supports:
 ### Linting
 
 ```bash
-npm run lint
+pnpm lint
 ```
 
 ### Building
 
 ```bash
-npm run build
+pnpm build
 ```
 
 ### Quality Gates
@@ -229,8 +231,8 @@ See `docs/safety-manual.md` for complete documentation on using and adjusting th
 
 ### Testing Changes
 
-1. Start the dev server: `npm run dev`
-2. Test the complete generate-validate-heal workflow
+1. Start the dev server: `pnpm dev`
+2. **Test the complete generate-validate-refine workflow**
 3. Verify new validation items work as expected
 4. Check that phase indicators and UI updates work properly
 
@@ -240,11 +242,10 @@ This application fulfills the original vision of:
 
 > "I want to define these concepts in code one single time, so I don't need to adjust the AI text prompt, then code, then linter, etc., every time I make a change."
 
-The modular architecture with `toPrompt()`, `validate()`, and `heal()` functions ensures that each validation rule is defined once and automatically contributes to:
+The modular architecture with `toPrompt()` and `validate()` functions ensures that each validation rule is defined once and automatically contributes to:
 
 - Initial AI prompts
 - Content validation
-- Healing instructions
 - Streaming progress updates
 
 This eliminates the need to maintain separate prompt text, validation code, and linting rules for each requirement.
