@@ -1,13 +1,9 @@
 import type { Issue } from "@/lib/spec/types";
 
 import { DeterministicIssuesPanel } from "./deterministic-issues-panel";
-
-import {
-  ErrorAlert,
-  GenerateActions,
-  PrdPreview,
-  SuccessAlert,
-} from "./generate-step-sections";
+import { GenerateActions } from "./generate-actions";
+import { ErrorAlert, SuccessAlert } from "./generation-feedback-alerts";
+import { PrdPreview } from "./prd-preview";
 
 interface GenerateStepActionsProps {
   isGenerating: boolean;

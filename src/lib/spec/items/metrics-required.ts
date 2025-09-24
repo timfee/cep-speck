@@ -1,4 +1,5 @@
-import { createWordBoundaryRegex, extractSection } from "../helpers";
+import { createWordBoundaryRegex } from "../helpers/patterns";
+import { extractSection } from "../helpers/validation";
 import type { Issue } from "../types";
 
 export const itemId = "metrics-required";

@@ -1,4 +1,4 @@
-import { countSections } from "../helpers";
+import { countSections } from "../helpers/validation";
 import type { Issue } from "../types";
 
 export const itemId = "section-count";

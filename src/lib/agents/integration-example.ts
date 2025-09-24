@@ -6,7 +6,7 @@
  * existing functionality.
  */
 
-import { runDrafterAgent } from "@/lib/agents";
+import { runDrafterAgent } from "@/lib/agents/drafter";
 import type { SpecPack } from "@/lib/spec/types";
 
 /**

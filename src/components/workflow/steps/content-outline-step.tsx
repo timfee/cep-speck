@@ -16,7 +16,7 @@ import { CompletionStatus } from "./components/completion-status";
 import { ContentSections } from "./components/content-sections";
 import { OutlineHeader } from "./components/outline-header";
 import { OutlineMetadataPanel } from "./components/outline-metadata-panel";
-import { getOutlineSummary } from "./content-outline-helpers";
+import { getOutlineSummary } from "./content-outline-summary";
 import { useOutlineStepHandlers } from "./hooks/use-outline-step-handlers";
 
 interface ContentOutlineStepProps {
