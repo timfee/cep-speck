@@ -1,19 +1,9 @@
-import { mutateOutline } from "@/hooks/content-editing-utils";
 
-import type {
-  ContentOutline,
-  CustomerJourney,
-  FunctionalRequirement,
-  Milestone,
-  SuccessMetric,
-  SuccessMetricSchema,
-} from "@/types/workflow";
+import type { ContentOutline } from "@/types/workflow";
 
-import { createNewCustomerJourney } from "../customer-journey-helpers";
-import { createNewFunctionalRequirement } from "../functional-requirement-helpers";
-import { createNewSuccessMetricSchema } from "../metric-schema-helpers";
-import { createNewMilestone } from "../milestone-helpers";
-import { createNewSuccessMetric } from "../success-metric-helpers";
+
+import type { OutlineEntityMetadata } from "../outline-entity-descriptor";
+import { outlineEntityMetadata } from "../outline-entity-metadata";
 
 import type {
   DraftForKind,
@@ -34,38 +24,32 @@ type ConfigEntry<Item, Draft> = {
   findById: (outline: ContentOutline, id?: string) => Item | undefined;
 };
 
-const requirementConfig: ConfigEntry<
-  FunctionalRequirement,
-  DraftForKind<"functionalRequirement">
-> = {
-  defaultDraft: () => ({
-    title: "",
-    description: "",
-    priority: "P1",
-  }),
-  toDraft: (item) => ({
-    id: item.id,
-    title: item.title,
-    description: item.description,
-    priority: item.priority,
-    userStory: item.userStory,
-    acceptanceCriteria: item.acceptanceCriteria,
-    dependencies: item.dependencies,
-    estimatedEffort: item.estimatedEffort,
-  }),
-  buildItem: (draft, fallbackId) => {
-    const created = createNewFunctionalRequirement({
-      title: draft.title,
-      description: draft.description,
-      priority: draft.priority,
-      userStory: draft.userStory,
-      acceptanceCriteria: draft.acceptanceCriteria,
-      dependencies: draft.dependencies,
-      estimatedEffort: draft.estimatedEffort,
-    });
-    const id = draft.id ?? fallbackId ?? created.id;
-    return { ...created, id };
+const createConfigEntry = <K extends EditorKind>(
+  metadata: OutlineEntityMetadata<ItemForKind<K>, DraftForKind<K>>
+): ConfigEntry<ItemForKind<K>, DraftForKind<K>> => ({
+  defaultDraft: () => metadata.defaults(),
+  toDraft: (item) => metadata.toDraft(item),
+  buildItem: (draft, fallbackId) => metadata.fromDraft(draft, fallbackId),
+  addToOutline: metadata.addToOutline,
+  updateInOutline: metadata.updateInOutline,
+  findById: (outline, id) => {
+    if (id === undefined || id === "") {
+      return undefined;
+    }
+
+    return metadata
+      .selectFromOutline(outline)
+      .find((item) => item[metadata.idKey] === id);
   },
+});
+
+type ConfigCacheEntry = ConfigEntry<
+  ItemForKind<EditorKind>,
+  DraftForKind<EditorKind>
+>;
+
+const configCache: Partial<Record<EditorKind, ConfigCacheEntry>> = {};
+=======
   addToOutline: (outline, item) =>
     mutateOutline(outline, "functionalRequirements", {
       type: "add",
@@ -216,65 +200,24 @@ const customerJourneyConfig: ConfigEntry<
     outline.customerJourneys.find((journey) => journey.id === id),
 };
 
-const metricSchemaConfig: ConfigEntry<
-  SuccessMetricSchema,
-  DraftForKind<"metricSchema">
-> = {
-  defaultDraft: () => ({
-    title: "",
-    description: "",
-    fields: [],
-  }),
-  toDraft: (item) => ({
-    id: item.id,
-    title: item.title,
-    description: item.description,
-    fields: item.fields.map((field) => ({
-      id: field.id,
-      name: field.name,
-      description: field.description,
-      dataType: field.dataType,
-      required: field.required,
-      allowedValues: field.allowedValues,
-      sourceSystem: field.sourceSystem,
-    })),
-  }),
-  buildItem: (draft, fallbackId) => {
-    const created = createNewSuccessMetricSchema({
-      title: draft.title,
-      description: draft.description,
-      fields: draft.fields,
-    });
-    const id = draft.id ?? fallbackId ?? created.id;
-    return { ...created, id };
-  },
-  addToOutline: (outline, item) =>
-    mutateOutline(outline, "metricSchemas", {
-      type: "add",
-      item,
-    }),
-  updateInOutline: (outline, id, item) =>
-    mutateOutline(outline, "metricSchemas", {
-      type: "update",
-      id,
-      updates: item,
-    }),
-  findById: (outline, id) =>
-    outline.metricSchemas.find((schema) => schema.id === id),
-};
-
-const CONFIG_MAP = {
-  functionalRequirement: requirementConfig,
-  successMetric: successMetricConfig,
-  milestone: milestoneConfig,
-  customerJourney: customerJourneyConfig,
-  metricSchema: metricSchemaConfig,
-} as const;
-
 const getConfigFor = <K extends EditorKind>(
   kind: K
-): ConfigEntry<ItemForKind<K>, DraftForKind<K>> =>
-  CONFIG_MAP[kind] as unknown as ConfigEntry<ItemForKind<K>, DraftForKind<K>>;
+): ConfigEntry<ItemForKind<K>, DraftForKind<K>> => {
+  if (!configCache[kind]) {
+    const metadata = outlineEntityMetadata[kind] as OutlineEntityMetadata<
+      ItemForKind<K>,
+      DraftForKind<K>
+    >;
+    const entry = createConfigEntry(metadata);
+    configCache[kind] = entry as unknown as ConfigCacheEntry;
+    return entry;
+  }
+
+  return configCache[kind] as unknown as ConfigEntry<
+    ItemForKind<K>,
+    DraftForKind<K>
+  >;
+};
 
 export const getDefaultDraftFor = <K extends EditorKind>(kind: K) =>
   getConfigFor(kind).defaultDraft();

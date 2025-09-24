@@ -1,5 +1,7 @@
 import type { CustomerJourney, CustomerJourneyStep } from "@/types/workflow";
 
+import type { CustomerJourneyDraft } from "./hooks/outline-editor-types";
+import type { OutlineEntityDescriptor } from "./outline-entity-descriptor";
 import { createOutlineId } from "./outline-id";
 
 import {
@@ -65,3 +67,42 @@ export function createNewCustomerJourney(
     painPoints: sanitizePainPoints(input.painPoints),
   };
 }
+
+export const customerJourneyDescriptor: OutlineEntityDescriptor<
+  CustomerJourney,
+  CustomerJourneyDraft
+> = {
+  idKey: "id",
+  defaults: () => ({
+    title: "",
+    role: "",
+    goal: "",
+    steps: [],
+    painPoints: [],
+  }),
+  toDraft: (item) => ({
+    id: item.id,
+    title: item.title,
+    role: item.role,
+    goal: item.goal,
+    successCriteria: item.successCriteria,
+    steps: item.steps.map((step) => ({
+      id: step.id,
+      description: step.description,
+    })),
+    painPoints: item.painPoints ?? [],
+  }),
+  fromDraft: (draft, fallbackId) => {
+    const created = createNewCustomerJourney({
+      title: draft.title,
+      role: draft.role,
+      goal: draft.goal,
+      successCriteria: draft.successCriteria,
+      steps: draft.steps,
+      painPoints: draft.painPoints,
+    });
+
+    const id = draft.id ?? fallbackId ?? created.id;
+    return { ...created, id };
+  },
+};
