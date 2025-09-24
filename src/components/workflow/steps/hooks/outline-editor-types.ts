@@ -109,6 +109,14 @@ export type EditorValues =
 
 export type EditorKind = EditorState["kind"];
 
+export const EDITOR_KINDS = [
+  "functionalRequirement",
+  "successMetric",
+  "milestone",
+  "customerJourney",
+  "metricSchema",
+] as const satisfies ReadonlyArray<EditorKind>;
+
 type DraftMap = {
   functionalRequirement: FunctionalRequirementDraft;
   successMetric: SuccessMetricDraft;

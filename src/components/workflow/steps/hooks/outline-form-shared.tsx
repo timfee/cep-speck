@@ -9,14 +9,6 @@ export const baseInputClass =
 
 export const formSectionClass = "space-y-4";
 
-export const sanitizeOptionalField = (value?: string) => {
-  if (value == null) {
-    return undefined;
-  }
-  const trimmed = value.trim();
-  return trimmed.length === 0 ? undefined : trimmed;
-};
-
 interface LabeledFieldProps {
   id: string;
   label: string;

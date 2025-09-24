@@ -1,5 +1,6 @@
+import { sanitizeOptionalField } from "@/lib/forms/sanitize";
+
 import type { SuccessMetricFieldDraft } from "./outline-editor-types";
-import { sanitizeOptionalField } from "./outline-form-shared";
 
 export const createDefaultMetricField = (): SuccessMetricFieldDraft => ({
   id: undefined,
