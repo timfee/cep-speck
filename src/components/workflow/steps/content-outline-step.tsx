@@ -17,6 +17,7 @@ import { ContentSections } from "./components/content-sections";
 import { OutlineHeader } from "./components/outline-header";
 import { OutlineMetadataPanel } from "./components/outline-metadata-panel";
 import { getOutlineSummary } from "./content-outline-summary";
+import type { EditorKind } from "./hooks/outline-editor-types";
 import { useOutlineStepHandlers } from "./hooks/use-outline-step-handlers";
 
 interface ContentOutlineStepProps {
@@ -94,21 +95,27 @@ export function ContentOutlineStep({
       onEditMetricSchema,
     });
 
-  const {
-    handleAddFunctionalRequirement,
-    handleEditFunctionalRequirement,
-    handleAddSuccessMetric,
-    handleEditSuccessMetric,
-    handleAddMilestone,
-    handleEditMilestone,
-    handleAddCustomerJourney,
-    handleEditCustomerJourney,
-    handleAddMetricSchema,
-    handleEditMetricSchema,
-    editorState,
-    cancelEditor,
-    submitEditor,
-  } = outlineHandlers;
+  const { handlersByKind, editorState, cancelEditor, submitEditor } =
+    outlineHandlers;
+
+  const deleteHandlers = React.useMemo<
+    Partial<Record<EditorKind, (id: string) => void>>
+  >(
+    () => ({
+      functionalRequirement: onDeleteFunctionalRequirement,
+      successMetric: onDeleteSuccessMetric,
+      milestone: onDeleteMilestone,
+      customerJourney: onDeleteCustomerJourney,
+      metricSchema: onDeleteMetricSchema,
+    }),
+    [
+      onDeleteFunctionalRequirement,
+      onDeleteSuccessMetric,
+      onDeleteMilestone,
+      onDeleteCustomerJourney,
+      onDeleteMetricSchema,
+    ]
+  );
 
   const handleMetadataChange = React.useCallback(
     (updates: Partial<OutlineMetadata>) => {
@@ -143,21 +150,8 @@ export function ContentOutlineStep({
 
       <ContentSections
         contentOutline={contentOutline}
-        handleAddFunctionalRequirement={handleAddFunctionalRequirement}
-        handleEditFunctionalRequirement={handleEditFunctionalRequirement}
-        onDeleteFunctionalRequirement={onDeleteFunctionalRequirement}
-        handleAddSuccessMetric={handleAddSuccessMetric}
-        handleEditSuccessMetric={handleEditSuccessMetric}
-        onDeleteSuccessMetric={onDeleteSuccessMetric}
-        handleAddMilestone={handleAddMilestone}
-        handleEditMilestone={handleEditMilestone}
-        onDeleteMilestone={onDeleteMilestone}
-        handleAddCustomerJourney={handleAddCustomerJourney}
-        handleEditCustomerJourney={handleEditCustomerJourney}
-        onDeleteCustomerJourney={onDeleteCustomerJourney}
-        handleAddMetricSchema={handleAddMetricSchema}
-        handleEditMetricSchema={handleEditMetricSchema}
-        onDeleteMetricSchema={onDeleteMetricSchema}
+        handlersByKind={handlersByKind}
+        deleteHandlers={deleteHandlers}
         editorState={editorState}
         onCancelEditor={cancelEditor}
         onSubmitEditor={submitEditor}
