@@ -3,8 +3,8 @@
  */
 
 import "@testing-library/jest-dom";
-import { act, renderHook } from "@testing-library/react";
-import type { RenderHookResult } from "@testing-library/react";
+import { act, renderHook } from "@testing-library/react/pure";
+import type { RenderHookResult } from "@testing-library/react/pure";
 import { useState } from "react";
 
 import { useContentEditing } from "@/hooks/use-content-editing";
@@ -36,8 +36,8 @@ const useContentEditingTestHook = (): ContentEditingHookResult => {
 
 const renderUseContentEditing = (): RenderHookResult<
   ContentEditingHookResult,
-  unknown
-> => renderHook<ContentEditingHookResult>(useContentEditingTestHook);
+  void
+> => renderHook<ContentEditingHookResult, void>(useContentEditingTestHook);
 
 const createNewFunctionalRequirement = (): FunctionalRequirement => ({
   id: "fr-new",
@@ -112,7 +112,7 @@ describe("useContentEditing", () => {
 
     expect(
       result.current.state.contentOutline.functionalRequirements.some(
-        (item) => item.id === newRequirement.id
+        (item: FunctionalRequirement) => item.id === newRequirement.id
       )
     ).toBe(true);
 
@@ -124,7 +124,7 @@ describe("useContentEditing", () => {
 
     expect(
       result.current.state.contentOutline.functionalRequirements.find(
-        (item) => item.id === "fr-existing"
+        (item: FunctionalRequirement) => item.id === "fr-existing"
       )?.title
     ).toBe("Support enterprise SSO with audit logs");
 
@@ -134,12 +134,12 @@ describe("useContentEditing", () => {
 
     expect(
       result.current.state.contentOutline.functionalRequirements.some(
-        (item) => item.id === newRequirement.id
+        (item: FunctionalRequirement) => item.id === newRequirement.id
       )
     ).toBe(true);
     expect(
       result.current.state.contentOutline.functionalRequirements.some(
-        (item) => item.id === "fr-existing"
+        (item: FunctionalRequirement) => item.id === "fr-existing"
       )
     ).toBe(false);
   });
@@ -154,7 +154,7 @@ describe("useContentEditing", () => {
 
     expect(
       result.current.state.contentOutline.successMetrics.some(
-        (item) => item.id === newMetric.id
+        (item: SuccessMetric) => item.id === newMetric.id
       )
     ).toBe(true);
 
@@ -167,7 +167,7 @@ describe("useContentEditing", () => {
 
     const updatedMetric =
       result.current.state.contentOutline.successMetrics.find(
-        (item) => item.id === "sm-existing"
+        (item: SuccessMetric) => item.id === "sm-existing"
       );
     expect(updatedMetric?.target).toBe("90%");
     expect(updatedMetric?.owner).toBe("VP Growth");
@@ -178,12 +178,12 @@ describe("useContentEditing", () => {
 
     expect(
       result.current.state.contentOutline.successMetrics.some(
-        (item) => item.id === newMetric.id
+        (item: SuccessMetric) => item.id === newMetric.id
       )
     ).toBe(true);
     expect(
       result.current.state.contentOutline.successMetrics.some(
-        (item) => item.id === "sm-existing"
+        (item: SuccessMetric) => item.id === "sm-existing"
       )
     ).toBe(false);
   });
@@ -198,7 +198,7 @@ describe("useContentEditing", () => {
 
     expect(
       result.current.state.contentOutline.milestones.some(
-        (item) => item.id === newMilestone.id
+        (item: Milestone) => item.id === newMilestone.id
       )
     ).toBe(true);
 
@@ -210,7 +210,7 @@ describe("useContentEditing", () => {
 
     expect(
       result.current.state.contentOutline.milestones.find(
-        (item) => item.id === "ms-existing"
+        (item: Milestone) => item.id === "ms-existing"
       )?.description
     ).toBe("Finalize security review and mitigation plan.");
 
@@ -220,12 +220,12 @@ describe("useContentEditing", () => {
 
     expect(
       result.current.state.contentOutline.milestones.some(
-        (item) => item.id === newMilestone.id
+        (item: Milestone) => item.id === newMilestone.id
       )
     ).toBe(true);
     expect(
       result.current.state.contentOutline.milestones.some(
-        (item) => item.id === "ms-existing"
+        (item: Milestone) => item.id === "ms-existing"
       )
     ).toBe(false);
   });
@@ -240,7 +240,7 @@ describe("useContentEditing", () => {
 
     expect(
       result.current.state.contentOutline.customerJourneys.some(
-        (item) => item.id === newJourney.id
+        (item: CustomerJourney) => item.id === newJourney.id
       )
     ).toBe(true);
 
@@ -252,7 +252,7 @@ describe("useContentEditing", () => {
 
     expect(
       result.current.state.contentOutline.customerJourneys.find(
-        (item) => item.id === "cjs-existing"
+        (item: CustomerJourney) => item.id === "cjs-existing"
       )?.goal
     ).toBe("Enable SSO with automated monitoring");
 
@@ -262,12 +262,12 @@ describe("useContentEditing", () => {
 
     expect(
       result.current.state.contentOutline.customerJourneys.some(
-        (item) => item.id === newJourney.id
+        (item: CustomerJourney) => item.id === newJourney.id
       )
     ).toBe(true);
     expect(
       result.current.state.contentOutline.customerJourneys.some(
-        (item) => item.id === "cjs-existing"
+        (item: CustomerJourney) => item.id === "cjs-existing"
       )
     ).toBe(false);
   });
@@ -282,7 +282,7 @@ describe("useContentEditing", () => {
 
     expect(
       result.current.state.contentOutline.metricSchemas.some(
-        (item) => item.id === newSchema.id
+        (item: SuccessMetricSchema) => item.id === newSchema.id
       )
     ).toBe(true);
 
@@ -294,7 +294,7 @@ describe("useContentEditing", () => {
 
     expect(
       result.current.state.contentOutline.metricSchemas.find(
-        (item) => item.id === "metric-schema-existing"
+        (item: SuccessMetricSchema) => item.id === "metric-schema-existing"
       )?.description
     ).toBe("Schema capturing activation and quality metrics");
 
@@ -304,12 +304,12 @@ describe("useContentEditing", () => {
 
     expect(
       result.current.state.contentOutline.metricSchemas.some(
-        (item) => item.id === newSchema.id
+        (item: SuccessMetricSchema) => item.id === newSchema.id
       )
     ).toBe(true);
     expect(
       result.current.state.contentOutline.metricSchemas.some(
-        (item) => item.id === "metric-schema-existing"
+        (item: SuccessMetricSchema) => item.id === "metric-schema-existing"
       )
     ).toBe(false);
   });

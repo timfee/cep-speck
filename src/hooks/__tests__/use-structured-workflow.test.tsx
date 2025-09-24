@@ -1,12 +1,13 @@
 /** @jest-environment jsdom */
 
-import { act, renderHook } from "@testing-library/react";
+import { act, renderHook } from "@testing-library/react/pure";
+
+import { generateContentOutlineFromPrompt } from "@/lib/services/content-outline-service";
+import type { ContentOutline } from "@/types/workflow";
 
 jest.mock("@/lib/services/content-outline-service", () => ({
   generateContentOutlineFromPrompt: jest.fn(),
 }));
-
-import { generateContentOutlineFromPrompt } from "@/lib/services/content-outline-service";
 
 import { useStructuredWorkflow } from "../use-structured-workflow";
 import { initialWorkflowState } from "../workflow-initial-state";
@@ -43,7 +44,7 @@ describe("useStructuredWorkflow", () => {
   });
 
   it("generates an outline and clears loading state", async () => {
-    const outline = {
+    const outline: ContentOutline = {
       ...initialWorkflowState.contentOutline,
       functionalRequirements: [
         {
@@ -53,6 +54,7 @@ describe("useStructuredWorkflow", () => {
           priority: "P0",
           userStory: "As a user I need a feature",
           acceptanceCriteria: ["Criteria"],
+          dependencies: [],
         },
       ],
     };

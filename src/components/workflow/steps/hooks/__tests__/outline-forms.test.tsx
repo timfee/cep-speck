@@ -3,7 +3,8 @@
  */
 
 import "@testing-library/jest-dom";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
+import { fireEvent } from "@testing-library/react/pure";
 import userEvent from "@testing-library/user-event";
 import React from "react";
 
@@ -15,9 +16,9 @@ import { MilestoneForm } from "../milestone-form";
 import type {
   CustomerJourneyDraft,
   FunctionalRequirementDraft,
-  MetricSchemaDraft,
   MilestoneDraft,
   SuccessMetricDraft,
+  SuccessMetricSchemaDraft,
 } from "../outline-editor-types";
 
 import { SuccessMetricForm } from "../success-metric-form";
@@ -238,7 +239,7 @@ describe("workflow outline forms", () => {
 
   it("sanitises metric schema fields and allowed values", async () => {
     const onSubmit = jest.fn();
-    const initialValues: MetricSchemaDraft = {
+    const initialValues: SuccessMetricSchemaDraft = {
       title: "",
       description: "",
       fields: [
@@ -289,6 +290,7 @@ describe("workflow outline forms", () => {
     await user.click(screen.getByLabelText("Required"));
     await user.type(screen.getByLabelText("Source System"), "  Snowflake  ");
     const allowedValuesField = screen.getByLabelText("Allowed Values");
+    await user.clear(allowedValuesField);
     fireEvent.change(allowedValuesField, {
       target: { value: "  Active  \n  \n  Paused  " },
     });
@@ -297,7 +299,7 @@ describe("workflow outline forms", () => {
     await user.click(submitButton);
 
     expect(onSubmit).toHaveBeenCalledTimes(1);
-    const submitted = onSubmit.mock.calls[0][0] as MetricSchemaDraft;
+    const submitted = onSubmit.mock.calls[0][0] as SuccessMetricSchemaDraft;
     expect(submitted.title).toBe("Provisioning metrics");
     expect(submitted.description).toBe(
       "Defines provisioning health indicators"

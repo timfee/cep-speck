@@ -1,11 +1,11 @@
 // Progress calculation helpers for structured workflow
 
+import { WORKFLOW_STEPS } from "@/config/workflow/steps";
+
 import type {
   StructuredWorkflowState,
   WorkflowProgress,
 } from "@/types/workflow";
-
-import { WORKFLOW_STEPS } from "@/types/workflow";
 
 export const MIN_PROMPT_LENGTH = 10;
 export const PROMPT_COMPLETION_TARGET = 50;

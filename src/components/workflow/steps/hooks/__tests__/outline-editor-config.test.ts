@@ -4,7 +4,15 @@
 
 import "@testing-library/jest-dom";
 import { createContentOutlineFixture } from "@/test-utils/workflow-fixtures";
-import type { ContentOutline } from "@/types/workflow";
+
+import type {
+  ContentOutline,
+  CustomerJourney,
+  FunctionalRequirement,
+  Milestone,
+  SuccessMetric,
+  SuccessMetricSchema,
+} from "@/types/workflow";
 
 import {
   addItemToOutline,
@@ -151,61 +159,70 @@ describe("outline-editor-config", () => {
       const draft = mapItemToDraftFor(kind, existing);
 
       switch (kind) {
-        case "functionalRequirement":
+        case "functionalRequirement": {
+          const requirement = existing as FunctionalRequirement;
           expect(draft).toEqual({
-            id: existing.id,
-            title: existing.title,
-            description: existing.description,
-            priority: existing.priority,
-            userStory: existing.userStory,
-            acceptanceCriteria: existing.acceptanceCriteria,
-            dependencies: existing.dependencies,
-            estimatedEffort: existing.estimatedEffort,
+            id: requirement.id,
+            title: requirement.title,
+            description: requirement.description,
+            priority: requirement.priority,
+            userStory: requirement.userStory,
+            acceptanceCriteria: requirement.acceptanceCriteria,
+            dependencies: requirement.dependencies,
+            estimatedEffort: requirement.estimatedEffort,
           });
           break;
-        case "successMetric":
+        }
+        case "successMetric": {
+          const successMetric = existing as SuccessMetric;
           expect(draft).toEqual({
-            id: existing.id,
-            name: existing.name,
-            description: existing.description,
-            type: existing.type,
-            target: existing.target,
-            measurement: existing.measurement,
-            frequency: existing.frequency,
-            owner: existing.owner,
+            id: successMetric.id,
+            name: successMetric.name,
+            description: successMetric.description,
+            type: successMetric.type,
+            target: successMetric.target,
+            measurement: successMetric.measurement,
+            frequency: successMetric.frequency,
+            owner: successMetric.owner,
           });
           break;
-        case "milestone":
+        }
+        case "milestone": {
+          const milestone = existing as Milestone;
           expect(draft).toEqual({
-            id: existing.id,
-            title: existing.title,
-            description: existing.description,
-            phase: existing.phase,
-            estimatedDate: existing.estimatedDate,
-            dependencies: existing.dependencies,
-            deliverables: existing.deliverables,
+            id: milestone.id,
+            title: milestone.title,
+            description: milestone.description,
+            phase: milestone.phase,
+            estimatedDate: milestone.estimatedDate,
+            dependencies: milestone.dependencies,
+            deliverables: milestone.deliverables,
           });
           break;
-        case "customerJourney":
+        }
+        case "customerJourney": {
+          const journey = existing as CustomerJourney;
           expect(draft).toEqual({
-            id: existing.id,
-            title: existing.title,
-            role: existing.role,
-            goal: existing.goal,
-            successCriteria: existing.successCriteria,
-            steps: existing.steps.map((step) => ({
+            id: journey.id,
+            title: journey.title,
+            role: journey.role,
+            goal: journey.goal,
+            successCriteria: journey.successCriteria,
+            steps: journey.steps.map((step) => ({
               id: step.id,
               description: step.description,
             })),
-            painPoints: existing.painPoints ?? [],
+            painPoints: journey.painPoints ?? [],
           });
           break;
-        case "metricSchema":
+        }
+        case "metricSchema": {
+          const metricSchema = existing as SuccessMetricSchema;
           expect(draft).toEqual({
-            id: existing.id,
-            title: existing.title,
-            description: existing.description,
-            fields: existing.fields.map((field) => ({
+            id: metricSchema.id,
+            title: metricSchema.title,
+            description: metricSchema.description,
+            fields: metricSchema.fields.map((field) => ({
               id: field.id,
               name: field.name,
               description: field.description,
@@ -216,6 +233,7 @@ describe("outline-editor-config", () => {
             })),
           });
           break;
+        }
       }
     }
   );
@@ -228,7 +246,8 @@ describe("outline-editor-config", () => {
       const built = buildItemFromDraft(kind, draft, fallbackId);
 
       switch (kind) {
-        case "functionalRequirement":
+        case "functionalRequirement": {
+          const builtRequirement = built as FunctionalRequirement;
           expect(built).toMatchObject({
             id: fallbackId,
             title: "Automated data sync",
@@ -239,9 +258,11 @@ describe("outline-editor-config", () => {
             acceptanceCriteria: ["Sync attempts logged"],
             dependencies: ["data-service"],
           });
-          expect(built.estimatedEffort).toBeUndefined();
+          expect(builtRequirement.estimatedEffort).toBeUndefined();
           break;
-        case "successMetric":
+        }
+        case "successMetric": {
+          const builtMetric = built as SuccessMetric;
           expect(built).toMatchObject({
             id: fallbackId,
             name: "Time to provision",
@@ -252,8 +273,11 @@ describe("outline-editor-config", () => {
             frequency: "weekly",
             owner: "Platform lead",
           });
+          expect(builtMetric.measurement).toBe("system telemetry");
           break;
-        case "milestone":
+        }
+        case "milestone": {
+          const builtMilestone = built as Milestone;
           expect(built).toMatchObject({
             id: fallbackId,
             title: "Launch automation globally",
@@ -262,9 +286,11 @@ describe("outline-editor-config", () => {
             dependencies: ["workflow-engine"],
             deliverables: ["Runbook"],
           });
-          expect(built.estimatedDate).toBeUndefined();
+          expect(builtMilestone.estimatedDate).toBeUndefined();
           break;
-        case "customerJourney":
+        }
+        case "customerJourney": {
+          const builtJourney = built as CustomerJourney;
           expect(built).toMatchObject({
             id: fallbackId,
             title: "Admin reviews automation",
@@ -273,20 +299,22 @@ describe("outline-editor-config", () => {
             successCriteria: "Monitoring is configured",
             painPoints: ["Slow approvals"],
           });
-          expect(built.steps).toHaveLength(1);
-          expect(built.steps[0]).toMatchObject({
+          expect(builtJourney.steps).toHaveLength(1);
+          expect(builtJourney.steps[0]).toMatchObject({
             id: "draft-step-1",
             description: "Review automation proposal",
           });
           break;
-        case "metricSchema":
+        }
+        case "metricSchema": {
+          const builtSchema = built as SuccessMetricSchema;
           expect(built).toMatchObject({
             id: fallbackId,
             title: "Provisioning schema",
             description: "Tracks provisioning signals",
           });
-          expect(built.fields).toHaveLength(1);
-          expect(built.fields[0]).toMatchObject({
+          expect(builtSchema.fields).toHaveLength(1);
+          expect(builtSchema.fields[0]).toMatchObject({
             id: "draft-field-1",
             name: "Provisioning status",
             description: "Current provisioning status",
@@ -296,6 +324,7 @@ describe("outline-editor-config", () => {
             sourceSystem: "Ops db",
           });
           break;
+        }
       }
 
       const outline = createContentOutlineFixture();
