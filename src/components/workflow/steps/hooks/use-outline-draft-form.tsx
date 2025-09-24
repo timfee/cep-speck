@@ -228,83 +228,87 @@ export function useOutlineDraftForm<TDraft>(
         required: field.required,
       } as const;
 
-      if (field.kind === "text") {
-        const value = (formState[field.path] ?? "") as string;
-        return (
-          <LabeledField
-            key={field.id}
-            id={field.id}
-            label={field.label}
-            hint={field.hint}
-          >
-            <input
-              {...commonProps}
-              type={field.inputType ?? "text"}
-              className={baseInputClass}
-              placeholder={field.placeholder}
-              value={value}
-              onChange={(event) =>
-                updateField(
-                  field.path,
-                  event.target.value as TDraft[typeof field.path]
-                )
-              }
-            />
-          </LabeledField>
-        );
+      switch (field.kind) {
+        case "text": {
+          const value = (formState[field.path] ?? "") as string;
+          return (
+            <LabeledField
+              key={field.id}
+              id={field.id}
+              label={field.label}
+              hint={field.hint}
+            >
+              <input
+                {...commonProps}
+                type={field.inputType ?? "text"}
+                className={baseInputClass}
+                placeholder={field.placeholder}
+                value={value}
+                onChange={(event) =>
+                  updateField(
+                    field.path,
+                    event.target.value as TDraft[typeof field.path]
+                  )
+                }
+              />
+            </LabeledField>
+          );
+        }
+        case "textarea": {
+          const value = (formState[field.path] ?? "") as string;
+          return (
+            <LabeledField
+              key={field.id}
+              id={field.id}
+              label={field.label}
+              hint={field.hint}
+            >
+              <Textarea
+                {...commonProps}
+                placeholder={field.placeholder}
+                value={value}
+                onChange={(event) =>
+                  updateField(
+                    field.path,
+                    event.target.value as TDraft[typeof field.path]
+                  )
+                }
+              />
+            </LabeledField>
+          );
+        }
+        case "select": {
+          const value = (formState[field.path] ?? "") as string;
+          return (
+            <LabeledField
+              key={field.id}
+              id={field.id}
+              label={field.label}
+              hint={field.hint}
+            >
+              <select
+                {...commonProps}
+                className={baseInputClass}
+                value={value}
+                onChange={(event) =>
+                  updateField(
+                    field.path,
+                    event.target.value as TDraft[typeof field.path]
+                  )
+                }
+              >
+                {field.options.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </LabeledField>
+          );
+        }
+        default:
+          return null;
       }
-
-      if (field.kind === "textarea") {
-        const value = (formState[field.path] ?? "") as string;
-        return (
-          <LabeledField
-            key={field.id}
-            id={field.id}
-            label={field.label}
-            hint={field.hint}
-          >
-            <Textarea
-              {...commonProps}
-              placeholder={field.placeholder}
-              value={value}
-              onChange={(event) =>
-                updateField(
-                  field.path,
-                  event.target.value as TDraft[typeof field.path]
-                )
-              }
-            />
-          </LabeledField>
-        );
-      }
-
-      const value = (formState[field.path] ?? "") as string;
-      return (
-        <LabeledField
-          key={field.id}
-          id={field.id}
-          label={field.label}
-          hint={field.hint}
-        >
-          <select
-            {...commonProps}
-            className={baseInputClass}
-            value={value}
-            onChange={(event) =>
-              updateField(
-                field.path,
-                event.target.value as TDraft[typeof field.path]
-              )
-            }
-          >
-            {field.options.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </LabeledField>
-      );
     },
     [formState, updateField]
   );

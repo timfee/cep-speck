@@ -244,10 +244,9 @@ export function CustomerJourneyForm({
         ),
         prepare: (draft: CustomerJourneyDraft) => ({
           ...draft,
-          painPoints:
-            draft.painPoints
-              ?.map((point) => point.trim())
-              .filter((point) => point.length > 0) ?? [],
+          painPoints: (draft.painPoints ?? [])
+            .map((point) => point.trim())
+            .filter((point) => point.length > 0),
         }),
       },
     ],
