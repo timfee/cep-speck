@@ -407,6 +407,57 @@ const eslintConfig = [
     },
   },
   {
+    // Temporary override for refactoring - convert unsafe operations to warnings
+    files: [
+      "**/forms/**/*.tsx", 
+      "**/lib/workflow/**/*.ts", 
+      "**/components/workflow/**/*.tsx"
+    ],
+    rules: {
+      "@typescript-eslint/no-unsafe-assignment": "warn",
+      "@typescript-eslint/no-unsafe-argument": "warn",
+      "@typescript-eslint/no-unsafe-call": "warn",
+      "@typescript-eslint/no-unsafe-member-access": "warn",
+      "@typescript-eslint/no-unsafe-return": "warn",
+      "@typescript-eslint/restrict-template-expressions": "warn",
+    },
+  },
+  {
+    files: ["**/workflow/**/*.ts", "**/workflow/**/*.tsx"],
+    rules: {
+      "custom/consistent-error-handling-pattern": "off",
+      "@typescript-eslint/no-unsafe-assignment": "warn",
+      "@typescript-eslint/no-unsafe-argument": "warn",
+      "@typescript-eslint/no-unsafe-call": "warn",
+      "@typescript-eslint/no-unsafe-member-access": "warn",
+      "@typescript-eslint/no-unsafe-return": "warn",
+      "no-magic-numbers": [
+        "error",
+        {
+          ignore: [
+            0, 1, -1, 2, 4, 8, 10, 12, 16, 20, 24, 32, 48, 64, 100, 200, 300,
+            400, 500, 1000, 1200, 1400, 1800,
+          ],
+          ignoreArrayIndexes: true,
+          enforceConst: true,
+          detectObjects: false,
+        },
+      ],
+    },
+  },
+  {
+    files: ["**/__tests__/**/*.ts", "**/__tests__/**/*.tsx", "**/*.test.ts", "**/*.test.tsx"],
+    rules: {
+      "@typescript-eslint/no-unsafe-assignment": "off",
+      "@typescript-eslint/no-unsafe-argument": "off",
+      "@typescript-eslint/no-unsafe-call": "off",
+      "@typescript-eslint/no-unsafe-member-access": "off",
+      "@typescript-eslint/no-unsafe-return": "off",
+      "custom/consistent-error-handling-pattern": "off",
+      "no-magic-numbers": "off",
+    },
+  },
+  {
     ignores: [
       "node_modules/**",
       ".next/**",

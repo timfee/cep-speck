@@ -1,11 +1,14 @@
 import { useCallback, useMemo, useState } from "react";
 
-import { generateContentOutlineFromPrompt } from "@/lib/services/content-outline-service";
 import {
   serializeWorkflowToLegacySpecText,
   serializeWorkflowToSpec,
 } from "@/lib/serializers/workflow-to-spec";
+
 import { serializeWorkflowToOutlinePayload } from "@/lib/serializers/workflow-to-structured-outline";
+import { generateContentOutlineFromPrompt } from "@/lib/services/content-outline-service";
+import { initialWorkflowState } from "@/lib/utils/workflow-initial-state";
+import type { WorkflowStateSetter } from "@/lib/utils/workflow-state";
 
 import type {
   ContentOutline,
@@ -14,10 +17,9 @@ import type {
 } from "@/types/workflow";
 
 import { useContentEditing } from "./use-content-editing";
+import { useWorkflowNavigation } from "./use-workflow-navigation";
 import { useWorkflowStateWithProgress } from "./use-workflow-progress";
-import { initialWorkflowState } from "./workflow-initial-state";
-import { useWorkflowNavigation } from "./workflow-navigation";
-import type { WorkflowStateSetter } from "./workflow-state";
+
 
 export interface WorkflowDispatch {
   setInitialPrompt: (prompt: string) => void;

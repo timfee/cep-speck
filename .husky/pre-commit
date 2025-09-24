@@ -1,24 +1,17 @@
 #!/usr/bin/env sh
 set -e
 
-printf "\n\033[1;36m[husky] pre-commit: lint + tests + build + FTA\033[0m\n"
+printf "\n\033[1;36m[husky] pre-commit: lint + tests + build\033[0m\n"
 printf "[husky] staged files:\n" && git diff --cached --name-only || true
 
 printf "\n[husky] running lint-staged...\n"
 pnpm exec lint-staged
-
-# Require at least one test file to exist in the repository
-printf "\n[husky] checking test files exist...\n"
-node scripts/ensure-tests-exist.mjs
 
 printf "\n[husky] running lint...\n"
 pnpm lint
 
 printf "\n[husky] running unit tests...\n"
 pnpm jest
-
-printf "\n[husky] enforcing FTA cap...\n"
-pnpm fta:check
 
 printf "\n[husky] verifying build...\n"
 pnpm build

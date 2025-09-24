@@ -12,7 +12,6 @@ import {
   pickOverride,
 } from "./workflow-to-spec/normalization";
 
-import { placeholder } from "./workflow-to-spec/placeholders";
 import { SECTION_DEFINITIONS } from "./workflow-to-spec/sections";
 
 import type {
@@ -81,7 +80,7 @@ function appendLegacySection(
   output.push(
     trimmedContent.length > 0
       ? trimmedContent
-      : placeholder(definition.placeholder)
+      : `[PM_INPUT_NEEDED: ${definition.placeholder}]`
   );
   output.push("");
 }

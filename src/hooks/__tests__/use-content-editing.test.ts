@@ -13,8 +13,10 @@ import type {
 } from "@/hooks/use-content-editing";
 
 import { useContentEditing } from "@/hooks/use-content-editing";
+import { createWorkflowStateFixture } from "@/tests/lib/workflow-fixtures";
 
 import type {
+  ContentOutline,
   CustomerJourney,
   FunctionalRequirement,
   Milestone,
@@ -22,9 +24,6 @@ import type {
   SuccessMetricField,
   SuccessMetricSchema,
 } from "@/types/workflow";
-
-import { createWorkflowStateFixture } from "../../tests/lib/workflow-fixtures";
-
 
 type ContentEditingState = ReturnType<typeof createWorkflowStateFixture>;
 type ContentEditingHookResult = {
@@ -108,7 +107,7 @@ const createNewSchema = (): SuccessMetricSchema => ({
 
 type OutlineRegistryKey = keyof OutlineActionRegistry;
 
-type OutlineCollection = ContentEditingState["contentOutline"];
+type OutlineCollection = ContentOutline;
 
 const outlineHandlerTestCases = [
   {
@@ -116,7 +115,8 @@ const outlineHandlerTestCases = [
     addKey: "addFunctionalRequirement",
     updateKey: "updateFunctionalRequirement",
     deleteKey: "deleteFunctionalRequirement",
-    collection: (outline: OutlineCollection) => outline.functionalRequirements,
+    collection: (outline: OutlineCollection): FunctionalRequirement[] =>
+      outline.functionalRequirements,
     createItem: createNewFunctionalRequirement,
     updateId: "fr-existing",
     updates: { title: "Support enterprise SSO with audit logs" },
@@ -126,7 +126,8 @@ const outlineHandlerTestCases = [
     addKey: "addSuccessMetric",
     updateKey: "updateSuccessMetric",
     deleteKey: "deleteSuccessMetric",
-    collection: (outline: OutlineCollection) => outline.successMetrics,
+    collection: (outline: OutlineCollection): SuccessMetric[] =>
+      outline.successMetrics,
     createItem: createNewSuccessMetric,
     updateId: "sm-existing",
     updates: { target: "90%", owner: "VP Growth" },
@@ -136,7 +137,7 @@ const outlineHandlerTestCases = [
     addKey: "addMilestone",
     updateKey: "updateMilestone",
     deleteKey: "deleteMilestone",
-    collection: (outline: OutlineCollection) => outline.milestones,
+    collection: (outline: OutlineCollection): Milestone[] => outline.milestones,
     createItem: createNewMilestone,
     updateId: "ms-existing",
     updates: {
@@ -148,7 +149,8 @@ const outlineHandlerTestCases = [
     addKey: "addCustomerJourney",
     updateKey: "updateCustomerJourney",
     deleteKey: "deleteCustomerJourney",
-    collection: (outline: OutlineCollection) => outline.customerJourneys,
+    collection: (outline: OutlineCollection): CustomerJourney[] =>
+      outline.customerJourneys,
     createItem: createNewJourney,
     updateId: "cjs-existing",
     updates: { goal: "Enable SSO with automated monitoring" },
@@ -158,7 +160,8 @@ const outlineHandlerTestCases = [
     addKey: "addMetricSchema",
     updateKey: "updateMetricSchema",
     deleteKey: "deleteMetricSchema",
-    collection: (outline: OutlineCollection) => outline.metricSchemas,
+    collection: (outline: OutlineCollection): SuccessMetricSchema[] =>
+      outline.metricSchemas,
     createItem: createNewSchema,
     updateId: "metric-schema-existing",
     updates: {

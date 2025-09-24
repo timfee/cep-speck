@@ -1,5 +1,14 @@
 import { useCallback, useMemo } from "react";
 
+import {
+  type OutlineCollectionItem,
+  type OutlineCollectionKey,
+  type OutlineMutation,
+  mutateOutline,
+} from "@/lib/utils/content-editing-utils";
+
+import type { WorkflowStateSetter } from "@/lib/utils/workflow-state";
+
 import type {
   CustomerJourney,
   FunctionalRequirement,
@@ -9,14 +18,7 @@ import type {
   SuccessMetricSchema,
 } from "@/types/workflow";
 
-import {
-  type OutlineCollectionItem,
-  type OutlineCollectionKey,
-  type OutlineMutation,
-  mutateOutline,
-} from "./content-editing-utils";
 
-import type { WorkflowStateSetter } from "./workflow-state";
 
 type OutlineActionConfig<K extends OutlineCollectionKey, Item> = {
   kind: K;

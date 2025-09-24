@@ -1,11 +1,12 @@
 import { useMemo } from "react";
 
+import { calculateStepProgress } from "@/lib/utils/progress-calculation";
+
 import type {
   StructuredWorkflowState,
   WorkflowProgress,
 } from "@/types/workflow";
 
-import { calculateStepProgress } from "./progress-calculation";
 
 export function useWorkflowStateWithProgress(
   state: StructuredWorkflowState

@@ -3,6 +3,7 @@
 import { act, renderHook } from "@testing-library/react/pure";
 
 import { generateContentOutlineFromPrompt } from "@/lib/services/content-outline-service";
+import { initialWorkflowState } from "@/lib/utils/workflow-initial-state";
 import type { ContentOutline } from "@/types/workflow";
 
 jest.mock("@/lib/services/content-outline-service", () => ({
@@ -10,7 +11,6 @@ jest.mock("@/lib/services/content-outline-service", () => ({
 }));
 
 import { useStructuredWorkflow } from "../use-structured-workflow";
-import { initialWorkflowState } from "../workflow-initial-state";
 
 describe("useStructuredWorkflow", () => {
   const mockGenerate = generateContentOutlineFromPrompt as jest.MockedFunction<

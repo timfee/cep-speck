@@ -2,21 +2,20 @@ import type { CoreMessage } from "ai";
 
 import { readKnowledgeDirectory } from "@/lib/knowledge";
 import { performCompetitorResearch } from "@/lib/research";
-
-import type {
-  SerializedWorkflowOutline,
-  SerializedWorkflowSpec,
-} from "@/types/workflow";
-
-import { buildSystemPrompt, buildUserPrompt } from "../prompt";
+import { buildSystemPrompt, buildUserPrompt } from "@/lib/spec/prompt";
 
 import {
   createPhaseFrame,
   encodeStreamFrame,
   withErrorRecovery,
-} from "../streaming";
+} from "@/lib/spec/streaming";
 
-import type { SpecPack } from "../types";
+import type { SpecPack } from "@/lib/spec/types";
+
+import type {
+  SerializedWorkflowOutline,
+  SerializedWorkflowSpec,
+} from "@/types/workflow";
 
 export interface WorkflowContext {
   specText: string;
