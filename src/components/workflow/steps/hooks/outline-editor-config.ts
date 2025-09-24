@@ -45,199 +45,290 @@ type ConfigEntry<Item, Draft> = {
   findById: (outline: ContentOutline, id?: string) => Item | undefined;
 };
 
-const requirementConfig: ConfigEntry<
-  FunctionalRequirement,
-  DraftForKind<"functionalRequirement">
+type FieldDescriptor<Item, Draft> =
+  | (keyof Draft & keyof Item)
+  | {
+      key: keyof Draft & keyof Item;
+      toDraft?: (value: Item[keyof Item], item: Item) => Draft[keyof Draft];
+      fromDraft?: (value: Draft[keyof Draft], draft: Draft) => Item[keyof Item];
+    };
+
+type NormalizedFieldDescriptor<Item, Draft> = {
+  key: keyof Draft & keyof Item;
+  toDraft?: (value: Item[keyof Item], item: Item) => Draft[keyof Draft];
+  fromDraft?: (value: Draft[keyof Draft], draft: Draft) => Item[keyof Item];
+};
+
+const normalizeDescriptor = <Item, Draft>(
+  descriptor: FieldDescriptor<Item, Draft>
+): NormalizedFieldDescriptor<Item, Draft> =>
+  typeof descriptor === "object" ? descriptor : { key: descriptor };
+
+const makeDraftMapper =
+  <Item extends { id: string }, Draft extends { id?: string }>(
+    fields: readonly FieldDescriptor<Item, Draft>[]
+  ) =>
+  (item: Item): Draft => {
+    const draft: Partial<Draft> = {};
+    draft.id = item.id;
+
+    for (const descriptor of fields) {
+      const { key, toDraft } = normalizeDescriptor(descriptor);
+      const value = item[key as keyof Item];
+      const mappedValue = toDraft?.(value, item) ?? value;
+      (draft as Draft)[key as keyof Draft] = mappedValue as Draft[keyof Draft];
+    }
+
+    return draft as Draft;
+  };
+
+const buildCreateFn =
+  <Item extends { id: string }, Draft extends { id?: string }, CreateInput>(
+    createItem: (input: CreateInput) => Item,
+    fields: readonly FieldDescriptor<Item, Draft>[]
+  ) =>
+  (draft: Draft, fallbackId?: string): Item => {
+    const input: Record<string, unknown> = {};
+
+    for (const descriptor of fields) {
+      const { key, fromDraft } = normalizeDescriptor(descriptor);
+      const draftValue = draft[key as keyof Draft];
+      const mappedValue = fromDraft?.(draftValue, draft) ?? draftValue;
+      input[key as string] = mappedValue;
+    }
+
+    const created = createItem(input as CreateInput);
+    const id = draft.id ?? fallbackId ?? created.id;
+
+    return { ...created, id };
+  };
+
+const cloneDefaultDraft = <Draft>(defaults: Draft): Draft =>
+  JSON.parse(JSON.stringify(defaults)) as Draft;
+
+const isCustomerJourneyStepArray = (
+  steps: unknown
+): steps is CustomerJourney["steps"] => Array.isArray(steps);
+
+const isStringArray = (value: unknown): value is string[] =>
+  Array.isArray(value);
+
+const isSuccessMetricFieldArray = (
+  fields: unknown
+): fields is SuccessMetricSchema["fields"] => Array.isArray(fields);
+
+type EntityDescriptor<
+  Item extends { id: string },
+  Draft extends { id?: string },
+  CreateInput,
 > = {
-  defaultDraft: () => ({
+  defaultDraft: Draft;
+  createItem: (input: CreateInput) => Item;
+  fields: readonly FieldDescriptor<Item, Draft>[];
+  addToOutline: (outline: ContentOutline, item: Item) => ContentOutline;
+  updateInOutline: (
+    outline: ContentOutline,
+    id: string,
+    item: Item
+  ) => ContentOutline;
+  selectItems: (outline: ContentOutline) => Item[];
+};
+
+const buildConfigEntry = <
+  Item extends { id: string },
+  Draft extends { id?: string },
+  CreateInput,
+>(
+  descriptor: EntityDescriptor<Item, Draft, CreateInput>
+): ConfigEntry<Item, Draft> => ({
+  defaultDraft: () => cloneDefaultDraft(descriptor.defaultDraft),
+  toDraft: makeDraftMapper(descriptor.fields),
+  buildItem: buildCreateFn(descriptor.createItem, descriptor.fields),
+  addToOutline: descriptor.addToOutline,
+  updateInOutline: descriptor.updateInOutline,
+  findById: (outline, id) =>
+    descriptor.selectItems(outline).find((item) => item.id === id),
+});
+
+const requirementDescriptor: EntityDescriptor<
+  FunctionalRequirement,
+  DraftForKind<"functionalRequirement">,
+  Parameters<typeof createNewFunctionalRequirement>[0]
+> = {
+  defaultDraft: {
     title: "",
     description: "",
     priority: "P1",
-  }),
-  toDraft: (item) => ({
-    id: item.id,
-    title: item.title,
-    description: item.description,
-    priority: item.priority,
-    userStory: item.userStory,
-    acceptanceCriteria: item.acceptanceCriteria,
-    dependencies: item.dependencies,
-    estimatedEffort: item.estimatedEffort,
-  }),
-  buildItem: (draft, fallbackId) => {
-    const created = createNewFunctionalRequirement({
-      title: draft.title,
-      description: draft.description,
-      priority: draft.priority,
-      userStory: draft.userStory,
-      acceptanceCriteria: draft.acceptanceCriteria,
-      dependencies: draft.dependencies,
-      estimatedEffort: draft.estimatedEffort,
-    });
-    const id = draft.id ?? fallbackId ?? created.id;
-    return { ...created, id };
   },
+  createItem: createNewFunctionalRequirement,
+  fields: [
+    "title",
+    "description",
+    "priority",
+    "userStory",
+    {
+      key: "acceptanceCriteria",
+      toDraft: (criteria) =>
+        Array.isArray(criteria) ? [...criteria] : criteria,
+    },
+    {
+      key: "dependencies",
+      toDraft: (dependencies) =>
+        Array.isArray(dependencies) ? [...dependencies] : dependencies,
+    },
+    "estimatedEffort",
+  ],
   addToOutline: addFunctionalRequirementToOutline,
   updateInOutline: updateFunctionalRequirementInOutline,
-  findById: (outline, id) =>
-    outline.functionalRequirements.find((item) => item.id === id),
+  selectItems: (outline) => outline.functionalRequirements,
 };
 
-const successMetricConfig: ConfigEntry<
+const successMetricDescriptor: EntityDescriptor<
   SuccessMetric,
-  DraftForKind<"successMetric">
+  DraftForKind<"successMetric">,
+  Parameters<typeof createNewSuccessMetric>[0]
 > = {
-  defaultDraft: () => ({
+  defaultDraft: {
     name: "",
     description: "",
     type: "engagement",
-  }),
-  toDraft: (item) => ({
-    id: item.id,
-    name: item.name,
-    description: item.description,
-    type: item.type,
-    target: item.target,
-    measurement: item.measurement,
-    frequency: item.frequency,
-    owner: item.owner,
-  }),
-  buildItem: (draft, fallbackId) => {
-    const created = createNewSuccessMetric({
-      name: draft.name,
-      description: draft.description,
-      type: draft.type,
-      target: draft.target,
-      measurement: draft.measurement,
-      frequency: draft.frequency,
-      owner: draft.owner,
-    });
-    const id = draft.id ?? fallbackId ?? created.id;
-    return { ...created, id };
   },
+  createItem: createNewSuccessMetric,
+  fields: [
+    "name",
+    "description",
+    "type",
+    "target",
+    "measurement",
+    "frequency",
+    "owner",
+  ],
   addToOutline: addSuccessMetricToOutline,
   updateInOutline: updateSuccessMetricInOutline,
-  findById: (outline, id) =>
-    outline.successMetrics.find((item) => item.id === id),
+  selectItems: (outline) => outline.successMetrics,
 };
 
-const milestoneConfig: ConfigEntry<Milestone, DraftForKind<"milestone">> = {
-  defaultDraft: () => ({
+const milestoneDescriptor: EntityDescriptor<
+  Milestone,
+  DraftForKind<"milestone">,
+  Parameters<typeof createNewMilestone>[0]
+> = {
+  defaultDraft: {
     title: "",
     description: "",
     phase: "development",
-  }),
-  toDraft: (item) => ({
-    id: item.id,
-    title: item.title,
-    description: item.description,
-    phase: item.phase,
-    estimatedDate: item.estimatedDate,
-    dependencies: item.dependencies,
-    deliverables: item.deliverables,
-  }),
-  buildItem: (draft, fallbackId) => {
-    const created = createNewMilestone({
-      title: draft.title,
-      description: draft.description,
-      phase: draft.phase,
-      estimatedDate: draft.estimatedDate,
-      dependencies: draft.dependencies,
-      deliverables: draft.deliverables,
-    });
-    const id = draft.id ?? fallbackId ?? created.id;
-    return { ...created, id };
   },
+  createItem: createNewMilestone,
+  fields: [
+    "title",
+    "description",
+    "phase",
+    "estimatedDate",
+    {
+      key: "dependencies",
+      toDraft: (dependencies) =>
+        Array.isArray(dependencies) ? [...dependencies] : dependencies,
+    },
+    {
+      key: "deliverables",
+      toDraft: (deliverables) =>
+        Array.isArray(deliverables) ? [...deliverables] : deliverables,
+    },
+  ],
   addToOutline: addMilestoneToOutline,
   updateInOutline: updateMilestoneInOutline,
-  findById: (outline, id) => outline.milestones.find((item) => item.id === id),
+  selectItems: (outline) => outline.milestones,
 };
 
-const customerJourneyConfig: ConfigEntry<
+const customerJourneyDescriptor: EntityDescriptor<
   CustomerJourney,
-  DraftForKind<"customerJourney">
+  DraftForKind<"customerJourney">,
+  Parameters<typeof createNewCustomerJourney>[0]
 > = {
-  defaultDraft: () => ({
+  defaultDraft: {
     title: "",
     role: "",
     goal: "",
     steps: [],
     painPoints: [],
-  }),
-  toDraft: (item) => ({
-    id: item.id,
-    title: item.title,
-    role: item.role,
-    goal: item.goal,
-    successCriteria: item.successCriteria,
-    steps: item.steps.map((step) => ({
-      id: step.id,
-      description: step.description,
-    })),
-    painPoints: item.painPoints ?? [],
-  }),
-  buildItem: (draft, fallbackId) => {
-    const created = createNewCustomerJourney({
-      title: draft.title,
-      role: draft.role,
-      goal: draft.goal,
-      successCriteria: draft.successCriteria,
-      steps: draft.steps,
-      painPoints: draft.painPoints,
-    });
-    const id = draft.id ?? fallbackId ?? created.id;
-    return { ...created, id };
   },
+  createItem: createNewCustomerJourney,
+  fields: [
+    "title",
+    "role",
+    "goal",
+    "successCriteria",
+    {
+      key: "steps",
+      toDraft: (steps) => {
+        if (!isCustomerJourneyStepArray(steps)) {
+          return steps;
+        }
+
+        return steps.map((step) => ({
+          id: step.id,
+          description: step.description,
+        }));
+      },
+    },
+    {
+      key: "painPoints",
+      toDraft: (points) => (isStringArray(points) ? [...points] : points),
+    },
+  ],
   addToOutline: addCustomerJourneyToOutline,
   updateInOutline: updateCustomerJourneyInOutline,
-  findById: (outline, id) =>
-    outline.customerJourneys.find((journey) => journey.id === id),
+  selectItems: (outline) => outline.customerJourneys,
 };
 
-const metricSchemaConfig: ConfigEntry<
+const metricSchemaDescriptor: EntityDescriptor<
   SuccessMetricSchema,
-  DraftForKind<"metricSchema">
+  DraftForKind<"metricSchema">,
+  Parameters<typeof createNewSuccessMetricSchema>[0]
 > = {
-  defaultDraft: () => ({
+  defaultDraft: {
     title: "",
     description: "",
     fields: [],
-  }),
-  toDraft: (item) => ({
-    id: item.id,
-    title: item.title,
-    description: item.description,
-    fields: item.fields.map((field) => ({
-      id: field.id,
-      name: field.name,
-      description: field.description,
-      dataType: field.dataType,
-      required: field.required,
-      allowedValues: field.allowedValues,
-      sourceSystem: field.sourceSystem,
-    })),
-  }),
-  buildItem: (draft, fallbackId) => {
-    const created = createNewSuccessMetricSchema({
-      title: draft.title,
-      description: draft.description,
-      fields: draft.fields,
-    });
-    const id = draft.id ?? fallbackId ?? created.id;
-    return { ...created, id };
   },
+  createItem: createNewSuccessMetricSchema,
+  fields: [
+    "title",
+    "description",
+    {
+      key: "fields",
+      toDraft: (fields) => {
+        if (!isSuccessMetricFieldArray(fields)) {
+          return fields;
+        }
+
+        return fields.map((field) => ({
+          id: field.id,
+          name: field.name,
+          description: field.description,
+          dataType: field.dataType,
+          required: field.required,
+          allowedValues: isStringArray(field.allowedValues)
+            ? [...field.allowedValues]
+            : field.allowedValues,
+          sourceSystem: field.sourceSystem,
+        }));
+      },
+    },
+  ],
   addToOutline: addMetricSchemaToOutline,
   updateInOutline: updateMetricSchemaInOutline,
-  findById: (outline, id) =>
-    outline.metricSchemas.find((schema) => schema.id === id),
+  selectItems: (outline) => outline.metricSchemas,
 };
 
-const CONFIG_MAP = {
-  functionalRequirement: requirementConfig,
-  successMetric: successMetricConfig,
-  milestone: milestoneConfig,
-  customerJourney: customerJourneyConfig,
-  metricSchema: metricSchemaConfig,
+const CONFIG_MAP: {
+  readonly [K in EditorKind]: ConfigEntry<ItemForKind<K>, DraftForKind<K>>;
+} = {
+  functionalRequirement: buildConfigEntry(requirementDescriptor),
+  successMetric: buildConfigEntry(successMetricDescriptor),
+  milestone: buildConfigEntry(milestoneDescriptor),
+  customerJourney: buildConfigEntry(customerJourneyDescriptor),
+  metricSchema: buildConfigEntry(metricSchemaDescriptor),
 } as const;
 
 const getConfigFor = <K extends EditorKind>(
