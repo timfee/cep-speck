@@ -1,6 +1,11 @@
-import { useCallback, useMemo, useState, type ReactNode } from "react";
+import { useCallback, useMemo, type ReactNode } from "react";
 
 import { Textarea } from "@/components/ui/textarea";
+
+import {
+  type DraftFormFieldConfig,
+  useDraftFormController,
+} from "@/hooks/use-draft-form-controller";
 
 import type { EditorMode } from "./outline-editor-types";
 
@@ -9,7 +14,6 @@ import {
   LabeledField,
   baseInputClass,
   formSectionClass,
-  sanitizeOptionalField,
 } from "./outline-form-shared";
 
 type FieldPath<TDraft> = Extract<keyof TDraft, string>;
@@ -98,53 +102,6 @@ interface OutlineDraftFormResult<TDraft> {
   preparedDraft: TDraft;
 }
 
-const cloneDraft = <TDraft,>(value: TDraft): TDraft => {
-  if (typeof structuredClone === "function") {
-    return structuredClone(value);
-  }
-
-  return JSON.parse(JSON.stringify(value)) as TDraft;
-};
-
-function applyFieldSanitizers<TDraft>(
-  draft: TDraft,
-  fields: OutlineDraftFieldConfig<TDraft>[]
-): TDraft {
-  const next = cloneDraft(draft);
-
-  for (const field of fields) {
-    if (field.kind === "custom") {
-      continue;
-    }
-
-    const currentValue = next[field.path];
-    if (typeof currentValue !== "string") {
-      continue;
-    }
-
-    const shouldTrim = field.trim ?? field.kind !== "select";
-    if (shouldTrim) {
-      const trimmed = currentValue.trim();
-      if (field.optional === true) {
-        next[field.path] = sanitizeOptionalField(
-          trimmed
-        ) as TDraft[typeof field.path];
-      } else {
-        next[field.path] = trimmed as TDraft[typeof field.path];
-      }
-      continue;
-    }
-
-    if (field.optional === true) {
-      next[field.path] = sanitizeOptionalField(
-        currentValue
-      ) as TDraft[typeof field.path];
-    }
-  }
-
-  return next;
-}
-
 function flattenFieldConfigs<TDraft>(
   sections: OutlineDraftFormSection<TDraft>[]
 ): OutlineDraftFieldConfig<TDraft>[] {
@@ -158,6 +115,25 @@ function flattenFieldConfigs<TDraft>(
   }
 
   return fields;
+}
+
+function toDraftFieldConfigs<TDraft>(
+  fields: OutlineDraftFieldConfig<TDraft>[]
+): DraftFormFieldConfig<TDraft>[] {
+  return fields
+    .filter(
+      (
+        field
+      ): field is Exclude<
+        OutlineDraftFieldConfig<TDraft>,
+        OutlineDraftCustomField<TDraft>
+      > => field.kind !== "custom"
+    )
+    .map((field) => ({
+      path: field.path,
+      optional: field.optional === true,
+      trim: field.trim ?? field.kind !== "select",
+    }));
 }
 
 export function useOutlineDraftForm<TDraft>(
@@ -174,48 +150,62 @@ export function useOutlineDraftForm<TDraft>(
     validate: validateDraft,
   } = options;
 
-  const [formState, setFormState] = useState<TDraft>(() =>
-    cloneDraft(initialValues)
-  );
-
   const flattenedFields = useMemo(
     () => flattenFieldConfigs(sections),
     [sections]
   );
 
-  const updateField = useCallback(
-    <K extends FieldPath<TDraft>>(path: K, value: TDraft[K]) => {
-      setFormState((prev) => ({ ...prev, [path]: value }));
-    },
-    []
+  const draftFieldConfigs = useMemo(
+    () => toDraftFieldConfigs(flattenedFields),
+    [flattenedFields]
   );
 
-  const preparedDraft = useMemo(() => {
-    let draft = applyFieldSanitizers(formState, flattenedFields);
+  const sectionPreparers = useMemo(
+    () =>
+      sections
+        .filter(
+          (
+            section
+          ): section is OutlineDraftCustomSection<TDraft> & {
+            prepare: (draft: TDraft) => TDraft;
+          } =>
+            section.kind === "custom" && typeof section.prepare === "function"
+        )
+        .map((section) => section.prepare),
+    [sections]
+  );
 
-    for (const section of sections) {
-      if (section.kind === "custom" && section.prepare) {
-        draft = section.prepare(draft);
+  const combinedPrepare = useCallback(
+    (draft: TDraft) => {
+      let nextDraft = draft;
+
+      for (const prepareSection of sectionPreparers) {
+        nextDraft = prepareSection(nextDraft);
       }
-    }
 
-    if (prepareDraft) {
-      draft = prepareDraft(draft);
-    }
+      if (prepareDraft) {
+        nextDraft = prepareDraft(nextDraft);
+      }
 
-    return draft;
-  }, [formState, flattenedFields, sections, prepareDraft]);
-
-  const isValid =
-    typeof validateDraft === "function" ? validateDraft(preparedDraft) : true;
-
-  const handleSubmit = useCallback(
-    (event: React.FormEvent<HTMLFormElement>) => {
-      event.preventDefault();
-      onSubmit(preparedDraft);
+      return nextDraft;
     },
-    [onSubmit, preparedDraft]
+    [prepareDraft, sectionPreparers]
   );
+
+  const {
+    formState,
+    setFormState,
+    updateField,
+    preparedDraft,
+    isValid,
+    handleSubmit,
+  } = useDraftFormController({
+    initialValues,
+    fields: draftFieldConfigs,
+    onSubmit,
+    prepare: combinedPrepare,
+    validate: validateDraft,
+  });
 
   const renderField = useCallback(
     (field: OutlineDraftFieldConfig<TDraft>) => {
@@ -310,7 +300,7 @@ export function useOutlineDraftForm<TDraft>(
           return null;
       }
     },
-    [formState, updateField]
+    [formState, setFormState, updateField]
   );
 
   const renderSection = useCallback(
