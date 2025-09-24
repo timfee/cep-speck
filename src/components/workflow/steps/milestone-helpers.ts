@@ -1,7 +1,7 @@
+import type { MilestoneDraft } from "@/lib/workflow/outline-editor-types";
 import type { Milestone } from "@/types/workflow";
 
 import { createMilestone } from "./entity-factory";
-import type { MilestoneDraft } from "./hooks/outline-editor-types";
 import type { OutlineEntityDescriptor } from "./outline-entity-descriptor";
 
 export interface MilestoneInput

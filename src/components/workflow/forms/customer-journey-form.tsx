@@ -8,15 +8,15 @@ import type {
   CustomerJourneyDraft,
   CustomerJourneyStepDraft,
   EditorMode,
-} from "./outline-editor-types";
+} from "@/lib/workflow/outline-editor-types";
 
 import {
   optionalTextareaField,
   textField,
   textareaField,
-} from "./outline-form-fields";
+} from "@/lib/workflow/outline-form-fields";
 
-import { LabeledField } from "./outline-form-shared";
+import { LabeledField } from "@/lib/workflow/outline-form-shared";
 
 import {
   type OutlineDraftRenderArgs,

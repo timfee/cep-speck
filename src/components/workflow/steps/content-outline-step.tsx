@@ -2,6 +2,9 @@
 
 import React from "react";
 
+import { useOutlineStepHandlers } from "@/components/workflow/hooks/use-outline-step-handlers";
+import type { EditorKind } from "@/lib/workflow/outline-editor-types";
+
 import type {
   ContentOutline,
   CustomerJourney,
@@ -17,8 +20,6 @@ import { ContentSections } from "./components/content-sections";
 import { OutlineHeader } from "./components/outline-header";
 import { OutlineMetadataPanel } from "./components/outline-metadata-panel";
 import { getOutlineSummary } from "./content-outline-summary";
-import type { EditorKind } from "./hooks/outline-editor-types";
-import { useOutlineStepHandlers } from "./hooks/use-outline-step-handlers";
 
 interface ContentOutlineStepProps {
   initialPrompt: string;

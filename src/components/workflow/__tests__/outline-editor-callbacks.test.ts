@@ -6,7 +6,7 @@ import type {
   SuccessMetric,
 } from "@/types/workflow";
 
-jest.mock("../steps/hooks/outline-editor-config", () => ({
+jest.mock("@/lib/workflow/outline-editor-config", () => ({
   addItemToOutline: jest.fn(),
   updateItemInOutline: jest.fn(),
 }));
@@ -14,7 +14,7 @@ jest.mock("../steps/hooks/outline-editor-config", () => ({
 import { commitEditorItem } from "../steps/hooks/outline-editor-callbacks";
 
 const { addItemToOutline, updateItemInOutline } = jest.requireMock(
-  "../steps/hooks/outline-editor-config"
+  "@/lib/workflow/outline-editor-config"
 );
 
 const createEmptySelection = () => ({

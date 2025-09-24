@@ -12,7 +12,7 @@ import {
   optionalTextareaField,
   selectField,
   textField,
-} from "../outline-form-fields";
+} from "@/lib/workflow/outline-form-fields";
 
 import { useOutlineDraftForm } from "../use-outline-draft-form";
 

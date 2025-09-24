@@ -1,9 +1,10 @@
-import type { SuccessMetricField, SuccessMetricSchema } from "@/types/workflow";
-
 import type {
   SuccessMetricFieldDraft,
   SuccessMetricSchemaDraft,
-} from "./hooks/outline-editor-types";
+} from "@/lib/workflow/outline-editor-types";
+
+import type { SuccessMetricField, SuccessMetricSchema } from "@/types/workflow";
+
 
 import type { OutlineEntityDescriptor } from "./outline-entity-descriptor";
 import { createOutlineId } from "./outline-id";

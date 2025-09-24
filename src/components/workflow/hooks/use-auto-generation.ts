@@ -1,6 +1,6 @@
 import React from "react";
 
-import { MIN_PROMPT_LENGTH } from "@/hooks/progress-calculation";
+import { MIN_PROMPT_LENGTH } from "@/lib/utils/progress-calculation";
 
 import { useStructuredWorkflowContext } from "../structured-workflow-context";
 

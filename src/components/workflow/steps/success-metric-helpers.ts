@@ -1,7 +1,7 @@
+import type { SuccessMetricDraft } from "@/lib/workflow/outline-editor-types";
 import type { SuccessMetric } from "@/types/workflow";
 
 import { createSuccessMetric } from "./entity-factory";
-import type { SuccessMetricDraft } from "./hooks/outline-editor-types";
 import type { OutlineEntityDescriptor } from "./outline-entity-descriptor";
 
 export interface SuccessMetricInput

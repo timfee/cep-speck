@@ -1,6 +1,6 @@
 import React from "react";
 
-import type { EditorMode } from "../hooks/outline-editor-types";
+import type { EditorMode } from "@/lib/workflow/outline-editor-types";
 
 export interface FormComponentProps<Draft> {
   mode: EditorMode;

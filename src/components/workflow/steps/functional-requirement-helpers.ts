@@ -1,7 +1,7 @@
+import type { FunctionalRequirementDraft } from "@/lib/workflow/outline-editor-types";
 import type { FunctionalRequirement } from "@/types/workflow";
 
 import { createFunctionalRequirement } from "./entity-factory";
-import type { FunctionalRequirementDraft } from "./hooks/outline-editor-types";
 import type { OutlineEntityDescriptor } from "./outline-entity-descriptor";
 
 export interface FunctionalRequirementInput

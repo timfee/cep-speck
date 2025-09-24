@@ -6,9 +6,9 @@ import "@testing-library/jest-dom";
 import { act, renderHook } from "@testing-library/react";
 import React from "react";
 
+import type { SubmitCallbackMap } from "@/lib/workflow/outline-editor-callbacks";
 import type { ContentOutline } from "@/types/workflow";
 
-import type { SubmitCallbackMap } from "../steps/hooks/outline-editor-callbacks";
 import { useOutlineEditorManager } from "../steps/hooks/outline-editor-manager";
 import type { EditorState } from "../steps/hooks/outline-editor-types";
 
@@ -16,11 +16,11 @@ jest.mock("../steps/hooks/outline-editor-callbacks", () => ({
   commitEditorItem: jest.fn(),
 }));
 
-jest.mock("../steps/hooks/outline-editor-config", () => ({
+jest.mock("@/lib/workflow/outline-editor-config", () => ({
   buildItemFromDraft: jest.fn(),
 }));
 
-jest.mock("../steps/hooks/outline-editor-state", () => ({
+jest.mock("@/lib/workflow/outline-editor-state", () => ({
   useEditorStateController: jest.fn(),
   getExistingId: jest.fn(),
 }));
@@ -29,10 +29,10 @@ const { commitEditorItem } = jest.requireMock(
   "../steps/hooks/outline-editor-callbacks"
 );
 const { buildItemFromDraft } = jest.requireMock(
-  "../steps/hooks/outline-editor-config"
+  "@/lib/workflow/outline-editor-config"
 );
 const { useEditorStateController, getExistingId } = jest.requireMock(
-  "../steps/hooks/outline-editor-state"
+  "@/lib/workflow/outline-editor-state"
 );
 
 (globalThis as typeof globalThis & { React: typeof React }).React = React;

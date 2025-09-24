@@ -1,12 +1,12 @@
 import React from "react";
 
 import { Card } from "@/components/ui/card";
+import { formSectionClass } from "@/lib/workflow/outline-form-shared";
 import type { OutlineMetadata } from "@/types/workflow";
 
 import { MetadataListFields } from "./metadata-list-fields";
 import { PrimaryPersonaSelector } from "./primary-persona-selector";
 import { ProjectMetadataFields } from "./project-metadata-fields";
-import { formSectionClass } from "../hooks/outline-form-shared";
 
 interface OutlineMetadataPanelProps {
   metadata: OutlineMetadata;

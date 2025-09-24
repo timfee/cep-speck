@@ -1,6 +1,6 @@
+import type { CustomerJourneyDraft } from "@/lib/workflow/outline-editor-types";
 import type { CustomerJourney, CustomerJourneyStep } from "@/types/workflow";
 
-import type { CustomerJourneyDraft } from "./hooks/outline-editor-types";
 import type { OutlineEntityDescriptor } from "./outline-entity-descriptor";
 import { createOutlineId } from "./outline-id";
 

@@ -7,14 +7,14 @@ import {
   useDraftFormController,
 } from "@/hooks/use-draft-form-controller";
 
-import type { EditorMode } from "./outline-editor-types";
+import type { EditorMode } from "@/lib/workflow/outline-editor-types";
 
 import {
   FormActionButtons,
   LabeledField,
   baseInputClass,
   formSectionClass,
-} from "./outline-form-shared";
+} from "@/lib/workflow/outline-form-shared";
 
 type FieldPath<TDraft> = Extract<keyof TDraft, string>;
 

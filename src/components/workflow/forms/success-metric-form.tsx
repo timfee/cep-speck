@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 
-import type { EditorMode, SuccessMetricDraft } from "./outline-editor-types";
+import type { EditorMode, SuccessMetricDraft } from "@/lib/workflow/outline-editor-types";
 
 import {
   METRIC_TYPE_OPTIONS,
@@ -8,7 +8,7 @@ import {
   selectField,
   textField,
   textareaField,
-} from "./outline-form-fields";
+} from "@/lib/workflow/outline-form-fields";
 
 import { useOutlineDraftForm } from "./use-outline-draft-form";
 

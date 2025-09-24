@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 
-import type { EditorMode, MilestoneDraft } from "./outline-editor-types";
+import type { EditorMode, MilestoneDraft } from "@/lib/workflow/outline-editor-types";
 
 import {
   MILESTONE_PHASE_OPTIONS,
@@ -8,7 +8,7 @@ import {
   selectField,
   textField,
   textareaField,
-} from "./outline-form-fields";
+} from "@/lib/workflow/outline-form-fields";
 
 import { useOutlineDraftForm } from "./use-outline-draft-form";
 

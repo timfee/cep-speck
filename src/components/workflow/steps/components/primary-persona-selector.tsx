@@ -1,12 +1,13 @@
 import React from "react";
 
+import { LabeledField } from "@/lib/workflow/outline-form-shared";
+
 import type {
   OutlineMetadata,
   OutlineMetadataPersonaSelection,
 } from "@/types/workflow";
 
 import { PersonaRadioGroup } from "./persona-radio-group";
-import { LabeledField } from "../hooks/outline-form-shared";
 
 interface PrimaryPersonaSelectorProps {
   metadata: OutlineMetadata;

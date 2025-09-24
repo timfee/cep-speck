@@ -1,9 +1,9 @@
 import React from "react";
 
 import { RadioGroupItem } from "@/components/ui/radio-group";
+import { baseInputClass } from "@/lib/workflow/outline-form-shared";
 import type { OutlineMetadataPersonaSelection } from "@/types/workflow";
 
-import { baseInputClass } from "../hooks/outline-form-shared";
 
 interface CustomPersonaInputProps {
   primaryPersona: OutlineMetadataPersonaSelection;

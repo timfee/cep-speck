@@ -1,14 +1,6 @@
 import React from "react";
 
-import type { ContentOutline } from "@/types/workflow";
-
-import { ContentSection } from "./content-section";
-import { SECTION_CONFIGS } from "./content-sections-config";
-import type { FormComponentProps } from "./inline-editor-panel";
-import { CustomerJourneyForm } from "../hooks/customer-journey-form";
-import { FunctionalRequirementForm } from "../hooks/functional-requirement-form";
-import { MetricSchemaForm } from "../hooks/metric-schema-form";
-import { MilestoneForm } from "../hooks/milestone-form";
+import type { OutlineEditorHandlerMap } from "@/components/workflow/hooks/use-outline-step-handlers";
 
 import {
   EDITOR_KINDS,
@@ -18,10 +10,19 @@ import {
   type EditorValues,
   type ItemForKind,
   type StateForKind,
-} from "../hooks/outline-editor-types";
+} from "@/lib/workflow/outline-editor-types";
 
-import { SuccessMetricForm } from "../hooks/success-metric-form";
-import type { OutlineEditorHandlerMap } from "../hooks/use-outline-step-handlers";
+import type { ContentOutline } from "@/types/workflow";
+
+import { ContentSection } from "./content-section";
+import { SECTION_CONFIGS } from "./content-sections-config";
+import type { FormComponentProps } from "./inline-editor-panel";
+import { CustomerJourneyForm } from "../../forms/customer-journey-form";
+import { FunctionalRequirementForm } from "../../forms/functional-requirement-form";
+import { MetricSchemaForm } from "../../forms/metric-schema-form";
+import { MilestoneForm } from "../../forms/milestone-form";
+import { SuccessMetricForm } from "../../forms/success-metric-form";
+
 
 type OutlineDeleteHandlers = Partial<Record<EditorKind, (id: string) => void>>;
 

@@ -1,6 +1,7 @@
 import React from "react";
 
 import { Textarea } from "@/components/ui/textarea";
+import { LabeledField } from "@/lib/workflow/outline-form-shared";
 import type { OutlineMetadata } from "@/types/workflow";
 
 import {
@@ -10,7 +11,6 @@ import {
 
 import { PresetCheckboxList } from "./preset-checkbox-list";
 import { useMetadataFieldHandlers } from "./use-metadata-field-handlers";
-import { LabeledField } from "../hooks/outline-form-shared";
 
 interface MetadataListFieldItemProps {
   fieldKey: string;

@@ -1,15 +1,16 @@
 import { useCallback, useMemo } from "react";
 
-import { MetricFieldsSection } from "./metric-fields-section";
-import { ensureFieldDrafts, normalizeMetricField } from "./metric-schema-utils";
+import { MetricFieldsSection } from "@/lib/workflow/metric-fields-section";
+import { ensureFieldDrafts, normalizeMetricField } from "@/lib/workflow/metric-schema-utils";
 
 import type {
   EditorMode,
   SuccessMetricSchemaDraft,
-} from "./outline-editor-types";
+} from "@/lib/workflow/outline-editor-types";
 
-import { textField, textareaField } from "./outline-form-fields";
-import { formSectionClass } from "./outline-form-shared";
+import { textField, textareaField } from "@/lib/workflow/outline-form-fields";
+import { formSectionClass } from "@/lib/workflow/outline-form-shared";
+
 import { useOutlineDraftForm } from "./use-outline-draft-form";
 import type { OutlineDraftRenderArgs } from "./use-outline-draft-form";
 

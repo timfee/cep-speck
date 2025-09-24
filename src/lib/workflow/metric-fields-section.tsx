@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 
 import { Button } from "@/components/ui/button";
+import type { OutlineDraftRenderArgs } from "@/components/workflow/forms/use-outline-draft-form";
 
 import { MetricFieldEditor } from "./metric-field-editor";
 
@@ -14,7 +15,6 @@ import type {
   SuccessMetricSchemaDraft,
 } from "./outline-editor-types";
 
-import type { OutlineDraftRenderArgs } from "./use-outline-draft-form";
 
 export function MetricFieldsSection({
   formState,
