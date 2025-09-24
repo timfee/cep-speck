@@ -71,7 +71,7 @@ describe("workflow outline forms", () => {
     await user.click(submitButton);
 
     expect(onSubmit).toHaveBeenCalledTimes(1);
-    const submitted = onSubmit.mock.calls[0][0] as FunctionalRequirementDraft;
+    const submitted = onSubmit.mock.calls[0]?.[0] as FunctionalRequirementDraft;
     expect(submitted.title).toBe("Payment flow");
     expect(submitted.description).toBe("Should process payments securely");
     expect(submitted.userStory).toBe("As a user, I want secure checkout");
@@ -118,7 +118,7 @@ describe("workflow outline forms", () => {
     await user.click(submitButton);
 
     expect(onSubmit).toHaveBeenCalledTimes(1);
-    const submitted = onSubmit.mock.calls[0][0] as SuccessMetricDraft;
+    const submitted = onSubmit.mock.calls[0]?.[0] as SuccessMetricDraft;
     expect(submitted.name).toBe("Time to provision");
     expect(submitted.description).toBe(
       "Tracks time from request to live tenant"
@@ -168,7 +168,7 @@ describe("workflow outline forms", () => {
     await user.click(submitButton);
 
     expect(onSubmit).toHaveBeenCalledTimes(1);
-    const submitted = onSubmit.mock.calls[0][0] as MilestoneDraft;
+    const submitted = onSubmit.mock.calls[0]?.[0] as MilestoneDraft;
     expect(submitted.title).toBe("Launch automation");
     expect(submitted.description).toBe(
       "Deploy provisioning automation globally"
@@ -224,7 +224,7 @@ describe("workflow outline forms", () => {
     await user.click(submitButton);
 
     expect(onSubmit).toHaveBeenCalledTimes(1);
-    const submitted = onSubmit.mock.calls[0][0] as CustomerJourneyDraft;
+    const submitted = onSubmit.mock.calls[0]?.[0] as CustomerJourneyDraft;
     expect(submitted.title).toBe("Approve automation");
     expect(submitted.role).toBe("IT admin");
     expect(submitted.goal).toBe("Approve provisioning rollout");
@@ -299,7 +299,7 @@ describe("workflow outline forms", () => {
     await user.click(submitButton);
 
     expect(onSubmit).toHaveBeenCalledTimes(1);
-    const submitted = onSubmit.mock.calls[0][0] as SuccessMetricSchemaDraft;
+    const submitted = onSubmit.mock.calls[0]?.[0] as SuccessMetricSchemaDraft;
     expect(submitted.title).toBe("Provisioning metrics");
     expect(submitted.description).toBe(
       "Defines provisioning health indicators"

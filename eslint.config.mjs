@@ -446,6 +446,18 @@ const eslintConfig = [
     },
   },
   {
+    files: ["**/__tests__/**/*.ts", "**/__tests__/**/*.tsx", "**/*.test.ts", "**/*.test.tsx"],
+    rules: {
+      "@typescript-eslint/no-unsafe-assignment": "off",
+      "@typescript-eslint/no-unsafe-argument": "off",
+      "@typescript-eslint/no-unsafe-call": "off",
+      "@typescript-eslint/no-unsafe-member-access": "off",
+      "@typescript-eslint/no-unsafe-return": "off",
+      "custom/consistent-error-handling-pattern": "off",
+      "no-magic-numbers": "off",
+    },
+  },
+  {
     ignores: [
       "node_modules/**",
       ".next/**",

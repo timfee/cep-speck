@@ -19,7 +19,7 @@ import type {
   SuccessMetricSchema,
 } from "@/types/workflow";
 
-import { ContentOutlineStep } from "../../src/components/workflow/steps/content-outline-step";
+import { ContentOutlineStep } from "../../src/workflow/steps/content-outline-step";
 
 const baseOutline: ContentOutline = {
   metadata: {

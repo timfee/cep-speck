@@ -14,7 +14,7 @@ import {
   textField,
 } from "@/lib/workflow/outline-form-fields";
 
-import { useOutlineDraftForm } from "../use-outline-draft-form";
+import { useOutlineDraftForm } from "../../forms/use-outline-draft-form";
 
 (globalThis as typeof globalThis & { React: typeof React }).React = React;
 
@@ -73,7 +73,7 @@ describe("useOutlineDraftForm", () => {
             }),
           },
         ],
-        validate: (draft) => draft.name.length > 0,
+        validate: (draft) => draft.name && draft.name.length > 0,
       });
 
       return <>{Form}</>;

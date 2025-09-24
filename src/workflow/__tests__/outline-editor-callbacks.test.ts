@@ -1,3 +1,5 @@
+import { commitEditorItem } from "@/lib/workflow/outline-editor-callbacks";
+
 import type {
   ContentOutline,
   CustomerJourney,
@@ -11,11 +13,12 @@ jest.mock("@/lib/workflow/outline-editor-config", () => ({
   updateItemInOutline: jest.fn(),
 }));
 
-import { commitEditorItem } from "../steps/hooks/outline-editor-callbacks";
-
 const { addItemToOutline, updateItemInOutline } = jest.requireMock(
   "@/lib/workflow/outline-editor-config"
-);
+) as {
+  addItemToOutline: jest.Mock;
+  updateItemInOutline: jest.Mock;
+};
 
 const createEmptySelection = () => ({
   presetIds: [] as string[],

@@ -1,5 +1,5 @@
-import { initialWorkflowState } from "@/hooks/workflow-initial-state";
-import { resolveNavigationGuards } from "@/hooks/workflow-navigation";
+import { resolveNavigationGuards } from "@/hooks/use-workflow-navigation";
+import { initialWorkflowState } from "@/lib/utils/workflow-initial-state";
 
 describe("resolveNavigationGuards", () => {
   it("enables forward navigation when progress allows", () => {
