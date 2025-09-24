@@ -21,25 +21,30 @@ import { successMetricDescriptor } from "./success-metric-helpers";
 // Map editor kinds to outline collection keys
 const kindToCollectionKey: Record<EditorKind, OutlineCollectionKey> = {
   functionalRequirement: "functionalRequirements",
-  successMetric: "successMetrics", 
+  successMetric: "successMetrics",
   milestone: "milestones",
   customerJourney: "customerJourneys",
   metricSchema: "metricSchemas",
 };
 
 // Generic helper functions that use mutateOutline
-const createAddFunction = <K extends EditorKind>(kind: K) => (
-  outline: ContentOutline,
-  item: ItemForKind<K>
-): ContentOutline =>
-  mutateOutline(outline, kindToCollectionKey[kind], { type: "add", item });
+const createAddFunction =
+  <K extends EditorKind>(kind: K) =>
+  (outline: ContentOutline, item: ItemForKind<K>): ContentOutline =>
+    mutateOutline(outline, kindToCollectionKey[kind], { type: "add", item });
 
-const createUpdateFunction = <K extends EditorKind>(kind: K) => (
-  outline: ContentOutline,
-  id: string,
-  updates: Partial<ItemForKind<K>>
-): ContentOutline =>
-  mutateOutline(outline, kindToCollectionKey[kind], { type: "update", id, updates });
+const createUpdateFunction =
+  <K extends EditorKind>(kind: K) =>
+  (
+    outline: ContentOutline,
+    id: string,
+    updates: Partial<ItemForKind<K>>
+  ): ContentOutline =>
+    mutateOutline(outline, kindToCollectionKey[kind], {
+      type: "update",
+      id,
+      updates,
+    });
 
 type OutlineEntityMetadataMap = {
   [K in EditorKind]: OutlineEntityMetadata<ItemForKind<K>, DraftForKind<K>>;

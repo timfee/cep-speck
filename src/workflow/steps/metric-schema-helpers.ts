@@ -5,7 +5,6 @@ import type {
 
 import type { SuccessMetricField, SuccessMetricSchema } from "@/types/workflow";
 
-
 import type { OutlineEntityDescriptor } from "./outline-entity-descriptor";
 import { createOutlineId } from "./outline-id";
 

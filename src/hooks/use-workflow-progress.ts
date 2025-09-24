@@ -7,7 +7,6 @@ import type {
   WorkflowProgress,
 } from "@/types/workflow";
 
-
 export function useWorkflowStateWithProgress(
   state: StructuredWorkflowState
 ): StructuredWorkflowState & { progress: WorkflowProgress } {

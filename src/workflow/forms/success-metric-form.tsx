@@ -1,6 +1,9 @@
 import { useCallback, useMemo } from "react";
 
-import type { EditorMode, SuccessMetricDraft } from "@/lib/workflow/outline-editor-types";
+import type {
+  EditorMode,
+  SuccessMetricDraft,
+} from "@/lib/workflow/outline-editor-types";
 
 import {
   METRIC_TYPE_OPTIONS,

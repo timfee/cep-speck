@@ -10,11 +10,7 @@ import type {
   SerializedWorkflowSpec,
 } from "@/types/workflow";
 
-import {
-  loadKnowledgeBase,
-  performResearch,
-} from "./workflow-context";
-
+import { loadKnowledgeBase, performResearch } from "./workflow-context";
 
 // Constants for magic numbers
 const MAX_ALLOWED_ATTEMPTS = 5;

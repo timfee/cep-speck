@@ -18,8 +18,6 @@ import type {
   SuccessMetricSchema,
 } from "@/types/workflow";
 
-
-
 type OutlineActionConfig<K extends OutlineCollectionKey, Item> = {
   kind: K;
   __itemType?: Item;

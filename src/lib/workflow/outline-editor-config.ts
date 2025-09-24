@@ -1,4 +1,3 @@
-
 import type { ContentOutline } from "@/types/workflow";
 import type { OutlineEntityMetadata } from "@/workflow/steps/outline-entity-descriptor";
 import { outlineEntityMetadata } from "@/workflow/steps/outline-entity-metadata";

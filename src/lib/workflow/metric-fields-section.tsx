@@ -15,7 +15,6 @@ import type {
   SuccessMetricSchemaDraft,
 } from "./outline-editor-types";
 
-
 export function MetricFieldsSection({
   formState,
   setFormState,

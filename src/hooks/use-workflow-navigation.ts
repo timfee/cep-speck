@@ -8,7 +8,6 @@ import { WORKFLOW_STEPS } from "@/config/workflow/steps";
 import type { WorkflowStateSetter } from "@/lib/utils/workflow-state";
 import type { StructuredWorkflowState, WorkflowStep } from "@/types/workflow";
 
-
 // Get step IDs for easier manipulation
 const STEP_IDS = WORKFLOW_STEPS.map((step) => step.id);
 

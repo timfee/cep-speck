@@ -1,9 +1,12 @@
 import { useMemo } from "react";
 
-
 import type { SubmitCallbackMap } from "@/lib/workflow/outline-editor-callbacks";
 import { useOutlineEditorManager } from "@/lib/workflow/outline-editor-manager";
-import { EDITOR_KINDS, type EditorKind } from "@/lib/workflow/outline-editor-types";
+
+import {
+  EDITOR_KINDS,
+  type EditorKind,
+} from "@/lib/workflow/outline-editor-types";
 
 import type {
   ContentOutline,

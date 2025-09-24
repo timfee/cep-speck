@@ -20,7 +20,6 @@ import { useContentEditing } from "./use-content-editing";
 import { useWorkflowNavigation } from "./use-workflow-navigation";
 import { useWorkflowStateWithProgress } from "./use-workflow-progress";
 
-
 export interface WorkflowDispatch {
   setInitialPrompt: (prompt: string) => void;
   setContentOutline: (outline: ContentOutline) => void;
