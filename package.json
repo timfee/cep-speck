@@ -17,6 +17,7 @@
     "test": "pnpm lint:quick && pnpm fta:check && jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
+    "benchmark:streaming": "tsx benchmarks/streaming-benchmark.ts",
     "complexity": "fta src",
     "complexity:json": "mkdir -p reports && fta src --format json > reports/fta.json && echo 'Wrote reports/fta.json'",
     "fta:check": "pnpm run complexity:json && node scripts/check-fta-cap.mjs",
@@ -83,6 +84,7 @@
     "tailwindcss": "^4.1.13",
     "ts-jest": "^29.4.4",
     "tw-animate-css": "^1.3.8",
+    "tsx": "^4.19.2",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.44.0"
   }
