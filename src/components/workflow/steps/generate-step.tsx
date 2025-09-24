@@ -3,7 +3,7 @@ import { GenerateStepView } from "./generate-step-view";
 import { useGenerateStep } from "../hooks/use-generate-step";
 
 export function GenerateStep() {
-  const { state, goToNextStep, setFinalPrd } = useStructuredWorkflowContext();
+  const { state, dispatch, navigation } = useStructuredWorkflowContext();
 
   const {
     generation: gen,
@@ -19,8 +19,8 @@ export function GenerateStep() {
   } = useGenerateStep({
     workflowState: state,
     onComplete: (draft: string) => {
-      setFinalPrd(draft);
-      goToNextStep();
+      dispatch.setFinalPrd(draft);
+      navigation.goToNextStep();
     },
   });
 
