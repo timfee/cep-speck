@@ -11,32 +11,39 @@ import { MetricSchemaForm } from "../hooks/metric-schema-form";
 import { MilestoneForm } from "../hooks/milestone-form";
 
 import {
+  EDITOR_KINDS,
   type DraftForKind,
   type EditorKind,
   type EditorState,
   type EditorValues,
+  type ItemForKind,
   type StateForKind,
 } from "../hooks/outline-editor-types";
 
 import { SuccessMetricForm } from "../hooks/success-metric-form";
+import type { OutlineEditorHandlerMap } from "../hooks/use-outline-step-handlers";
+
+type OutlineDeleteHandlers = Partial<Record<EditorKind, (id: string) => void>>;
+
+type FormComponentMap = {
+  [K in EditorKind]: React.ComponentType<FormComponentProps<DraftForKind<K>>>;
+};
+
+const FORM_COMPONENTS: FormComponentMap = {
+  functionalRequirement: FunctionalRequirementForm,
+  successMetric: SuccessMetricForm,
+  milestone: MilestoneForm,
+  customerJourney: CustomerJourneyForm,
+  metricSchema: MetricSchemaForm,
+};
+
+const getFormComponent = <K extends EditorKind>(kind: K) =>
+  FORM_COMPONENTS[kind];
 
 interface ContentSectionsProps {
   contentOutline: ContentOutline;
-  handleAddFunctionalRequirement: () => void;
-  handleEditFunctionalRequirement: (id: string) => void;
-  onDeleteFunctionalRequirement?: (id: string) => void;
-  handleAddSuccessMetric: () => void;
-  handleEditSuccessMetric: (id: string) => void;
-  onDeleteSuccessMetric?: (id: string) => void;
-  handleAddMilestone: () => void;
-  handleEditMilestone: (id: string) => void;
-  onDeleteMilestone?: (id: string) => void;
-  handleAddCustomerJourney: () => void;
-  handleEditCustomerJourney: (id: string) => void;
-  onDeleteCustomerJourney?: (id: string) => void;
-  handleAddMetricSchema: () => void;
-  handleEditMetricSchema: (id: string) => void;
-  onDeleteMetricSchema?: (id: string) => void;
+  handlersByKind: OutlineEditorHandlerMap;
+  deleteHandlers?: OutlineDeleteHandlers;
   editorState: EditorState | null;
   onCancelEditor: () => void;
   onSubmitEditor: (values: EditorValues) => void;
@@ -45,21 +52,8 @@ interface ContentSectionsProps {
 export function ContentSections(props: ContentSectionsProps) {
   const {
     contentOutline,
-    handleAddFunctionalRequirement,
-    handleEditFunctionalRequirement,
-    onDeleteFunctionalRequirement,
-    handleAddSuccessMetric,
-    handleEditSuccessMetric,
-    onDeleteSuccessMetric,
-    handleAddMilestone,
-    handleEditMilestone,
-    onDeleteMilestone,
-    handleAddCustomerJourney,
-    handleEditCustomerJourney,
-    onDeleteCustomerJourney,
-    handleAddMetricSchema,
-    handleEditMetricSchema,
-    onDeleteMetricSchema,
+    handlersByKind,
+    deleteHandlers = {},
     editorState,
     onCancelEditor,
     onSubmitEditor,
@@ -82,58 +76,47 @@ export function ContentSections(props: ContentSectionsProps) {
     };
   };
 
-  return (
-    <>
-      <ContentSection
-        {...SECTION_CONFIGS.requirements}
-        items={contentOutline.functionalRequirements}
-        onAdd={handleAddFunctionalRequirement}
-        onEdit={handleEditFunctionalRequirement}
-        onDelete={onDeleteFunctionalRequirement}
-        renderItem={SECTION_CONFIGS.requirements.renderer}
-        editor={resolveEditorProps("functionalRequirement")}
-        FormComponent={FunctionalRequirementForm}
+  const renderSection = <K extends EditorKind>(kind: K) => {
+    const {
+      title,
+      icon,
+      addLabel,
+      itemLabel,
+      emptyMessage,
+      renderer,
+      selectItems,
+    } = SECTION_CONFIGS[kind];
+
+    const { handleAdd, handleEdit } = handlersByKind[kind];
+    const FormComponent = getFormComponent(kind);
+    const editor = resolveEditorProps(kind);
+    const items = selectItems(contentOutline) as ItemForKind<K>[];
+    const renderItem = renderer as (item: ItemForKind<K>) => {
+      id: string;
+      title: string;
+      description: string;
+      badge: React.ReactNode;
+      extra?: React.ReactNode;
+    };
+
+    return (
+      <ContentSection<ItemForKind<K>, DraftForKind<K>>
+        key={kind}
+        title={title}
+        icon={icon}
+        items={items}
+        onAdd={handleAdd}
+        onEdit={handleEdit}
+        onDelete={deleteHandlers[kind]}
+        emptyMessage={emptyMessage}
+        renderItem={renderItem}
+        addLabel={addLabel}
+        itemLabel={itemLabel}
+        FormComponent={FormComponent}
+        editor={editor}
       />
-      <ContentSection
-        {...SECTION_CONFIGS.metrics}
-        items={contentOutline.successMetrics}
-        onAdd={handleAddSuccessMetric}
-        onEdit={handleEditSuccessMetric}
-        onDelete={onDeleteSuccessMetric}
-        renderItem={SECTION_CONFIGS.metrics.renderer}
-        editor={resolveEditorProps("successMetric")}
-        FormComponent={SuccessMetricForm}
-      />
-      <ContentSection
-        {...SECTION_CONFIGS.milestones}
-        items={contentOutline.milestones}
-        onAdd={handleAddMilestone}
-        onEdit={handleEditMilestone}
-        onDelete={onDeleteMilestone}
-        renderItem={SECTION_CONFIGS.milestones.renderer}
-        editor={resolveEditorProps("milestone")}
-        FormComponent={MilestoneForm}
-      />
-      <ContentSection
-        {...SECTION_CONFIGS.customerJourneys}
-        items={contentOutline.customerJourneys}
-        onAdd={handleAddCustomerJourney}
-        onEdit={handleEditCustomerJourney}
-        onDelete={onDeleteCustomerJourney}
-        renderItem={SECTION_CONFIGS.customerJourneys.renderer}
-        editor={resolveEditorProps("customerJourney")}
-        FormComponent={CustomerJourneyForm}
-      />
-      <ContentSection
-        {...SECTION_CONFIGS.metricSchemas}
-        items={contentOutline.metricSchemas}
-        onAdd={handleAddMetricSchema}
-        onEdit={handleEditMetricSchema}
-        onDelete={onDeleteMetricSchema}
-        renderItem={SECTION_CONFIGS.metricSchemas.renderer}
-        editor={resolveEditorProps("metricSchema")}
-        FormComponent={MetricSchemaForm}
-      />
-    </>
-  );
+    );
+  };
+
+  return <>{EDITOR_KINDS.map((kind) => renderSection(kind))}</>;
 }

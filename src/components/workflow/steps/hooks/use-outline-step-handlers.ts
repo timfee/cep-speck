@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 
 import type {
   ContentOutline,
@@ -11,6 +11,14 @@ import type {
 
 import type { SubmitCallbackMap } from "./outline-editor-callbacks";
 import { useOutlineEditorManager } from "./outline-editor-manager";
+import { EDITOR_KINDS, type EditorKind } from "./outline-editor-types";
+
+export type OutlineEditorHandlerMap = {
+  [K in EditorKind]: {
+    handleAdd: () => void;
+    handleEdit: (id: string) => void;
+  };
+};
 
 interface UseOutlineStepHandlersProps {
   contentOutline: ContentOutline;
@@ -135,47 +143,19 @@ export function useOutlineStepHandlers(props: UseOutlineStepHandlersProps) {
       submitCallbacks,
     });
 
+  const handlersByKind = useMemo(() => {
+    const map = {} as OutlineEditorHandlerMap;
+    for (const kind of EDITOR_KINDS) {
+      map[kind] = {
+        handleAdd: () => openEditor(kind, "create"),
+        handleEdit: (id: string) => openEditor(kind, "edit", id),
+      };
+    }
+    return map;
+  }, [openEditor]);
+
   return {
-    handleAddFunctionalRequirement: useCallback(
-      () => openEditor("functionalRequirement", "create"),
-      [openEditor]
-    ),
-    handleEditFunctionalRequirement: useCallback(
-      (id: string) => openEditor("functionalRequirement", "edit", id),
-      [openEditor]
-    ),
-    handleAddSuccessMetric: useCallback(
-      () => openEditor("successMetric", "create"),
-      [openEditor]
-    ),
-    handleEditSuccessMetric: useCallback(
-      (id: string) => openEditor("successMetric", "edit", id),
-      [openEditor]
-    ),
-    handleAddMilestone: useCallback(
-      () => openEditor("milestone", "create"),
-      [openEditor]
-    ),
-    handleEditMilestone: useCallback(
-      (id: string) => openEditor("milestone", "edit", id),
-      [openEditor]
-    ),
-    handleAddCustomerJourney: useCallback(
-      () => openEditor("customerJourney", "create"),
-      [openEditor]
-    ),
-    handleEditCustomerJourney: useCallback(
-      (id: string) => openEditor("customerJourney", "edit", id),
-      [openEditor]
-    ),
-    handleAddMetricSchema: useCallback(
-      () => openEditor("metricSchema", "create"),
-      [openEditor]
-    ),
-    handleEditMetricSchema: useCallback(
-      (id: string) => openEditor("metricSchema", "edit", id),
-      [openEditor]
-    ),
+    handlersByKind,
     editorState,
     cancelEditor: closeEditor,
     submitEditor,

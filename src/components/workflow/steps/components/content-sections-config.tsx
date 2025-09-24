@@ -2,16 +2,20 @@
  * Content sections configuration and renderers
  */
 import { BarChart3, Calendar, ListChecks, Route, Target } from "lucide-react";
+import type { ReactNode } from "react";
 
 import { Badge } from "@/components/ui/badge";
 
 import type {
+  ContentOutline,
   CustomerJourney,
   FunctionalRequirement,
   Milestone,
   SuccessMetric,
   SuccessMetricSchema,
 } from "@/types/workflow";
+
+import type { EditorKind, ItemForKind } from "../hooks/outline-editor-types";
 
 const JOURNEY_STEP_PREVIEW_LIMIT = 3;
 const METRIC_FIELD_PREVIEW_LIMIT = 3;
@@ -62,11 +66,29 @@ export const createDateExtra = (estimatedDate?: string) =>
     </div>
   ) : undefined;
 
+type SectionConfig<K extends EditorKind> = {
+  title: string;
+  icon: ReactNode;
+  addLabel: string;
+  itemLabel: string;
+  emptyMessage: string;
+  renderer: (item: ItemForKind<K>) => {
+    id: string;
+    title: string;
+    description: string;
+    badge: ReactNode;
+    extra?: ReactNode;
+  };
+  selectItems: (outline: ContentOutline) => ItemForKind<K>[];
+};
+
+type SectionConfigMap = { [K in EditorKind]: SectionConfig<K> };
+
 /**
  * Section configuration with renderers
  */
 export const SECTION_CONFIGS = {
-  requirements: {
+  functionalRequirement: {
     title: "Functional Requirements",
     icon: <Target className="h-5 w-5 text-green-600" />,
     addLabel: "Add Requirement",
@@ -80,8 +102,9 @@ export const SECTION_CONFIGS = {
       badge: createPriorityBadge(req.priority),
       extra: createUserStoryExtra(req.userStory),
     }),
+    selectItems: (outline) => outline.functionalRequirements,
   },
-  metrics: {
+  successMetric: {
     title: "Success Metrics",
     icon: <BarChart3 className="h-5 w-5 text-blue-600" />,
     addLabel: "Add Metric",
@@ -95,8 +118,9 @@ export const SECTION_CONFIGS = {
       badge: <Badge variant="outline">{metric.type}</Badge>,
       extra: createMetricExtra(metric.target, metric.measurement),
     }),
+    selectItems: (outline) => outline.successMetrics,
   },
-  milestones: {
+  milestone: {
     title: "Milestones & Timeline",
     icon: <Calendar className="h-5 w-5 text-purple-600" />,
     addLabel: "Add Milestone",
@@ -110,8 +134,9 @@ export const SECTION_CONFIGS = {
       badge: <Badge variant="outline">{milestone.phase}</Badge>,
       extra: createDateExtra(milestone.estimatedDate),
     }),
+    selectItems: (outline) => outline.milestones,
   },
-  customerJourneys: {
+  customerJourney: {
     title: "Customer Journeys",
     icon: <Route className="h-5 w-5 text-amber-600" />,
     addLabel: "Add Journey",
@@ -152,8 +177,9 @@ export const SECTION_CONFIGS = {
           ) : undefined,
       };
     },
+    selectItems: (outline) => outline.customerJourneys,
   },
-  metricSchemas: {
+  metricSchema: {
     title: "Metric Schemas",
     icon: <ListChecks className="h-5 w-5 text-sky-600" />,
     addLabel: "Add Metric Schema",
@@ -186,5 +212,6 @@ export const SECTION_CONFIGS = {
           ) : undefined,
       };
     },
+    selectItems: (outline) => outline.metricSchemas,
   },
-} as const;
+} as const satisfies SectionConfigMap;
