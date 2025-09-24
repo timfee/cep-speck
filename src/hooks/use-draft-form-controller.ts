@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState, type FormEvent } from "react";
 
-import { sanitizeOptionalField } from "@/lib/forms/sanitize";
+import { sanitizeOptionalField } from "@/hooks/sanitize-utils";
 
 type FieldPath<TDraft> = Extract<keyof TDraft, string>;
 

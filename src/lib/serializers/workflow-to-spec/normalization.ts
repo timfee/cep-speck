@@ -1,5 +1,8 @@
-import { normalizeWhitespace } from "./strings";
 import type { SectionContentMap } from "./types";
+
+function normalizeWhitespace(value: string): string {
+  return value.trim();
+}
 
 export function buildNormalizedSectionMap(
   contents: Record<string, string>

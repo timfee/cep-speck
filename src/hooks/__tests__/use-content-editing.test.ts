@@ -13,7 +13,6 @@ import type {
 } from "@/hooks/use-content-editing";
 
 import { useContentEditing } from "@/hooks/use-content-editing";
-import { createWorkflowStateFixture } from "@/test-utils/workflow-fixtures";
 
 import type {
   CustomerJourney,
@@ -23,6 +22,9 @@ import type {
   SuccessMetricField,
   SuccessMetricSchema,
 } from "@/types/workflow";
+
+import { createWorkflowStateFixture } from "../../tests/lib/workflow-fixtures";
+
 
 type ContentEditingState = ReturnType<typeof createWorkflowStateFixture>;
 type ContentEditingHookResult = {
