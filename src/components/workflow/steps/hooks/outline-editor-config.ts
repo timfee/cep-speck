@@ -1,15 +1,4 @@
-import {
-  addFunctionalRequirementToOutline,
-  addCustomerJourneyToOutline,
-  addMilestoneToOutline,
-  addSuccessMetricToOutline,
-  addMetricSchemaToOutline,
-  updateFunctionalRequirementInOutline,
-  updateCustomerJourneyInOutline,
-  updateMilestoneInOutline,
-  updateSuccessMetricInOutline,
-  updateMetricSchemaInOutline,
-} from "@/hooks/content-editing-utils";
+import { mutateOutline } from "@/hooks/content-editing-utils";
 
 import type {
   ContentOutline,
@@ -77,8 +66,17 @@ const requirementConfig: ConfigEntry<
     const id = draft.id ?? fallbackId ?? created.id;
     return { ...created, id };
   },
-  addToOutline: addFunctionalRequirementToOutline,
-  updateInOutline: updateFunctionalRequirementInOutline,
+  addToOutline: (outline, item) =>
+    mutateOutline(outline, "functionalRequirements", {
+      type: "add",
+      item,
+    }),
+  updateInOutline: (outline, id, item) =>
+    mutateOutline(outline, "functionalRequirements", {
+      type: "update",
+      id,
+      updates: item,
+    }),
   findById: (outline, id) =>
     outline.functionalRequirements.find((item) => item.id === id),
 };
@@ -115,8 +113,17 @@ const successMetricConfig: ConfigEntry<
     const id = draft.id ?? fallbackId ?? created.id;
     return { ...created, id };
   },
-  addToOutline: addSuccessMetricToOutline,
-  updateInOutline: updateSuccessMetricInOutline,
+  addToOutline: (outline, item) =>
+    mutateOutline(outline, "successMetrics", {
+      type: "add",
+      item,
+    }),
+  updateInOutline: (outline, id, item) =>
+    mutateOutline(outline, "successMetrics", {
+      type: "update",
+      id,
+      updates: item,
+    }),
   findById: (outline, id) =>
     outline.successMetrics.find((item) => item.id === id),
 };
@@ -148,8 +155,14 @@ const milestoneConfig: ConfigEntry<Milestone, DraftForKind<"milestone">> = {
     const id = draft.id ?? fallbackId ?? created.id;
     return { ...created, id };
   },
-  addToOutline: addMilestoneToOutline,
-  updateInOutline: updateMilestoneInOutline,
+  addToOutline: (outline, item) =>
+    mutateOutline(outline, "milestones", { type: "add", item }),
+  updateInOutline: (outline, id, item) =>
+    mutateOutline(outline, "milestones", {
+      type: "update",
+      id,
+      updates: item,
+    }),
   findById: (outline, id) => outline.milestones.find((item) => item.id === id),
 };
 
@@ -188,8 +201,17 @@ const customerJourneyConfig: ConfigEntry<
     const id = draft.id ?? fallbackId ?? created.id;
     return { ...created, id };
   },
-  addToOutline: addCustomerJourneyToOutline,
-  updateInOutline: updateCustomerJourneyInOutline,
+  addToOutline: (outline, item) =>
+    mutateOutline(outline, "customerJourneys", {
+      type: "add",
+      item,
+    }),
+  updateInOutline: (outline, id, item) =>
+    mutateOutline(outline, "customerJourneys", {
+      type: "update",
+      id,
+      updates: item,
+    }),
   findById: (outline, id) =>
     outline.customerJourneys.find((journey) => journey.id === id),
 };
@@ -226,8 +248,17 @@ const metricSchemaConfig: ConfigEntry<
     const id = draft.id ?? fallbackId ?? created.id;
     return { ...created, id };
   },
-  addToOutline: addMetricSchemaToOutline,
-  updateInOutline: updateMetricSchemaInOutline,
+  addToOutline: (outline, item) =>
+    mutateOutline(outline, "metricSchemas", {
+      type: "add",
+      item,
+    }),
+  updateInOutline: (outline, id, item) =>
+    mutateOutline(outline, "metricSchemas", {
+      type: "update",
+      id,
+      updates: item,
+    }),
   findById: (outline, id) =>
     outline.metricSchemas.find((schema) => schema.id === id),
 };
