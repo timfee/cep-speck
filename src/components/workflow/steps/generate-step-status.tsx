@@ -1,10 +1,8 @@
 import { MetricsDashboard } from "@/components/ui/metrics-dashboard";
 import type { Issue } from "@/lib/spec/types";
 
-import {
-  GenerationStatusCard,
-  ValidationIssuesAlert,
-} from "./generate-step-sections";
+import { GenerationStatusCard } from "./generation-status-card";
+import { ValidationIssuesAlert } from "./validation-issues-alert";
 
 interface GenerateStepStatusProps {
   isGenerating: boolean;

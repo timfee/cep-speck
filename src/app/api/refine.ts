@@ -1,6 +1,6 @@
 import type { NextRequest } from "next/server";
 
-import { runRefinerAgentComplete } from "@/lib/agents";
+import { runRefinerAgentComplete } from "@/lib/agents/refiner";
 
 export const runtime = "nodejs";
 
