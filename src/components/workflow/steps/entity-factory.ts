@@ -43,6 +43,10 @@ export function createEntityFactory<
       ...config.defaultValues,
     };
 
+    const requiredFields = new Set(
+      config.requiredFields.map((fieldConfig) => fieldConfig.field as string)
+    );
+
     // Process required fields
     for (const fieldConfig of config.requiredFields) {
       const value = input[fieldConfig.field as string];
@@ -62,13 +66,20 @@ export function createEntityFactory<
 
     // Copy other fields with optional string normalization
     for (const [key, value] of Object.entries(input)) {
-      if (
-        !Object.prototype.hasOwnProperty.call(result, key) &&
-        value !== undefined
-      ) {
-        result[key] =
-          typeof value === "string" ? normalizeOptionalString(value) : value;
+      if (requiredFields.has(key) || value === undefined) {
+        continue;
       }
+
+      if (typeof value === "string") {
+        const normalized = normalizeOptionalString(value);
+        if (normalized === undefined) {
+          continue;
+        }
+        result[key] = normalized;
+        continue;
+      }
+
+      result[key] = value;
     }
 
     return result as TOutput;
