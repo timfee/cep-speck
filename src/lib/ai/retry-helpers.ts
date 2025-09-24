@@ -27,11 +27,35 @@ async function validateProviderAvailability(
   provider: AIProvider
 ): Promise<void> {
   const isAvailable = await provider.isAvailable();
+
   if (!isAvailable) {
     // Get detailed availability status if available
     if (provider.getAvailabilityStatus) {
-      const status = await provider.getAvailabilityStatus();
-      throw new Error(`${status.reason} - ${status.actionRequired}`);
+      try {
+        const status = await provider.getAvailabilityStatus();
+        // Properly format the error message
+        const errorMessage =
+          status.reason != null &&
+          status.reason !== "" &&
+          status.actionRequired != null &&
+          status.actionRequired !== ""
+            ? `${status.reason} - ${status.actionRequired}`
+            : (status.reason ??
+              `Provider ${provider.name} is not available. Check configuration and API keys.`);
+        throw new Error(errorMessage);
+      } catch (statusError) {
+        // If getting status fails, throw the status error itself if it's descriptive
+        if (
+          statusError instanceof Error &&
+          statusError.message.includes("API key")
+        ) {
+          throw statusError;
+        }
+        // Otherwise fallback to generic message
+        throw new Error(
+          `Provider ${provider.name} is not available. Check configuration and API keys.`
+        );
+      }
     }
     throw new Error(
       `Provider ${provider.name} is not available. Check configuration and API keys.`
