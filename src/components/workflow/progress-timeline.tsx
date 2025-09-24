@@ -4,9 +4,9 @@ import React, { useMemo } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { WORKFLOW_STEPS } from "@/config/workflow/steps";
 import type { StreamPhase } from "@/lib/spec/types";
 import { cn } from "@/lib/utils";
-import { WORKFLOW_STEPS } from "@/types/workflow";
 import type { WorkflowProgress } from "@/types/workflow";
 
 import {

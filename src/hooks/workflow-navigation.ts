@@ -4,13 +4,13 @@
 
 import { useCallback, useMemo } from "react";
 
+import { WORKFLOW_STEPS } from "@/config/workflow/steps";
 import type { StructuredWorkflowState, WorkflowStep } from "@/types/workflow";
-import { WORKFLOW_STEPS } from "@/types/workflow";
 
 import type { WorkflowStateSetter } from "./workflow-state";
 
 // Get step IDs for easier manipulation
-const STEP_IDS = WORKFLOW_STEPS.map((step) => step.id) as WorkflowStep[];
+const STEP_IDS = WORKFLOW_STEPS.map((step) => step.id);
 
 export function findNextStep(currentStep: WorkflowStep): WorkflowStep | null {
   const currentIndex = STEP_IDS.indexOf(currentStep);

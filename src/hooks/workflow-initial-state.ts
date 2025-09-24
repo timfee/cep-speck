@@ -1,5 +1,5 @@
+import { DEFAULT_ENTERPRISE_PARAMETERS } from "@/config/workflow/enterprise";
 import { EMPTY_OUTLINE_METADATA } from "@/lib/services/content-outline-schemas";
-import { DEFAULT_ENTERPRISE_PARAMETERS } from "@/types/workflow";
 import type { StructuredWorkflowState } from "@/types/workflow";
 
 // Initial state for the workflow

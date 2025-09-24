@@ -64,18 +64,16 @@ function renderOutlineStep(options: {
   const user = userEvent.setup();
   const outline = options.outline ?? baseOutline;
   const onAddRequirement =
-    options.onAddRequirement ??
-    jest.fn<(requirement: FunctionalRequirement) => void>();
+    options.onAddRequirement ?? jest.fn<void, [FunctionalRequirement]>();
   const onEditMetric =
-    options.onEditMetric ??
-    jest.fn<(id: string, metric: Partial<SuccessMetric>) => void>();
+    options.onEditMetric ?? jest.fn<void, [string, Partial<SuccessMetric>]>();
   const onDeleteMilestone =
-    options.onDeleteMilestone ?? jest.fn<(id: string) => void>();
+    options.onDeleteMilestone ?? jest.fn<void, [string]>();
   const onAddJourney =
-    options.onAddJourney ?? jest.fn<(journey: CustomerJourney) => void>();
+    options.onAddJourney ?? jest.fn<void, [CustomerJourney]>();
   const onEditMetricSchema =
     options.onEditMetricSchema ??
-    jest.fn<(id: string, updates: Partial<SuccessMetricSchema>) => void>();
+    jest.fn<void, [string, Partial<SuccessMetricSchema>]>();
 
   render(
     <ContentOutlineStep

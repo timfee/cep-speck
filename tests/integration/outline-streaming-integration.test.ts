@@ -34,7 +34,6 @@ import type {
   SuccessMetric,
   CustomerJourney,
   Milestone,
-  WorkflowProgress,
   SerializedWorkflowOutline,
   SerializedWorkflowSpec,
 } from "@/types/workflow";
@@ -165,12 +164,15 @@ function createTestWorkflowState(
   const defaultCustomerJourney: CustomerJourney = {
     id: "cj-001",
     title: "Security Incident Response",
-    description: "How security teams respond to detected threats",
+    role: "Security Analyst",
+    goal: "Coordinate incident mitigation",
+    successCriteria: "Incidents resolved within SLA",
     steps: [
       { id: "step1", description: "Alert received" },
       { id: "step2", description: "Incident investigation" },
       { id: "step3", description: "Response coordination" },
     ],
+    painPoints: ["Manual escalation"],
   };
 
   const defaultMilestone: Milestone = {
@@ -206,11 +208,13 @@ function createTestWorkflowState(
     sectionOrder: [],
     finalPrd: "",
     progress: {
-      currentStep: "outline",
-      completedSteps: [],
+      step: 2,
       totalSteps: 4,
-      percentComplete: 25,
-    } as WorkflowProgress,
+      stepName: "outline",
+      completion: 25,
+      canGoBack: true,
+      canGoNext: true,
+    },
     isLoading: false,
     ...overrides,
   };
@@ -319,8 +323,12 @@ describe("Streaming Payload Integration", () => {
       new TextEncoder().encode(partialFrame2 + "\n")
     );
     expect(frames2).toHaveLength(1);
-    expect(frames2[0].type).toBe("phase");
-    expect(frames2[0].data.phase).toBe("generating");
+    const [frame] = frames2;
+    expect(frame.type).toBe("phase");
+    if (frame.type !== "phase") {
+      throw new Error("Expected a phase frame");
+    }
+    expect(frame.data.phase).toBe("generating");
   });
 });
 

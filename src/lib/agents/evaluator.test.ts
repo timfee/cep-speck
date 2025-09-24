@@ -22,7 +22,7 @@ describe("Semantic Evaluator Agent", () => {
   const mockResilientAI = getResilientAI as jest.MockedFunction<
     typeof getResilientAI
   >;
-  const mockLoadPrompt = loadPrompt;
+  const mockLoadPrompt = loadPrompt as jest.MockedFunction<typeof loadPrompt>;
 
   beforeEach(() => {
     jest.clearAllMocks();

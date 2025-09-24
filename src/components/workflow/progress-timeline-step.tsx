@@ -4,7 +4,11 @@ import { Circle } from "lucide-react";
 
 import { getTimelinePhaseLabel } from "@/lib/spec/helpers/phase-processing";
 import { cn } from "@/lib/utils";
-import type { WorkflowProgress, WORKFLOW_STEPS } from "@/types/workflow";
+
+import type {
+  WorkflowProgress,
+  WorkflowStepDefinition,
+} from "@/types/workflow";
 
 import { PhaseBadges, StepIndicator } from "./progress-timeline-visuals";
 
@@ -24,7 +28,7 @@ export function getPhaseLabel(phase: string | undefined): string | undefined {
 }
 
 interface TimelineStepProps {
-  step: (typeof WORKFLOW_STEPS)[number];
+  step: WorkflowStepDefinition;
   index: number;
   progress: WorkflowProgress;
   generatePhase?: GeneratePhaseDetails;

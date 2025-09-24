@@ -2,16 +2,16 @@
  * Workflow state management utilities
  */
 
+import { WORKFLOW_STEPS } from "@/config/workflow/steps";
+
 import type {
   StructuredWorkflowState,
   WorkflowProgress,
   WorkflowStep,
 } from "@/types/workflow";
 
-import { WORKFLOW_STEPS } from "@/types/workflow";
-
 // Get step IDs for easier manipulation
-const STEP_IDS = WORKFLOW_STEPS.map((step) => step.id) as WorkflowStep[];
+const STEP_IDS = WORKFLOW_STEPS.map((step) => step.id);
 
 /**
  * Calculate workflow progress
