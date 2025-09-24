@@ -37,6 +37,107 @@ const editorKinds: EditorKind[] = [
   "metricSchema",
 ];
 
+type OptionalFieldAssertion<K extends EditorKind> = (
+  original: ItemForKind<K>,
+  draft: DraftForKind<K>,
+  rebuilt: ItemForKind<K>
+) => void;
+
+const expectMetricSchemaDraftMatches = (
+  original: ItemForKind<"metricSchema">,
+  draft: DraftForKind<"metricSchema">
+) => {
+  expect(draft.fields).toHaveLength(original.fields.length);
+  expect(draft.fields[0]).toEqual({
+    id: original.fields[0]?.id,
+    name: original.fields[0]?.name,
+    description: original.fields[0]?.description,
+    dataType: original.fields[0]?.dataType,
+    required: original.fields[0]?.required,
+    allowedValues: original.fields[0]?.allowedValues,
+    sourceSystem: original.fields[0]?.sourceSystem,
+  });
+};
+
+const expectMetricSchemaRebuiltMatches = (
+  original: ItemForKind<"metricSchema">,
+  rebuilt: ItemForKind<"metricSchema">
+) => {
+  const rebuiltField = rebuilt.fields[0];
+  const originalField = original.fields[0];
+  expect(rebuiltField?.id).toBe(originalField?.id);
+  expect(rebuiltField?.name).toBe(originalField?.name);
+  expect(rebuiltField?.description).toBe(originalField?.description);
+  expect(rebuiltField?.dataType).toBe(originalField?.dataType);
+  expect(rebuiltField?.required).toBe(originalField?.required);
+  expect(rebuiltField?.allowedValues).toBeUndefined();
+  expect(rebuiltField?.sourceSystem).toBe(originalField?.sourceSystem);
+};
+
+const optionalFieldAssertions: {
+  [K in EditorKind]: OptionalFieldAssertion<K>;
+} = {
+  functionalRequirement: (original, draft, rebuilt) => {
+    expect(draft.userStory).toBe(original.userStory);
+    expect(rebuilt.userStory).toBe(original.userStory);
+    expect(draft.acceptanceCriteria).toEqual(original.acceptanceCriteria);
+    expect(rebuilt.acceptanceCriteria).toEqual(original.acceptanceCriteria);
+    expect(draft.dependencies).toEqual(original.dependencies);
+    expect(rebuilt.dependencies).toEqual(original.dependencies);
+    expect(draft.estimatedEffort).toBe(original.estimatedEffort);
+    expect(rebuilt.estimatedEffort).toBe(original.estimatedEffort);
+  },
+  successMetric: (original, draft, rebuilt) => {
+    expect(draft.type).toBe(original.type);
+    expect(rebuilt.type).toBe(original.type);
+    expect(draft.target).toBe(original.target);
+    expect(rebuilt.target).toBe(original.target);
+    expect(draft.measurement).toBe(original.measurement);
+    expect(rebuilt.measurement).toBe(original.measurement);
+    expect(draft.frequency).toBe(original.frequency);
+    expect(rebuilt.frequency).toBe(original.frequency);
+    expect(draft.owner).toBe(original.owner);
+    expect(rebuilt.owner).toBe(original.owner);
+  },
+  milestone: (original, draft, rebuilt) => {
+    expect(draft.phase).toBe(original.phase);
+    expect(rebuilt.phase).toBe(original.phase);
+    expect(draft.estimatedDate).toBe(original.estimatedDate);
+    expect(rebuilt.estimatedDate).toBe(original.estimatedDate);
+    expect(draft.dependencies).toEqual(original.dependencies);
+    expect(rebuilt.dependencies).toEqual(original.dependencies);
+    expect(draft.deliverables).toEqual(original.deliverables);
+    expect(rebuilt.deliverables).toEqual(original.deliverables);
+  },
+  customerJourney: (original, draft, rebuilt) => {
+    expect(draft.successCriteria).toBe(original.successCriteria);
+    expect(rebuilt.successCriteria).toBe(original.successCriteria);
+    expect(draft.steps).toEqual(
+      original.steps.map((step) => ({
+        id: step.id,
+        description: step.description,
+      }))
+    );
+    expect(
+      rebuilt.steps.map((step) => ({
+        id: step.id,
+        description: step.description,
+      }))
+    ).toEqual(
+      original.steps.map((step) => ({
+        id: step.id,
+        description: step.description,
+      }))
+    );
+    expect(draft.painPoints).toEqual(original.painPoints ?? []);
+    expect(rebuilt.painPoints).toEqual(original.painPoints ?? []);
+  },
+  metricSchema: (original, draft, rebuilt) => {
+    expectMetricSchemaDraftMatches(original, draft);
+    expectMetricSchemaRebuiltMatches(original, rebuilt);
+  },
+};
+
 const defaultDraftExpectations: Record<EditorKind, DraftForKind<EditorKind>> = {
   functionalRequirement: {
     title: "",
@@ -357,6 +458,29 @@ describe("outline-editor-config", () => {
 
       expect(findItemForEditor(kind, outlineWithUpdate, existing.id)).toEqual(
         updatedMatch
+      );
+    }
+  );
+
+  it.each(editorKinds)(
+    "preserves entity ids and optional fields when round-tripping %s",
+    (kind) => {
+      const outline = createContentOutlineFixture();
+      const original = getCollection(outline, kind)[0] as ItemForKind<
+        typeof kind
+      >;
+      const draft = mapItemToDraftFor(kind, original);
+      const fallbackId = `${kind}-fallback`;
+      const rebuilt = buildItemFromDraft(kind, draft, fallbackId);
+
+      expect(draft.id).toBe(original.id);
+      expect(rebuilt.id).toBe(original.id);
+      expect(rebuilt.id).not.toBe(fallbackId);
+
+      optionalFieldAssertions[kind](
+        original as ItemForKind<typeof kind>,
+        draft as DraftForKind<typeof kind>,
+        rebuilt as ItemForKind<typeof kind>
       );
     }
   );

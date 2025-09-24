@@ -1,5 +1,11 @@
 import type { SuccessMetricField, SuccessMetricSchema } from "@/types/workflow";
 
+import type {
+  SuccessMetricFieldDraft,
+  SuccessMetricSchemaDraft,
+} from "./hooks/outline-editor-types";
+
+import type { OutlineEntityDescriptor } from "./outline-entity-descriptor";
 import { createOutlineId } from "./outline-id";
 
 import {
@@ -91,3 +97,39 @@ export function createNewSuccessMetricSchema(
     fields: sanitizeFields(input.fields),
   };
 }
+
+export const successMetricSchemaDescriptor: OutlineEntityDescriptor<
+  SuccessMetricSchema,
+  SuccessMetricSchemaDraft
+> = {
+  idKey: "id",
+  defaults: () => ({
+    title: "",
+    description: "",
+    fields: [],
+  }),
+  toDraft: (item) => ({
+    id: item.id,
+    title: item.title,
+    description: item.description,
+    fields: item.fields.map<SuccessMetricFieldDraft>((field) => ({
+      id: field.id,
+      name: field.name,
+      description: field.description,
+      dataType: field.dataType,
+      required: field.required,
+      allowedValues: field.allowedValues,
+      sourceSystem: field.sourceSystem,
+    })),
+  }),
+  fromDraft: (draft, fallbackId) => {
+    const created = createNewSuccessMetricSchema({
+      title: draft.title,
+      description: draft.description,
+      fields: draft.fields,
+    });
+
+    const id = draft.id ?? fallbackId ?? created.id;
+    return { ...created, id };
+  },
+};
