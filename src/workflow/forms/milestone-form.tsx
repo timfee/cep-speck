@@ -1,6 +1,9 @@
 import { useCallback, useMemo } from "react";
 
-import type { EditorMode, MilestoneDraft } from "@/lib/workflow/outline-editor-types";
+import type {
+  EditorMode,
+  MilestoneDraft,
+} from "@/lib/workflow/outline-editor-types";
 
 import {
   MILESTONE_PHASE_OPTIONS,

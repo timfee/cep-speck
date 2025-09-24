@@ -1,7 +1,11 @@
 import { useCallback, useMemo } from "react";
 
 import { MetricFieldsSection } from "@/lib/workflow/metric-fields-section";
-import { ensureFieldDrafts, normalizeMetricField } from "@/lib/workflow/metric-schema-utils";
+
+import {
+  ensureFieldDrafts,
+  normalizeMetricField,
+} from "@/lib/workflow/metric-schema-utils";
 
 import type {
   EditorMode,

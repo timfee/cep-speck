@@ -1,6 +1,5 @@
 import React from "react";
 
-
 import {
   EDITOR_KINDS,
   type DraftForKind,
@@ -22,7 +21,6 @@ import { FunctionalRequirementForm } from "../../forms/functional-requirement-fo
 import { MetricSchemaForm } from "../../forms/metric-schema-form";
 import { MilestoneForm } from "../../forms/milestone-form";
 import { SuccessMetricForm } from "../../forms/success-metric-form";
-
 
 type OutlineDeleteHandlers = Partial<Record<EditorKind, (id: string) => void>>;
 

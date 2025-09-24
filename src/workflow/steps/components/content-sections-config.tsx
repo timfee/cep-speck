@@ -5,7 +5,11 @@ import { BarChart3, Calendar, ListChecks, Route, Target } from "lucide-react";
 import type { ReactNode } from "react";
 
 import { Badge } from "@/components/ui/badge";
-import type { EditorKind, ItemForKind } from "@/lib/workflow/outline-editor-types";
+
+import type {
+  EditorKind,
+  ItemForKind,
+} from "@/lib/workflow/outline-editor-types";
 
 import type {
   ContentOutline,
@@ -15,7 +19,6 @@ import type {
   SuccessMetric,
   SuccessMetricSchema,
 } from "@/types/workflow";
-
 
 const JOURNEY_STEP_PREVIEW_LIMIT = 3;
 const METRIC_FIELD_PREVIEW_LIMIT = 3;

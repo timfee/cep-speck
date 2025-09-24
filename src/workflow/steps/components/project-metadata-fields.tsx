@@ -1,9 +1,13 @@
 import React from "react";
 
 import { Textarea } from "@/components/ui/textarea";
-import { LabeledField, baseInputClass } from "@/lib/workflow/outline-form-shared";
-import type { OutlineMetadata } from "@/types/workflow";
 
+import {
+  LabeledField,
+  baseInputClass,
+} from "@/lib/workflow/outline-form-shared";
+
+import type { OutlineMetadata } from "@/types/workflow";
 
 interface ProjectMetadataFieldsProps {
   metadata: OutlineMetadata;

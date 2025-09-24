@@ -4,7 +4,6 @@ import { RadioGroupItem } from "@/components/ui/radio-group";
 import { baseInputClass } from "@/lib/workflow/outline-form-shared";
 import type { OutlineMetadataPersonaSelection } from "@/types/workflow";
 
-
 interface CustomPersonaInputProps {
   primaryPersona: OutlineMetadataPersonaSelection;
   onPersonaChange: (

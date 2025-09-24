@@ -201,7 +201,8 @@ const eslintConfig = [
                 "!*/spec/registry",
                 "!*/spec/streaming",
               ],
-              message: "Use concrete module paths under spec or explicitly allowed files",
+              message:
+                "Use concrete module paths under spec or explicitly allowed files",
             },
           ],
         },
@@ -409,9 +410,9 @@ const eslintConfig = [
   {
     // Temporary override for refactoring - convert unsafe operations to warnings
     files: [
-      "**/forms/**/*.tsx", 
-      "**/lib/workflow/**/*.ts", 
-      "**/components/workflow/**/*.tsx"
+      "**/forms/**/*.tsx",
+      "**/lib/workflow/**/*.ts",
+      "**/components/workflow/**/*.tsx",
     ],
     rules: {
       "@typescript-eslint/no-unsafe-assignment": "warn",
@@ -446,7 +447,12 @@ const eslintConfig = [
     },
   },
   {
-    files: ["**/__tests__/**/*.ts", "**/__tests__/**/*.tsx", "**/*.test.ts", "**/*.test.tsx"],
+    files: [
+      "**/__tests__/**/*.ts",
+      "**/__tests__/**/*.tsx",
+      "**/*.test.ts",
+      "**/*.test.tsx",
+    ],
     rules: {
       "@typescript-eslint/no-unsafe-assignment": "off",
       "@typescript-eslint/no-unsafe-argument": "off",
