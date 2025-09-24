@@ -2,11 +2,7 @@
  * Workflow state management utilities
  */
 
-import { useCallback } from "react";
-
 import type {
-  ContentOutline,
-  EnterpriseParameters,
   StructuredWorkflowState,
   WorkflowProgress,
   WorkflowStep,
@@ -50,66 +46,8 @@ export function canNavigateToStep(
   return targetIndex <= maxAllowedIndex;
 }
 
-/**
- * State setter hooks
- */
 export type WorkflowStateSetter = (
   updater:
     | StructuredWorkflowState
     | ((prev: StructuredWorkflowState) => StructuredWorkflowState)
 ) => void;
-
-export function useWorkflowSetters(setState: WorkflowStateSetter) {
-  const setInitialPrompt = useCallback(
-    (prompt: string) => {
-      setState((prev) => ({ ...prev, initialPrompt: prompt }));
-    },
-    [setState]
-  );
-
-  const setContentOutline = useCallback(
-    (outline: ContentOutline) => {
-      setState((prev) => ({ ...prev, contentOutline: outline }));
-    },
-    [setState]
-  );
-
-  const setEnterpriseParameters = useCallback(
-    (parameters: EnterpriseParameters) => {
-      setState((prev) => ({ ...prev, enterpriseParameters: parameters }));
-    },
-    [setState]
-  );
-
-  const setLoading = useCallback(
-    (loading: boolean) => {
-      setState((prev) => ({ ...prev, isLoading: loading }));
-    },
-    [setState]
-  );
-
-  const setError = useCallback(
-    (error?: string) => {
-      setState((prev) => ({ ...prev, error }));
-    },
-    [setState]
-  );
-
-  const setFinalPrd = useCallback(
-    (finalPrd: string) => {
-      setState((prev) => ({ ...prev, finalPrd }));
-    },
-    [setState]
-  );
-
-  return {
-    setInitialPrompt,
-    setContentOutline,
-    setEnterpriseParameters,
-    setLoading,
-    setError,
-    setFinalPrd,
-  };
-}
-
-export type WorkflowSetters = ReturnType<typeof useWorkflowSetters>;

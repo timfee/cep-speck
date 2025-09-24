@@ -12,12 +12,11 @@ interface WizardNavigationProps {
 export function WizardNavigation({
   handleRegenerateOutline,
 }: WizardNavigationProps) {
-  const { state, goToNextStep, goToPreviousStep, resetWorkflow } =
-    useStructuredWorkflowContext();
+  const { state, navigation } = useStructuredWorkflowContext();
 
   const handleNext = () => {
-    if (state.progress.canGoNext) {
-      goToNextStep();
+    if (navigation.canGoNext) {
+      navigation.goToNextStep();
     }
   };
 
@@ -26,8 +25,8 @@ export function WizardNavigation({
       <div className="flex items-center space-x-2">
         <Button
           variant="outline"
-          onClick={goToPreviousStep}
-          disabled={!state.progress.canGoBack}
+          onClick={navigation.goToPreviousStep}
+          disabled={!navigation.canGoBack}
           className="flex items-center gap-2"
         >
           <ArrowLeft className="h-4 w-4" />
@@ -36,7 +35,7 @@ export function WizardNavigation({
 
         <Button
           variant="ghost"
-          onClick={resetWorkflow}
+          onClick={navigation.resetWorkflow}
           className="text-muted-foreground"
         >
           Start Over
@@ -58,7 +57,7 @@ export function WizardNavigation({
 
         <Button
           onClick={handleNext}
-          disabled={!state.progress.canGoNext}
+          disabled={!navigation.canGoNext}
           className="flex items-center gap-2"
         >
           Next

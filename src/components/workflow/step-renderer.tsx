@@ -15,9 +15,7 @@ interface StepRendererProps {
 export function StepRenderer({ handleRegenerateOutline }: StepRendererProps) {
   const {
     state,
-    setInitialPrompt,
-    setContentOutline,
-    setEnterpriseParameters,
+    dispatch,
     updateFunctionalRequirement,
     deleteFunctionalRequirement,
     addFunctionalRequirement,
@@ -35,6 +33,9 @@ export function StepRenderer({ handleRegenerateOutline }: StepRendererProps) {
     deleteMetricSchema,
     addMetricSchema,
   } = useStructuredWorkflowContext();
+
+  const { setInitialPrompt, setContentOutline, setEnterpriseParameters } =
+    dispatch;
 
   switch (state.currentStep) {
     case "idea":
