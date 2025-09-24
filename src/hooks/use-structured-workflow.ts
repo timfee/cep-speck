@@ -20,7 +20,6 @@ import { useContentEditing } from "./use-content-editing";
 import { useWorkflowNavigation } from "./use-workflow-navigation";
 import { useWorkflowStateWithProgress } from "./use-workflow-progress";
 
-
 export interface WorkflowDispatch {
   setInitialPrompt: (prompt: string) => void;
   setContentOutline: (outline: ContentOutline) => void;
@@ -80,8 +79,13 @@ export const useStructuredWorkflow = () => {
       dispatch.setError(undefined);
 
       try {
-        const outline = await generateContentOutlineFromPrompt(prompt);
-        dispatch.setContentOutline(outline);
+        const result = await generateContentOutlineFromPrompt(prompt);
+        dispatch.setContentOutline(result.outline);
+
+        // Set error if AI failed but fallback was used
+        if (result.error != null && result.error !== "") {
+          dispatch.setError(result.error);
+        }
       } catch (error) {
         dispatch.setError(getOutlineErrorMessage(error));
         console.error("Content outline generation failed:", error);
