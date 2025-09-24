@@ -3,6 +3,12 @@
  * Consolidates common patterns from multiple helper files
  */
 
+import type {
+  FunctionalRequirement,
+  Milestone,
+  SuccessMetric,
+} from "@/types/workflow";
+
 import { createOutlineId } from "./outline-id";
 
 import {
@@ -72,7 +78,10 @@ export function createEntityFactory<
 /**
  * Common entity creation patterns
  */
-export const createMilestone = createEntityFactory({
+export const createMilestone = createEntityFactory<
+  Partial<Milestone>,
+  Milestone
+>({
   idPrefix: "ms",
   requiredFields: [
     {
@@ -91,7 +100,10 @@ export const createMilestone = createEntityFactory({
   defaultValues: { phase: "development" },
 });
 
-export const createFunctionalRequirement = createEntityFactory({
+export const createFunctionalRequirement = createEntityFactory<
+  Partial<FunctionalRequirement>,
+  FunctionalRequirement
+>({
   idPrefix: "fr",
   requiredFields: [
     {
@@ -112,7 +124,10 @@ export const createFunctionalRequirement = createEntityFactory({
   defaultValues: { priority: "P0" },
 });
 
-export const createSuccessMetric = createEntityFactory({
+export const createSuccessMetric = createEntityFactory<
+  Partial<SuccessMetric>,
+  SuccessMetric
+>({
   idPrefix: "sm",
   requiredFields: [
     {

@@ -16,13 +16,13 @@ import type { StreamFrame, ValidationReport } from "../types";
  */
 export function createTestFrameSequence(): StreamFrame[] {
   return [
-    createPhaseFrame("starting", 1, "Test phase"),
+    createPhaseFrame("loading-knowledge", 1, "Test phase"),
     createPhaseFrame("generating", 1, "Test generation"),
     createGenerationFrame("Hello ", "Hello ", 1),
     createGenerationFrame("world!", "Hello world!", 2),
     createPhaseFrame("validating", 1, "Test validation"),
     createValidationFrame(createMockValidationReport(true, []), 100),
-    createPhaseFrame("completed", 1, "Test completed"),
+    createPhaseFrame("done", 1, "Test completed"),
     createResultFrame(true, "Hello world!", 1, 1000),
   ];
 }

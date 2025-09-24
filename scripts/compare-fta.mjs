@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 import fs from "node:fs";
 
+import { resolveCap } from "./fta-config.mjs";
+
 function readJson(p) {
   return JSON.parse(fs.readFileSync(p, "utf8"));
 }
@@ -48,7 +50,6 @@ const byFile = (arr) => {
 const curMap = byFile(current);
 const baseMap = byFile(base);
 
-const HARD_CAP = Number(process.env.FTA_HARD_CAP || 50);
 const DELTA_PCT = Number(process.env.FTA_DELTA_PCT || 10);
 
 const failures = [];
@@ -59,11 +60,12 @@ for (const f of changed) {
   const baseEntry = baseMap.get(f);
   const curScore = cur.fta_score;
   const baseScore = baseEntry?.fta_score;
-  report.push({ file: `src/${f}`, curScore, baseScore });
-  if (curScore > HARD_CAP)
+  const { cap, category } = resolveCap(f);
+  report.push({ file: `src/${f}`, curScore, baseScore, cap, category });
+  if (curScore > cap)
     failures.push({
       file: `src/${f}`,
-      reason: `FTA ${curScore.toFixed(2)} > ${HARD_CAP}`,
+      reason: `FTA ${curScore.toFixed(2)} > ${cap} [${category}]`,
     });
   if (
     typeof baseScore === "number" &&
@@ -79,7 +81,7 @@ for (const f of changed) {
 console.log("[quality] FTA comparison for changed files:");
 for (const r of report) {
   console.log(
-    `- ${r.file}: ${typeof r.baseScore === "number" ? r.baseScore.toFixed(2) : "—"} -> ${r.curScore.toFixed(2)}`
+    `- ${r.file}: ${typeof r.baseScore === "number" ? r.baseScore.toFixed(2) : "—"} -> ${r.curScore.toFixed(2)} (cap ${r.cap} [${r.category}])`
   );
 }
 

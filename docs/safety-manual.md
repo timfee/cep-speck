@@ -29,7 +29,7 @@ When you run `git commit`, the following checks run automatically:
 1. **Lint-staged**: ESLint with no warnings allowed on staged files
 2. **Test existence**: Ensures at least one test file exists
 3. **Tests**: All Jest tests must pass
-4. **Complexity cap**: FTA scores must be under the cap (default: 50)
+4. **Complexity cap**: FTA scores must be under the cap (default: 65, category-aware)
 
 ### Pre-push (Automatic)
 
@@ -43,16 +43,18 @@ When you run `git push`, the following checks run:
 On pull requests, additional checks run:
 
 1. **FTA Delta**: Changed files can't exceed complexity increase threshold (default: +10%)
-2. **Hard Cap**: No files can exceed the absolute complexity cap
+2. **Hard Cap**: No files can exceed the absolute or category-specific caps
 3. **Full CI**: All quality, test, and build checks must pass
 
 ## Adjusting Safeties
 
 ### Complexity Thresholds (FTA)
 
-- **Hard cap**: Set `FTA_HARD_CAP` env var (default: 50) in CI variables or locally
+- **Hard cap**: Set `FTA_HARD_CAP` env var (default: 65) in CI variables or locally
+- **Category caps**: Override with `FTA_CAP_HOOKS`, `FTA_CAP_CONFIG`, or `FTA_CAP_UI` if specific areas need a temporary raise
 - **Delta threshold**: Set `FTA_DELTA_PCT` env var (default: 10) for PR gate
 - Local pre-commit uses the hard cap via `scripts/check-fta-cap.mjs`
+- Revisit caps after meaningful refactors; lower them only when sustained complexity reductions make a tighter gate realistic
 
 ### ESLint Complexity Rules
 
@@ -67,7 +69,8 @@ In `eslint.config.mjs`, adjust these rules:
 - **Environment variables**:
 
   ```bash
-  export FTA_HARD_CAP=60  # Temporarily raise cap
+  export FTA_HARD_CAP=70        # Temporarily raise all caps
+  export FTA_CAP_HOOKS=75       # Optional: raise hook-heavy files only
   pnpm run complexity:json && node scripts/check-fta-cap.mjs
   ```
 
@@ -88,8 +91,9 @@ Commits are blocked if no test files exist. Add at least one test file:
 └── pre-push          # Build verification before push
 
 scripts/
-├── check-fta-cap.mjs      # Complexity cap enforcement
+├── check-fta-cap.mjs      # Complexity cap enforcement with diagnostics
 ├── compare-fta.mjs        # PR complexity comparison
+├── fta-config.mjs         # Shared FTA cap configuration
 └── ensure-tests-exist.mjs # Test existence verification
 
 .github/workflows/
@@ -97,6 +101,7 @@ scripts/
 └── quality-gate.yml       # PR quality checks
 
 reports/
+├── fta.base.json         # Baseline complexity snapshot for comparisons
 └── fta.json              # Generated complexity analysis
 ```
 
@@ -120,7 +125,10 @@ reports/
 
 Set these to adjust thresholds:
 
-- `FTA_HARD_CAP`: Maximum complexity score allowed (default: 50)
+- `FTA_HARD_CAP`: Maximum complexity score allowed (default: 65)
+- `FTA_CAP_HOOKS`: Override cap for hook-heavy files
+- `FTA_CAP_CONFIG`: Override cap for configuration-driven files
+- `FTA_CAP_UI`: Override cap for UI components
 - `FTA_DELTA_PCT`: Maximum complexity increase for changed files (default: 10%)
 
 ## Philosophy

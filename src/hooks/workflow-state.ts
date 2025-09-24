@@ -53,11 +53,13 @@ export function canNavigateToStep(
 /**
  * State setter hooks
  */
-export function useWorkflowSetters(
-  setState: (
-    updater: (prev: StructuredWorkflowState) => StructuredWorkflowState
-  ) => void
-) {
+export type WorkflowStateSetter = (
+  updater:
+    | StructuredWorkflowState
+    | ((prev: StructuredWorkflowState) => StructuredWorkflowState)
+) => void;
+
+export function useWorkflowSetters(setState: WorkflowStateSetter) {
   const setInitialPrompt = useCallback(
     (prompt: string) => {
       setState((prev) => ({ ...prev, initialPrompt: prompt }));
@@ -93,12 +95,20 @@ export function useWorkflowSetters(
     [setState]
   );
 
+  const setFinalPrd = useCallback(
+    (finalPrd: string) => {
+      setState((prev) => ({ ...prev, finalPrd }));
+    },
+    [setState]
+  );
+
   return {
     setInitialPrompt,
     setContentOutline,
     setEnterpriseParameters,
     setLoading,
     setError,
+    setFinalPrd,
   };
 }
 

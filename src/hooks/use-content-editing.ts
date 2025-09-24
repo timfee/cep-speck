@@ -5,7 +5,6 @@ import type {
   FunctionalRequirement,
   Milestone,
   OutlineMetadata,
-  StructuredWorkflowState,
   SuccessMetric,
   SuccessMetricSchema,
 } from "@/types/workflow";
@@ -28,15 +27,13 @@ import {
   updateSuccessMetricInOutline,
 } from "./content-editing-utils";
 
+import type { WorkflowStateSetter } from "./workflow-state";
+
 /**
  * Hook for content editing operations
  * Extracted from use-structured-workflow to reduce complexity
  */
-export function useContentEditing(
-  setState: (
-    updater: (prev: StructuredWorkflowState) => StructuredWorkflowState
-  ) => void
-) {
+export function useContentEditing(setState: WorkflowStateSetter) {
   // Functional requirement operations
   const updateFunctionalRequirement = useCallback(
     (id: string, updates: Partial<FunctionalRequirement>) => {

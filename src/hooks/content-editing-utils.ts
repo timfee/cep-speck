@@ -3,10 +3,11 @@ import type {
   CustomerJourney,
   FunctionalRequirement,
   Milestone,
-  StructuredWorkflowState,
   SuccessMetric,
   SuccessMetricSchema,
 } from "@/types/workflow";
+
+import type { WorkflowStateSetter } from "./workflow-state";
 
 type ContentType =
   | "functionalRequirements"
@@ -222,9 +223,7 @@ export const addMetricSchemaToOutline = (
  * Generic state updater for content outline changes
  */
 export const updateStateWithContentOutline = (
-  setState: (
-    updater: (prev: StructuredWorkflowState) => StructuredWorkflowState
-  ) => void,
+  setState: WorkflowStateSetter,
   newContentOutline: ContentOutline
 ): void => {
   setState((prev) => ({ ...prev, contentOutline: newContentOutline }));

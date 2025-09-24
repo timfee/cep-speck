@@ -7,18 +7,8 @@ import {
   parseContentOutlineResponse,
 } from "@/lib/agents/content-outline-agent";
 
-import { EMPTY_OUTLINE_METADATA } from "@/lib/services/content-outline-schemas";
+import { buildFallbackOutline } from "@/lib/services/content-outline-fallback";
 import type { ContentOutline } from "@/types/workflow";
-
-import {
-  generateDLPMilestones,
-  generateDLPMetrics,
-  generateDLPRequirements,
-  generateGenericMilestones,
-  generateGenericMetrics,
-  generateGenericRequirements,
-  generateOnboardingRequirements,
-} from "./content-outline-fallback-generators";
 
 /**
  * Generate complete content outline using AI
@@ -45,52 +35,6 @@ export async function generateContentOutline(
     console.error("Failed to generate AI content outline:", error);
 
     // Return a context-aware fallback outline
-    return generateFallbackOutline(prompt);
+    return buildFallbackOutline(prompt);
   }
-}
-
-/**
- * Generate fallback content outline based on context keywords
- */
-function generateFallbackOutline(prompt: string): ContentOutline {
-  const contextKeywords = prompt.toLowerCase();
-
-  // Determine content type and generate appropriate fallback
-  if (
-    contextKeywords.includes("dlp") ||
-    contextKeywords.includes("data loss")
-  ) {
-    return {
-      metadata: { ...EMPTY_OUTLINE_METADATA, problemStatement: prompt },
-      functionalRequirements: generateDLPRequirements(),
-      successMetrics: generateDLPMetrics(),
-      milestones: generateDLPMilestones(),
-      customerJourneys: [],
-      metricSchemas: [],
-    };
-  }
-
-  if (
-    contextKeywords.includes("onboard") ||
-    contextKeywords.includes("nudge")
-  ) {
-    return {
-      metadata: { ...EMPTY_OUTLINE_METADATA, problemStatement: prompt },
-      functionalRequirements: generateOnboardingRequirements(),
-      successMetrics: generateGenericMetrics(),
-      milestones: generateGenericMilestones(),
-      customerJourneys: [],
-      metricSchemas: [],
-    };
-  }
-
-  // Generic fallback
-  return {
-    metadata: { ...EMPTY_OUTLINE_METADATA, problemStatement: prompt },
-    functionalRequirements: generateGenericRequirements(prompt),
-    successMetrics: generateGenericMetrics(),
-    milestones: generateGenericMilestones(),
-    customerJourneys: [],
-    metricSchemas: [],
-  };
 }

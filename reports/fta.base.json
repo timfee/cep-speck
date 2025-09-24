@@ -1,0 +1,5022 @@
+[
+  {
+    "file_name": "components/workflow/steps/hooks/customer-journey-form.tsx",
+    "cyclo": 6,
+    "halstead": {
+      "uniq_operators": 23,
+      "uniq_operands": 57,
+      "total_operators": 253,
+      "total_operands": 233,
+      "program_length": 486,
+      "vocabulary_size": 80,
+      "volume": 3072.4570541152584,
+      "difficulty": 44.96491228070175,
+      "effort": 138152.76192451591,
+      "time": 7675.153440250884,
+      "bugs": 1.0241523513717528
+    },
+    "line_count": 230,
+    "fta_score": 60.12609029016425,
+    "assessment": "Needs improvement"
+  },
+  {
+    "file_name": "hooks/content-editing-utils.ts",
+    "cyclo": 11,
+    "halstead": {
+      "uniq_operators": 19,
+      "uniq_operands": 60,
+      "total_operators": 119,
+      "total_operands": 239,
+      "program_length": 358,
+      "vocabulary_size": 79,
+      "volume": 2256.753507847403,
+      "difficulty": 35.85,
+      "effort": 80904.6132563294,
+      "time": 4494.700736462744,
+      "bugs": 0.7522511692824676
+    },
+    "line_count": 192,
+    "fta_score": 56.28899032533031,
+    "assessment": "Could be better"
+  },
+  {
+    "file_name": "components/workflow/steps/components/content-sections-config.tsx",
+    "cyclo": 15,
+    "halstead": {
+      "uniq_operators": 20,
+      "uniq_operands": 76,
+      "total_operators": 242,
+      "total_operands": 212,
+      "program_length": 454,
+      "vocabulary_size": 96,
+      "volume": 2989.572975327405,
+      "difficulty": 27.894736842105264,
+      "effort": 83393.35141702762,
+      "time": 4632.963967612645,
+      "bugs": 0.996524325109135
+    },
+    "line_count": 170,
+    "fta_score": 55.1144077251663,
+    "assessment": "Could be better"
+  },
+  {
+    "file_name": "components/error/error-view-components.tsx",
+    "cyclo": 3,
+    "halstead": {
+      "uniq_operators": 15,
+      "uniq_operands": 36,
+      "total_operators": 77,
+      "total_operands": 113,
+      "program_length": 190,
+      "vocabulary_size": 51,
+      "volume": 1077.760814974584,
+      "difficulty": 21.97222222222222,
+      "effort": 23680.800129024887,
+      "time": 1315.6000071680492,
+      "bugs": 0.35925360499152803
+    },
+    "line_count": 95,
+    "fta_score": 54.61094978169867,
+    "assessment": "Could be better"
+  },
+  {
+    "file_name": "lib/spec/streaming.test.ts",
+    "cyclo": 12,
+    "halstead": {
+      "uniq_operators": 18,
+      "uniq_operands": 80,
+      "total_operators": 444,
+      "total_operands": 342,
+      "program_length": 786,
+      "vocabulary_size": 98,
+      "volume": 5199.161937474554,
+      "difficulty": 38.475,
+      "effort": 200037.7555443335,
+      "time": 11113.208641351861,
+      "bugs": 1.7330539791581847
+    },
+    "line_count": 146,
+    "fta_score": 54.146461782598664,
+    "assessment": "Could be better"
+  },
+  {
+    "file_name": "components/workflow/steps/idea-capture-step.tsx",
+    "cyclo": 7,
+    "halstead": {
+      "uniq_operators": 22,
+      "uniq_operands": 51,
+      "total_operators": 97,
+      "total_operands": 133,
+      "program_length": 230,
+      "vocabulary_size": 73,
+      "volume": 1423.659648542404,
+      "difficulty": 28.686274509803923,
+      "effort": 40839.491486618375,
+      "time": 2268.860638145465,
+      "bugs": 0.4745532161808014
+    },
+    "line_count": 132,
+    "fta_score": 53.93974111608349,
+    "assessment": "Could be better"
+  },
+  {
+    "file_name": "components/workflow/section-type-selector.tsx",
+    "cyclo": 8,
+    "halstead": {
+      "uniq_operators": 21,
+      "uniq_operands": 46,
+      "total_operators": 102,
+      "total_operands": 147,
+      "program_length": 249,
+      "vocabulary_size": 67,
+      "volume": 1510.4562084239853,
+      "difficulty": 31.956521739130434,
+      "effort": 48268.92666050562,
+      "time": 2681.6070366947565,
+      "bugs": 0.5034854028079951
+    },
+    "line_count": 138,
+    "fta_score": 53.605790384432346,
+    "assessment": "Could be better"
+  },
+  {
+    "file_name": "components/workflow/steps/structure-review-step.tsx",
+    "cyclo": 12,
+    "halstead": {
+      "uniq_operators": 21,
+      "uniq_operands": 44,
+      "total_operators": 117,
+      "total_operands": 161,
+      "program_length": 278,
+      "vocabulary_size": 65,
+      "volume": 1674.2182520219103,
+      "difficulty": 36.59090909090909,
+      "effort": 61261.16785807445,
+      "time": 3403.398214337469,
+      "bugs": 0.5580727506739701
+    },
+    "line_count": 155,
+    "fta_score": 53.464615312883524,
+    "assessment": "Could be better"
+  },
+  {
+    "file_name": "lib/spec/streaming.ts",
+    "cyclo": 5,
+    "halstead": {
+      "uniq_operators": 20,
+      "uniq_operands": 48,
+      "total_operators": 84,
+      "total_operands": 115,
+      "program_length": 199,
+      "vocabulary_size": 68,
+      "volume": 1211.4051054088175,
+      "difficulty": 23.958333333333332,
+      "effort": 29023.24731708625,
+      "time": 1612.402628727014,
+      "bugs": 0.4038017018029392
+    },
+    "line_count": 106,
+    "fta_score": 53.17533126738717,
+    "assessment": "Could be better"
+  },
+  {
+    "file_name": "lib/spec/helpers/validation.ts",
+    "cyclo": 18,
+    "halstead": {
+      "uniq_operators": 25,
+      "uniq_operands": 80,
+      "total_operators": 231,
+      "total_operands": 198,
+      "program_length": 429,
+      "vocabulary_size": 105,
+      "volume": 2880.4113270787666,
+      "difficulty": 29.7,
+      "effort": 85548.21641423936,
+      "time": 4752.678689679964,
+      "bugs": 0.9601371090262555
+    },
+    "line_count": 137,
+    "fta_score": 53.12856474646056,
+    "assessment": "Could be better"
+  },
+  {
+    "file_name": "components/ui/code-editor-parts.tsx",
+    "cyclo": 9,
+    "halstead": {
+      "uniq_operators": 17,
+      "uniq_operands": 42,
+      "total_operators": 75,
+      "total_operands": 134,
+      "program_length": 209,
+      "vocabulary_size": 59,
+      "volume": 1229.472397316625,
+      "difficulty": 25.523809523809526,
+      "effort": 31380.819283891,
+      "time": 1743.3788491050555,
+      "bugs": 0.40982413243887494
+    },
+    "line_count": 142,
+    "fta_score": 53.1023590111044,
+    "assessment": "Could be better"
+  },
+  {
+    "file_name": "components/error/error-terminal.tsx",
+    "cyclo": 4,
+    "halstead": {
+      "uniq_operators": 18,
+      "uniq_operands": 39,
+      "total_operators": 58,
+      "total_operands": 89,
+      "program_length": 147,
+      "vocabulary_size": 57,
+      "volume": 857.434832082217,
+      "difficulty": 20.53846153846154,
+      "effort": 17610.392320457842,
+      "time": 978.3551289143246,
+      "bugs": 0.28581161069407235
+    },
+    "line_count": 93,
+    "fta_score": 52.67865694162237,
+    "assessment": "Could be better"
+  },
+  {
+    "file_name": "lib/spec/items/metrics-required.ts",
+    "cyclo": 11,
+    "halstead": {
+      "uniq_operators": 17,
+      "uniq_operands": 79,
+      "total_operators": 139,
+      "total_operands": 161,
+      "program_length": 300,
+      "vocabulary_size": 96,
+      "volume": 1975.4887502163467,
+      "difficulty": 16.303797468354432,
+      "effort": 32207.968484539935,
+      "time": 1789.331582474441,
+      "bugs": 0.6584962500721155
+    },
+    "line_count": 114,
+    "fta_score": 51.94306728436246,
+    "assessment": "Could be better"
+  },
+  {
+    "file_name": "components/workflow/steps/entity-factory.ts",
+    "cyclo": 7,
+    "halstead": {
+      "uniq_operators": 18,
+      "uniq_operands": 50,
+      "total_operators": 89,
+      "total_operands": 95,
+      "program_length": 184,
+      "vocabulary_size": 68,
+      "volume": 1120.0931627900625,
+      "difficulty": 17.1,
+      "effort": 19153.59308371007,
+      "time": 1064.0885046505596,
+      "bugs": 0.3733643875966875
+    },
+    "line_count": 105,
+    "fta_score": 51.55600865970735,
+    "assessment": "Could be better"
+  },
+  {
+    "file_name": "lib/spec/helpers/semantic-validation-issues.ts",
+    "cyclo": 13,
+    "halstead": {
+      "uniq_operators": 15,
+      "uniq_operands": 32,
+      "total_operators": 152,
+      "total_operands": 108,
+      "program_length": 260,
+      "vocabulary_size": 47,
+      "volume": 1444.1931014361858,
+      "difficulty": 23.625,
+      "effort": 34119.06202142989,
+      "time": 1895.503445634994,
+      "bugs": 0.4813977004787286
+    },
+    "line_count": 135,
+    "fta_score": 51.003983296301435,
+    "assessment": "Could be better"
+  },
+  {
+    "file_name": "lib/error/matchers.ts",
+    "cyclo": 13,
+    "halstead": {
+      "uniq_operators": 12,
+      "uniq_operands": 56,
+      "total_operators": 133,
+      "total_operands": 106,
+      "program_length": 239,
+      "vocabulary_size": 68,
+      "volume": 1454.903619058831,
+      "difficulty": 11.357142857142858,
+      "effort": 16523.548245025297,
+      "time": 917.9749025014054,
+      "bugs": 0.48496787301961036
+    },
+    "line_count": 119,
+    "fta_score": 50.93206617099598,
+    "assessment": "Could be better"
+  },
+  {
+    "file_name": "components/workflow/steps/components/outline-header.tsx",
+    "cyclo": 4,
+    "halstead": {
+      "uniq_operators": 15,
+      "uniq_operands": 27,
+      "total_operators": 39,
+      "total_operands": 79,
+      "program_length": 118,
+      "vocabulary_size": 42,
+      "volume": 636.2934558878937,
+      "difficulty": 20.48148148148148,
+      "effort": 13032.23263355575,
+      "time": 724.0129240864305,
+      "bugs": 0.2120978186292979
+    },
+    "line_count": 83,
+    "fta_score": 50.672295233760366,
+    "assessment": "Could be better"
+  },
+  {
+    "file_name": "lib/spec/helpers/stream-helpers.ts",
+    "cyclo": 18,
+    "halstead": {
+      "uniq_operators": 21,
+      "uniq_operands": 57,
+      "total_operators": 138,
+      "total_operands": 128,
+      "program_length": 266,
+      "vocabulary_size": 78,
+      "volume": 1671.9169902173583,
+      "difficulty": 22.45614035087719,
+      "effort": 37544.802587337166,
+      "time": 2085.822365963176,
+      "bugs": 0.5573056634057861
+    },
+    "line_count": 109,
+    "fta_score": 50.05864472988938,
+    "assessment": "Could be better"
+  },
+  {
+    "file_name": "lib/spec/api/workflow-context-loaders.ts",
+    "cyclo": 4,
+    "halstead": {
+      "uniq_operators": 14,
+      "uniq_operands": 36,
+      "total_operators": 119,
+      "total_operands": 75,
+      "program_length": 194,
+      "vocabulary_size": 50,
+      "volume": 1094.9081008162966,
+      "difficulty": 14.583333333333334,
+      "effort": 15967.409803570992,
+      "time": 887.0783224206107,
+      "bugs": 0.3649693669387655
+    },
+    "line_count": 73,
+    "fta_score": 49.98625003694861,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/ui/typing-text.tsx",
+    "cyclo": 5,
+    "halstead": {
+      "uniq_operators": 14,
+      "uniq_operands": 37,
+      "total_operators": 47,
+      "total_operands": 89,
+      "program_length": 136,
+      "vocabulary_size": 51,
+      "volume": 771.4498465081233,
+      "difficulty": 16.83783783783784,
+      "effort": 12989.547415528672,
+      "time": 721.6415230849262,
+      "bugs": 0.2571499488360411
+    },
+    "line_count": 83,
+    "fta_score": 49.983259773200125,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/components/section-items.tsx",
+    "cyclo": 8,
+    "halstead": {
+      "uniq_operators": 21,
+      "uniq_operands": 36,
+      "total_operators": 75,
+      "total_operands": 112,
+      "program_length": 187,
+      "vocabulary_size": 57,
+      "volume": 1090.7504326488065,
+      "difficulty": 31.11111111111111,
+      "effort": 33934.45790462953,
+      "time": 1885.2476613683075,
+      "bugs": 0.3635834775496022
+    },
+    "line_count": 98,
+    "fta_score": 49.87153800245762,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/agents/workflow/orchestration.ts",
+    "cyclo": 3,
+    "halstead": {
+      "uniq_operators": 11,
+      "uniq_operands": 23,
+      "total_operators": 41,
+      "total_operands": 68,
+      "program_length": 109,
+      "vocabulary_size": 34,
+      "volume": 554.533449696287,
+      "difficulty": 14.782608695652174,
+      "effort": 8197.45099551033,
+      "time": 455.4139441950183,
+      "bugs": 0.18484448323209565
+    },
+    "line_count": 65,
+    "fta_score": 49.782791633288205,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/hooks/prd-generation-helpers.ts",
+    "cyclo": 4,
+    "halstead": {
+      "uniq_operators": 19,
+      "uniq_operands": 38,
+      "total_operators": 73,
+      "total_operands": 91,
+      "program_length": 164,
+      "vocabulary_size": 57,
+      "volume": 956.5939623230175,
+      "difficulty": 21.55263157894737,
+      "effort": 20617.11724059346,
+      "time": 1145.3954022551923,
+      "bugs": 0.3188646541076725
+    },
+    "line_count": 68,
+    "fta_score": 49.71252421341779,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/customer-journey-helpers.ts",
+    "cyclo": 3,
+    "halstead": {
+      "uniq_operators": 15,
+      "uniq_operands": 32,
+      "total_operators": 83,
+      "total_operands": 67,
+      "program_length": 150,
+      "vocabulary_size": 47,
+      "volume": 833.1883277516456,
+      "difficulty": 14.65625,
+      "effort": 12211.416428610057,
+      "time": 678.4120238116698,
+      "bugs": 0.2777294425838819
+    },
+    "line_count": 58,
+    "fta_score": 49.687935375645466,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/services/content-outline-fallback.ts",
+    "cyclo": 5,
+    "halstead": {
+      "uniq_operators": 10,
+      "uniq_operands": 44,
+      "total_operators": 91,
+      "total_operands": 67,
+      "program_length": 158,
+      "vocabulary_size": 54,
+      "volume": 909.272225341828,
+      "difficulty": 7.613636363636363,
+      "effort": 6922.868079307099,
+      "time": 384.60378218372773,
+      "bugs": 0.3030907417806093
+    },
+    "line_count": 78,
+    "fta_score": 49.56845795918504,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "app/api/run/route.ts",
+    "cyclo": 5,
+    "halstead": {
+      "uniq_operators": 13,
+      "uniq_operands": 33,
+      "total_operators": 59,
+      "total_operands": 80,
+      "program_length": 139,
+      "vocabulary_size": 46,
+      "volume": 767.7751118919248,
+      "difficulty": 14.545454545454545,
+      "effort": 11167.637991155269,
+      "time": 620.4243328419593,
+      "bugs": 0.25592503729730826
+    },
+    "line_count": 82,
+    "fta_score": 49.55464920650586,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/ai/retry-helpers.ts",
+    "cyclo": 13,
+    "halstead": {
+      "uniq_operators": 26,
+      "uniq_operands": 48,
+      "total_operators": 171,
+      "total_operands": 161,
+      "program_length": 332,
+      "vocabulary_size": 74,
+      "volume": 2061.538517388811,
+      "difficulty": 43.604166666666664,
+      "effort": 89891.66910197462,
+      "time": 4993.981616776367,
+      "bugs": 0.6871795057962704
+    },
+    "line_count": 99,
+    "fta_score": 49.44600734147523,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/error/recovery-strategies.ts",
+    "cyclo": 12,
+    "halstead": {
+      "uniq_operators": 10,
+      "uniq_operands": 51,
+      "total_operators": 71,
+      "total_operands": 78,
+      "program_length": 149,
+      "vocabulary_size": 61,
+      "volume": 883.6798632968702,
+      "difficulty": 7.647058823529412,
+      "effort": 6757.5518957995955,
+      "time": 375.4195497666442,
+      "bugs": 0.29455995443229005
+    },
+    "line_count": 103,
+    "fta_score": 49.39961707046962,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/ui/spinner-animation-config.ts",
+    "cyclo": 3,
+    "halstead": {
+      "uniq_operators": 12,
+      "uniq_operands": 24,
+      "total_operators": 81,
+      "total_operands": 62,
+      "program_length": 143,
+      "vocabulary_size": 36,
+      "volume": 739.2992752062506,
+      "difficulty": 15.5,
+      "effort": 11459.138765696885,
+      "time": 636.6188203164936,
+      "bugs": 0.2464330917354169
+    },
+    "line_count": 61,
+    "fta_score": 49.3549007439701,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/spec/pack-validate.ts",
+    "cyclo": 16,
+    "halstead": {
+      "uniq_operators": 22,
+      "uniq_operands": 48,
+      "total_operators": 182,
+      "total_operands": 138,
+      "program_length": 320,
+      "vocabulary_size": 70,
+      "volume": 1961.3705654223893,
+      "difficulty": 31.625,
+      "effort": 62028.34413148306,
+      "time": 3446.0191184157256,
+      "bugs": 0.6537901884741297
+    },
+    "line_count": 103,
+    "fta_score": 49.318319024127206,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/enterprise-parameters-handlers.ts",
+    "cyclo": 3,
+    "halstead": {
+      "uniq_operators": 15,
+      "uniq_operands": 13,
+      "total_operators": 82,
+      "total_operands": 69,
+      "program_length": 151,
+      "vocabulary_size": 28,
+      "volume": 725.9105932306982,
+      "difficulty": 37.15384615384615,
+      "effort": 26970.370502340556,
+      "time": 1498.3539167966976,
+      "bugs": 0.24197019774356607
+    },
+    "line_count": 65,
+    "fta_score": 49.19237568294143,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/metric-schema-helpers.ts",
+    "cyclo": 6,
+    "halstead": {
+      "uniq_operators": 17,
+      "uniq_operands": 40,
+      "total_operators": 95,
+      "total_operands": 93,
+      "program_length": 188,
+      "vocabulary_size": 57,
+      "volume": 1096.5833226629713,
+      "difficulty": 18.6,
+      "effort": 20396.449801531267,
+      "time": 1133.1361000850704,
+      "bugs": 0.3655277742209904
+    },
+    "line_count": 80,
+    "fta_score": 49.09057845951898,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/progress-timeline.tsx",
+    "cyclo": 7,
+    "halstead": {
+      "uniq_operators": 20,
+      "uniq_operands": 40,
+      "total_operators": 82,
+      "total_operands": 101,
+      "program_length": 183,
+      "vocabulary_size": 60,
+      "volume": 1080.960978996359,
+      "difficulty": 25.25,
+      "effort": 27294.264719658066,
+      "time": 1516.3480399810037,
+      "bugs": 0.3603203263321197
+    },
+    "line_count": 84,
+    "fta_score": 49.061404054648264,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/agents/refiner.ts",
+    "cyclo": 5,
+    "halstead": {
+      "uniq_operators": 18,
+      "uniq_operands": 40,
+      "total_operators": 87,
+      "total_operands": 79,
+      "program_length": 166,
+      "vocabulary_size": 58,
+      "volume": 972.4248451911769,
+      "difficulty": 17.775,
+      "effort": 17284.851623273167,
+      "time": 960.269534626287,
+      "bugs": 0.32414161506372563
+    },
+    "line_count": 72,
+    "fta_score": 49.02746073602471,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/serializers/workflow-to-structured-outline.ts",
+    "cyclo": 14,
+    "halstead": {
+      "uniq_operators": 18,
+      "uniq_operands": 29,
+      "total_operators": 164,
+      "total_operands": 118,
+      "program_length": 282,
+      "vocabulary_size": 47,
+      "volume": 1566.3940561730938,
+      "difficulty": 36.62068965517241,
+      "effort": 57362.43060882157,
+      "time": 3186.801700490087,
+      "bugs": 0.5221313520576979
+    },
+    "line_count": 111,
+    "fta_score": 49.01422452249053,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/step-renderer.tsx",
+    "cyclo": 7,
+    "halstead": {
+      "uniq_operators": 10,
+      "uniq_operands": 39,
+      "total_operators": 46,
+      "total_operands": 77,
+      "program_length": 123,
+      "vocabulary_size": 49,
+      "volume": 690.6093108261706,
+      "difficulty": 9.871794871794872,
+      "effort": 6817.553453027582,
+      "time": 378.7529696126434,
+      "bugs": 0.23020310360872354
+    },
+    "line_count": 89,
+    "fta_score": 48.9933051511508,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/hooks/metric-schema-form-state.ts",
+    "cyclo": 6,
+    "halstead": {
+      "uniq_operators": 19,
+      "uniq_operands": 29,
+      "total_operators": 110,
+      "total_operands": 90,
+      "program_length": 200,
+      "vocabulary_size": 48,
+      "volume": 1116.9925001442311,
+      "difficulty": 27.93103448275862,
+      "effort": 31198.75603851128,
+      "time": 1733.264224361738,
+      "bugs": 0.3723308333814104
+    },
+    "line_count": 83,
+    "fta_score": 48.916756838799316,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/wizard-navigation.tsx",
+    "cyclo": 3,
+    "halstead": {
+      "uniq_operators": 14,
+      "uniq_operands": 17,
+      "total_operators": 35,
+      "total_operands": 46,
+      "program_length": 81,
+      "vocabulary_size": 31,
+      "volume": 401.2899011413369,
+      "difficulty": 18.941176470588236,
+      "effort": 7600.902833382969,
+      "time": 422.2723796323872,
+      "bugs": 0.13376330038044562
+    },
+    "line_count": 61,
+    "fta_score": 48.90018435996484,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/error/error-display.tsx",
+    "cyclo": 7,
+    "halstead": {
+      "uniq_operators": 18,
+      "uniq_operands": 37,
+      "total_operators": 95,
+      "total_operands": 105,
+      "program_length": 200,
+      "vocabulary_size": 55,
+      "volume": 1156.271942704932,
+      "difficulty": 25.54054054054054,
+      "effort": 29531.810428544883,
+      "time": 1640.6561349191602,
+      "bugs": 0.385423980901644
+    },
+    "line_count": 84,
+    "fta_score": 48.79680805444589,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/generate-step-actions.tsx",
+    "cyclo": 3,
+    "halstead": {
+      "uniq_operators": 13,
+      "uniq_operands": 22,
+      "total_operators": 22,
+      "total_operands": 57,
+      "program_length": 79,
+      "vocabulary_size": 35,
+      "volume": 405.21335833865237,
+      "difficulty": 15.545454545454545,
+      "effort": 6299.225843264505,
+      "time": 349.9569912924725,
+      "bugs": 0.13507111944621747
+    },
+    "line_count": 58,
+    "fta_score": 48.79146893754762,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/spec/helpers/outline-enumerations.ts",
+    "cyclo": 5,
+    "halstead": {
+      "uniq_operators": 20,
+      "uniq_operands": 34,
+      "total_operators": 71,
+      "total_operands": 76,
+      "program_length": 147,
+      "vocabulary_size": 54,
+      "volume": 845.9684628180298,
+      "difficulty": 22.352941176470587,
+      "effort": 18909.883286520664,
+      "time": 1050.5490714733703,
+      "bugs": 0.28198948760600995
+    },
+    "line_count": 71,
+    "fta_score": 48.67765738356979,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/components/multi-select-section.tsx",
+    "cyclo": 4,
+    "halstead": {
+      "uniq_operators": 17,
+      "uniq_operands": 27,
+      "total_operators": 53,
+      "total_operands": 71,
+      "program_length": 124,
+      "vocabulary_size": 44,
+      "volume": 676.9695207110249,
+      "difficulty": 21.037037037037038,
+      "effort": 14241.432880143042,
+      "time": 791.1907155635023,
+      "bugs": 0.22565650690367495
+    },
+    "line_count": 66,
+    "fta_score": 48.64252509096777,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/error/error-level-formatting.ts",
+    "cyclo": 3,
+    "halstead": {
+      "uniq_operators": 17,
+      "uniq_operands": 20,
+      "total_operators": 91,
+      "total_operands": 47,
+      "program_length": 138,
+      "vocabulary_size": 37,
+      "volume": 718.9045644567951,
+      "difficulty": 18.8,
+      "effort": 13515.405811787748,
+      "time": 750.8558784326527,
+      "bugs": 0.2396348548189317
+    },
+    "line_count": 55,
+    "fta_score": 48.45730756674003,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/agents/hybrid-workflow.ts",
+    "cyclo": 7,
+    "halstead": {
+      "uniq_operators": 18,
+      "uniq_operands": 36,
+      "total_operators": 80,
+      "total_operands": 109,
+      "program_length": 189,
+      "vocabulary_size": 54,
+      "volume": 1087.6737379088954,
+      "difficulty": 27.25,
+      "effort": 29639.1093580174,
+      "time": 1646.617186556522,
+      "bugs": 0.3625579126362985
+    },
+    "line_count": 81,
+    "fta_score": 48.39647392775418,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/hooks/prd-stream-utils.ts",
+    "cyclo": 12,
+    "halstead": {
+      "uniq_operators": 20,
+      "uniq_operands": 41,
+      "total_operators": 123,
+      "total_operands": 122,
+      "program_length": 245,
+      "vocabulary_size": 61,
+      "volume": 1453.0306477029073,
+      "difficulty": 29.75609756097561,
+      "effort": 43236.52171213529,
+      "time": 2402.028984007516,
+      "bugs": 0.48434354923430245
+    },
+    "line_count": 92,
+    "fta_score": 48.329655280337654,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/ui/status.tsx",
+    "cyclo": 10,
+    "halstead": {
+      "uniq_operators": 11,
+      "uniq_operands": 48,
+      "total_operators": 63,
+      "total_operands": 89,
+      "program_length": 152,
+      "vocabulary_size": 59,
+      "volume": 894.1617435029999,
+      "difficulty": 9.270833333333334,
+      "effort": 8289.624497059061,
+      "time": 460.534694281059,
+      "bugs": 0.298053914501
+    },
+    "line_count": 88,
+    "fta_score": 48.26007338587124,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/agents/content-outline-agent.ts",
+    "cyclo": 11,
+    "halstead": {
+      "uniq_operators": 19,
+      "uniq_operands": 39,
+      "total_operators": 129,
+      "total_operands": 90,
+      "program_length": 219,
+      "vocabulary_size": 58,
+      "volume": 1282.8978379329383,
+      "difficulty": 20.76923076923077,
+      "effort": 26644.80124937641,
+      "time": 1480.2667360764672,
+      "bugs": 0.42763261264431274
+    },
+    "line_count": 89,
+    "fta_score": 48.06539908838495,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/research.ts",
+    "cyclo": 8,
+    "halstead": {
+      "uniq_operators": 23,
+      "uniq_operands": 36,
+      "total_operators": 140,
+      "total_operands": 87,
+      "program_length": 227,
+      "vocabulary_size": 59,
+      "volume": 1335.359972205138,
+      "difficulty": 26.583333333333332,
+      "effort": 35498.31926111992,
+      "time": 1972.1288478399956,
+      "bugs": 0.44511999073504604
+    },
+    "line_count": 80,
+    "fta_score": 48.05381077603873,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/agents/refiner-helpers.ts",
+    "cyclo": 10,
+    "halstead": {
+      "uniq_operators": 22,
+      "uniq_operands": 37,
+      "total_operators": 137,
+      "total_operands": 101,
+      "program_length": 238,
+      "vocabulary_size": 59,
+      "volume": 1400.0690457481182,
+      "difficulty": 30.027027027027028,
+      "effort": 42039.91107638269,
+      "time": 2335.550615354594,
+      "bugs": 0.46668968191603943
+    },
+    "line_count": 86,
+    "fta_score": 48.042277950058306,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/spec/items/competitor-research.ts",
+    "cyclo": 7,
+    "halstead": {
+      "uniq_operators": 16,
+      "uniq_operands": 44,
+      "total_operators": 100,
+      "total_operands": 85,
+      "program_length": 185,
+      "vocabulary_size": 60,
+      "volume": 1092.774760187576,
+      "difficulty": 15.454545454545455,
+      "effort": 16888.337202898903,
+      "time": 938.2409557166058,
+      "bugs": 0.36425825339585866
+    },
+    "line_count": 75,
+    "fta_score": 47.9877638780556,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/ai/resilient-service.ts",
+    "cyclo": 9,
+    "halstead": {
+      "uniq_operators": 19,
+      "uniq_operands": 33,
+      "total_operators": 101,
+      "total_operands": 95,
+      "program_length": 196,
+      "vocabulary_size": 52,
+      "volume": 1117.286184755654,
+      "difficulty": 25.90909090909091,
+      "effort": 28947.86933230558,
+      "time": 1608.2149629058656,
+      "bugs": 0.37242872825188467
+    },
+    "line_count": 84,
+    "fta_score": 47.74452651779149,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/ui/workflow-status.tsx",
+    "cyclo": 9,
+    "halstead": {
+      "uniq_operators": 16,
+      "uniq_operands": 36,
+      "total_operators": 62,
+      "total_operands": 89,
+      "program_length": 151,
+      "vocabulary_size": 52,
+      "volume": 860.7663974393048,
+      "difficulty": 19.77777777777778,
+      "effort": 17024.04652713292,
+      "time": 945.7803626184955,
+      "bugs": 0.2869221324797683
+    },
+    "line_count": 84,
+    "fta_score": 47.74452651779149,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/error/error-view-helpers.tsx",
+    "cyclo": 3,
+    "halstead": {
+      "uniq_operators": 16,
+      "uniq_operands": 24,
+      "total_operators": 40,
+      "total_operands": 53,
+      "program_length": 93,
+      "vocabulary_size": 40,
+      "volume": 494.93931282452473,
+      "difficulty": 17.666666666666668,
+      "effort": 8743.927859899937,
+      "time": 485.77376999444095,
+      "bugs": 0.16497977094150826
+    },
+    "line_count": 48,
+    "fta_score": 47.40471036883612,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/components/item-card.tsx",
+    "cyclo": 3,
+    "halstead": {
+      "uniq_operators": 13,
+      "uniq_operands": 17,
+      "total_operators": 26,
+      "total_operands": 57,
+      "program_length": 83,
+      "vocabulary_size": 30,
+      "volume": 407.2719194355071,
+      "difficulty": 20.11764705882353,
+      "effort": 8193.352732173142,
+      "time": 455.1862628985079,
+      "bugs": 0.13575730647850237
+    },
+    "line_count": 52,
+    "fta_score": 47.28818702822913,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/serializers/workflow-to-spec/formatters.ts",
+    "cyclo": 24,
+    "halstead": {
+      "uniq_operators": 16,
+      "uniq_operands": 32,
+      "total_operators": 281,
+      "total_operands": 131,
+      "program_length": 412,
+      "vocabulary_size": 48,
+      "volume": 2301.004550297116,
+      "difficulty": 32.75,
+      "effort": 75357.89902223056,
+      "time": 4186.549945679475,
+      "bugs": 0.7670015167657054
+    },
+    "line_count": 94,
+    "fta_score": 47.087756038426335,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "hooks/progress-calculation.ts",
+    "cyclo": 10,
+    "halstead": {
+      "uniq_operators": 19,
+      "uniq_operands": 32,
+      "total_operators": 112,
+      "total_operands": 97,
+      "program_length": 209,
+      "vocabulary_size": 51,
+      "volume": 1185.5368964720426,
+      "difficulty": 27.28125,
+      "effort": 32342.92845687791,
+      "time": 1796.8293587154394,
+      "bugs": 0.3951789654906809
+    },
+    "line_count": 81,
+    "fta_score": 47.03172162739365,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/deterministic-issues-panel.tsx",
+    "cyclo": 7,
+    "halstead": {
+      "uniq_operators": 17,
+      "uniq_operands": 26,
+      "total_operators": 50,
+      "total_operands": 78,
+      "program_length": 128,
+      "vocabulary_size": 43,
+      "volume": 694.5618886018685,
+      "difficulty": 24.0,
+      "effort": 16669.485326444847,
+      "time": 926.0825181358248,
+      "bugs": 0.2315206295339562
+    },
+    "line_count": 75,
+    "fta_score": 46.97469304650682,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/ui/progress-timeline.tsx",
+    "cyclo": 7,
+    "halstead": {
+      "uniq_operators": 18,
+      "uniq_operands": 32,
+      "total_operators": 62,
+      "total_operands": 82,
+      "program_length": 144,
+      "vocabulary_size": 50,
+      "volume": 812.7152913275603,
+      "difficulty": 23.0625,
+      "effort": 18743.24640624186,
+      "time": 1041.2914670134367,
+      "bugs": 0.27090509710918675
+    },
+    "line_count": 71,
+    "fta_score": 46.91409982744305,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/components/persona-radio-group.tsx",
+    "cyclo": 3,
+    "halstead": {
+      "uniq_operators": 16,
+      "uniq_operands": 20,
+      "total_operators": 46,
+      "total_operands": 44,
+      "program_length": 90,
+      "vocabulary_size": 36,
+      "volume": 465.2932501298081,
+      "difficulty": 17.6,
+      "effort": 8189.161202284623,
+      "time": 454.9534001269235,
+      "bugs": 0.15509775004326937
+    },
+    "line_count": 47,
+    "fta_score": 46.88486246800245,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/serializers/workflow-to-spec-legacy.ts",
+    "cyclo": 8,
+    "halstead": {
+      "uniq_operators": 20,
+      "uniq_operands": 34,
+      "total_operators": 101,
+      "total_operands": 89,
+      "program_length": 190,
+      "vocabulary_size": 54,
+      "volume": 1093.4286254110589,
+      "difficulty": 26.176470588235293,
+      "effort": 28622.102253407127,
+      "time": 1590.1167918559515,
+      "bugs": 0.36447620847035295
+    },
+    "line_count": 71,
+    "fta_score": 46.65387209777959,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/ui/copy-button.tsx",
+    "cyclo": 3,
+    "halstead": {
+      "uniq_operators": 16,
+      "uniq_operands": 22,
+      "total_operators": 47,
+      "total_operands": 48,
+      "program_length": 95,
+      "vocabulary_size": 38,
+      "volume": 498.5531137771406,
+      "difficulty": 17.454545454545453,
+      "effort": 8702.01798592827,
+      "time": 483.4454436626817,
+      "bugs": 0.16618437125904686
+    },
+    "line_count": 45,
+    "fta_score": 46.6373131915005,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/spec/items/banned-text.ts",
+    "cyclo": 10,
+    "halstead": {
+      "uniq_operators": 21,
+      "uniq_operands": 36,
+      "total_operators": 130,
+      "total_operands": 105,
+      "program_length": 235,
+      "vocabulary_size": 57,
+      "volume": 1370.7291533287141,
+      "difficulty": 29.166666666666668,
+      "effort": 39979.60030542083,
+      "time": 2221.0889058567127,
+      "bugs": 0.45690971777623807
+    },
+    "line_count": 73,
+    "fta_score": 46.384785921828495,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/spec/helpers/phase-processing.ts",
+    "cyclo": 4,
+    "halstead": {
+      "uniq_operators": 18,
+      "uniq_operands": 25,
+      "total_operators": 67,
+      "total_operands": 62,
+      "program_length": 129,
+      "vocabulary_size": 43,
+      "volume": 699.9881533565706,
+      "difficulty": 22.32,
+      "effort": 15623.735582918656,
+      "time": 867.9853101621476,
+      "bugs": 0.2333293844521902
+    },
+    "line_count": 52,
+    "fta_score": 46.31398469647806,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/hooks/outline-editor-state.ts",
+    "cyclo": 3,
+    "halstead": {
+      "uniq_operators": 13,
+      "uniq_operands": 28,
+      "total_operators": 48,
+      "total_operands": 64,
+      "program_length": 112,
+      "vocabulary_size": 41,
+      "volume": 600.0458245172254,
+      "difficulty": 13.714285714285714,
+      "effort": 8229.199879093376,
+      "time": 457.1777710607431,
+      "bugs": 0.2000152748390751
+    },
+    "line_count": 42,
+    "fta_score": 46.21476476939324,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/ai/providers.ts",
+    "cyclo": 4,
+    "halstead": {
+      "uniq_operators": 18,
+      "uniq_operands": 29,
+      "total_operators": 65,
+      "total_operands": 54,
+      "program_length": 119,
+      "vocabulary_size": 47,
+      "volume": 660.9960733496389,
+      "difficulty": 16.75862068965517,
+      "effort": 11077.382470618086,
+      "time": 615.4101372565603,
+      "bugs": 0.22033202444987962
+    },
+    "line_count": 50,
+    "fta_score": 46.21290362876029,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/progress-timeline-step.tsx",
+    "cyclo": 17,
+    "halstead": {
+      "uniq_operators": 20,
+      "uniq_operands": 49,
+      "total_operators": 76,
+      "total_operands": 107,
+      "program_length": 183,
+      "vocabulary_size": 69,
+      "volume": 1117.859975590405,
+      "difficulty": 21.836734693877553,
+      "effort": 24410.411711872108,
+      "time": 1356.1339839928949,
+      "bugs": 0.37261999186346834
+    },
+    "line_count": 74,
+    "fta_score": 46.07154481430518,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/spec/helpers/semantic-section-extraction.ts",
+    "cyclo": 4,
+    "halstead": {
+      "uniq_operators": 16,
+      "uniq_operands": 19,
+      "total_operators": 66,
+      "total_operands": 53,
+      "program_length": 119,
+      "vocabulary_size": 35,
+      "volume": 610.384679016451,
+      "difficulty": 22.31578947368421,
+      "effort": 13621.215994893431,
+      "time": 756.734221938524,
+      "bugs": 0.20346155967215032
+    },
+    "line_count": 54,
+    "fta_score": 46.045541790899435,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/progress-timeline-visuals.tsx",
+    "cyclo": 14,
+    "halstead": {
+      "uniq_operators": 18,
+      "uniq_operands": 33,
+      "total_operators": 70,
+      "total_operands": 81,
+      "program_length": 151,
+      "vocabulary_size": 51,
+      "volume": 856.5362266376958,
+      "difficulty": 22.09090909090909,
+      "effort": 18921.663915723642,
+      "time": 1051.2035508735357,
+      "bugs": 0.2855120755458986
+    },
+    "line_count": 78,
+    "fta_score": 45.9200838747629,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "hooks/content-outline-generation.ts",
+    "cyclo": 9,
+    "halstead": {
+      "uniq_operators": 14,
+      "uniq_operands": 29,
+      "total_operators": 90,
+      "total_operands": 67,
+      "program_length": 157,
+      "vocabulary_size": 43,
+      "volume": 851.9235664882294,
+      "difficulty": 16.17241379310345,
+      "effort": 13777.660437344124,
+      "time": 765.4255798524514,
+      "bugs": 0.28397452216274316
+    },
+    "line_count": 72,
+    "fta_score": 45.70624128491519,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/configuration-summary.tsx",
+    "cyclo": 3,
+    "halstead": {
+      "uniq_operators": 13,
+      "uniq_operands": 14,
+      "total_operators": 35,
+      "total_operands": 57,
+      "program_length": 92,
+      "vocabulary_size": 27,
+      "volume": 437.44965019903907,
+      "difficulty": 24.428571428571427,
+      "effort": 10686.270026290811,
+      "time": 593.6816681272672,
+      "bugs": 0.14581655006634636
+    },
+    "line_count": 45,
+    "fta_score": 45.59807557316441,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/complete-step.tsx",
+    "cyclo": 3,
+    "halstead": {
+      "uniq_operators": 16,
+      "uniq_operands": 15,
+      "total_operators": 29,
+      "total_operands": 41,
+      "program_length": 70,
+      "vocabulary_size": 31,
+      "volume": 346.7937417270812,
+      "difficulty": 21.866666666666667,
+      "effort": 7583.223152432176,
+      "time": 421.2901751351209,
+      "bugs": 0.11559791390902707
+    },
+    "line_count": 43,
+    "fta_score": 45.5874856901567,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "app/api/run/utils.ts",
+    "cyclo": 4,
+    "halstead": {
+      "uniq_operators": 15,
+      "uniq_operands": 28,
+      "total_operators": 60,
+      "total_operands": 53,
+      "program_length": 113,
+      "vocabulary_size": 43,
+      "volume": 613.167917281337,
+      "difficulty": 13.25,
+      "effort": 8124.474903977716,
+      "time": 451.3597168876509,
+      "bugs": 0.20438930576044567
+    },
+    "line_count": 48,
+    "fta_score": 45.55568536062349,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/hooks/outline-form-shared.tsx",
+    "cyclo": 6,
+    "halstead": {
+      "uniq_operators": 17,
+      "uniq_operands": 31,
+      "total_operators": 47,
+      "total_operands": 75,
+      "program_length": 122,
+      "vocabulary_size": 48,
+      "volume": 681.3654250879811,
+      "difficulty": 19.35483870967742,
+      "effort": 13187.717904928666,
+      "time": 732.6509947182592,
+      "bugs": 0.22712180836266035
+    },
+    "line_count": 58,
+    "fta_score": 45.521411180639724,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/hooks/use-generate-step.ts",
+    "cyclo": 6,
+    "halstead": {
+      "uniq_operators": 16,
+      "uniq_operands": 29,
+      "total_operators": 90,
+      "total_operands": 81,
+      "program_length": 171,
+      "vocabulary_size": 45,
+      "volume": 939.1068794723744,
+      "difficulty": 22.344827586206897,
+      "effort": 20984.181306830986,
+      "time": 1165.787850379499,
+      "bugs": 0.3130356264907915
+    },
+    "line_count": 58,
+    "fta_score": 45.325153689461146,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "hooks/workflow-navigation.ts",
+    "cyclo": 8,
+    "halstead": {
+      "uniq_operators": 20,
+      "uniq_operands": 29,
+      "total_operators": 108,
+      "total_operands": 94,
+      "program_length": 202,
+      "vocabulary_size": 49,
+      "volume": 1134.1713885112722,
+      "difficulty": 32.41379310344828,
+      "effort": 36762.79673105503,
+      "time": 2042.3775961697238,
+      "bugs": 0.3780571295037574
+    },
+    "line_count": 63,
+    "fta_score": 45.22587038287585,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/serializers/workflow-to-spec/metadata.ts",
+    "cyclo": 3,
+    "halstead": {
+      "uniq_operators": 15,
+      "uniq_operands": 24,
+      "total_operators": 88,
+      "total_operands": 55,
+      "program_length": 143,
+      "vocabulary_size": 39,
+      "volume": 755.8125172973016,
+      "difficulty": 16.041666666666668,
+      "effort": 12124.492464977548,
+      "time": 673.5829147209748,
+      "bugs": 0.2519375057657672
+    },
+    "line_count": 38,
+    "fta_score": 45.11452721640415,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/spec/items/word-budget.ts",
+    "cyclo": 3,
+    "halstead": {
+      "uniq_operators": 14,
+      "uniq_operands": 25,
+      "total_operators": 71,
+      "total_operands": 62,
+      "program_length": 133,
+      "vocabulary_size": 39,
+      "volume": 702.9584951086791,
+      "difficulty": 17.36,
+      "effort": 12203.359475086669,
+      "time": 677.9644152825927,
+      "bugs": 0.2343194983695597
+    },
+    "line_count": 38,
+    "fta_score": 45.11452721640415,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/agents/drafter-messages.ts",
+    "cyclo": 5,
+    "halstead": {
+      "uniq_operators": 15,
+      "uniq_operands": 29,
+      "total_operators": 49,
+      "total_operands": 57,
+      "program_length": 106,
+      "vocabulary_size": 44,
+      "volume": 578.6997515755535,
+      "difficulty": 13.758620689655173,
+      "effort": 7962.110375125719,
+      "time": 442.3394652847621,
+      "bugs": 0.19289991719185115
+    },
+    "line_count": 52,
+    "fta_score": 45.104442931634445,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/hooks/prd-generation-runner.ts",
+    "cyclo": 4,
+    "halstead": {
+      "uniq_operators": 14,
+      "uniq_operands": 30,
+      "total_operators": 57,
+      "total_operands": 51,
+      "program_length": 108,
+      "vocabulary_size": 44,
+      "volume": 589.6186148128281,
+      "difficulty": 11.9,
+      "effort": 7016.461516272655,
+      "time": 389.80341757070306,
+      "bugs": 0.1965395382709427
+    },
+    "line_count": 45,
+    "fta_score": 45.014177438015196,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/spec/helpers/patterns.ts",
+    "cyclo": 9,
+    "halstead": {
+      "uniq_operators": 17,
+      "uniq_operands": 38,
+      "total_operators": 105,
+      "total_operands": 101,
+      "program_length": 206,
+      "vocabulary_size": 55,
+      "volume": 1190.9601009860799,
+      "difficulty": 21.263157894736842,
+      "effort": 25323.572673598752,
+      "time": 1406.865148533264,
+      "bugs": 0.39698670032869326
+    },
+    "line_count": 61,
+    "fta_score": 44.88405264933032,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "app/api/run/streaming-response.ts",
+    "cyclo": 5,
+    "halstead": {
+      "uniq_operators": 15,
+      "uniq_operands": 27,
+      "total_operators": 63,
+      "total_operands": 49,
+      "program_length": 112,
+      "vocabulary_size": 42,
+      "volume": 603.9395513512212,
+      "difficulty": 12.703703703703704,
+      "effort": 7672.269115313662,
+      "time": 426.23717307298125,
+      "bugs": 0.2013131837837404
+    },
+    "line_count": 51,
+    "fta_score": 44.77901774322128,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/spec/items/placeholder-quality.ts",
+    "cyclo": 7,
+    "halstead": {
+      "uniq_operators": 17,
+      "uniq_operands": 29,
+      "total_operators": 85,
+      "total_operands": 70,
+      "program_length": 155,
+      "vocabulary_size": 46,
+      "volume": 856.152103188837,
+      "difficulty": 19.310344827586206,
+      "effort": 16532.59233743961,
+      "time": 918.4773520799785,
+      "bugs": 0.285384034396279
+    },
+    "line_count": 56,
+    "fta_score": 44.41216942706705,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/ai/circuit-breaker.ts",
+    "cyclo": 5,
+    "halstead": {
+      "uniq_operators": 18,
+      "uniq_operands": 21,
+      "total_operators": 70,
+      "total_operands": 51,
+      "program_length": 121,
+      "vocabulary_size": 39,
+      "volume": 639.5336684823321,
+      "difficulty": 21.857142857142858,
+      "effort": 13978.378753970974,
+      "time": 776.5765974428318,
+      "bugs": 0.2131778894941107
+    },
+    "line_count": 50,
+    "fta_score": 44.36605632953857,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/ui/code-editor-config.ts",
+    "cyclo": 3,
+    "halstead": {
+      "uniq_operators": 13,
+      "uniq_operands": 26,
+      "total_operators": 53,
+      "total_operands": 41,
+      "program_length": 94,
+      "vocabulary_size": 39,
+      "volume": 496.82780857305136,
+      "difficulty": 9.461538461538462,
+      "effort": 4700.755419575794,
+      "time": 261.1530788653219,
+      "bugs": 0.16560926952435046
+    },
+    "line_count": 34,
+    "fta_score": 44.06081067325465,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/error/circuit-breaker-status.tsx",
+    "cyclo": 4,
+    "halstead": {
+      "uniq_operators": 13,
+      "uniq_operands": 19,
+      "total_operators": 39,
+      "total_operands": 54,
+      "program_length": 93,
+      "vocabulary_size": 32,
+      "volume": 465.0,
+      "difficulty": 17.05263157894737,
+      "effort": 7929.473684210527,
+      "time": 440.5263157894737,
+      "bugs": 0.155
+    },
+    "line_count": 45,
+    "fta_score": 44.04578012701145,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/ui/typing-animation-hooks.ts",
+    "cyclo": 4,
+    "halstead": {
+      "uniq_operators": 16,
+      "uniq_operands": 28,
+      "total_operators": 68,
+      "total_operands": 64,
+      "program_length": 132,
+      "vocabulary_size": 44,
+      "volume": 720.6449736601232,
+      "difficulty": 18.285714285714285,
+      "effort": 13177.50808978511,
+      "time": 732.0837827658394,
+      "bugs": 0.24021499122004109
+    },
+    "line_count": 40,
+    "fta_score": 43.89833815284946,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/knowledge.ts",
+    "cyclo": 11,
+    "halstead": {
+      "uniq_operators": 19,
+      "uniq_operands": 33,
+      "total_operators": 96,
+      "total_operands": 80,
+      "program_length": 176,
+      "vocabulary_size": 52,
+      "volume": 1003.2773903928321,
+      "difficulty": 21.818181818181817,
+      "effort": 21889.68851766179,
+      "time": 1216.0938065367661,
+      "bugs": 0.3344257967976107
+    },
+    "line_count": 59,
+    "fta_score": 43.838709663469196,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/hooks/outline-editor-callbacks.ts",
+    "cyclo": 4,
+    "halstead": {
+      "uniq_operators": 11,
+      "uniq_operands": 23,
+      "total_operators": 36,
+      "total_operands": 66,
+      "program_length": 102,
+      "vocabulary_size": 34,
+      "volume": 518.9212098075346,
+      "difficulty": 14.347826086956522,
+      "effort": 7445.391271151584,
+      "time": 413.6328483973102,
+      "bugs": 0.17297373660251156
+    },
+    "line_count": 43,
+    "fta_score": 43.79943952666174,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/hooks/use-refine-draft.ts",
+    "cyclo": 5,
+    "halstead": {
+      "uniq_operators": 16,
+      "uniq_operands": 23,
+      "total_operators": 42,
+      "total_operands": 55,
+      "program_length": 97,
+      "vocabulary_size": 39,
+      "volume": 512.6840152296381,
+      "difficulty": 19.130434782608695,
+      "effort": 9807.868117436556,
+      "time": 544.8815620798086,
+      "bugs": 0.1708946717432127
+    },
+    "line_count": 46,
+    "fta_score": 43.576125297484396,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/error/circuit-breaker-utils.ts",
+    "cyclo": 6,
+    "halstead": {
+      "uniq_operators": 24,
+      "uniq_operands": 31,
+      "total_operators": 75,
+      "total_operands": 56,
+      "program_length": 131,
+      "vocabulary_size": 55,
+      "volume": 757.3581224717304,
+      "difficulty": 21.677419354838708,
+      "effort": 16417.569622612995,
+      "time": 912.0872012562775,
+      "bugs": 0.2524527074905768
+    },
+    "line_count": 45,
+    "fta_score": 43.531143853104645,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/spec/items/technical-feasibility.ts",
+    "cyclo": 4,
+    "halstead": {
+      "uniq_operators": 17,
+      "uniq_operands": 28,
+      "total_operators": 46,
+      "total_operands": 50,
+      "program_length": 96,
+      "vocabulary_size": 45,
+      "volume": 527.2178972476488,
+      "difficulty": 14.285714285714286,
+      "effort": 7531.684246394983,
+      "time": 418.42690257749905,
+      "bugs": 0.1757392990825496
+    },
+    "line_count": 38,
+    "fta_score": 43.48074018872803,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/serializers/workflow-to-spec.ts",
+    "cyclo": 7,
+    "halstead": {
+      "uniq_operators": 17,
+      "uniq_operands": 25,
+      "total_operators": 72,
+      "total_operands": 60,
+      "program_length": 132,
+      "vocabulary_size": 42,
+      "volume": 711.7858998067965,
+      "difficulty": 19.2,
+      "effort": 13666.289276290492,
+      "time": 759.2382931272496,
+      "bugs": 0.23726196660226548
+    },
+    "line_count": 52,
+    "fta_score": 43.43345457586232,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/spec/prompt.ts",
+    "cyclo": 7,
+    "halstead": {
+      "uniq_operators": 15,
+      "uniq_operands": 24,
+      "total_operators": 101,
+      "total_operands": 62,
+      "program_length": 163,
+      "vocabulary_size": 39,
+      "volume": 861.5205616745466,
+      "difficulty": 18.083333333333332,
+      "effort": 15579.163490281382,
+      "time": 865.5090827934101,
+      "bugs": 0.2871735205581822
+    },
+    "line_count": 53,
+    "fta_score": 43.38855358365525,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/spec/items/sku-differentiation.ts",
+    "cyclo": 7,
+    "halstead": {
+      "uniq_operators": 14,
+      "uniq_operands": 34,
+      "total_operators": 52,
+      "total_operands": 54,
+      "program_length": 106,
+      "vocabulary_size": 48,
+      "volume": 592.0060250764426,
+      "difficulty": 11.117647058823529,
+      "effort": 6581.714043496921,
+      "time": 365.65078019427335,
+      "bugs": 0.19733534169214753
+    },
+    "line_count": 49,
+    "fta_score": 43.27655623084509,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/ui/metrics/phase-metric-cards.tsx",
+    "cyclo": 3,
+    "halstead": {
+      "uniq_operators": 18,
+      "uniq_operands": 18,
+      "total_operators": 46,
+      "total_operands": 33,
+      "program_length": 79,
+      "vocabulary_size": 36,
+      "volume": 408.42407511394265,
+      "difficulty": 16.5,
+      "effort": 6738.9972393800535,
+      "time": 374.3887355211141,
+      "bugs": 0.13614135837131422
+    },
+    "line_count": 32,
+    "fta_score": 43.243067425694036,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "hooks/use-clipboard.ts",
+    "cyclo": 7,
+    "halstead": {
+      "uniq_operators": 21,
+      "uniq_operands": 29,
+      "total_operators": 74,
+      "total_operands": 68,
+      "program_length": 142,
+      "vocabulary_size": 50,
+      "volume": 801.4275789480108,
+      "difficulty": 23.448275862068964,
+      "effort": 18792.094954643013,
+      "time": 1044.0052752579452,
+      "bugs": 0.2671425263160036
+    },
+    "line_count": 47,
+    "fta_score": 43.00589932430482,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "app/api/run/api-validation.ts",
+    "cyclo": 4,
+    "halstead": {
+      "uniq_operators": 13,
+      "uniq_operands": 19,
+      "total_operators": 48,
+      "total_operands": 38,
+      "program_length": 86,
+      "vocabulary_size": 32,
+      "volume": 430.0,
+      "difficulty": 12.0,
+      "effort": 5160.0,
+      "time": 286.6666666666667,
+      "bugs": 0.14333333333333334
+    },
+    "line_count": 40,
+    "fta_score": 42.92994084184572,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/generation-status-card.tsx",
+    "cyclo": 3,
+    "halstead": {
+      "uniq_operators": 13,
+      "uniq_operands": 13,
+      "total_operators": 19,
+      "total_operands": 36,
+      "program_length": 55,
+      "vocabulary_size": 26,
+      "volume": 258.52418449776,
+      "difficulty": 16.615384615384617,
+      "effort": 4295.478757808936,
+      "time": 238.63770876716313,
+      "bugs": 0.08617472816592
+    },
+    "line_count": 34,
+    "fta_score": 42.827817362048535,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/validation-issues-alert.tsx",
+    "cyclo": 3,
+    "halstead": {
+      "uniq_operators": 15,
+      "uniq_operands": 16,
+      "total_operators": 33,
+      "total_operands": 39,
+      "program_length": 72,
+      "vocabulary_size": 31,
+      "volume": 356.702134347855,
+      "difficulty": 17.0625,
+      "effort": 6086.230167310276,
+      "time": 338.1238981839042,
+      "bugs": 0.118900711449285
+    },
+    "line_count": 32,
+    "fta_score": 42.788351041688784,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "hooks/use-outline-generation.ts",
+    "cyclo": 3,
+    "halstead": {
+      "uniq_operators": 13,
+      "uniq_operands": 18,
+      "total_operators": 47,
+      "total_operands": 39,
+      "program_length": 86,
+      "vocabulary_size": 31,
+      "volume": 426.06088269327125,
+      "difficulty": 13.0,
+      "effort": 5538.7914750125265,
+      "time": 307.7106375006959,
+      "bugs": 0.14202029423109042
+    },
+    "line_count": 32,
+    "fta_score": 42.788351041688784,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/spec/helpers/streaming.ts",
+    "cyclo": 12,
+    "halstead": {
+      "uniq_operators": 24,
+      "uniq_operands": 26,
+      "total_operators": 92,
+      "total_operands": 71,
+      "program_length": 163,
+      "vocabulary_size": 50,
+      "volume": 919.9485589332801,
+      "difficulty": 32.76923076923077,
+      "effort": 30146.006623505946,
+      "time": 1674.7781457503304,
+      "bugs": 0.3066495196444267
+    },
+    "line_count": 50,
+    "fta_score": 41.948236142481896,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "app/api/refine.ts",
+    "cyclo": 5,
+    "halstead": {
+      "uniq_operators": 22,
+      "uniq_operands": 29,
+      "total_operators": 72,
+      "total_operands": 51,
+      "program_length": 123,
+      "vocabulary_size": 51,
+      "volume": 697.708317062494,
+      "difficulty": 19.344827586206897,
+      "effort": 13497.047099036521,
+      "time": 749.8359499464734,
+      "bugs": 0.23256943902083133
+    },
+    "line_count": 35,
+    "fta_score": 41.80280407134258,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/generate-actions.tsx",
+    "cyclo": 3,
+    "halstead": {
+      "uniq_operators": 9,
+      "uniq_operands": 9,
+      "total_operators": 17,
+      "total_operands": 26,
+      "program_length": 43,
+      "vocabulary_size": 18,
+      "volume": 179.30677506201943,
+      "difficulty": 11.555555555555555,
+      "effort": 2071.989400716669,
+      "time": 115.11052226203716,
+      "bugs": 0.059768925020673144
+    },
+    "line_count": 33,
+    "fta_score": 41.426772414869305,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/error/utilities.ts",
+    "cyclo": 8,
+    "halstead": {
+      "uniq_operators": 20,
+      "uniq_operands": 24,
+      "total_operators": 66,
+      "total_operands": 46,
+      "program_length": 112,
+      "vocabulary_size": 44,
+      "volume": 611.4563412873773,
+      "difficulty": 19.166666666666668,
+      "effort": 11719.579874674733,
+      "time": 651.087770815263,
+      "bugs": 0.20381878042912577
+    },
+    "line_count": 43,
+    "fta_score": 41.280244565853955,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/spec/test-utils/validation-helpers.ts",
+    "cyclo": 8,
+    "halstead": {
+      "uniq_operators": 20,
+      "uniq_operands": 24,
+      "total_operators": 73,
+      "total_operands": 64,
+      "program_length": 137,
+      "vocabulary_size": 44,
+      "volume": 747.9421317533097,
+      "difficulty": 26.666666666666668,
+      "effort": 19945.123513421593,
+      "time": 1108.0624174123107,
+      "bugs": 0.2493140439177699
+    },
+    "line_count": 43,
+    "fta_score": 41.280244565853955,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/spec/items/section-count.ts",
+    "cyclo": 9,
+    "halstead": {
+      "uniq_operators": 23,
+      "uniq_operands": 27,
+      "total_operators": 93,
+      "total_operands": 66,
+      "program_length": 159,
+      "vocabulary_size": 50,
+      "volume": 897.3731341741811,
+      "difficulty": 26.88888888888889,
+      "effort": 24129.36649668354,
+      "time": 1340.5203609268633,
+      "bugs": 0.29912437805806036
+    },
+    "line_count": 42,
+    "fta_score": 41.05860135202063,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/hooks/use-auto-generation.ts",
+    "cyclo": 7,
+    "halstead": {
+      "uniq_operators": 17,
+      "uniq_operands": 18,
+      "total_operators": 70,
+      "total_operands": 46,
+      "program_length": 116,
+      "vocabulary_size": 35,
+      "volume": 594.9968299656161,
+      "difficulty": 20.444444444444443,
+      "effort": 12164.379634852596,
+      "time": 675.798868602922,
+      "bugs": 0.1983322766552054
+    },
+    "line_count": 42,
+    "fta_score": 40.85569286816811,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/agents/prompt-loader.ts",
+    "cyclo": 8,
+    "halstead": {
+      "uniq_operators": 17,
+      "uniq_operands": 26,
+      "total_operators": 67,
+      "total_operands": 61,
+      "program_length": 128,
+      "vocabulary_size": 43,
+      "volume": 694.5618886018685,
+      "difficulty": 18.76923076923077,
+      "effort": 13036.392370681226,
+      "time": 724.2440205934014,
+      "bugs": 0.2315206295339562
+    },
+    "line_count": 41,
+    "fta_score": 40.75912182410286,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/serializers/workflow-to-spec/sections/key-personas-section.ts",
+    "cyclo": 3,
+    "halstead": {
+      "uniq_operators": 16,
+      "uniq_operands": 18,
+      "total_operators": 41,
+      "total_operands": 29,
+      "program_length": 70,
+      "vocabulary_size": 34,
+      "volume": 356.12239888752373,
+      "difficulty": 12.88888888888889,
+      "effort": 4590.022030105862,
+      "time": 255.00122389477008,
+      "bugs": 0.11870746629584124
+    },
+    "line_count": 25,
+    "fta_score": 40.7305779435546,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/generation-feedback-alerts.tsx",
+    "cyclo": 5,
+    "halstead": {
+      "uniq_operators": 15,
+      "uniq_operands": 15,
+      "total_operators": 30,
+      "total_operands": 36,
+      "program_length": 66,
+      "vocabulary_size": 30,
+      "volume": 323.85477931016226,
+      "difficulty": 16.8,
+      "effort": 5440.760292410726,
+      "time": 302.2644606894848,
+      "bugs": 0.10795159310338742
+    },
+    "line_count": 37,
+    "fta_score": 40.715648915310204,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/agents/workflow/error-handling.ts",
+    "cyclo": 3,
+    "halstead": {
+      "uniq_operators": 14,
+      "uniq_operands": 17,
+      "total_operators": 31,
+      "total_operands": 32,
+      "program_length": 63,
+      "vocabulary_size": 31,
+      "volume": 312.11436755437313,
+      "difficulty": 13.176470588235293,
+      "effort": 4112.565784245858,
+      "time": 228.47587690254764,
+      "bugs": 0.10403812251812437
+    },
+    "line_count": 25,
+    "fta_score": 40.44967661917959,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/serializers/workflow-to-spec/sections/tldr-section.ts",
+    "cyclo": 9,
+    "halstead": {
+      "uniq_operators": 17,
+      "uniq_operands": 24,
+      "total_operators": 107,
+      "total_operands": 62,
+      "program_length": 169,
+      "vocabulary_size": 41,
+      "volume": 905.4262887804562,
+      "difficulty": 20.666666666666668,
+      "effort": 18712.143301462762,
+      "time": 1039.5635167479313,
+      "bugs": 0.30180876292681874
+    },
+    "line_count": 41,
+    "fta_score": 40.22683221930441,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/services/refine-client.ts",
+    "cyclo": 6,
+    "halstead": {
+      "uniq_operators": 20,
+      "uniq_operands": 23,
+      "total_operators": 46,
+      "total_operands": 40,
+      "program_length": 86,
+      "vocabulary_size": 43,
+      "volume": 466.6587689043804,
+      "difficulty": 17.391304347826086,
+      "effort": 8115.80467659792,
+      "time": 450.87803758877334,
+      "bugs": 0.1555529229681268
+    },
+    "line_count": 33,
+    "fta_score": 39.84435917466925,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/error/classification.ts",
+    "cyclo": 5,
+    "halstead": {
+      "uniq_operators": 19,
+      "uniq_operands": 17,
+      "total_operators": 71,
+      "total_operands": 35,
+      "program_length": 106,
+      "vocabulary_size": 36,
+      "volume": 548.0120501528851,
+      "difficulty": 18.529411764705884,
+      "effort": 10154.34092930346,
+      "time": 564.13005162797,
+      "bugs": 0.18267068338429504
+    },
+    "line_count": 31,
+    "fta_score": 39.59389138498944,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/spec/test-utils/performance-helpers.ts",
+    "cyclo": 3,
+    "halstead": {
+      "uniq_operators": 12,
+      "uniq_operands": 16,
+      "total_operators": 28,
+      "total_operands": 24,
+      "program_length": 52,
+      "vocabulary_size": 28,
+      "volume": 249.9824559469954,
+      "difficulty": 9.0,
+      "effort": 2249.8421035229585,
+      "time": 124.9912279734977,
+      "bugs": 0.08332748531566514
+    },
+    "line_count": 22,
+    "fta_score": 38.92910899995627,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/ui/metrics/use-animated-word-count.ts",
+    "cyclo": 3,
+    "halstead": {
+      "uniq_operators": 14,
+      "uniq_operands": 17,
+      "total_operators": 43,
+      "total_operands": 39,
+      "program_length": 82,
+      "vocabulary_size": 31,
+      "volume": 406.24409745172375,
+      "difficulty": 16.058823529411764,
+      "effort": 6523.802270842387,
+      "time": 362.4334594912437,
+      "bugs": 0.13541469915057458
+    },
+    "line_count": 21,
+    "fta_score": 38.79790768833432,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/ui/metrics/issues-summary.tsx",
+    "cyclo": 3,
+    "halstead": {
+      "uniq_operators": 13,
+      "uniq_operands": 14,
+      "total_operators": 22,
+      "total_operands": 25,
+      "program_length": 47,
+      "vocabulary_size": 27,
+      "volume": 223.47971260168302,
+      "difficulty": 10.714285714285714,
+      "effort": 2394.4254921608895,
+      "time": 133.02363845338274,
+      "bugs": 0.07449323753389434
+    },
+    "line_count": 21,
+    "fta_score": 38.377801395878016,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/spec/validate.ts",
+    "cyclo": 8,
+    "halstead": {
+      "uniq_operators": 14,
+      "uniq_operands": 23,
+      "total_operators": 54,
+      "total_operands": 63,
+      "program_length": 117,
+      "vocabulary_size": 37,
+      "volume": 609.5060437785871,
+      "difficulty": 19.17391304347826,
+      "effort": 11686.615882885084,
+      "time": 649.2564379380602,
+      "bugs": 0.20316868125952905
+    },
+    "line_count": 33,
+    "fta_score": 38.24572273596873,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/outline-text-utils.ts",
+    "cyclo": 5,
+    "halstead": {
+      "uniq_operators": 11,
+      "uniq_operands": 15,
+      "total_operators": 36,
+      "total_operands": 36,
+      "program_length": 72,
+      "vocabulary_size": 26,
+      "volume": 338.4316597061586,
+      "difficulty": 12.0,
+      "effort": 4061.179916473903,
+      "time": 225.6211064707724,
+      "bugs": 0.1128105532353862
+    },
+    "line_count": 29,
+    "fta_score": 37.97248977730609,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/serializers/workflow-to-spec/normalization.ts",
+    "cyclo": 6,
+    "halstead": {
+      "uniq_operators": 12,
+      "uniq_operands": 18,
+      "total_operators": 40,
+      "total_operands": 41,
+      "program_length": 81,
+      "vocabulary_size": 30,
+      "volume": 397.45813824429,
+      "difficulty": 13.666666666666666,
+      "effort": 5431.92788933863,
+      "time": 301.7737716299239,
+      "bugs": 0.13248604608143
+    },
+    "line_count": 30,
+    "fta_score": 37.84667547303571,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/serializers/workflow-to-spec/sections/go-to-market-section.ts",
+    "cyclo": 4,
+    "halstead": {
+      "uniq_operators": 12,
+      "uniq_operands": 18,
+      "total_operators": 42,
+      "total_operands": 29,
+      "program_length": 71,
+      "vocabulary_size": 30,
+      "volume": 348.3892322882048,
+      "difficulty": 9.666666666666666,
+      "effort": 3367.7625787859797,
+      "time": 187.09792104366554,
+      "bugs": 0.11612974409606827
+    },
+    "line_count": 21,
+    "fta_score": 36.6292484585465,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/outline-id.ts",
+    "cyclo": 4,
+    "halstead": {
+      "uniq_operators": 15,
+      "uniq_operands": 12,
+      "total_operators": 46,
+      "total_operands": 24,
+      "program_length": 70,
+      "vocabulary_size": 27,
+      "volume": 332.84212515144276,
+      "difficulty": 14.0,
+      "effort": 4659.7897521201985,
+      "time": 258.87720845112216,
+      "bugs": 0.11094737505048093
+    },
+    "line_count": 13,
+    "fta_score": 31.76552998973756,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "types/workflow.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 2,
+      "uniq_operands": 192,
+      "total_operators": 105,
+      "total_operands": 290,
+      "program_length": 395,
+      "vocabulary_size": 194,
+      "volume": 3001.9655726639153,
+      "difficulty": 1.5104166666666667,
+      "effort": 4534.218833711122,
+      "time": 251.90104631728457,
+      "bugs": 1.0006551908879717
+    },
+    "line_count": 328,
+    "fta_score": 16.153720717619464,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/spec/helpers/outline-data.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 2,
+      "uniq_operands": 128,
+      "total_operators": 128,
+      "total_operands": 136,
+      "program_length": 264,
+      "vocabulary_size": 130,
+      "volume": 1853.905102639512,
+      "difficulty": 1.0625,
+      "effort": 1969.7741715544817,
+      "time": 109.43189841969343,
+      "bugs": 0.617968367546504
+    },
+    "line_count": 161,
+    "fta_score": 14.936362071560836,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/hooks/use-prd-generation-store.ts",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 18,
+      "uniq_operands": 67,
+      "total_operators": 215,
+      "total_operands": 268,
+      "program_length": 483,
+      "vocabulary_size": 85,
+      "volume": 3095.73582215451,
+      "difficulty": 36.0,
+      "effort": 111446.48959756237,
+      "time": 6191.47164430902,
+      "bugs": 1.03191194071817
+    },
+    "line_count": 194,
+    "fta_score": 13.778822534356522,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/structured-workflow-context.tsx",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 11,
+      "uniq_operands": 72,
+      "total_operators": 28,
+      "total_operands": 123,
+      "program_length": 151,
+      "vocabulary_size": 83,
+      "volume": 962.6309541333856,
+      "difficulty": 8.541666666666666,
+      "effort": 8222.472733222668,
+      "time": 456.8040407345927,
+      "bugs": 0.3208769847111285
+    },
+    "line_count": 81,
+    "fta_score": 13.70641588335809,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/content-outline-step.tsx",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 12,
+      "uniq_operands": 65,
+      "total_operators": 41,
+      "total_operands": 178,
+      "program_length": 219,
+      "vocabulary_size": 77,
+      "volume": 1372.4262524121834,
+      "difficulty": 16.43076923076923,
+      "effort": 22550.019039634026,
+      "time": 1252.7788355352236,
+      "bugs": 0.4574754174707278
+    },
+    "line_count": 156,
+    "fta_score": 13.478238709730505,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/spec/helpers/helpers.test.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 8,
+      "uniq_operands": 70,
+      "total_operators": 235,
+      "total_operands": 196,
+      "program_length": 431,
+      "vocabulary_size": 78,
+      "volume": 2709.0083563296294,
+      "difficulty": 11.2,
+      "effort": 30340.893590891847,
+      "time": 1685.6051994939914,
+      "bugs": 0.9030027854432098
+    },
+    "line_count": 161,
+    "fta_score": 13.382974209816311,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/hooks/outline-editor-config.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 14,
+      "uniq_operands": 62,
+      "total_operators": 372,
+      "total_operands": 303,
+      "program_length": 675,
+      "vocabulary_size": 76,
+      "volume": 4217.35107157442,
+      "difficulty": 34.20967741935484,
+      "effort": 144274.21972273136,
+      "time": 8015.234429040631,
+      "bugs": 1.4057836905248065
+    },
+    "line_count": 264,
+    "fta_score": 13.303984426601701,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/ui/workflow-phase-config.ts",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 10,
+      "uniq_operands": 61,
+      "total_operators": 77,
+      "total_operands": 86,
+      "program_length": 163,
+      "vocabulary_size": 71,
+      "volume": 1002.4087804792632,
+      "difficulty": 7.049180327868853,
+      "effort": 7066.16025583743,
+      "time": 392.564458657635,
+      "bugs": 0.3341362601597544
+    },
+    "line_count": 101,
+    "fta_score": 13.231541146558385,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/hooks/outline-editor-types.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 5,
+      "uniq_operands": 64,
+      "total_operators": 34,
+      "total_operands": 160,
+      "program_length": 194,
+      "vocabulary_size": 69,
+      "volume": 1185.053744614965,
+      "difficulty": 5.0,
+      "effort": 5925.268723074824,
+      "time": 329.1815957263791,
+      "bugs": 0.39501791487165494
+    },
+    "line_count": 136,
+    "fta_score": 13.01014843503259,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/components/enterprise-options.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 2,
+      "uniq_operands": 67,
+      "total_operators": 69,
+      "total_operands": 69,
+      "program_length": 138,
+      "vocabulary_size": 69,
+      "volume": 842.9763750353874,
+      "difficulty": 1.0298507462686568,
+      "effort": 868.1398489170408,
+      "time": 48.22999160650227,
+      "bugs": 0.28099212501179577
+    },
+    "line_count": 141,
+    "fta_score": 13.01014843503259,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/components/content-sections.tsx",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 15,
+      "uniq_operands": 50,
+      "total_operators": 75,
+      "total_operands": 140,
+      "program_length": 215,
+      "vocabulary_size": 65,
+      "volume": 1294.8090798011176,
+      "difficulty": 19.6,
+      "effort": 25378.257964101907,
+      "time": 1409.9032202278838,
+      "bugs": 0.43160302660037253
+    },
+    "line_count": 130,
+    "fta_score": 12.963049007869785,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/spec/types.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 1,
+      "uniq_operands": 66,
+      "total_operators": 10,
+      "total_operands": 95,
+      "program_length": 105,
+      "vocabulary_size": 67,
+      "volume": 636.939364998066,
+      "difficulty": 0.0,
+      "effort": 0.0,
+      "time": 0.0,
+      "bugs": 0.212313121666022
+    },
+    "line_count": 109,
+    "fta_score": 12.920702702241513,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/hooks/metric-field-editor.tsx",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 22,
+      "uniq_operands": 41,
+      "total_operators": 129,
+      "total_operands": 149,
+      "program_length": 278,
+      "vocabulary_size": 63,
+      "volume": 1661.6838187329768,
+      "difficulty": 39.97560975609756,
+      "effort": 66426.82387569144,
+      "time": 3690.37910420508,
+      "bugs": 0.5538946062443256
+    },
+    "line_count": 142,
+    "fta_score": 12.86801203347133,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/spec/config.ts",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 11,
+      "uniq_operands": 51,
+      "total_operators": 53,
+      "total_operands": 72,
+      "program_length": 125,
+      "vocabulary_size": 62,
+      "volume": 744.2745387983593,
+      "difficulty": 7.0588235294117645,
+      "effort": 5253.702626811948,
+      "time": 291.87236815621935,
+      "bugs": 0.24809151293278645
+    },
+    "line_count": 91,
+    "fta_score": 12.819356024698536,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "hooks/use-content-editing.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 12,
+      "uniq_operands": 49,
+      "total_operators": 188,
+      "total_operands": 211,
+      "program_length": 399,
+      "vocabulary_size": 61,
+      "volume": 2366.364197687592,
+      "difficulty": 25.836734693877553,
+      "effort": 61139.12396474473,
+      "time": 3396.617998041374,
+      "bugs": 0.788788065895864
+    },
+    "line_count": 233,
+    "fta_score": 12.635405902749241,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/agents/drafter.ts",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 16,
+      "uniq_operands": 42,
+      "total_operators": 71,
+      "total_operands": 94,
+      "program_length": 165,
+      "vocabulary_size": 58,
+      "volume": 966.5668641960493,
+      "difficulty": 17.904761904761905,
+      "effort": 17306.1495684626,
+      "time": 961.4527538034777,
+      "bugs": 0.3221889547320164
+    },
+    "line_count": 111,
+    "fta_score": 12.616551844936467,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/hooks/use-outline-step-handlers.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 11,
+      "uniq_operands": 48,
+      "total_operators": 81,
+      "total_operands": 190,
+      "program_length": 271,
+      "vocabulary_size": 59,
+      "volume": 1594.1962663770591,
+      "difficulty": 19.791666666666668,
+      "effort": 31551.801105379298,
+      "time": 1752.8778391877388,
+      "bugs": 0.5313987554590197
+    },
+    "line_count": 174,
+    "fta_score": 12.534031993163595,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "hooks/workflow-state.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 20,
+      "uniq_operands": 38,
+      "total_operators": 99,
+      "total_operands": 98,
+      "program_length": 197,
+      "vocabulary_size": 58,
+      "volume": 1154.0222560401317,
+      "difficulty": 25.789473684210527,
+      "effort": 29761.626603140237,
+      "time": 1653.4237001744577,
+      "bugs": 0.38467408534671055
+    },
+    "line_count": 78,
+    "fta_score": 12.482048920959855,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/ui/code-editor.tsx",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 13,
+      "uniq_operands": 44,
+      "total_operators": 55,
+      "total_operands": 110,
+      "program_length": 165,
+      "vocabulary_size": 57,
+      "volume": 962.4268523371824,
+      "difficulty": 15.0,
+      "effort": 14436.402785057735,
+      "time": 802.022376947652,
+      "bugs": 0.3208089507790608
+    },
+    "line_count": 92,
+    "fta_score": 12.429161750140153,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/hooks/success-metric-form.tsx",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 18,
+      "uniq_operands": 36,
+      "total_operators": 129,
+      "total_operands": 158,
+      "program_length": 287,
+      "vocabulary_size": 54,
+      "volume": 1651.6527131209155,
+      "difficulty": 39.5,
+      "effort": 65240.28216827616,
+      "time": 3624.4601204597866,
+      "bugs": 0.5505509043736385
+    },
+    "line_count": 160,
+    "fta_score": 12.39924973224224,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/hooks/functional-requirement-form.tsx",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 18,
+      "uniq_operands": 34,
+      "total_operators": 103,
+      "total_operands": 123,
+      "program_length": 226,
+      "vocabulary_size": 52,
+      "volume": 1288.2993762998867,
+      "difficulty": 32.55882352941177,
+      "effort": 41945.512045999254,
+      "time": 2330.306224777736,
+      "bugs": 0.4294331254332956
+    },
+    "line_count": 130,
+    "fta_score": 12.284483822586807,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/hooks/milestone-form.tsx",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 18,
+      "uniq_operands": 33,
+      "total_operators": 90,
+      "total_operands": 115,
+      "program_length": 205,
+      "vocabulary_size": 51,
+      "volume": 1162.8471951041565,
+      "difficulty": 31.363636363636363,
+      "effort": 36471.11657372127,
+      "time": 2026.1731429845152,
+      "bugs": 0.3876157317013855
+    },
+    "line_count": 117,
+    "fta_score": 12.225434672611996,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/ui/metrics-dashboard.tsx",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 15,
+      "uniq_operands": 36,
+      "total_operators": 53,
+      "total_operands": 69,
+      "program_length": 122,
+      "vocabulary_size": 51,
+      "volume": 692.0358917205224,
+      "difficulty": 13.416666666666666,
+      "effort": 9284.814880583675,
+      "time": 515.8230489213153,
+      "bugs": 0.23067863057350746
+    },
+    "line_count": 61,
+    "fta_score": 12.225434672611996,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/agents/refiner.test.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 12,
+      "uniq_operands": 40,
+      "total_operators": 151,
+      "total_operands": 93,
+      "program_length": 244,
+      "vocabulary_size": 52,
+      "volume": 1390.9072912264264,
+      "difficulty": 13.95,
+      "effort": 19403.15671260865,
+      "time": 1077.9531507004804,
+      "bugs": 0.46363576374214216
+    },
+    "line_count": 83,
+    "fta_score": 12.149980898610195,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/hooks/metric-schema-form.tsx",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 16,
+      "uniq_operands": 35,
+      "total_operators": 70,
+      "total_operands": 94,
+      "program_length": 164,
+      "vocabulary_size": 51,
+      "volume": 930.2777560833252,
+      "difficulty": 21.485714285714284,
+      "effort": 19987.68207356173,
+      "time": 1110.4267818645405,
+      "bugs": 0.3100925853611084
+    },
+    "line_count": 110,
+    "fta_score": 12.09093174863537,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/constants.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 2,
+      "uniq_operands": 49,
+      "total_operators": 64,
+      "total_operands": 74,
+      "program_length": 138,
+      "vocabulary_size": 51,
+      "volume": 782.7946971920663,
+      "difficulty": 1.510204081632653,
+      "effort": 1182.1797467798551,
+      "time": 65.67665259888084,
+      "bugs": 0.26093156573068876
+    },
+    "line_count": 86,
+    "fta_score": 12.09093174863537,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/enterprise-parameters-step.tsx",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 10,
+      "uniq_operands": 41,
+      "total_operators": 45,
+      "total_operands": 107,
+      "program_length": 152,
+      "vocabulary_size": 51,
+      "volume": 862.2086519796673,
+      "difficulty": 13.048780487804878,
+      "effort": 11250.77143436883,
+      "time": 625.042857464935,
+      "bugs": 0.2874028839932224
+    },
+    "line_count": 120,
+    "fta_score": 12.09093174863537,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/agents/evaluator.test.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 12,
+      "uniq_operands": 37,
+      "total_operators": 194,
+      "total_operands": 120,
+      "program_length": 314,
+      "vocabulary_size": 49,
+      "volume": 1763.0188910521754,
+      "difficulty": 19.45945945945946,
+      "effort": 34307.39463669098,
+      "time": 1905.9663687050545,
+      "bugs": 0.5876729636840584
+    },
+    "line_count": 132,
+    "fta_score": 11.969278099517695,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/spec/test-utils/frame-creators.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 9,
+      "uniq_operands": 40,
+      "total_operators": 37,
+      "total_operands": 75,
+      "program_length": 112,
+      "vocabulary_size": 49,
+      "volume": 628.8475025409033,
+      "difficulty": 7.5,
+      "effort": 4716.356269056775,
+      "time": 262.0197927253764,
+      "bugs": 0.2096158341803011
+    },
+    "line_count": 45,
+    "fta_score": 11.969278099517695,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/error/types.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 3,
+      "uniq_operands": 45,
+      "total_operators": 10,
+      "total_operands": 61,
+      "program_length": 71,
+      "vocabulary_size": 48,
+      "volume": 396.5323375512021,
+      "difficulty": 1.3555555555555556,
+      "effort": 537.5216131249629,
+      "time": 29.862311840275716,
+      "bugs": 0.1321774458504007
+    },
+    "line_count": 68,
+    "fta_score": 11.90657617352106,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/components/metadata-list-field-item.tsx",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 15,
+      "uniq_operands": 30,
+      "total_operators": 40,
+      "total_operands": 65,
+      "program_length": 105,
+      "vocabulary_size": 45,
+      "volume": 576.6445751146158,
+      "difficulty": 15.166666666666666,
+      "effort": 8745.776055905006,
+      "time": 485.8764475502781,
+      "bugs": 0.1922148583715386
+    },
+    "line_count": 56,
+    "fta_score": 11.844821606319101,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/spec/helpers/phase-labels.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 4,
+      "uniq_operands": 43,
+      "total_operators": 46,
+      "total_operands": 45,
+      "program_length": 91,
+      "vocabulary_size": 47,
+      "volume": 505.46758550266503,
+      "difficulty": 2.0930232558139537,
+      "effort": 1057.955411517206,
+      "time": 58.77530063984477,
+      "bugs": 0.168489195167555
+    },
+    "line_count": 49,
+    "fta_score": 11.842554110463325,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/agents/manual-test.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 11,
+      "uniq_operands": 35,
+      "total_operators": 98,
+      "total_operands": 61,
+      "program_length": 159,
+      "vocabulary_size": 46,
+      "volume": 878.2463510130651,
+      "difficulty": 8.714285714285714,
+      "effort": 7653.28963025671,
+      "time": 425.1827572364839,
+      "bugs": 0.2927487836710217
+    },
+    "line_count": 49,
+    "fta_score": 11.777155123826475,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/components/radio-group-section.tsx",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 16,
+      "uniq_operands": 28,
+      "total_operators": 43,
+      "total_operands": 70,
+      "program_length": 113,
+      "vocabulary_size": 44,
+      "volume": 616.9157729060146,
+      "difficulty": 20.0,
+      "effort": 12338.31545812029,
+      "time": 685.4619698955717,
+      "bugs": 0.20563859096867151
+    },
+    "line_count": 61,
+    "fta_score": 11.776483097295312,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/hooks/prd-generation-context.tsx",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 15,
+      "uniq_operands": 29,
+      "total_operators": 65,
+      "total_operands": 59,
+      "program_length": 124,
+      "vocabulary_size": 44,
+      "volume": 676.9695207110249,
+      "difficulty": 14.241379310344827,
+      "effort": 9640.979725988043,
+      "time": 535.6099847771135,
+      "bugs": 0.22565650690367495
+    },
+    "line_count": 62,
+    "fta_score": 11.776483097295312,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/ui/spinner-components.tsx",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 13,
+      "uniq_operands": 31,
+      "total_operators": 73,
+      "total_operands": 88,
+      "program_length": 161,
+      "vocabulary_size": 44,
+      "volume": 878.9684906006049,
+      "difficulty": 17.032258064516128,
+      "effort": 14970.818162487722,
+      "time": 831.7121201382067,
+      "bugs": 0.2929894968668683
+    },
+    "line_count": 86,
+    "fta_score": 11.776483097295312,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/agents/workflow/validation.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 12,
+      "uniq_operands": 32,
+      "total_operators": 80,
+      "total_operands": 86,
+      "program_length": 166,
+      "vocabulary_size": 44,
+      "volume": 906.2656486937914,
+      "difficulty": 16.125,
+      "effort": 14613.533585187386,
+      "time": 811.8629769548547,
+      "bugs": 0.30208854956459713
+    },
+    "line_count": 84,
+    "fta_score": 11.6419801733187,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/agents/evaluator-helpers.ts",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 16,
+      "uniq_operands": 26,
+      "total_operators": 70,
+      "total_operands": 50,
+      "program_length": 120,
+      "vocabulary_size": 42,
+      "volume": 647.0780907334513,
+      "difficulty": 15.384615384615385,
+      "effort": 9955.047549745404,
+      "time": 553.058197208078,
+      "bugs": 0.21569269691115042
+    },
+    "line_count": 50,
+    "fta_score": 11.635018722265215,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/spec/registry.ts",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 15,
+      "uniq_operands": 27,
+      "total_operators": 53,
+      "total_operands": 74,
+      "program_length": 127,
+      "vocabulary_size": 42,
+      "volume": 684.8243126929026,
+      "difficulty": 19.185185185185187,
+      "effort": 13138.481258330503,
+      "time": 729.9156254628057,
+      "bugs": 0.2282747708976342
+    },
+    "line_count": 42,
+    "fta_score": 11.635018722265215,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/agents/integration-example.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 11,
+      "uniq_operands": 30,
+      "total_operators": 34,
+      "total_operands": 38,
+      "program_length": 72,
+      "vocabulary_size": 41,
+      "volume": 385.74374433250205,
+      "difficulty": 6.333333333333333,
+      "effort": 2443.043714105846,
+      "time": 135.72465078365812,
+      "bugs": 0.12858124811083402
+    },
+    "line_count": 69,
+    "fta_score": 11.427236694071581,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/hooks/prd-generation-executor.ts",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 8,
+      "uniq_operands": 31,
+      "total_operators": 34,
+      "total_operands": 75,
+      "program_length": 109,
+      "vocabulary_size": 39,
+      "volume": 576.1088418559851,
+      "difficulty": 9.67741935483871,
+      "effort": 5575.246856670824,
+      "time": 309.73593648171243,
+      "bugs": 0.1920362806186617
+    },
+    "line_count": 69,
+    "fta_score": 11.40966114612526,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/hooks/outline-editor-manager.ts",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 13,
+      "uniq_operands": 26,
+      "total_operators": 40,
+      "total_operands": 67,
+      "program_length": 107,
+      "vocabulary_size": 39,
+      "volume": 565.5380374182606,
+      "difficulty": 15.461538461538462,
+      "effort": 8744.088117005414,
+      "time": 485.78267316696747,
+      "bugs": 0.18851267913942021
+    },
+    "line_count": 52,
+    "fta_score": 11.40966114612526,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/spec/helpers/constants.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 6,
+      "uniq_operands": 34,
+      "total_operators": 36,
+      "total_operands": 35,
+      "program_length": 71,
+      "vocabulary_size": 40,
+      "volume": 377.85689473700273,
+      "difficulty": 3.088235294117647,
+      "effort": 1166.9109984525085,
+      "time": 64.82838880291713,
+      "bugs": 0.1259522982456676
+    },
+    "line_count": 44,
+    "fta_score": 11.352148047597936,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/hooks/use-prd-generation.ts",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 10,
+      "uniq_operands": 28,
+      "total_operators": 36,
+      "total_operands": 70,
+      "program_length": 106,
+      "vocabulary_size": 38,
+      "volume": 556.28031642502,
+      "difficulty": 12.5,
+      "effort": 6953.503955312751,
+      "time": 386.30577529515284,
+      "bugs": 0.18542677214167336
+    },
+    "line_count": 77,
+    "fta_score": 11.33067136291065,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "app/api/run/workflow-execution.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 11,
+      "uniq_operands": 28,
+      "total_operators": 40,
+      "total_operands": 89,
+      "program_length": 129,
+      "vocabulary_size": 39,
+      "volume": 681.8168862332301,
+      "difficulty": 15.892857142857142,
+      "effort": 10836.018370492406,
+      "time": 602.0010205829115,
+      "bugs": 0.22727229541107669
+    },
+    "line_count": 79,
+    "fta_score": 11.275158222148633,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/ui/button.tsx",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 10,
+      "uniq_operands": 27,
+      "total_operators": 37,
+      "total_operands": 44,
+      "program_length": 81,
+      "vocabulary_size": 37,
+      "volume": 421.96572261594497,
+      "difficulty": 8.148148148148149,
+      "effort": 3438.2392213151074,
+      "time": 191.0132900730615,
+      "bugs": 0.14065524087198167
+    },
+    "line_count": 53,
+    "fta_score": 11.249574939035057,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/components/use-metadata-field-handlers.ts",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 16,
+      "uniq_operands": 21,
+      "total_operators": 48,
+      "total_operands": 55,
+      "program_length": 103,
+      "vocabulary_size": 37,
+      "volume": 536.5736966597818,
+      "difficulty": 20.952380952380953,
+      "effort": 11242.496501443047,
+      "time": 624.5831389690582,
+      "bugs": 0.17885789888659395
+    },
+    "line_count": 50,
+    "fta_score": 11.249574939035057,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/services/content-outline-schemas.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 7,
+      "uniq_operands": 31,
+      "total_operators": 404,
+      "total_operands": 142,
+      "program_length": 546,
+      "vocabulary_size": 38,
+      "volume": 2865.3684223401974,
+      "difficulty": 13.741935483870968,
+      "effort": 39375.70799732013,
+      "time": 2187.5393331844516,
+      "bugs": 0.9551228074467325
+    },
+    "line_count": 178,
+    "fta_score": 11.196168438934038,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/agents/schemas.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 7,
+      "uniq_operands": 31,
+      "total_operators": 85,
+      "total_operands": 54,
+      "program_length": 139,
+      "vocabulary_size": 38,
+      "volume": 729.4619243686584,
+      "difficulty": 5.225806451612903,
+      "effort": 3812.0268305716986,
+      "time": 211.77926836509437,
+      "bugs": 0.2431539747895528
+    },
+    "line_count": 58,
+    "fta_score": 11.196168438934038,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/error/api-key-dialog.tsx",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 10,
+      "uniq_operands": 26,
+      "total_operators": 22,
+      "total_operands": 76,
+      "program_length": 98,
+      "vocabulary_size": 36,
+      "volume": 506.6526501413466,
+      "difficulty": 14.615384615384615,
+      "effort": 7404.923348219681,
+      "time": 411.38463045664895,
+      "bugs": 0.1688842167137822
+    },
+    "line_count": 93,
+    "fta_score": 11.166256421036124,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/error/terminal-components.tsx",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 11,
+      "uniq_operands": 25,
+      "total_operators": 37,
+      "total_operands": 64,
+      "program_length": 101,
+      "vocabulary_size": 36,
+      "volume": 522.1624251456735,
+      "difficulty": 12.8,
+      "effort": 6683.6790418646215,
+      "time": 371.3155023258123,
+      "bugs": 0.17405414171522451
+    },
+    "line_count": 57,
+    "fta_score": 11.166256421036124,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/generate-step-view.tsx",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 8,
+      "uniq_operands": 29,
+      "total_operators": 15,
+      "total_operands": 72,
+      "program_length": 87,
+      "vocabulary_size": 37,
+      "volume": 453.22244280971864,
+      "difficulty": 9.931034482758621,
+      "effort": 4500.967707903413,
+      "time": 250.0537615501896,
+      "bugs": 0.15107414760323956
+    },
+    "line_count": 75,
+    "fta_score": 11.115072015058445,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/agents/types.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 3,
+      "uniq_operands": 34,
+      "total_operators": 12,
+      "total_operands": 44,
+      "program_length": 56,
+      "vocabulary_size": 37,
+      "volume": 291.7293884752212,
+      "difficulty": 1.2941176470588236,
+      "effort": 377.53214979146276,
+      "time": 20.97400832174793,
+      "bugs": 0.0972431294917404
+    },
+    "line_count": 42,
+    "fta_score": 11.115072015058445,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/serializers/workflow-to-spec/sections/technical-considerations-section.ts",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 15,
+      "uniq_operands": 20,
+      "total_operators": 88,
+      "total_operands": 48,
+      "program_length": 136,
+      "vocabulary_size": 35,
+      "volume": 697.5824903045154,
+      "difficulty": 16.8,
+      "effort": 11719.38583711586,
+      "time": 651.0769909508812,
+      "bugs": 0.2325274967681718
+    },
+    "line_count": 42,
+    "fta_score": 11.080590596342091,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/agents/workflow/refinement.ts",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 13,
+      "uniq_operands": 22,
+      "total_operators": 50,
+      "total_operands": 63,
+      "program_length": 113,
+      "vocabulary_size": 35,
+      "volume": 579.6089809147812,
+      "difficulty": 17.181818181818183,
+      "effort": 9958.736126626696,
+      "time": 553.2631181459276,
+      "bugs": 0.1932029936382604
+    },
+    "line_count": 53,
+    "fta_score": 11.080590596342091,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/components/content-section.tsx",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 9,
+      "uniq_operands": 27,
+      "total_operators": 18,
+      "total_operands": 74,
+      "program_length": 92,
+      "vocabulary_size": 36,
+      "volume": 475.63310013269273,
+      "difficulty": 10.962962962962964,
+      "effort": 5214.348060713965,
+      "time": 289.6860033729981,
+      "bugs": 0.15854436671089758
+    },
+    "line_count": 61,
+    "fta_score": 11.031753497059498,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/structured-prd-wizard.tsx",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 13,
+      "uniq_operands": 23,
+      "total_operators": 58,
+      "total_operands": 66,
+      "program_length": 124,
+      "vocabulary_size": 36,
+      "volume": 641.0707001788467,
+      "difficulty": 17.217391304347824,
+      "effort": 11037.565098731446,
+      "time": 613.1980610406358,
+      "bugs": 0.21369023339294888
+    },
+    "line_count": 71,
+    "fta_score": 11.031753497059498,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/agents/workflow/draft.ts",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 14,
+      "uniq_operands": 20,
+      "total_operators": 59,
+      "total_operands": 63,
+      "program_length": 122,
+      "vocabulary_size": 34,
+      "volume": 620.6704666325413,
+      "difficulty": 22.05,
+      "effort": 13685.783789247536,
+      "time": 760.3213216248631,
+      "bugs": 0.20689015554418044
+    },
+    "line_count": 54,
+    "fta_score": 10.99244136140588,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/spec/api/workflow-context.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 10,
+      "uniq_operands": 25,
+      "total_operators": 26,
+      "total_operands": 40,
+      "program_length": 66,
+      "vocabulary_size": 35,
+      "volume": 338.53267911836775,
+      "difficulty": 8.0,
+      "effort": 2708.261432946942,
+      "time": 150.45896849705233,
+      "bugs": 0.11284422637278925
+    },
+    "line_count": 41,
+    "fta_score": 10.94608767236548,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/generate-step-content.tsx",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 8,
+      "uniq_operands": 26,
+      "total_operators": 13,
+      "total_operands": 67,
+      "program_length": 80,
+      "vocabulary_size": 34,
+      "volume": 406.9970273000271,
+      "difficulty": 10.307692307692308,
+      "effort": 4195.200127554126,
+      "time": 233.066673753007,
+      "bugs": 0.1356656757666757
+    },
+    "line_count": 72,
+    "fta_score": 10.857938437429254,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/components/inline-editor-panel.tsx",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 14,
+      "uniq_operands": 18,
+      "total_operators": 23,
+      "total_operands": 40,
+      "program_length": 63,
+      "vocabulary_size": 32,
+      "volume": 315.0,
+      "difficulty": 15.555555555555555,
+      "effort": 4900.0,
+      "time": 272.22222222222223,
+      "bugs": 0.105
+    },
+    "line_count": 29,
+    "fta_score": 10.80808578629157,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/components/preset-checkbox-list.tsx",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 13,
+      "uniq_operands": 19,
+      "total_operators": 36,
+      "total_operands": 44,
+      "program_length": 80,
+      "vocabulary_size": 32,
+      "volume": 400.0,
+      "difficulty": 13.894736842105264,
+      "effort": 5557.894736842106,
+      "time": 308.7719298245614,
+      "bugs": 0.13333333333333333
+    },
+    "line_count": 41,
+    "fta_score": 10.80808578629157,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/components/custom-persona-input.tsx",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 16,
+      "uniq_operands": 16,
+      "total_operators": 30,
+      "total_operands": 31,
+      "program_length": 61,
+      "vocabulary_size": 32,
+      "volume": 305.0,
+      "difficulty": 15.5,
+      "effort": 4727.5,
+      "time": 262.6388888888889,
+      "bugs": 0.10166666666666667
+    },
+    "line_count": 40,
+    "fta_score": 10.80808578629157,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/serializers/workflow-to-spec/sections/cuj-section.ts",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 17,
+      "uniq_operands": 15,
+      "total_operators": 38,
+      "total_operands": 23,
+      "program_length": 61,
+      "vocabulary_size": 32,
+      "volume": 305.0,
+      "difficulty": 12.266666666666667,
+      "effort": 3741.3333333333335,
+      "time": 207.85185185185185,
+      "bugs": 0.10166666666666667
+    },
+    "line_count": 19,
+    "fta_score": 10.80808578629157,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/agents/evaluator.ts",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 12,
+      "uniq_operands": 19,
+      "total_operators": 40,
+      "total_operands": 32,
+      "program_length": 72,
+      "vocabulary_size": 31,
+      "volume": 356.702134347855,
+      "difficulty": 10.105263157894736,
+      "effort": 3604.5689365677977,
+      "time": 200.2538298093221,
+      "bugs": 0.118900711449285
+    },
+    "line_count": 33,
+    "fta_score": 10.711540037030872,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/agents/workflow/completion-helpers.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 10,
+      "uniq_operands": 22,
+      "total_operators": 60,
+      "total_operands": 80,
+      "program_length": 140,
+      "vocabulary_size": 32,
+      "volume": 700.0,
+      "difficulty": 18.181818181818183,
+      "effort": 12727.272727272728,
+      "time": 707.0707070707072,
+      "bugs": 0.23333333333333334
+    },
+    "line_count": 71,
+    "fta_score": 10.673582862314959,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/ui/badge.tsx",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 10,
+      "uniq_operands": 20,
+      "total_operators": 29,
+      "total_operands": 35,
+      "program_length": 64,
+      "vocabulary_size": 30,
+      "volume": 314.0409981189452,
+      "difficulty": 8.75,
+      "effort": 2747.8587335407706,
+      "time": 152.65881853004282,
+      "bugs": 0.10468033270631506
+    },
+    "line_count": 41,
+    "fta_score": 10.611828295113,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/spec/test-utils/test-utils.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 9,
+      "uniq_operands": 22,
+      "total_operators": 19,
+      "total_operands": 30,
+      "program_length": 49,
+      "vocabulary_size": 31,
+      "volume": 242.75561920895686,
+      "difficulty": 5.454545454545454,
+      "effort": 1324.1215593215827,
+      "time": 73.56230885119903,
+      "bugs": 0.08091853973631895
+    },
+    "line_count": 36,
+    "fta_score": 10.577037113054246,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/generate-step.tsx",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 12,
+      "uniq_operands": 18,
+      "total_operators": 39,
+      "total_operands": 42,
+      "program_length": 81,
+      "vocabulary_size": 30,
+      "volume": 397.45813824429,
+      "difficulty": 14.0,
+      "effort": 5564.41393542006,
+      "time": 309.13410752333664,
+      "bugs": 0.13248604608143
+    },
+    "line_count": 47,
+    "fta_score": 10.477325371136388,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/serializers/workflow-to-spec/sections/people-problems-section.ts",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 13,
+      "uniq_operands": 15,
+      "total_operators": 35,
+      "total_operands": 23,
+      "program_length": 58,
+      "vocabulary_size": 28,
+      "volume": 278.826585479341,
+      "difficulty": 9.2,
+      "effort": 2565.2045864099373,
+      "time": 142.51136591166318,
+      "bugs": 0.09294219515978033
+    },
+    "line_count": 19,
+    "fta_score": 10.4020254110591,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/hooks/metric-schema-utils.ts",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 14,
+      "uniq_operands": 13,
+      "total_operators": 53,
+      "total_operands": 28,
+      "program_length": 81,
+      "vocabulary_size": 27,
+      "volume": 385.14588767524094,
+      "difficulty": 15.076923076923077,
+      "effort": 5806.814921872863,
+      "time": 322.60082899293684,
+      "bugs": 0.12838196255841364
+    },
+    "line_count": 23,
+    "fta_score": 10.291433744574562,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "hooks/use-structured-workflow.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 8,
+      "uniq_operands": 20,
+      "total_operators": 37,
+      "total_operands": 44,
+      "program_length": 81,
+      "vocabulary_size": 28,
+      "volume": 389.3957486866659,
+      "difficulty": 8.8,
+      "effort": 3426.6825884426603,
+      "time": 190.37125491348112,
+      "bugs": 0.1297985828955553
+    },
+    "line_count": 37,
+    "fta_score": 10.267522487082474,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/generate-step-status.tsx",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 9,
+      "uniq_operands": 19,
+      "total_operators": 14,
+      "total_operands": 42,
+      "program_length": 56,
+      "vocabulary_size": 28,
+      "volume": 269.2118756352258,
+      "difficulty": 8.842105263157896,
+      "effort": 2380.399742458839,
+      "time": 132.24443013660215,
+      "bugs": 0.08973729187840859
+    },
+    "line_count": 48,
+    "fta_score": 10.267522487082474,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/components/persona-option.tsx",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 14,
+      "uniq_operands": 12,
+      "total_operators": 30,
+      "total_operands": 28,
+      "program_length": 58,
+      "vocabulary_size": 26,
+      "volume": 272.62550365218334,
+      "difficulty": 16.333333333333332,
+      "effort": 4452.883226318994,
+      "time": 247.38240146216634,
+      "bugs": 0.09087516788406111
+    },
+    "line_count": 32,
+    "fta_score": 10.176667834919144,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/serializers/workflow-to-spec/sections/goals-section.ts",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 12,
+      "uniq_operands": 14,
+      "total_operators": 26,
+      "total_operands": 19,
+      "program_length": 45,
+      "vocabulary_size": 26,
+      "volume": 211.51978731634912,
+      "difficulty": 8.142857142857142,
+      "effort": 1722.375411004557,
+      "time": 95.6875228335865,
+      "bugs": 0.07050659577211638
+    },
+    "line_count": 16,
+    "fta_score": 10.176667834919144,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/ui/alert.tsx",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 10,
+      "uniq_operands": 17,
+      "total_operators": 35,
+      "total_operands": 40,
+      "program_length": 75,
+      "vocabulary_size": 27,
+      "volume": 356.6165626622601,
+      "difficulty": 11.764705882352942,
+      "effort": 4195.488972497178,
+      "time": 233.08272069428767,
+      "bugs": 0.1188721875540867
+    },
+    "line_count": 42,
+    "fta_score": 10.15693082059795,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/ui/card.tsx",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 8,
+      "uniq_operands": 19,
+      "total_operators": 53,
+      "total_operands": 72,
+      "program_length": 125,
+      "vocabulary_size": 27,
+      "volume": 594.3609377704336,
+      "difficulty": 15.157894736842104,
+      "effort": 9009.260530414993,
+      "time": 500.51447391194404,
+      "bugs": 0.1981203125901445
+    },
+    "line_count": 83,
+    "fta_score": 10.15693082059795,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/ui/terminal-components.tsx",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 9,
+      "uniq_operands": 16,
+      "total_operators": 35,
+      "total_operands": 45,
+      "program_length": 80,
+      "vocabulary_size": 25,
+      "volume": 371.50849518197793,
+      "difficulty": 11.25,
+      "effort": 4179.470570797252,
+      "time": 232.1928094887362,
+      "bugs": 0.12383616506065931
+    },
+    "line_count": 54,
+    "fta_score": 10.057400169189862,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/content-outline-helpers.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 12,
+      "uniq_operands": 14,
+      "total_operators": 43,
+      "total_operands": 27,
+      "program_length": 70,
+      "vocabulary_size": 26,
+      "volume": 329.0307802698764,
+      "difficulty": 11.571428571428571,
+      "effort": 3807.356171694284,
+      "time": 211.51978731634912,
+      "bugs": 0.10967692675662546
+    },
+    "line_count": 37,
+    "fta_score": 10.042164910942518,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/ui/metrics/metric-card.tsx",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 11,
+      "uniq_operands": 15,
+      "total_operators": 18,
+      "total_operands": 31,
+      "program_length": 49,
+      "vocabulary_size": 26,
+      "volume": 230.3215461889135,
+      "difficulty": 10.333333333333334,
+      "effort": 2379.989310618773,
+      "time": 132.2216283677096,
+      "bugs": 0.07677384872963783
+    },
+    "line_count": 28,
+    "fta_score": 10.042164910942518,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/components/metadata-list-fields.tsx",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 11,
+      "uniq_operands": 15,
+      "total_operators": 20,
+      "total_operands": 30,
+      "program_length": 50,
+      "vocabulary_size": 26,
+      "volume": 235.02198590705459,
+      "difficulty": 10.0,
+      "effort": 2350.2198590705457,
+      "time": 130.56776994836366,
+      "bugs": 0.07834066196901819
+    },
+    "line_count": 28,
+    "fta_score": 10.042164910942518,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/ui/metrics/progress-bar.tsx",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 12,
+      "uniq_operands": 12,
+      "total_operators": 22,
+      "total_operands": 30,
+      "program_length": 52,
+      "vocabulary_size": 24,
+      "volume": 238.4180500375001,
+      "difficulty": 15.0,
+      "effort": 3576.2707505625017,
+      "time": 198.68170836458341,
+      "bugs": 0.07947268334583336
+    },
+    "line_count": 35,
+    "fta_score": 9.933263109830023,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/services/content-outline-service.ts",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 12,
+      "uniq_operands": 12,
+      "total_operators": 30,
+      "total_operands": 21,
+      "program_length": 51,
+      "vocabulary_size": 24,
+      "volume": 233.83308753677895,
+      "difficulty": 10.5,
+      "effort": 2455.247419136179,
+      "time": 136.40263439645437,
+      "bugs": 0.07794436251225965
+    },
+    "line_count": 19,
+    "fta_score": 9.933263109830023,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/components/primary-persona-selector.tsx",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 12,
+      "uniq_operands": 13,
+      "total_operators": 25,
+      "total_operands": 29,
+      "program_length": 54,
+      "vocabulary_size": 25,
+      "volume": 250.76823424783512,
+      "difficulty": 13.384615384615385,
+      "effort": 3356.4363660864087,
+      "time": 186.46868700480047,
+      "bugs": 0.08358941141594504
+    },
+    "line_count": 39,
+    "fta_score": 9.922897245213235,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/components/project-metadata-fields.tsx",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 12,
+      "uniq_operands": 13,
+      "total_operators": 39,
+      "total_operands": 46,
+      "program_length": 85,
+      "vocabulary_size": 25,
+      "volume": 394.72777613085157,
+      "difficulty": 21.23076923076923,
+      "effort": 8380.374324008848,
+      "time": 465.5763513338249,
+      "bugs": 0.1315759253769505
+    },
+    "line_count": 57,
+    "fta_score": 9.922897245213235,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/agents/index.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 0,
+      "uniq_operands": 25,
+      "total_operators": 0,
+      "total_operands": 25,
+      "program_length": 25,
+      "vocabulary_size": 25,
+      "volume": 116.09640474436812,
+      "difficulty": 0.0,
+      "effort": 0.0,
+      "time": 0.0,
+      "bugs": 0.03869880158145604
+    },
+    "line_count": 33,
+    "fta_score": 9.922897245213235,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/prd-preview.tsx",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 10,
+      "uniq_operands": 13,
+      "total_operators": 17,
+      "total_operands": 29,
+      "program_length": 46,
+      "vocabulary_size": 23,
+      "volume": 208.0838499786226,
+      "difficulty": 11.153846153846153,
+      "effort": 2320.9352497615596,
+      "time": 128.94084720897553,
+      "bugs": 0.06936128332620753
+    },
+    "line_count": 26,
+    "fta_score": 9.803842060135423,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/components/outline-metadata-panel.tsx",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 8,
+      "uniq_operands": 16,
+      "total_operators": 21,
+      "total_operands": 40,
+      "program_length": 61,
+      "vocabulary_size": 24,
+      "volume": 279.68271254399053,
+      "difficulty": 10.0,
+      "effort": 2796.827125439905,
+      "time": 155.3792847466614,
+      "bugs": 0.09322757084799685
+    },
+    "line_count": 34,
+    "fta_score": 9.79876018585341,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/ui/progress.tsx",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 13,
+      "uniq_operands": 11,
+      "total_operators": 22,
+      "total_operands": 21,
+      "program_length": 43,
+      "vocabulary_size": 24,
+      "volume": 197.1533875310097,
+      "difficulty": 11.454545454545455,
+      "effort": 2258.302438991566,
+      "time": 125.46124661064255,
+      "bugs": 0.06571779584366991
+    },
+    "line_count": 27,
+    "fta_score": 9.79876018585341,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/spec/items/label-pattern.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 10,
+      "uniq_operands": 14,
+      "total_operators": 20,
+      "total_operands": 25,
+      "program_length": 45,
+      "vocabulary_size": 24,
+      "volume": 206.32331253245204,
+      "difficulty": 8.928571428571429,
+      "effort": 1842.1724333254647,
+      "time": 102.34291296252582,
+      "bugs": 0.06877443751081734
+    },
+    "line_count": 15,
+    "fta_score": 9.79876018585341,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/serializers/workflow-to-spec/constants.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 1,
+      "uniq_operands": 22,
+      "total_operators": 7,
+      "total_operands": 22,
+      "program_length": 29,
+      "vocabulary_size": 23,
+      "volume": 131.18329672565338,
+      "difficulty": 0.0,
+      "effort": 0.0,
+      "time": 0.0,
+      "bugs": 0.04372776557521779
+    },
+    "line_count": 17,
+    "fta_score": 9.669339136158811,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/ui/tooltip.tsx",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 9,
+      "uniq_operands": 14,
+      "total_operators": 25,
+      "total_operands": 30,
+      "program_length": 55,
+      "vocabulary_size": 23,
+      "volume": 248.79590758313572,
+      "difficulty": 8.571428571428571,
+      "effort": 2132.5363507125917,
+      "time": 118.4742417062551,
+      "bugs": 0.08293196919437858
+    },
+    "line_count": 23,
+    "fta_score": 9.669339136158811,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/serializers/workflow-to-spec/sections/functional-requirements-section.ts",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 9,
+      "uniq_operands": 13,
+      "total_operators": 20,
+      "total_operands": 17,
+      "program_length": 37,
+      "vocabulary_size": 22,
+      "volume": 164.99896988958,
+      "difficulty": 5.230769230769231,
+      "effort": 863.0715348070338,
+      "time": 47.94841860039077,
+      "bugs": 0.05499965662986
+    },
+    "line_count": 15,
+    "fta_score": 9.668667109627634,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/serializers/workflow-to-spec/sections/success-metrics-section.ts",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 9,
+      "uniq_operands": 13,
+      "total_operators": 20,
+      "total_operands": 17,
+      "program_length": 37,
+      "vocabulary_size": 22,
+      "volume": 164.99896988958,
+      "difficulty": 5.230769230769231,
+      "effort": 863.0715348070338,
+      "time": 47.94841860039077,
+      "bugs": 0.05499965662986
+    },
+    "line_count": 15,
+    "fta_score": 9.668667109627634,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/ui/tabs.tsx",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 8,
+      "uniq_operands": 14,
+      "total_operators": 35,
+      "total_operands": 48,
+      "program_length": 83,
+      "vocabulary_size": 22,
+      "volume": 370.1328243468957,
+      "difficulty": 13.714285714285714,
+      "effort": 5076.107305328855,
+      "time": 282.00596140715857,
+      "bugs": 0.12337760811563189
+    },
+    "line_count": 59,
+    "fta_score": 9.534164185651022,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/ui/metrics-dashboard-utils.tsx",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 10,
+      "uniq_operands": 12,
+      "total_operators": 19,
+      "total_operands": 20,
+      "program_length": 39,
+      "vocabulary_size": 22,
+      "volume": 173.9178331268546,
+      "difficulty": 8.333333333333334,
+      "effort": 1449.3152760571218,
+      "time": 80.51751533650676,
+      "bugs": 0.05797261104228486
+    },
+    "line_count": 18,
+    "fta_score": 9.534164185651022,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/components/outline-metadata-utils.ts",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 10,
+      "uniq_operands": 11,
+      "total_operators": 30,
+      "total_operands": 20,
+      "program_length": 50,
+      "vocabulary_size": 21,
+      "volume": 219.61587113893805,
+      "difficulty": 9.090909090909092,
+      "effort": 1996.5079194448915,
+      "time": 110.91710663582731,
+      "bugs": 0.07320529037964602
+    },
+    "line_count": 12,
+    "fta_score": 9.527202734597566,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/ai/resilient.ts",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 10,
+      "uniq_operands": 11,
+      "total_operators": 24,
+      "total_operands": 21,
+      "program_length": 45,
+      "vocabulary_size": 21,
+      "volume": 197.65428402504423,
+      "difficulty": 9.545454545454545,
+      "effort": 1886.699983875422,
+      "time": 104.81666577085679,
+      "bugs": 0.0658847613416814
+    },
+    "line_count": 18,
+    "fta_score": 9.527202734597566,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/agents/semantic-issue-converter.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 13,
+      "uniq_operands": 8,
+      "total_operators": 33,
+      "total_operands": 22,
+      "program_length": 55,
+      "vocabulary_size": 21,
+      "volume": 241.57745825283183,
+      "difficulty": 16.5,
+      "effort": 3986.0280611717253,
+      "time": 221.44600339842918,
+      "bugs": 0.08052581941761061
+    },
+    "line_count": 21,
+    "fta_score": 9.39269981062094,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/components/section-header.tsx",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 8,
+      "uniq_operands": 13,
+      "total_operators": 13,
+      "total_operands": 30,
+      "program_length": 43,
+      "vocabulary_size": 21,
+      "volume": 188.86964917948671,
+      "difficulty": 9.23076923076923,
+      "effort": 1743.4121462721848,
+      "time": 96.85623034845472,
+      "bugs": 0.06295654972649557
+    },
+    "line_count": 30,
+    "fta_score": 9.39269981062094,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/spec/test-utils/setup.ts",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 10,
+      "uniq_operands": 10,
+      "total_operators": 33,
+      "total_operands": 16,
+      "program_length": 49,
+      "vocabulary_size": 20,
+      "volume": 211.77447664948076,
+      "difficulty": 8.0,
+      "effort": 1694.195813195846,
+      "time": 94.12198962199145,
+      "bugs": 0.07059149221649359
+    },
+    "line_count": 14,
+    "fta_score": 9.378834983906884,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/ui/separator.tsx",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 8,
+      "uniq_operands": 12,
+      "total_operators": 14,
+      "total_operands": 21,
+      "program_length": 35,
+      "vocabulary_size": 20,
+      "volume": 151.26748332105768,
+      "difficulty": 7.0,
+      "effort": 1058.8723832474038,
+      "time": 58.82624351374466,
+      "bugs": 0.05042249444035256
+    },
+    "line_count": 24,
+    "fta_score": 9.244332059930272,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/ui/metrics/metric-configs.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 4,
+      "uniq_operands": 15,
+      "total_operators": 16,
+      "total_operands": 18,
+      "program_length": 34,
+      "vocabulary_size": 19,
+      "volume": 144.4295354570819,
+      "difficulty": 2.4,
+      "effort": 346.63088509699656,
+      "time": 19.257271394277588,
+      "bugs": 0.048143178485693966
+    },
+    "line_count": 27,
+    "fta_score": 9.088352451266374,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/ui/radio-group.tsx",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 8,
+      "uniq_operands": 11,
+      "total_operators": 23,
+      "total_operands": 31,
+      "program_length": 54,
+      "vocabulary_size": 19,
+      "volume": 229.3880857259536,
+      "difficulty": 11.272727272727273,
+      "effort": 2585.829330001659,
+      "time": 143.65718500009217,
+      "bugs": 0.07646269524198454
+    },
+    "line_count": 40,
+    "fta_score": 9.088352451266374,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/ui/spinner.tsx",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 7,
+      "uniq_operands": 11,
+      "total_operators": 11,
+      "total_operands": 22,
+      "program_length": 33,
+      "vocabulary_size": 18,
+      "volume": 137.6075250475963,
+      "difficulty": 6.0,
+      "effort": 825.6451502855779,
+      "time": 45.86917501586544,
+      "bugs": 0.04586917501586544
+    },
+    "line_count": 16,
+    "fta_score": 9.058440433368446,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/components/completion-status.tsx",
+    "cyclo": 2,
+    "halstead": {
+      "uniq_operators": 9,
+      "uniq_operands": 9,
+      "total_operators": 14,
+      "total_operands": 17,
+      "program_length": 31,
+      "vocabulary_size": 18,
+      "volume": 129.26767504471167,
+      "difficulty": 7.555555555555555,
+      "effort": 976.6891003378214,
+      "time": 54.26050557432341,
+      "bugs": 0.043089225014903886
+    },
+    "line_count": 21,
+    "fta_score": 9.058440433368446,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/agents/workflow/types.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 3,
+      "uniq_operands": 15,
+      "total_operators": 5,
+      "total_operands": 18,
+      "program_length": 23,
+      "vocabulary_size": 18,
+      "volume": 95.90827503317318,
+      "difficulty": 1.2,
+      "effort": 115.08993003980781,
+      "time": 6.393885002211545,
+      "bugs": 0.03196942501105773
+    },
+    "line_count": 16,
+    "fta_score": 8.923937509391834,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "hooks/use-workflow-serializers.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 8,
+      "uniq_operands": 10,
+      "total_operators": 30,
+      "total_operands": 25,
+      "program_length": 55,
+      "vocabulary_size": 18,
+      "volume": 229.34587507932716,
+      "difficulty": 10.0,
+      "effort": 2293.4587507932715,
+      "time": 127.41437504407064,
+      "bugs": 0.07644862502644238
+    },
+    "line_count": 23,
+    "fta_score": 8.923937509391834,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/error/recovery-time-display.tsx",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 9,
+      "uniq_operands": 9,
+      "total_operators": 16,
+      "total_operands": 21,
+      "program_length": 37,
+      "vocabulary_size": 18,
+      "volume": 154.28722505336555,
+      "difficulty": 9.333333333333334,
+      "effort": 1440.0141004980785,
+      "time": 80.00078336100437,
+      "bugs": 0.05142907501778852
+    },
+    "line_count": 15,
+    "fta_score": 8.923937509391834,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/agents/workflow/state-management.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 7,
+      "uniq_operands": 10,
+      "total_operators": 18,
+      "total_operands": 16,
+      "program_length": 34,
+      "vocabulary_size": 17,
+      "volume": 138.97373660251154,
+      "difficulty": 4.8,
+      "effort": 667.0739356920553,
+      "time": 37.05966309400307,
+      "bugs": 0.046324578867503845
+    },
+    "line_count": 19,
+    "fta_score": 8.750122449761577,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/functional-requirement-helpers.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 8,
+      "uniq_operands": 9,
+      "total_operators": 11,
+      "total_operands": 15,
+      "program_length": 26,
+      "vocabulary_size": 17,
+      "volume": 106.27403387250882,
+      "difficulty": 6.666666666666667,
+      "effort": 708.4935591500589,
+      "time": 39.36075328611438,
+      "bugs": 0.03542467795750294
+    },
+    "line_count": 12,
+    "fta_score": 8.750122449761577,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "app/layout.tsx",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 8,
+      "uniq_operands": 9,
+      "total_operators": 10,
+      "total_operands": 13,
+      "program_length": 23,
+      "vocabulary_size": 17,
+      "volume": 94.0116453487578,
+      "difficulty": 5.777777777777778,
+      "effort": 543.1783953483783,
+      "time": 30.176577519354353,
+      "bugs": 0.0313372151162526
+    },
+    "line_count": 16,
+    "fta_score": 8.750122449761577,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/success-metric-helpers.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 8,
+      "uniq_operands": 9,
+      "total_operators": 11,
+      "total_operands": 15,
+      "program_length": 26,
+      "vocabulary_size": 17,
+      "volume": 106.27403387250882,
+      "difficulty": 6.666666666666667,
+      "effort": 708.4935591500589,
+      "time": 39.36075328611438,
+      "bugs": 0.03542467795750294
+    },
+    "line_count": 12,
+    "fta_score": 8.750122449761577,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "hooks/use-workflow-progress.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 10,
+      "uniq_operands": 7,
+      "total_operators": 18,
+      "total_operands": 19,
+      "program_length": 37,
+      "vocabulary_size": 17,
+      "volume": 151.23612512626255,
+      "difficulty": 13.571428571428571,
+      "effort": 2052.490269570706,
+      "time": 114.02723719837256,
+      "bugs": 0.050412041708754185
+    },
+    "line_count": 18,
+    "fta_score": 8.750122449761577,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/milestone-helpers.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 8,
+      "uniq_operands": 9,
+      "total_operators": 11,
+      "total_operands": 15,
+      "program_length": 26,
+      "vocabulary_size": 17,
+      "volume": 106.27403387250882,
+      "difficulty": 6.666666666666667,
+      "effort": 708.4935591500589,
+      "time": 39.36075328611438,
+      "bugs": 0.03542467795750294
+    },
+    "line_count": 10,
+    "fta_score": 8.750122449761577,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/agents/content-outline-constants.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 8,
+      "uniq_operands": 8,
+      "total_operators": 20,
+      "total_operands": 11,
+      "program_length": 31,
+      "vocabulary_size": 16,
+      "volume": 124.0,
+      "difficulty": 5.5,
+      "effort": 682.0,
+      "time": 37.888888888888886,
+      "bugs": 0.04133333333333333
+    },
+    "line_count": 68,
+    "fta_score": 8.56576687464728,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/spec/items/index.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 4,
+      "uniq_operands": 12,
+      "total_operators": 47,
+      "total_operands": 47,
+      "program_length": 94,
+      "vocabulary_size": 16,
+      "volume": 376.0,
+      "difficulty": 7.833333333333333,
+      "effort": 2945.333333333333,
+      "time": 163.62962962962962,
+      "bugs": 0.12533333333333332
+    },
+    "line_count": 19,
+    "fta_score": 8.56576687464728,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/ui/textarea.tsx",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 8,
+      "uniq_operands": 7,
+      "total_operators": 11,
+      "total_operands": 12,
+      "program_length": 23,
+      "vocabulary_size": 15,
+      "volume": 89.85848369899593,
+      "difficulty": 6.857142857142857,
+      "effort": 616.1724596502578,
+      "time": 34.231803313903214,
+      "bugs": 0.02995282789966531
+    },
+    "line_count": 15,
+    "fta_score": 8.36950938346871,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "hooks/workflow-initial-state.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 4,
+      "uniq_operands": 11,
+      "total_operators": 29,
+      "total_operands": 16,
+      "program_length": 45,
+      "vocabulary_size": 15,
+      "volume": 175.81007680238335,
+      "difficulty": 2.909090909090909,
+      "effort": 511.44749615238794,
+      "time": 28.413749786243773,
+      "bugs": 0.05860335893412778
+    },
+    "line_count": 29,
+    "fta_score": 8.36950938346871,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/serializers/workflow-to-spec/types.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 4,
+      "uniq_operands": 10,
+      "total_operators": 5,
+      "total_operands": 12,
+      "program_length": 17,
+      "vocabulary_size": 14,
+      "volume": 64.72503367497927,
+      "difficulty": 2.4,
+      "effort": 155.34008081995026,
+      "time": 8.630004489997237,
+      "bugs": 0.02157501122499309
+    },
+    "line_count": 11,
+    "fta_score": 8.159706499414824,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/error/testing-indicator.tsx",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 8,
+      "uniq_operands": 6,
+      "total_operators": 10,
+      "total_operands": 9,
+      "program_length": 19,
+      "vocabulary_size": 14,
+      "volume": 72.33974351909448,
+      "difficulty": 6.0,
+      "effort": 434.03846111456687,
+      "time": 24.11324783969816,
+      "bugs": 0.024113247839698163
+    },
+    "line_count": 10,
+    "fta_score": 8.159706499414824,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/serializers/workflow-to-spec/sections/index.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 3,
+      "uniq_operands": 11,
+      "total_operators": 21,
+      "total_operands": 20,
+      "program_length": 41,
+      "vocabulary_size": 14,
+      "volume": 156.10155180436178,
+      "difficulty": 1.8181818181818181,
+      "effort": 283.82100328065775,
+      "time": 15.767833515592097,
+      "bugs": 0.05203385060145393
+    },
+    "line_count": 21,
+    "fta_score": 8.159706499414824,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/components/empty-state.tsx",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 8,
+      "uniq_operands": 5,
+      "total_operators": 9,
+      "total_operands": 9,
+      "program_length": 18,
+      "vocabulary_size": 13,
+      "volume": 66.60791492653966,
+      "difficulty": 7.2,
+      "effort": 479.5769874710856,
+      "time": 26.64316597061587,
+      "bugs": 0.022202638308846556
+    },
+    "line_count": 9,
+    "fta_score": 7.93434892327484,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/agents/refiner-prompts.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 6,
+      "uniq_operands": 6,
+      "total_operators": 11,
+      "total_operands": 15,
+      "program_length": 26,
+      "vocabulary_size": 12,
+      "volume": 93.20902501875005,
+      "difficulty": 7.5,
+      "effort": 699.0676876406254,
+      "time": 38.837093757812525,
+      "bugs": 0.03106967500625002
+    },
+    "line_count": 28,
+    "fta_score": 7.690944198185733,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/agents/agent-types.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 1,
+      "uniq_operands": 11,
+      "total_operators": 2,
+      "total_operands": 11,
+      "program_length": 13,
+      "vocabulary_size": 12,
+      "volume": 46.60451250937503,
+      "difficulty": 0.0,
+      "effort": 0.0,
+      "time": 0.0,
+      "bugs": 0.01553483750312501
+    },
+    "line_count": 14,
+    "fta_score": 7.690944198185733,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/generate-step-sections.tsx",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 0,
+      "uniq_operands": 12,
+      "total_operators": 0,
+      "total_operands": 12,
+      "program_length": 12,
+      "vocabulary_size": 12,
+      "volume": 43.01955000865387,
+      "difficulty": 0.0,
+      "effort": 0.0,
+      "time": 0.0,
+      "bugs": 0.014339850002884624
+    },
+    "line_count": 13,
+    "fta_score": 7.690944198185733,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "app/(prd)/page.tsx",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 6,
+      "uniq_operands": 4,
+      "total_operators": 7,
+      "total_operands": 6,
+      "program_length": 13,
+      "vocabulary_size": 10,
+      "volume": 43.18506523353571,
+      "difficulty": 4.5,
+      "effort": 194.3327935509107,
+      "time": 10.796266308383927,
+      "bugs": 0.014395021744511903
+    },
+    "line_count": 9,
+    "fta_score": 7.136516072262594,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "lib/spec-templates.ts",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 4,
+      "uniq_operands": 6,
+      "total_operators": 23,
+      "total_operands": 7,
+      "program_length": 30,
+      "vocabulary_size": 10,
+      "volume": 99.65784284662087,
+      "difficulty": 2.3333333333333335,
+      "effort": 232.53496664211536,
+      "time": 12.918609257895298,
+      "bugs": 0.03321928094887362
+    },
+    "line_count": 60,
+    "fta_score": 7.136516072262594,
+    "assessment": "OK"
+  },
+  {
+    "file_name": "components/workflow/steps/generate-step-header.tsx",
+    "cyclo": 1,
+    "halstead": {
+      "uniq_operators": 6,
+      "uniq_operands": 4,
+      "total_operators": 6,
+      "total_operands": 7,
+      "program_length": 13,
+      "vocabulary_size": 10,
+      "volume": 43.18506523353571,
+      "difficulty": 5.25,
+      "effort": 226.72159247606248,
+      "time": 12.595644026447916,
+      "bugs": 0.014395021744511903
+    },
+    "line_count": 11,
+    "fta_score": 7.136516072262594,
+    "assessment": "OK"
+  }
+]

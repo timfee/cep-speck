@@ -40,5 +40,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-#reports
-/reports
+# reports
+/reports/*
+!/reports/fta.base.json
