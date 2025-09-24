@@ -7,7 +7,7 @@ import { act, renderHook } from "@testing-library/react/pure";
 import type { RenderHookResult } from "@testing-library/react/pure";
 import { useState } from "react";
 
-import { useContentEditing } from "@/hooks/use-content-editing";
+import { outlineActions, useContentEditing } from "@/hooks/use-content-editing";
 import { createWorkflowStateFixture } from "@/test-utils/workflow-fixtures";
 
 import type {
@@ -18,6 +18,11 @@ import type {
   SuccessMetricField,
   SuccessMetricSchema,
 } from "@/types/workflow";
+
+import type {
+  OutlineCollectionKind,
+  OutlineItem,
+} from "../content-editing-utils";
 
 type ContentEditingState = ReturnType<typeof createWorkflowStateFixture>;
 type ContentEditingActions = ReturnType<typeof useContentEditing>;
@@ -30,8 +35,7 @@ type ContentEditingHookResult = {
 const useContentEditingTestHook = (): ContentEditingHookResult => {
   const [state, setState] = useState(createWorkflowStateFixture());
   const editing = useContentEditing(setState);
-  const result: ContentEditingHookResult = { state, editing };
-  return result;
+  return { state, editing };
 };
 
 const renderUseContentEditing = (): RenderHookResult<
@@ -101,218 +105,142 @@ const createNewSchema = (): SuccessMetricSchema => ({
   ],
 });
 
+type OutlineTestCaseConfig<K extends OutlineCollectionKind> = {
+  createNew: () => OutlineItem<K>;
+  existingId: string;
+  updatePatch: Partial<OutlineItem<K>>;
+  selectUpdatedValue: (item: OutlineItem<K>) => unknown;
+  expectedUpdatedValue: unknown;
+};
+
+type OutlineTestCase<K extends OutlineCollectionKind> =
+  OutlineTestCaseConfig<K> & {
+    kind: K;
+    addKey: (typeof outlineActions)[K]["add"];
+    updateKey: (typeof outlineActions)[K]["update"];
+    deleteKey: (typeof outlineActions)[K]["delete"];
+  };
+
+const createOutlineTestCase = <K extends OutlineCollectionKind>(
+  kind: K,
+  config: OutlineTestCaseConfig<K>
+): OutlineTestCase<K> => ({
+  kind,
+  addKey: outlineActions[kind].add,
+  updateKey: outlineActions[kind].update,
+  deleteKey: outlineActions[kind].delete,
+  ...config,
+});
+
+const outlineTestCases = [
+  createOutlineTestCase("functionalRequirements", {
+    createNew: createNewFunctionalRequirement,
+    existingId: "fr-existing",
+    updatePatch: { title: "Support enterprise SSO with audit logs" },
+    selectUpdatedValue: (item) => item.title,
+    expectedUpdatedValue: "Support enterprise SSO with audit logs",
+  }),
+  createOutlineTestCase("successMetrics", {
+    createNew: createNewSuccessMetric,
+    existingId: "sm-existing",
+    updatePatch: { owner: "VP Growth", target: "90%" },
+    selectUpdatedValue: (item) => [item.owner, item.target],
+    expectedUpdatedValue: ["VP Growth", "90%"],
+  }),
+  createOutlineTestCase("milestones", {
+    createNew: createNewMilestone,
+    existingId: "ms-existing",
+    updatePatch: {
+      description: "Finalize security review and mitigation plan.",
+    },
+    selectUpdatedValue: (item) => item.description,
+    expectedUpdatedValue: "Finalize security review and mitigation plan.",
+  }),
+  createOutlineTestCase("customerJourneys", {
+    createNew: createNewJourney,
+    existingId: "cjs-existing",
+    updatePatch: { goal: "Enable SSO with automated monitoring" },
+    selectUpdatedValue: (item) => item.goal,
+    expectedUpdatedValue: "Enable SSO with automated monitoring",
+  }),
+  createOutlineTestCase("metricSchemas", {
+    createNew: createNewSchema,
+    existingId: "metric-schema-existing",
+    updatePatch: {
+      description: "Schema capturing activation and quality metrics",
+    },
+    selectUpdatedValue: (item) => item.description,
+    expectedUpdatedValue: "Schema capturing activation and quality metrics",
+  }),
+] as const;
+
+const outlineTestMatrix = outlineTestCases.map((testCase) => [
+  testCase.kind,
+  testCase,
+]) as const;
+
 describe("useContentEditing", () => {
-  it("manages functional requirements through add, update, and delete operations", () => {
-    const { result } = renderUseContentEditing();
-    const newRequirement = createNewFunctionalRequirement();
+  it.each(outlineTestMatrix)(
+    "generates handlers that mutate %s collections",
+    (_label, testCase) => {
+      const { result } = renderUseContentEditing();
+      const { kind, addKey, updateKey, deleteKey } = testCase;
 
-    act(() => {
-      result.current.editing.addFunctionalRequirement(newRequirement);
-    });
+      const addHandler = result.current.editing[addKey] as (
+        item: OutlineItem<typeof kind>
+      ) => void;
+      const updateHandler = result.current.editing[updateKey] as (
+        id: string,
+        updates: Partial<OutlineItem<typeof kind>>
+      ) => void;
+      const deleteHandler = result.current.editing[deleteKey] as (
+        id: string
+      ) => void;
 
-    expect(
-      result.current.state.contentOutline.functionalRequirements.some(
-        (item: FunctionalRequirement) => item.id === newRequirement.id
-      )
-    ).toBe(true);
+      const newItem = testCase.createNew();
 
-    act(() => {
-      result.current.editing.updateFunctionalRequirement("fr-existing", {
-        title: "Support enterprise SSO with audit logs",
+      act(() => {
+        addHandler(newItem);
       });
-    });
 
-    expect(
-      result.current.state.contentOutline.functionalRequirements.find(
-        (item: FunctionalRequirement) => item.id === "fr-existing"
-      )?.title
-    ).toBe("Support enterprise SSO with audit logs");
-
-    act(() => {
-      result.current.editing.deleteFunctionalRequirement("fr-existing");
-    });
-
-    expect(
-      result.current.state.contentOutline.functionalRequirements.some(
-        (item: FunctionalRequirement) => item.id === newRequirement.id
-      )
-    ).toBe(true);
-    expect(
-      result.current.state.contentOutline.functionalRequirements.some(
-        (item: FunctionalRequirement) => item.id === "fr-existing"
-      )
-    ).toBe(false);
-  });
-
-  it("manages success metrics through add, update, and delete operations", () => {
-    const { result } = renderUseContentEditing();
-    const newMetric = createNewSuccessMetric();
-
-    act(() => {
-      result.current.editing.addSuccessMetric(newMetric);
-    });
-
-    expect(
-      result.current.state.contentOutline.successMetrics.some(
-        (item: SuccessMetric) => item.id === newMetric.id
-      )
-    ).toBe(true);
-
-    act(() => {
-      result.current.editing.updateSuccessMetric("sm-existing", {
-        target: "90%",
-        owner: "VP Growth",
-      });
-    });
-
-    const updatedMetric =
-      result.current.state.contentOutline.successMetrics.find(
-        (item: SuccessMetric) => item.id === "sm-existing"
+      const collectionAfterAdd = result.current.state.contentOutline[
+        kind
+      ] as OutlineItem<typeof kind>[];
+      expect(collectionAfterAdd.some((item) => item.id === newItem.id)).toBe(
+        true
       );
-    expect(updatedMetric?.target).toBe("90%");
-    expect(updatedMetric?.owner).toBe("VP Growth");
 
-    act(() => {
-      result.current.editing.deleteSuccessMetric("sm-existing");
-    });
-
-    expect(
-      result.current.state.contentOutline.successMetrics.some(
-        (item: SuccessMetric) => item.id === newMetric.id
-      )
-    ).toBe(true);
-    expect(
-      result.current.state.contentOutline.successMetrics.some(
-        (item: SuccessMetric) => item.id === "sm-existing"
-      )
-    ).toBe(false);
-  });
-
-  it("manages milestones through add, update, and delete operations", () => {
-    const { result } = renderUseContentEditing();
-    const newMilestone = createNewMilestone();
-
-    act(() => {
-      result.current.editing.addMilestone(newMilestone);
-    });
-
-    expect(
-      result.current.state.contentOutline.milestones.some(
-        (item: Milestone) => item.id === newMilestone.id
-      )
-    ).toBe(true);
-
-    act(() => {
-      result.current.editing.updateMilestone("ms-existing", {
-        description: "Finalize security review and mitigation plan.",
+      act(() => {
+        updateHandler(testCase.existingId, testCase.updatePatch);
       });
-    });
 
-    expect(
-      result.current.state.contentOutline.milestones.find(
-        (item: Milestone) => item.id === "ms-existing"
-      )?.description
-    ).toBe("Finalize security review and mitigation plan.");
+      const collectionAfterUpdate = result.current.state.contentOutline[
+        kind
+      ] as OutlineItem<typeof kind>[];
+      const updatedItem = collectionAfterUpdate.find(
+        (item) => item.id === testCase.existingId
+      );
+      expect(updatedItem).toBeDefined();
+      expect(
+        testCase.selectUpdatedValue(updatedItem as OutlineItem<typeof kind>)
+      ).toEqual(testCase.expectedUpdatedValue);
 
-    act(() => {
-      result.current.editing.deleteMilestone("ms-existing");
-    });
-
-    expect(
-      result.current.state.contentOutline.milestones.some(
-        (item: Milestone) => item.id === newMilestone.id
-      )
-    ).toBe(true);
-    expect(
-      result.current.state.contentOutline.milestones.some(
-        (item: Milestone) => item.id === "ms-existing"
-      )
-    ).toBe(false);
-  });
-
-  it("manages customer journeys through add, update, and delete operations", () => {
-    const { result } = renderUseContentEditing();
-    const newJourney = createNewJourney();
-
-    act(() => {
-      result.current.editing.addCustomerJourney(newJourney);
-    });
-
-    expect(
-      result.current.state.contentOutline.customerJourneys.some(
-        (item: CustomerJourney) => item.id === newJourney.id
-      )
-    ).toBe(true);
-
-    act(() => {
-      result.current.editing.updateCustomerJourney("cjs-existing", {
-        goal: "Enable SSO with automated monitoring",
+      act(() => {
+        deleteHandler(testCase.existingId);
       });
-    });
 
-    expect(
-      result.current.state.contentOutline.customerJourneys.find(
-        (item: CustomerJourney) => item.id === "cjs-existing"
-      )?.goal
-    ).toBe("Enable SSO with automated monitoring");
+      const collectionAfterDelete = result.current.state.contentOutline[
+        kind
+      ] as OutlineItem<typeof kind>[];
 
-    act(() => {
-      result.current.editing.deleteCustomerJourney("cjs-existing");
-    });
-
-    expect(
-      result.current.state.contentOutline.customerJourneys.some(
-        (item: CustomerJourney) => item.id === newJourney.id
-      )
-    ).toBe(true);
-    expect(
-      result.current.state.contentOutline.customerJourneys.some(
-        (item: CustomerJourney) => item.id === "cjs-existing"
-      )
-    ).toBe(false);
-  });
-
-  it("manages metric schemas through add, update, and delete operations", () => {
-    const { result } = renderUseContentEditing();
-    const newSchema = createNewSchema();
-
-    act(() => {
-      result.current.editing.addMetricSchema(newSchema);
-    });
-
-    expect(
-      result.current.state.contentOutline.metricSchemas.some(
-        (item: SuccessMetricSchema) => item.id === newSchema.id
-      )
-    ).toBe(true);
-
-    act(() => {
-      result.current.editing.updateMetricSchema("metric-schema-existing", {
-        description: "Schema capturing activation and quality metrics",
-      });
-    });
-
-    expect(
-      result.current.state.contentOutline.metricSchemas.find(
-        (item: SuccessMetricSchema) => item.id === "metric-schema-existing"
-      )?.description
-    ).toBe("Schema capturing activation and quality metrics");
-
-    act(() => {
-      result.current.editing.deleteMetricSchema("metric-schema-existing");
-    });
-
-    expect(
-      result.current.state.contentOutline.metricSchemas.some(
-        (item: SuccessMetricSchema) => item.id === newSchema.id
-      )
-    ).toBe(true);
-    expect(
-      result.current.state.contentOutline.metricSchemas.some(
-        (item: SuccessMetricSchema) => item.id === "metric-schema-existing"
-      )
-    ).toBe(false);
-  });
+      expect(collectionAfterDelete.some((item) => item.id === newItem.id)).toBe(
+        true
+      );
+      expect(
+        collectionAfterDelete.some((item) => item.id === testCase.existingId)
+      ).toBe(false);
+    }
+  );
 
   it("updates outline metadata", () => {
     const { result } = renderUseContentEditing();

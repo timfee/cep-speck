@@ -1,256 +1,132 @@
-import { useCallback } from "react";
+import { useMemo } from "react";
 
-import type {
-  CustomerJourney,
-  FunctionalRequirement,
-  Milestone,
-  OutlineMetadata,
-  SuccessMetric,
-  SuccessMetricSchema,
-} from "@/types/workflow";
+import type { OutlineMetadata } from "@/types/workflow";
 
 import {
-  addCustomerJourneyToOutline,
-  addFunctionalRequirementToOutline,
-  addMetricSchemaToOutline,
-  addMilestoneToOutline,
-  addSuccessMetricToOutline,
-  deleteCustomerJourneyFromOutline,
-  deleteFunctionalRequirementFromOutline,
-  deleteMetricSchemaFromOutline,
-  deleteMilestoneFromOutline,
-  deleteSuccessMetricFromOutline,
-  updateCustomerJourneyInOutline,
-  updateFunctionalRequirementInOutline,
-  updateMetricSchemaInOutline,
-  updateMilestoneInOutline,
-  updateSuccessMetricInOutline,
+  mutateOutline,
+  type OutlineCollectionKind,
+  type OutlineItem,
 } from "./content-editing-utils";
 
 import type { WorkflowStateSetter } from "./workflow-state";
 
-/**
- * Hook for content editing operations
- * Extracted from use-structured-workflow to reduce complexity
- */
-export function useContentEditing(setState: WorkflowStateSetter) {
-  // Functional requirement operations
-  const updateFunctionalRequirement = useCallback(
-    (id: string, updates: Partial<FunctionalRequirement>) => {
+type OutlineActionNames<
+  Add extends string,
+  Update extends string,
+  Delete extends string,
+> = {
+  add: Add;
+  update: Update;
+  delete: Delete;
+};
+
+export const outlineActions = {
+  functionalRequirements: {
+    add: "addFunctionalRequirement",
+    update: "updateFunctionalRequirement",
+    delete: "deleteFunctionalRequirement",
+  },
+  successMetrics: {
+    add: "addSuccessMetric",
+    update: "updateSuccessMetric",
+    delete: "deleteSuccessMetric",
+  },
+  milestones: {
+    add: "addMilestone",
+    update: "updateMilestone",
+    delete: "deleteMilestone",
+  },
+  customerJourneys: {
+    add: "addCustomerJourney",
+    update: "updateCustomerJourney",
+    delete: "deleteCustomerJourney",
+  },
+  metricSchemas: {
+    add: "addMetricSchema",
+    update: "updateMetricSchema",
+    delete: "deleteMetricSchema",
+  },
+} as const satisfies Record<
+  OutlineCollectionKind,
+  OutlineActionNames<string, string, string>
+>;
+
+type OutlineActionDefinitions = typeof outlineActions;
+
+type CollectionHandlers = {
+  [K in OutlineCollectionKind as OutlineActionDefinitions[K]["add"]]: (
+    item: OutlineItem<K>
+  ) => void;
+} & {
+  [K in OutlineCollectionKind as OutlineActionDefinitions[K]["update"]]: (
+    id: string,
+    updates: Partial<OutlineItem<K>>
+  ) => void;
+} & {
+  [K in OutlineCollectionKind as OutlineActionDefinitions[K]["delete"]]: (
+    id: string
+  ) => void;
+};
+
+type ContentEditingHandlers = CollectionHandlers & {
+  updateOutlineMetadata: (updates: Partial<OutlineMetadata>) => void;
+};
+
+export function useContentEditing(
+  setState: WorkflowStateSetter
+): ContentEditingHandlers {
+  return useMemo(() => {
+    const handlerMap: Partial<ContentEditingHandlers> = {};
+
+    const registerHandlersFor = <K extends OutlineCollectionKind>(kind: K) => {
+      const { add, update, delete: remove } = outlineActions[kind];
+
+      handlerMap[add] = ((item: OutlineItem<K>) => {
+        setState((prev) => ({
+          ...prev,
+          contentOutline: mutateOutline(prev.contentOutline, kind, {
+            type: "add",
+            item,
+          }),
+        }));
+      }) as ContentEditingHandlers[typeof add];
+
+      handlerMap[update] = ((id: string, updates: Partial<OutlineItem<K>>) => {
+        setState((prev) => ({
+          ...prev,
+          contentOutline: mutateOutline(prev.contentOutline, kind, {
+            type: "update",
+            id,
+            updates,
+          }),
+        }));
+      }) as ContentEditingHandlers[typeof update];
+
+      handlerMap[remove] = ((id: string) => {
+        setState((prev) => ({
+          ...prev,
+          contentOutline: mutateOutline(prev.contentOutline, kind, {
+            type: "delete",
+            id,
+          }),
+        }));
+      }) as ContentEditingHandlers[typeof remove];
+    };
+
+    for (const kind of Object.keys(outlineActions) as OutlineCollectionKind[]) {
+      registerHandlersFor(kind);
+    }
+
+    handlerMap.updateOutlineMetadata = (updates: Partial<OutlineMetadata>) => {
       setState((prev) => ({
         ...prev,
-        contentOutline: updateFunctionalRequirementInOutline(
-          prev.contentOutline,
-          id,
-          updates
-        ),
+        contentOutline: mutateOutline(prev.contentOutline, "metadata", {
+          type: "update",
+          updates,
+        }),
       }));
-    },
-    [setState]
-  );
+    };
 
-  const deleteFunctionalRequirement = useCallback(
-    (id: string) => {
-      setState((prev) => ({
-        ...prev,
-        contentOutline: deleteFunctionalRequirementFromOutline(
-          prev.contentOutline,
-          id
-        ),
-      }));
-    },
-    [setState]
-  );
-
-  const addFunctionalRequirement = useCallback(
-    (requirement: FunctionalRequirement) => {
-      setState((prev) => ({
-        ...prev,
-        contentOutline: addFunctionalRequirementToOutline(
-          prev.contentOutline,
-          requirement
-        ),
-      }));
-    },
-    [setState]
-  );
-
-  // Success metric operations
-  const updateSuccessMetric = useCallback(
-    (id: string, updates: Partial<SuccessMetric>) => {
-      setState((prev) => ({
-        ...prev,
-        contentOutline: updateSuccessMetricInOutline(
-          prev.contentOutline,
-          id,
-          updates
-        ),
-      }));
-    },
-    [setState]
-  );
-
-  const deleteSuccessMetric = useCallback(
-    (id: string) => {
-      setState((prev) => ({
-        ...prev,
-        contentOutline: deleteSuccessMetricFromOutline(prev.contentOutline, id),
-      }));
-    },
-    [setState]
-  );
-
-  const addSuccessMetric = useCallback(
-    (metric: SuccessMetric) => {
-      setState((prev) => ({
-        ...prev,
-        contentOutline: addSuccessMetricToOutline(prev.contentOutline, metric),
-      }));
-    },
-    [setState]
-  );
-
-  // Milestone operations
-  const updateMilestone = useCallback(
-    (id: string, updates: Partial<Milestone>) => {
-      setState((prev) => ({
-        ...prev,
-        contentOutline: updateMilestoneInOutline(
-          prev.contentOutline,
-          id,
-          updates
-        ),
-      }));
-    },
-    [setState]
-  );
-
-  const deleteMilestone = useCallback(
-    (id: string) => {
-      setState((prev) => ({
-        ...prev,
-        contentOutline: deleteMilestoneFromOutline(prev.contentOutline, id),
-      }));
-    },
-    [setState]
-  );
-
-  const addMilestone = useCallback(
-    (milestone: Milestone) => {
-      setState((prev) => ({
-        ...prev,
-        contentOutline: addMilestoneToOutline(prev.contentOutline, milestone),
-      }));
-    },
-    [setState]
-  );
-
-  const updateCustomerJourney = useCallback(
-    (id: string, updates: Partial<CustomerJourney>) => {
-      setState((prev) => ({
-        ...prev,
-        contentOutline: updateCustomerJourneyInOutline(
-          prev.contentOutline,
-          id,
-          updates
-        ),
-      }));
-    },
-    [setState]
-  );
-
-  const deleteCustomerJourney = useCallback(
-    (id: string) => {
-      setState((prev) => ({
-        ...prev,
-        contentOutline: deleteCustomerJourneyFromOutline(
-          prev.contentOutline,
-          id
-        ),
-      }));
-    },
-    [setState]
-  );
-
-  const addCustomerJourney = useCallback(
-    (customerJourney: CustomerJourney) => {
-      setState((prev) => ({
-        ...prev,
-        contentOutline: addCustomerJourneyToOutline(
-          prev.contentOutline,
-          customerJourney
-        ),
-      }));
-    },
-    [setState]
-  );
-
-  const updateMetricSchema = useCallback(
-    (id: string, updates: Partial<SuccessMetricSchema>) => {
-      setState((prev) => ({
-        ...prev,
-        contentOutline: updateMetricSchemaInOutline(
-          prev.contentOutline,
-          id,
-          updates
-        ),
-      }));
-    },
-    [setState]
-  );
-
-  const deleteMetricSchema = useCallback(
-    (id: string) => {
-      setState((prev) => ({
-        ...prev,
-        contentOutline: deleteMetricSchemaFromOutline(prev.contentOutline, id),
-      }));
-    },
-    [setState]
-  );
-
-  const addMetricSchema = useCallback(
-    (metricSchema: SuccessMetricSchema) => {
-      setState((prev) => ({
-        ...prev,
-        contentOutline: addMetricSchemaToOutline(
-          prev.contentOutline,
-          metricSchema
-        ),
-      }));
-    },
-    [setState]
-  );
-
-  const updateOutlineMetadata = useCallback(
-    (updates: Partial<OutlineMetadata>) => {
-      setState((prev) => ({
-        ...prev,
-        contentOutline: {
-          ...prev.contentOutline,
-          metadata: { ...prev.contentOutline.metadata, ...updates },
-        },
-      }));
-    },
-    [setState]
-  );
-
-  return {
-    updateFunctionalRequirement,
-    deleteFunctionalRequirement,
-    addFunctionalRequirement,
-    updateSuccessMetric,
-    deleteSuccessMetric,
-    addSuccessMetric,
-    updateMilestone,
-    deleteMilestone,
-    addMilestone,
-    updateOutlineMetadata,
-    updateCustomerJourney,
-    deleteCustomerJourney,
-    addCustomerJourney,
-    updateMetricSchema,
-    deleteMetricSchema,
-    addMetricSchema,
-  };
+    return handlerMap as ContentEditingHandlers;
+  }, [setState]);
 }
