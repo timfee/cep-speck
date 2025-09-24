@@ -6,7 +6,7 @@ import {
 } from "@/lib/serializers/workflow-to-spec";
 
 import { serializeWorkflowToOutlinePayload } from "@/lib/serializers/workflow-to-structured-outline";
-import { generateContentOutlineFromPrompt } from "@/lib/services/content-outline-service";
+// Removed direct import of AI service - this should only run on server side
 import { initialWorkflowState } from "@/lib/utils/workflow-initial-state";
 import type { WorkflowStateSetter } from "@/lib/utils/workflow-state";
 
@@ -79,7 +79,23 @@ export const useStructuredWorkflow = () => {
       dispatch.setError(undefined);
 
       try {
-        const result = await generateContentOutlineFromPrompt(prompt);
+        // SECURITY FIX: Use API route instead of direct client-side AI access
+        const response = await fetch("/api/content-outline", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ prompt }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = (await response.json()) as {
+          outline: ContentOutline;
+          error?: string;
+        };
         dispatch.setContentOutline(result.outline);
 
         // Set error if AI failed but fallback was used
