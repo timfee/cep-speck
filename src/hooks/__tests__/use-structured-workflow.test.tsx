@@ -2,20 +2,16 @@
 
 import { act, renderHook } from "@testing-library/react/pure";
 
-import { generateContentOutlineFromPrompt } from "@/lib/services/content-outline-service";
 import { initialWorkflowState } from "@/lib/utils/workflow-initial-state";
 import type { ContentOutline } from "@/types/workflow";
 
-jest.mock("@/lib/services/content-outline-service", () => ({
-  generateContentOutlineFromPrompt: jest.fn(),
-}));
+// Mock fetch for API calls
+global.fetch = jest.fn();
 
 import { useStructuredWorkflow } from "../use-structured-workflow";
 
 describe("useStructuredWorkflow", () => {
-  const mockGenerate = generateContentOutlineFromPrompt as jest.MockedFunction<
-    typeof generateContentOutlineFromPrompt
-  >;
+  const mockFetch = global.fetch as jest.MockedFunction<typeof fetch>;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -59,7 +55,11 @@ describe("useStructuredWorkflow", () => {
       ],
     };
 
-    mockGenerate.mockResolvedValueOnce(outline);
+    // Mock successful API response
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve({ outline }),
+    } as Response);
 
     const { result } = renderHook(() => useStructuredWorkflow());
 
@@ -67,7 +67,13 @@ describe("useStructuredWorkflow", () => {
       await result.current.generateContentOutlineForPrompt("prompt");
     });
 
-    expect(mockGenerate).toHaveBeenCalledWith("prompt");
+    expect(mockFetch).toHaveBeenCalledWith("/api/content-outline", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ prompt: "prompt" }),
+    });
     expect(
       result.current.state.contentOutline.functionalRequirements
     ).toHaveLength(1);
@@ -80,7 +86,11 @@ describe("useStructuredWorkflow", () => {
       .spyOn(console, "error")
       .mockImplementation(() => undefined);
 
-    mockGenerate.mockRejectedValueOnce(new Error("Network failure"));
+    // Mock failed API response
+    mockFetch.mockResolvedValueOnce({
+      ok: false,
+      status: 500,
+    } as Response);
 
     const { result } = renderHook(() => useStructuredWorkflow());
 
@@ -89,7 +99,7 @@ describe("useStructuredWorkflow", () => {
     });
 
     expect(result.current.state.isLoading).toBe(false);
-    expect(result.current.state.error).toBe("Network failure");
+    expect(result.current.state.error).toBe("HTTP error! status: 500");
 
     consoleSpy.mockRestore();
   });

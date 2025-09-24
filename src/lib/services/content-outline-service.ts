@@ -14,7 +14,7 @@ import { ContentOutlineSchema } from "./content-outline-schemas";
  */
 export async function generateContentOutlineFromPrompt(
   prompt: string
-): Promise<ContentOutline> {
+): Promise<{ outline: ContentOutline; error?: string }> {
   const ai = getResilientAI();
 
   try {
@@ -23,11 +23,16 @@ export async function generateContentOutlineFromPrompt(
       schema: ContentOutlineSchema,
     });
 
-    return result.object;
+    return { outline: result.object };
   } catch (error) {
     console.error("Failed to generate AI content outline:", error);
 
-    // Return a basic fallback outline
-    return buildFallbackOutline(prompt);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+
+    // Return fallback outline with error information
+    return {
+      outline: buildFallbackOutline(prompt),
+      error: errorMessage,
+    };
   }
 }

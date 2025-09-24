@@ -21,6 +21,65 @@ export interface ProviderAttemptResult<T> {
 }
 
 /**
+ * Check provider availability and throw detailed error if not available
+ */
+async function validateProviderAvailability(
+  provider: AIProvider
+): Promise<void> {
+  const isAvailable = await provider.isAvailable();
+
+  if (!isAvailable) {
+    // Get detailed availability status if available
+    if (provider.getAvailabilityStatus) {
+      try {
+        const status = await provider.getAvailabilityStatus();
+        // Properly format the error message
+        const errorMessage =
+          status.reason != null &&
+          status.reason !== "" &&
+          status.actionRequired != null &&
+          status.actionRequired !== ""
+            ? `${status.reason} - ${status.actionRequired}`
+            : (status.reason ??
+              `Provider ${provider.name} is not available. Check configuration and API keys.`);
+        throw new Error(errorMessage);
+      } catch (statusError) {
+        // If getting status fails, throw the status error itself if it's descriptive
+        if (
+          statusError instanceof Error &&
+          statusError.message.includes("API key")
+        ) {
+          throw statusError;
+        }
+        // Otherwise fallback to generic message
+        throw new Error(
+          `Provider ${provider.name} is not available. Check configuration and API keys.`
+        );
+      }
+    }
+    throw new Error(
+      `Provider ${provider.name} is not available. Check configuration and API keys.`
+    );
+  }
+}
+
+/**
+ * Handle retry logic with exponential backoff
+ */
+async function handleRetry(
+  retry: number,
+  maxRetries: number,
+  retryDelay: number
+): Promise<boolean> {
+  // Wait before retry (exponential backoff)
+  if (retry < maxRetries - 1) {
+    await delay(retryDelay * Math.pow(2, retry));
+    return true; // Continue retrying
+  }
+  return false; // Stop retrying
+}
+
+/**
  * Attempts to generate text with a specific provider with retry logic
  */
 export async function attemptWithProvider(
@@ -34,10 +93,7 @@ export async function attemptWithProvider(
 
   for (let retry = 0; retry < maxRetries; retry++) {
     try {
-      const isAvailable = await provider.isAvailable();
-      if (!isAvailable) {
-        throw new Error(`Provider ${provider.name} is not available`);
-      }
+      await validateProviderAvailability(provider);
 
       console.log(
         `Generating with ${provider.name} (attempt ${retry + 1}/${maxRetries})`
@@ -53,13 +109,8 @@ export async function attemptWithProvider(
         errorObj.message
       );
 
-      // Wait before retry (exponential backoff)
-      if (retry < maxRetries - 1) {
-        await delay(retryDelay * Math.pow(2, retry));
-      }
-
-      // Return error if this was the last retry
-      if (retry === maxRetries - 1) {
+      const shouldContinue = await handleRetry(retry, maxRetries, retryDelay);
+      if (!shouldContinue) {
         return { success: false, error: errorObj };
       }
     }
@@ -82,10 +133,7 @@ export async function attemptObjectWithProvider<T>(
 
   for (let retry = 0; retry < maxRetries; retry++) {
     try {
-      const isAvailable = await provider.isAvailable();
-      if (!isAvailable) {
-        throw new Error(`Provider ${provider.name} is not available`);
-      }
+      await validateProviderAvailability(provider);
 
       console.log(
         `Generating object with ${provider.name} (attempt ${retry + 1}/${maxRetries})`
@@ -111,13 +159,8 @@ export async function attemptObjectWithProvider<T>(
         errorObj.message
       );
 
-      // Wait before retry (exponential backoff)
-      if (retry < maxRetries - 1) {
-        await delay(retryDelay * Math.pow(2, retry));
-      }
-
-      // Return error if this was the last retry
-      if (retry === maxRetries - 1) {
+      const shouldContinue = await handleRetry(retry, maxRetries, retryDelay);
+      if (!shouldContinue) {
         return { success: false, error: errorObj };
       }
     }
