@@ -15,13 +15,24 @@ module.exports = {
         /function\s+extract\w*Metrics|const\s+extract\w*Metrics\s*=/,
       extractBulletPoints:
         /function\s+extract\w*Bullet|const\s+extract\w*Bullet\s*=/,
-      buildHealing: /function\s+build\w*Healing|const\s+build\w*Healing\s*=/,
+      buildHealingInstructions:
+        /function\s+build\w*Healing|const\s+build\w*Healing\s*=/,
       createWordBoundaryRegex:
         /function\s+create\w*Boundary|const\s+create\w*Boundary\s*=/,
       createFlexibleRegex:
         /function\s+create\w*Regex|const\s+create\w*Regex\s*=/,
       doesMetricReferenceFeature:
         /function\s+\w*MetricReference|const\s+\w*MetricReference\s*=/,
+    };
+
+    const helperImportSources = {
+      extractSection: "@/lib/spec/helpers/validation",
+      extractMetrics: "@/lib/spec/helpers/validation",
+      extractBulletPoints: "@/lib/spec/helpers/validation",
+      buildHealingInstructions: "@/lib/agents/refiner-helpers",
+      createWordBoundaryRegex: "@/lib/spec/helpers/patterns",
+      createFlexibleRegex: "@/lib/spec/helpers/patterns",
+      doesMetricReferenceFeature: "@/lib/spec/helpers/validation",
     };
 
     const helperImports = new Map();
@@ -51,12 +62,19 @@ module.exports = {
         // Check for duplicate helper implementations
         Object.entries(helperPatterns).forEach(([helperName, pattern]) => {
           if (pattern.test(functionText) && !helperImports.has(helperName)) {
+            const modulePath = helperImportSources[helperName];
+
             context.report({
               node,
-              message: `Use imported ${helperName} from @/lib/spec/helpers instead of implementing locally`,
+              message: modulePath
+                ? `Use imported ${helperName} from ${modulePath} instead of implementing locally`
+                : `Use the shared ${helperName} helper instead of implementing locally`,
               fix(fixer) {
+                if (!modulePath) {
+                  return null;
+                }
                 // Add import if not present
-                const importStatement = `import { ${helperName} } from "@/lib/spec/helpers";\n`;
+                const importStatement = `import { ${helperName} } from "${modulePath}";\n`;
 
                 // Safely check if node.parent and node.parent.body exist
                 if (

@@ -30,7 +30,7 @@ The `DrafterAgent` combines:
 **Usage:**
 
 ```typescript
-import { DrafterAgent, runDrafterAgent } from "@/lib/agents";
+import { DrafterAgent, runDrafterAgent } from "@/lib/agents/drafter";
 
 // Simple usage
 const result = await runDrafterAgent(userInput, pack);
@@ -59,7 +59,7 @@ await runDrafterAgent(userInput, pack, {
 Utility for loading prompt files with caching:
 
 ```typescript
-import { loadPrompt, clearPromptCache } from "@/lib/agents";
+import { loadPrompt, clearPromptCache } from "@/lib/agents/prompt-loader";
 
 const content = await loadPrompt({
   path: "guides/prompts/drafter-master.md",
