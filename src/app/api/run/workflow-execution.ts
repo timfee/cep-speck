@@ -5,15 +5,16 @@
 import { runGenerationLoop } from "@/lib/agents/hybrid-workflow";
 import { DEFAULT_SPEC_PACK } from "@/lib/config";
 
-import {
-  loadKnowledgeBase,
-  performResearch,
-} from "@/lib/spec/api/workflow-context";
-
 import type {
   SerializedWorkflowOutline,
   SerializedWorkflowSpec,
 } from "@/types/workflow";
+
+import {
+  loadKnowledgeBase,
+  performResearch,
+} from "./workflow-context";
+
 
 // Constants for magic numbers
 const MAX_ALLOWED_ATTEMPTS = 5;

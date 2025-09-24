@@ -8,6 +8,9 @@
  * - Refiner: AI healing replacement
  */
 
+
+import { executeDraftPhase } from "./workflow/draft";
+
 import {
   createWorkflowState,
   updateWorkflowState,
@@ -16,13 +19,9 @@ import {
   handleWorkflowError,
 } from "./workflow/orchestration";
 
-import {
-  executeDraftPhase,
-  runValidationAndEvaluation,
-  runRefinement,
-} from "./workflow/phases";
-
+import { runRefinement } from "./workflow/refinement";
 import type { GenerationLoopContext } from "./workflow/types";
+import { runValidationAndEvaluation } from "./workflow/validation";
 
 /**
  * Run the hybrid Drafter→Linter→Evaluator→Refiner workflow

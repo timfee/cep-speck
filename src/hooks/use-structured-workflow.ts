@@ -1,6 +1,11 @@
 import { useCallback, useMemo, useState } from "react";
 
 import { generateContentOutlineFromPrompt } from "@/lib/services/content-outline-service";
+import {
+  serializeWorkflowToLegacySpecText,
+  serializeWorkflowToSpec,
+} from "@/lib/serializers/workflow-to-spec";
+import { serializeWorkflowToOutlinePayload } from "@/lib/serializers/workflow-to-structured-outline";
 
 import type {
   ContentOutline,
@@ -10,7 +15,6 @@ import type {
 
 import { useContentEditing } from "./use-content-editing";
 import { useWorkflowStateWithProgress } from "./use-workflow-progress";
-import { useWorkflowSerializers } from "./use-workflow-serializers";
 import { initialWorkflowState } from "./workflow-initial-state";
 import { useWorkflowNavigation } from "./workflow-navigation";
 import type { WorkflowStateSetter } from "./workflow-state";
@@ -86,11 +90,17 @@ export const useStructuredWorkflow = () => {
     [dispatch, getOutlineErrorMessage]
   );
 
-  const {
-    serializeToSpecPayload,
-    serializeToLegacySpecText,
-    serializeToOutlinePayload,
-  } = useWorkflowSerializers(state);
+  const serializeToSpecPayload = useCallback(() => {
+    return serializeWorkflowToSpec(state);
+  }, [state]);
+
+  const serializeToLegacySpecText = useCallback((): string => {
+    return serializeWorkflowToLegacySpecText(state);
+  }, [state]);
+
+  const serializeToOutlinePayload = useCallback(() => {
+    return serializeWorkflowToOutlinePayload(state);
+  }, [state]);
 
   return {
     state: currentState,
