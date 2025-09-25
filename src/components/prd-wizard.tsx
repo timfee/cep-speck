@@ -2,6 +2,8 @@
 
 import React, { useState, useTransition } from "react";
 
+import { generateContentOutlineAction } from "@/actions/generate-outline";
+import { generatePRDContentAction } from "@/actions/generate-prd";
 import { AIProgressModal, type AIProgressStep } from "@/components/ai-progress-modal";
 import { APIKeySettings } from "@/components/api-key-settings";
 
@@ -15,7 +17,7 @@ import {
 
 import { Card } from "@/components/ui/card";
 import { ProgressTimeline, WizardNavigation } from "@/components/wizard";
-import { generatePRDContent, generateContentOutline, type AIConfig } from "@/lib/ai";
+import type { AIConfig } from "@/lib/ai";
 import { type WorkflowStep, WORKFLOW_STEPS } from "@/lib/utils";
 
 interface PRDData {
@@ -138,29 +140,31 @@ export function PRDWizard() {
     setCurrentProgressStep(0);
 
     startTransition(async () => {
-      const result = await generateContentOutline(
-        data.prompt, 
-        aiConfig,
-        (step: string, message: string) => {
-          setProgressSteps(prev => {
-            const newSteps = [...prev];
-            const stepIndex = newSteps.findIndex(s => s.type === step);
-            if (stepIndex !== -1) {
-              // Mark previous steps as completed
-              for (let i = 0; i < stepIndex; i++) {
-                newSteps[i].completed = true;
-              }
-              // Update current step
-              newSteps[stepIndex].message = message;
-              setCurrentProgressStep(stepIndex);
-            }
-            return newSteps;
-          });
-        }
-      );
+      // Simulate progress updates
+      setCurrentProgressStep(0);
+      setProgressSteps(prev => prev.map((step, i) => 
+        i === 0 ? { ...step, completed: true } : step
+      ));
+      
+      await new Promise(resolve => setTimeout(resolve, 500));
+      setCurrentProgressStep(1);
+      setProgressSteps(prev => prev.map((step, i) => 
+        i <= 1 ? { ...step, completed: true } : step
+      ));
+      
+      await new Promise(resolve => setTimeout(resolve, 500));
+      setCurrentProgressStep(2);
+      setProgressSteps(prev => prev.map((step, i) => 
+        i <= 2 ? { ...step, completed: true } : step
+      ));
+
+      // Call the server action
+      const result = await generateContentOutlineAction(data.prompt, aiConfig);
       
       // Mark all steps as completed
       setProgressSteps(prev => prev.map(s => ({ ...s, completed: true })));
+      const finalStepIndex = progressSteps.length - 1;
+      setCurrentProgressStep(finalStepIndex);
       
       setTimeout(() => {
         setShowProgressModal(false);
@@ -185,29 +189,25 @@ export function PRDWizard() {
     setCurrentProgressStep(0);
 
     startTransition(async () => {
-      const result = await generatePRDContent(
-        data.prompt, 
-        aiConfig,
-        (step: string, message: string) => {
-          setProgressSteps(prev => {
-            const newSteps = [...prev];
-            const stepIndex = newSteps.findIndex(s => s.type === step);
-            if (stepIndex !== -1) {
-              // Mark previous steps as completed
-              for (let i = 0; i < stepIndex; i++) {
-                newSteps[i].completed = true;
-              }
-              // Update current step
-              newSteps[stepIndex].message = message;
-              setCurrentProgressStep(stepIndex);
-            }
-            return newSteps;
-          });
-        }
-      );
+      // Simulate progress updates
+      setCurrentProgressStep(0);
+      setProgressSteps(prev => prev.map((step, i) => 
+        i === 0 ? { ...step, completed: true } : step
+      ));
+      
+      await new Promise(resolve => setTimeout(resolve, 500));
+      setCurrentProgressStep(1);
+      setProgressSteps(prev => prev.map((step, i) => 
+        i <= 1 ? { ...step, completed: true } : step
+      ));
+
+      // Call the server action
+      const result = await generatePRDContentAction(data.prompt, aiConfig);
       
       // Mark all steps as completed
       setProgressSteps(prev => prev.map(s => ({ ...s, completed: true })));
+      const finalStepIndex = progressSteps.length - 1;
+      setCurrentProgressStep(finalStepIndex);
       
       setTimeout(() => {
         setShowProgressModal(false);

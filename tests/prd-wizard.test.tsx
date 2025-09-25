@@ -1,7 +1,3 @@
-/**
- * @fileoverview PRD Wizard Component Tests
- */
-
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import React from 'react'
 
@@ -9,15 +5,10 @@ import '@testing-library/jest-dom'
 
 import { PRDWizard } from '../src/components/prd-wizard'
 
-// Mock the AI service
-jest.mock('../src/lib/ai', () => ({
-  generatePRDContent: jest.fn(),
-  generateContentOutline: jest.fn(),
-}))
+// Use the global mocks from setup.ts
+const _mockGenerateContentOutlineAction = (global as any).mockGenerateContentOutlineAction
 
 describe('PRDWizard Component', () => {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockGenerateContentOutline = require('../src/lib/ai').generateContentOutline
 
   beforeEach(() => {
     jest.clearAllMocks()
