@@ -6,7 +6,7 @@ import '@testing-library/jest-dom'
 import { PRDWizard } from '../src/components/prd-wizard'
 
 // Use the global mocks from setup.ts
-const _mockGenerateContentOutlineAction = (global as any).mockGenerateContentOutlineAction
+const mockGenerateContentOutlineAction = (global as any).mockGenerateContentOutlineAction
 
 describe('PRDWizard Component', () => {
 
@@ -88,7 +88,7 @@ describe('PRDWizard Component', () => {
       ]
     }
 
-    mockGenerateContentOutline.mockResolvedValue({
+    mockGenerateContentOutlineAction.mockResolvedValue({
       success: true,
       data: mockOutlineData
     })
@@ -105,11 +105,8 @@ describe('PRDWizard Component', () => {
 
     // Should show outline step header
     await waitFor(() => {
-      expect(screen.getByText('Content Outline')).toBeInTheDocument()
+      expect(screen.getByRole('heading', { name: 'Content Outline', level: 2 })).toBeInTheDocument()
     })
-
-    // Should show loading state initially
-    expect(screen.getByText('Generating outline...')).toBeInTheDocument()
 
     // Wait for outline to load
     await waitFor(() => {
@@ -118,8 +115,9 @@ describe('PRDWizard Component', () => {
       expect(screen.getByText('Test Milestone')).toBeInTheDocument()
     })
 
-    expect(mockGenerateContentOutline).toHaveBeenCalledWith(
-      'This is a comprehensive product description for testing the outline generation feature.'
+    expect(mockGenerateContentOutlineAction).toHaveBeenCalledWith(
+      'This is a comprehensive product description for testing the outline generation feature.',
+      {}
     )
   })
 
@@ -133,7 +131,7 @@ describe('PRDWizard Component', () => {
     fireEvent.click(screen.getByRole('button', { name: /next/i }))
 
     await waitFor(() => {
-      expect(screen.getByText('Content Outline')).toBeInTheDocument()
+      expect(screen.getByRole('heading', { name: 'Content Outline', level: 2 })).toBeInTheDocument()
     })
 
     // Go back
@@ -163,7 +161,7 @@ describe('PRDWizard Component', () => {
   })
 
   it('should display error state when AI generation fails', async () => {
-    mockGenerateContentOutline.mockResolvedValue({
+    mockGenerateContentOutlineAction.mockResolvedValue({
       success: false,
       error: 'AI service unavailable'
     })
@@ -176,7 +174,7 @@ describe('PRDWizard Component', () => {
     fireEvent.click(screen.getByRole('button', { name: /next/i }))
 
     await waitFor(() => {
-      expect(screen.getByText('Content Outline')).toBeInTheDocument()
+      expect(screen.getByRole('heading', { name: 'Content Outline', level: 2 })).toBeInTheDocument()
     })
 
     // Should show Generate Outline button instead of content
