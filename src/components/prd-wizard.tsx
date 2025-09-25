@@ -2,6 +2,9 @@
 
 import React, { useState, useTransition } from "react";
 
+import { AIProgressModal, type AIProgressStep } from "@/components/ai-progress-modal";
+import { APIKeySettings } from "@/components/api-key-settings";
+
 import {
   IdeaStep,
   OutlineStep,
@@ -12,7 +15,7 @@ import {
 
 import { Card } from "@/components/ui/card";
 import { ProgressTimeline, WizardNavigation } from "@/components/wizard";
-import { generatePRDContent, generateContentOutline } from "@/lib/ai";
+import { generatePRDContent, generateContentOutline, type AIConfig } from "@/lib/ai";
 import { type WorkflowStep, WORKFLOW_STEPS } from "@/lib/utils";
 
 interface PRDData {
@@ -54,6 +57,14 @@ export function PRDWizard() {
   const [completedSteps, setCompletedSteps] = useState<WorkflowStep[]>([]);
   const [data, setData] = useState<PRDData>({ prompt: "" });
   const [isPending, startTransition] = useTransition();
+  
+  // AI Configuration
+  const [aiConfig, setAIConfig] = useState<AIConfig>({});
+  
+  // Progress Modal State
+  const [progressSteps, setProgressSteps] = useState<AIProgressStep[]>([]);
+  const [currentProgressStep, setCurrentProgressStep] = useState(0);
+  const [showProgressModal, setShowProgressModal] = useState(false);
 
   const canGoNext = () => {
     switch (currentStep) {
@@ -117,26 +128,95 @@ export function PRDWizard() {
   const handleGenerateOutline = () => {
     if (!data.prompt) return;
 
+    setShowProgressModal(true);
+    setProgressSteps([
+      { type: "input", message: "Processing your product concept...", completed: false },
+      { type: "rag", message: "Researching market context and best practices...", completed: false },
+      { type: "thinking", message: "Structuring requirements and milestones...", completed: false },
+      { type: "output", message: "Generating outline...", completed: false },
+    ]);
+    setCurrentProgressStep(0);
+
     startTransition(async () => {
-      const result = await generateContentOutline(data.prompt);
-      if (result.success) {
-        setData((prev) => ({ ...prev, outline: result.data }));
-      } else {
-        console.error("Failed to generate outline:", result.error);
-      }
+      const result = await generateContentOutline(
+        data.prompt, 
+        aiConfig,
+        (step: string, message: string) => {
+          setProgressSteps(prev => {
+            const newSteps = [...prev];
+            const stepIndex = newSteps.findIndex(s => s.type === step);
+            if (stepIndex !== -1) {
+              // Mark previous steps as completed
+              for (let i = 0; i < stepIndex; i++) {
+                newSteps[i].completed = true;
+              }
+              // Update current step
+              newSteps[stepIndex].message = message;
+              setCurrentProgressStep(stepIndex);
+            }
+            return newSteps;
+          });
+        }
+      );
+      
+      // Mark all steps as completed
+      setProgressSteps(prev => prev.map(s => ({ ...s, completed: true })));
+      
+      setTimeout(() => {
+        setShowProgressModal(false);
+        if (result.success) {
+          setData((prev) => ({ ...prev, outline: result.data }));
+        } else {
+          console.error("Failed to generate outline:", result.error);
+        }
+      }, 1000);
     });
   };
 
   const handleGeneratePRD = () => {
     if (!data.prompt) return;
 
+    setShowProgressModal(true);
+    setProgressSteps([
+      { type: "input", message: "Processing your product concept...", completed: false },
+      { type: "thinking", message: "AI analyzing requirements and generating structured PRD...", completed: false },
+      { type: "output", message: "Finalizing PRD document...", completed: false },
+    ]);
+    setCurrentProgressStep(0);
+
     startTransition(async () => {
-      const result = await generatePRDContent(data.prompt);
-      if (result.success) {
-        setData((prev) => ({ ...prev, prd: result.data }));
-      } else {
-        console.error("Failed to generate PRD:", result.error);
-      }
+      const result = await generatePRDContent(
+        data.prompt, 
+        aiConfig,
+        (step: string, message: string) => {
+          setProgressSteps(prev => {
+            const newSteps = [...prev];
+            const stepIndex = newSteps.findIndex(s => s.type === step);
+            if (stepIndex !== -1) {
+              // Mark previous steps as completed
+              for (let i = 0; i < stepIndex; i++) {
+                newSteps[i].completed = true;
+              }
+              // Update current step
+              newSteps[stepIndex].message = message;
+              setCurrentProgressStep(stepIndex);
+            }
+            return newSteps;
+          });
+        }
+      );
+      
+      // Mark all steps as completed
+      setProgressSteps(prev => prev.map(s => ({ ...s, completed: true })));
+      
+      setTimeout(() => {
+        setShowProgressModal(false);
+        if (result.success) {
+          setData((prev) => ({ ...prev, prd: result.data }));
+        } else {
+          console.error("Failed to generate PRD:", result.error);
+        }
+      }, 1000);
     });
   };
 
@@ -168,10 +248,22 @@ export function PRDWizard() {
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-6">
       <div className="text-center space-y-2">
-        <h1 className="text-3xl font-bold">Structured PRD Wizard</h1>
-        <p className="text-muted-foreground">
-          Create comprehensive PRDs through a guided, step-by-step process
-        </p>
+        <div className="flex items-center justify-center gap-4">
+          <div>
+            <h1 className="text-3xl font-bold">Structured PRD Wizard</h1>
+            <p className="text-muted-foreground">
+              Create comprehensive PRDs through a guided, step-by-step process
+            </p>
+          </div>
+          <APIKeySettings 
+            onSettingsChange={(settings) => {
+              setAIConfig({
+                apiKey: settings.userApiKey,
+                model: settings.model,
+              });
+            }} 
+          />
+        </div>
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
@@ -200,6 +292,14 @@ export function PRDWizard() {
         This guided workflow helps you create better PRDs through structured
         input and AI assistance.
       </p>
+      
+      {/* AI Progress Modal */}
+      <AIProgressModal
+        open={showProgressModal}
+        steps={progressSteps}
+        currentStep={currentProgressStep}
+        title={currentStep === "outline" ? "Generating Content Outline" : "Generating PRD"}
+      />
     </div>
   );
 }

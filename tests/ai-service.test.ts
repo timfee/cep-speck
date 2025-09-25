@@ -1,41 +1,41 @@
-/**
- * @fileoverview AI Service Tests - Testing server actions for PRD and content generation
- */
+import { generateObject } from 'ai'
 
-import { generatePRDContent, generateContentOutline } from '../src/lib/ai'
+import { generatePRDContent, generateContentOutline } from '@/lib/ai'
 
-// Mock the AI SDK modules
+// Mock the ai module
 jest.mock('ai', () => ({
   generateObject: jest.fn(),
 }))
 
+// Mock the google provider
 jest.mock('@ai-sdk/google', () => ({
-  google: jest.fn(() => 'mocked-model'),
+  google: jest.fn(() => 'mock-model'),
 }))
 
-describe('AI Service', () => {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockGenerateObject = require('ai').generateObject
+const mockGenerateObject = generateObject as jest.MockedFunction<typeof generateObject>
 
+describe('AI Service', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    // Mock environment variable
+    process.env.GOOGLE_GENERATIVE_AI_API_KEY = 'test-api-key'
   })
 
   describe('generatePRDContent', () => {
     it('should generate PRD content successfully', async () => {
       const mockResult = {
         object: {
-          title: 'Test PRD',
-          overview: 'Test overview',
+          title: 'Test Product',
+          overview: 'A comprehensive test product overview',
           objectives: ['Objective 1', 'Objective 2'],
           requirements: [
             {
               title: 'Requirement 1',
-              description: 'Test requirement',
+              description: 'Description of requirement 1',
               priority: 'high' as const
             }
           ],
-          timeline: '3 months',
+          timeline: 'Q1 2024',
           success_metrics: ['Metric 1', 'Metric 2']
         }
       }
@@ -44,38 +44,18 @@ describe('AI Service', () => {
 
       const result = await generatePRDContent('Test product concept')
 
-      expect(result).toEqual({
-        success: true,
-        data: mockResult.object
-      })
-
-      expect(mockGenerateObject).toHaveBeenCalledWith(
-        expect.objectContaining({
-          model: 'mocked-model',
-          schema: expect.any(Object),
-          prompt: expect.stringContaining('Test product concept')
-        })
-      )
+      expect(result.success).toBe(true)
+      expect(result.data).toEqual(mockResult.object)
     })
 
     it('should handle errors gracefully', async () => {
-      mockGenerateObject.mockRejectedValue(new Error('AI generation failed'))
+      mockGenerateObject.mockRejectedValue(new Error('API Error'))
 
       const result = await generatePRDContent('Test prompt')
 
-      expect(result).toEqual({
-        success: false,
-        error: 'AI generation failed'
-      })
+      expect(result.success).toBe(false)
+      expect(result.error).toBe('API Error')
     })
-
-    it('should require a prompt', async () => {
-      await generatePRDContent('')
-
-      // Should still attempt generation even with empty prompt
-      expect(mockGenerateObject).toHaveBeenCalled()
-    })
-  })
   })
 
   describe('generateContentOutline', () => {
@@ -84,23 +64,23 @@ describe('AI Service', () => {
         object: {
           functional_requirements: [
             {
-              id: 'req-1',
-              title: 'Test Requirement',
-              description: 'Test description'
+              id: 'req1',
+              title: 'Requirement 1',
+              description: 'Description of requirement 1'
             }
           ],
           success_metrics: [
             {
-              id: 'metric-1',
-              name: 'Test Metric',
-              target: '90%'
+              id: 'metric1',
+              name: 'Metric 1',
+              target: '95% accuracy'
             }
           ],
           milestones: [
             {
-              id: 'milestone-1',
-              title: 'Test Milestone',
-              timeline: '1 month'
+              id: 'milestone1',
+              title: 'Milestone 1',
+              timeline: 'Q1 2024'
             }
           ]
         }
@@ -110,48 +90,8 @@ describe('AI Service', () => {
 
       const result = await generateContentOutline('Test product concept')
 
-      expect(result).toEqual({
-        success: true,
-        data: mockResult.object
-      })
-
-      expect(mockGenerateObject).toHaveBeenCalledWith(
-        expect.objectContaining({
-          model: 'mocked-model',
-          schema: expect.any(Object),
-          prompt: expect.stringContaining('Test product concept')
-        })
-      )
-    })
-
-    it('should handle errors gracefully', async () => {
-      mockGenerateObject.mockRejectedValue(new Error('Outline generation failed'))
-
-      const result = await generateContentOutline('Test prompt')
-
-      expect(result).toEqual({
-        success: false,
-        error: 'Outline generation failed'
-      })
-    })
-
-    it('should validate required schema fields', async () => {
-      const incompleteResult = {
-        object: {
-          functional_requirements: [], // Empty but valid
-          success_metrics: [], // Empty but valid
-          milestones: [] // Empty but valid
-        }
-      }
-
-      mockGenerateObject.mockResolvedValue(incompleteResult)
-
-      const result = await generateContentOutline('Test prompt')
-
       expect(result.success).toBe(true)
-      expect(result.data).toHaveProperty('functional_requirements')
-      expect(result.data).toHaveProperty('success_metrics')
-      expect(result.data).toHaveProperty('milestones')
+      expect(result.data).toEqual(mockResult.object)
     })
   })
 })

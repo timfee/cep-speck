@@ -6,8 +6,8 @@ import '@testing-library/jest-dom'
 
 // Make React available globally for JSX
 import React from 'react'
-// @ts-ignore
-global.React = React
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+;(global as any).React = React
 
 // Mock Next.js router
 jest.mock('next/navigation', () => ({
