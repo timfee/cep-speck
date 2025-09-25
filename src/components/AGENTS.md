@@ -1,29 +1,14 @@
-# React Components - AI Agent Guide
+# AI Agent Guide (`src/components`)
 
-This directory contains the React components that make up the PRD generation interface.
+This guide provides context for the `src/components` directory. All components must adhere to the standards in the [root `AGENTS.md` guide](../../AGENTS.md).
 
-## Structure
+## Component Structure
 
-- `ui/` - Reusable UI components (shadcn/ui based)
-- `*.tsx` - Feature-specific components for the wizard workflow
+- **`ui/`**: Contains reusable, general-purpose UI components based on `shadcn/ui`. These should be stateless and highly composable.
+- **Feature Components (`*.tsx`)**: Higher-level components that compose UI elements and implement specific features for the wizard workflow (e.g., `prd-wizard.tsx`, `steps.tsx`).
 
-## Key Components
+## Key Guidelines
 
-- `prd-wizard.tsx` - Main wizard interface for PRD generation
-- `wizard.tsx` - Core wizard navigation and state management
-- `steps.tsx` - Individual step components for the workflow
-- `ai-progress-modal.tsx` - AI generation progress display
-
-## UI Components (`ui/`)
-
-Standardized components from shadcn/ui providing:
-- Consistent styling with Tailwind CSS
-- Accessibility features
-- Type-safe props
-
-## Guidelines
-
-- Use Server Components by default (components in this directory are client-side)
-- Follow shadcn/ui patterns for new UI components  
-- Keep business logic in Server Actions when possible
-- Ensure accessibility and responsive design
+- **Server Components First**: Default to Server Components. Only use the `"use client"` directive for components requiring interactivity or browser APIs.
+- **Composition**: Build complex components by composing smaller, single-purpose ones.
+- **Accessibility**: Ensure all components are accessible, using semantic HTML and ARIA attributes where necessary.

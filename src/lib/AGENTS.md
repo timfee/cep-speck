@@ -1,22 +1,13 @@
-# Library Code - AI Agent Guide
+# AI Agent Guide (`src/lib`)
 
-This directory contains core utility functions, AI integrations, and shared business logic.
+This guide provides context for the `src/lib` directory. All code must adhere to the standards in the [root `AGENTS.md` guide](../../AGENTS.md).
 
-## Files
+## Purpose
 
-- `ai.ts` - Google Gemini AI integration, model configuration, and API client setup
-- `utils.ts` - General utility functions and helpers for the application
-- `prompts/` - AI prompt templates for PRD generation workflows
+This directory contains shared libraries, utility functions, and core business logic that is not part of the UI.
 
-## AI Integration
+## Structure
 
-The `ai.ts` file configures Google Gemini models for:
-- PRD content generation
-- Outline creation
-- Content validation and improvement
-
-## Guidelines
-
-- Keep AI configurations centralized in `ai.ts`
-- Shared utilities should be pure functions when possible
-- Type all exports for better IDE support and AI assistance
+- **`ai.ts`**: Core functions for interacting with the AI SDK, including `generateObject` calls and schema definitions (Zod).
+- **`utils.ts`**: Shared utility functions and type definitions used across the application.
+- **`prompts/`**: Contains markdown files with system prompts and specific instructions for guiding AI model behavior.

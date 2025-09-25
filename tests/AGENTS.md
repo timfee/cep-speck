@@ -1,33 +1,13 @@
-# Test Suite - AI Agent Guide
+# AI Agent Guide (`tests`)
 
-Comprehensive test suite organized by test type for better maintainability.
+This guide provides context for the `tests` directory. All tests must adhere to the standards in the [root `AGENTS.md` guide](../AGENTS.md).
 
-## Directory Structure
+## Testing Strategy
 
-- `unit/` - Unit tests for individual functions and components
-- `integration/` - Integration tests for workflows and feature combinations  
-- `e2e/` - End-to-end tests using Playwright for full user journeys
+The project uses a multi-layered testing strategy to ensure code quality and correctness.
 
-## Test Categories
+## Structure
 
-### Unit Tests
-- Component behavior and rendering
-- Utility function correctness
-- AI service integration mocks
-
-### Integration Tests  
-- Workflow state management
-- Component interactions
-- Server Action integration
-
-### E2E Tests
-- Complete user journeys through the PRD wizard
-- Browser-based testing with Playwright
-- Responsive design validation
-
-## Guidelines
-
-- Follow the existing test patterns in each directory
-- Mock AI services in unit/integration tests
-- Use Playwright best practices for E2E tests
-- Ensure tests are deterministic and fast
+- **`e2e/`**: End-to-end tests using Playwright. These simulate real user flows from the browser.
+- **`integration/`**: Integration tests that verify the interaction between multiple components or modules.
+- **`unit/`**: Unit tests that isolate and test individual functions or components in detail.

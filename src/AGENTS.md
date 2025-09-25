@@ -1,24 +1,13 @@
-# Source Code Structure - AI Agent Guide
+# AI Agent Guide (`src`)
 
-This directory contains the main source code for the PRD Generation application.
+This guide provides context for the `src` directory. All code within this directory must adhere to the high-level standards defined in the [root `AGENTS.md` guide](../AGENTS.md).
 
 ## Directory Structure
 
-- `app/` - Next.js App Router pages and layouts
-- `components/` - React components organized by function
-- `lib/` - Utility functions, AI integrations, and shared logic
-- `actions/` - Server Actions for AI generation workflows
-- `eslint-rules/` - Custom ESLint rules for code quality
+The `src` directory contains the main application source code, organized as follows:
 
-## Key Files
-
-- `lib/ai.ts` - AI service integrations and configuration
-- `lib/utils.ts` - Utility functions and helpers
-- `actions/generate-*.ts` - Server Actions for PRD generation workflow
-
-## Development Guidelines
-
-- Follow Next.js 15 App Router patterns
-- Use Server Components by default, Client Components only when necessary
-- Server Actions for AI generation to keep API keys secure
-- Type-safe with TypeScript throughout
+- `app/`: Next.js App Router pages and layouts. This is the entry point for all user-facing routes.
+- `components/`: Shared and feature-specific React components.
+- `lib/`: Utility functions, AI integrations, and other shared logic that is not a React component.
+- `actions/`: Next.js Server Actions that handle backend logic and data mutations.
+- `eslint-rules/`: Custom ESLint rules for maintaining code quality and consistency.

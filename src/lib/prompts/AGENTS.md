@@ -1,23 +1,13 @@
-# AI Prompts - AI Agent Guide
+# AI Agent Guide (`src/lib/prompts`)
 
-This directory contains master prompt templates used for PRD generation workflows.
+This guide provides context for the `src/lib/prompts` directory. All prompts must adhere to the standards in the [root `AGENTS.md` guide](../../../AGENTS.md).
 
-## Files
+## Purpose
 
-- `drafter-master.md` - Main prompt template for generating initial PRD content
-- `refiner.md` - Prompt template for refining and improving generated PRDs  
-- `semantic-evaluator.md` - Prompt for evaluating semantic quality and coherence
-
-## Usage
-
-These prompts are loaded by the AI service to provide consistent, high-quality outputs for:
-
-1. **Drafting**: Creating initial PRD structure and content
-2. **Refining**: Improving existing content based on feedback
-3. **Evaluation**: Assessing quality and suggesting improvements
+This directory contains the markdown files used as system prompts for the AI models. These files are critical for steering the behavior and output quality of the AI.
 
 ## Guidelines
 
-- Keep prompts focused and specific to Chrome Enterprise Premium domain
-- Include clear examples and anti-patterns
-- Maintain consistency with Google PM voice and technical sophistication
+- **Clarity and Precision**: Prompts should be unambiguous and clearly define the desired output format and constraints.
+- **Role-Playing**: Use role-playing (e.g., "You are a senior product manager") to set the context for the AI.
+- **Iterative Testing**: Any changes to prompts must be tested thoroughly to ensure they do not negatively impact the quality of the generated content.
