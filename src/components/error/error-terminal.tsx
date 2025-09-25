@@ -6,17 +6,17 @@ import type { ErrorDetails } from "@/lib/error/types";
 import { cn } from "@/lib/utils";
 
 import {
-  formatErrorTimestamp,
-  hasValidAttemptInfo,
-  isErrorRecoverable,
-} from "./error-recovery-utils";
-
-import {
   AnimatedSpan,
   ConditionalTerminalLine,
   TerminalLine,
   TerminalPrompt,
 } from "./terminal-components";
+
+import {
+  formatErrorTimestamp,
+  hasValidAttemptInfo,
+  isErrorRecoverable,
+} from "./utilities";
 
 interface ErrorTerminalProps {
   error: ErrorDetails;

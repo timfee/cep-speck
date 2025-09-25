@@ -1,4 +1,4 @@
-import { sanitizeOptionalField } from "@/lib/utils/sanitize-utils";
+import { sanitizeOptionalField } from "@/lib/utils";
 
 import type { SuccessMetricFieldDraft } from "./outline-editor-types";
 
