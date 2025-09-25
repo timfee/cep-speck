@@ -1,0 +1,58 @@
+{
+  "id": "prd-v1",
+  "items": [
+    {
+      "id": "word-budget",
+      "kind": "policy",
+      "priority": 90,
+      "severity": "error",
+      "params": {
+        "maxWords": 1800,
+        "warningThreshold": 0.85
+      }
+    },
+    {
+      "id": "banned-text",
+      "kind": "policy", 
+      "priority": 95,
+      "severity": "error",
+      "params": {
+        "exactMatches": [],
+        "regexPatterns": [],
+        "caseSensitive": false
+      }
+    }
+  ],
+  "composition": {
+    "labelPattern": "# {n}. {title}",
+    "headerRegex": "^#+\\s*\\d+\\.\\s+.+$",
+    "sectionCount": 9
+  },
+  "globals": {
+    "bannedText": {
+      "exact": [
+        "synergy",
+        "paradigm shift", 
+        "low-hanging fruit",
+        "circle back",
+        "deep dive",
+        "game changer",
+        "disruptive innovation",
+        "move the needle",
+        "best practices",
+        "scalable solution"
+      ],
+      "regex": [
+        "\\b(very|really|quite)\\s+(good|bad|nice|cool)\\b",
+        "\\b(amazing|awesome|incredible)\\s+(solution|product)\\b"
+      ]
+    },
+    "lexicon": {
+      "user": "customer",
+      "utilize": "use", 
+      "implement": "build",
+      "functionality": "feature"
+    },
+    "targetWordCount": 1600
+  }
+}

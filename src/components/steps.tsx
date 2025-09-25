@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -88,11 +88,100 @@ export function IdeaStep({ data, onDataChange }: StepProps) {
   );
 }
 
-export function OutlineStep({ data, isPending, onGenerate }: StepProps) {
+export function OutlineStep({ data, isPending, onDataChange, onGenerate }: StepProps) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingRequirement, setEditingRequirement] = useState<number | null>(null);
+  const [editingMetric, setEditingMetric] = useState<number | null>(null);
+  const [editingMilestone, setEditingMilestone] = useState<number | null>(null);
+
+  const updateRequirement = (index: number, field: 'title' | 'description', value: string) => {
+    if (!data.outline) return;
+    
+    const updated = { ...data.outline };
+    updated.functional_requirements = [...updated.functional_requirements];
+    updated.functional_requirements[index] = {
+      ...updated.functional_requirements[index],
+      [field]: value
+    };
+    
+    onDataChange({ ...data, outline: updated });
+  };
+
+  const updateMetric = (index: number, field: 'name' | 'target', value: string) => {
+    if (!data.outline) return;
+    
+    const updated = { ...data.outline };
+    updated.success_metrics = [...updated.success_metrics];
+    updated.success_metrics[index] = {
+      ...updated.success_metrics[index],
+      [field]: value
+    };
+    
+    onDataChange({ ...data, outline: updated });
+  };
+
+  const updateMilestone = (index: number, field: 'title' | 'timeline', value: string) => {
+    if (!data.outline) return;
+    
+    const updated = { ...data.outline };
+    updated.milestones = [...updated.milestones];
+    updated.milestones[index] = {
+      ...updated.milestones[index],
+      [field]: value
+    };
+    
+    onDataChange({ ...data, outline: updated });
+  };
+
+  const addRequirement = () => {
+    if (!data.outline) return;
+    
+    const updated = { ...data.outline };
+    updated.functional_requirements = [
+      ...updated.functional_requirements,
+      {
+        id: `req-${updated.functional_requirements.length + 1}`,
+        title: 'New Requirement',
+        description: 'Describe the requirement details...'
+      }
+    ];
+    
+    onDataChange({ ...data, outline: updated });
+  };
+
+  const removeRequirement = (index: number) => {
+    if (!data.outline) return;
+    
+    const updated = { ...data.outline };
+    updated.functional_requirements = updated.functional_requirements.filter((_, i) => i !== index);
+    
+    onDataChange({ ...data, outline: updated });
+  };
+
   return (
     <Card className="p-6">
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold">Content Outline</h2>
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold">Content Outline</h2>
+          {data.outline && (
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsEditing(!isEditing)}
+              >
+                {isEditing ? "Done Editing" : "Edit Outline"}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onGenerate}
+              >
+                Regenerate
+              </Button>
+            </div>
+          )}
+        </div>
 
         {isPending === true ? (
           <div className="text-center py-8">
@@ -104,42 +193,131 @@ export function OutlineStep({ data, isPending, onGenerate }: StepProps) {
         ) : data.outline != null ? (
           <div className="space-y-4">
             <div>
-              <h3 className="font-medium">Functional Requirements</h3>
-              <div className="space-y-2 mt-2">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="font-medium">Functional Requirements</h3>
+                {isEditing && (
+                  <Button variant="outline" size="sm" onClick={addRequirement}>
+                    Add Requirement
+                  </Button>
+                )}
+              </div>
+              <div className="space-y-2">
                 {data.outline.functional_requirements.map((req, i) => (
-                  <div key={i} className="p-3 bg-muted rounded">
-                    <div className="font-medium">{req.title}</div>
-                    <div className="text-sm text-muted-foreground">
-                      {req.description}
-                    </div>
+                  <div key={req.id} className="p-3 bg-muted rounded relative">
+                    {isEditing && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="absolute top-2 right-2 h-6 w-6 p-0 text-red-500 hover:text-red-700"
+                        onClick={() => removeRequirement(i)}
+                      >
+                        ×
+                      </Button>
+                    )}
+                    {isEditing && editingRequirement === i ? (
+                      <div className="space-y-2">
+                        <input
+                          type="text"
+                          value={req.title}
+                          onChange={(e) => updateRequirement(i, 'title', e.target.value)}
+                          className="w-full font-medium bg-transparent border-b border-gray-300 focus:border-primary outline-none"
+                          onBlur={() => setEditingRequirement(null)}
+                          autoFocus
+                        />
+                        <textarea
+                          value={req.description}
+                          onChange={(e) => updateRequirement(i, 'description', e.target.value)}
+                          className="w-full text-sm text-muted-foreground bg-transparent border border-gray-300 rounded p-2 focus:border-primary outline-none"
+                          rows={2}
+                        />
+                      </div>
+                    ) : (
+                      <div
+                        onClick={() => isEditing && setEditingRequirement(i)}
+                        className={isEditing ? "cursor-pointer hover:bg-gray-50 -m-1 p-1 rounded" : ""}
+                      >
+                        <div className="font-medium">{req.title}</div>
+                        <div className="text-sm text-muted-foreground">
+                          {req.description}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
             </div>
 
             <div>
-              <h3 className="font-medium">Success Metrics</h3>
-              <div className="space-y-2 mt-2">
+              <h3 className="font-medium mb-3">Success Metrics</h3>
+              <div className="space-y-2">
                 {data.outline.success_metrics.map((metric, i) => (
-                  <div key={i} className="p-3 bg-muted rounded">
-                    <div className="font-medium">{metric.name}</div>
-                    <div className="text-sm text-muted-foreground">
-                      Target: {metric.target}
-                    </div>
+                  <div key={metric.id} className="p-3 bg-muted rounded">
+                    {isEditing && editingMetric === i ? (
+                      <div className="space-y-2">
+                        <input
+                          type="text"
+                          value={metric.name}
+                          onChange={(e) => updateMetric(i, 'name', e.target.value)}
+                          className="w-full font-medium bg-transparent border-b border-gray-300 focus:border-primary outline-none"
+                          onBlur={() => setEditingMetric(null)}
+                          autoFocus
+                        />
+                        <input
+                          type="text"
+                          value={metric.target}
+                          onChange={(e) => updateMetric(i, 'target', e.target.value)}
+                          className="w-full text-sm text-muted-foreground bg-transparent border border-gray-300 rounded p-2 focus:border-primary outline-none"
+                        />
+                      </div>
+                    ) : (
+                      <div
+                        onClick={() => isEditing && setEditingMetric(i)}
+                        className={isEditing ? "cursor-pointer hover:bg-gray-50 -m-1 p-1 rounded" : ""}
+                      >
+                        <div className="font-medium">{metric.name}</div>
+                        <div className="text-sm text-muted-foreground">
+                          Target: {metric.target}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
             </div>
 
             <div>
-              <h3 className="font-medium">Milestones</h3>
-              <div className="space-y-2 mt-2">
+              <h3 className="font-medium mb-3">Milestones</h3>
+              <div className="space-y-2">
                 {data.outline.milestones.map((milestone, i) => (
-                  <div key={i} className="p-3 bg-muted rounded">
-                    <div className="font-medium">{milestone.title}</div>
-                    <div className="text-sm text-muted-foreground">
-                      {milestone.timeline}
-                    </div>
+                  <div key={milestone.id} className="p-3 bg-muted rounded">
+                    {isEditing && editingMilestone === i ? (
+                      <div className="space-y-2">
+                        <input
+                          type="text"
+                          value={milestone.title}
+                          onChange={(e) => updateMilestone(i, 'title', e.target.value)}
+                          className="w-full font-medium bg-transparent border-b border-gray-300 focus:border-primary outline-none"
+                          onBlur={() => setEditingMilestone(null)}
+                          autoFocus
+                        />
+                        <input
+                          type="text"
+                          value={milestone.timeline}
+                          onChange={(e) => updateMilestone(i, 'timeline', e.target.value)}
+                          className="w-full text-sm text-muted-foreground bg-transparent border border-gray-300 rounded p-2 focus:border-primary outline-none"
+                        />
+                      </div>
+                    ) : (
+                      <div
+                        onClick={() => isEditing && setEditingMilestone(i)}
+                        className={isEditing ? "cursor-pointer hover:bg-gray-50 -m-1 p-1 rounded" : ""}
+                      >
+                        <div className="font-medium">{milestone.title}</div>
+                        <div className="text-sm text-muted-foreground">
+                          {milestone.timeline}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
