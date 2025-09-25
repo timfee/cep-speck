@@ -8,7 +8,7 @@ import unicorn from "eslint-plugin-unicorn";
 import { dirname } from "path";
 import tseslint from "typescript-eslint";
 import { fileURLToPath } from "url";
-import customRules from "./eslint-rules/index.js";
+import customRules from "./src/eslint-rules/index.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -474,6 +474,7 @@ const eslintConfig = [
       "*.config.js",
       "*.config.mjs",
       "eslint-rules/**",
+      "src/eslint-rules/**",
       "scripts/**",
     ],
   },

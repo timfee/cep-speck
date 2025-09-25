@@ -11,7 +11,7 @@ import {
   sanitizeOptionalField,
   WORKFLOW_STEPS,
   type WorkflowStep 
-} from '../src/lib/utils'
+} from '../../src/lib/utils'
 
 describe('Utility Functions', () => {
   describe('cn (className merger)', () => {

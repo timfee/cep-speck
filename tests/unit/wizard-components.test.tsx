@@ -7,7 +7,7 @@ import React from 'react'
 
 import '@testing-library/jest-dom'
 
-import { ProgressTimeline, WizardNavigation } from '../src/components/wizard'
+import { ProgressTimeline, WizardNavigation } from '../../src/components/wizard'
 
 describe('Wizard Components', () => {
   describe('ProgressTimeline', () => {

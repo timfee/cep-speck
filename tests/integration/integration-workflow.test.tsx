@@ -3,7 +3,7 @@ import React from 'react'
 
 import '@testing-library/jest-dom'
 
-import { PRDWizard } from '../src/components/prd-wizard'
+import { PRDWizard } from '../../src/components/prd-wizard'
 
 // Use the global mocks from setup.ts
 const mockGenerateContentOutlineAction = (global as any).mockGenerateContentOutlineAction

@@ -7,7 +7,7 @@ import React from 'react'
 
 import '@testing-library/jest-dom'
 
-import { IdeaStep, OutlineStep, SettingsStep, GenerateStep, CompleteStep } from '../src/components/steps'
+import { IdeaStep, OutlineStep, SettingsStep, GenerateStep, CompleteStep } from '../../src/components/steps'
 
 describe('Individual Step Components', () => {
   describe('IdeaStep', () => {
