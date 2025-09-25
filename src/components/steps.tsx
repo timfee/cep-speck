@@ -5,6 +5,8 @@ import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 
 interface PRDData {
@@ -157,24 +159,116 @@ export function SettingsStep() {
   return (
     <Card className="p-6">
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold">Enterprise Settings</h2>
+        <h2 className="text-xl font-semibold">Business Context</h2>
         <p className="text-muted-foreground">
-          Configure deployment and security settings (optional).
+          Refine your PRD with strategic business context for Chrome Enterprise Premium.
         </p>
 
         <div className="space-y-4">
+          {/* Market Position Widget */}
           <div className="p-4 bg-muted rounded">
-            <h3 className="font-medium">Deployment Configuration</h3>
-            <p className="text-sm text-muted-foreground">
-              Standard cloud deployment selected
-            </p>
+            <h3 className="font-medium mb-2">Market Position</h3>
+            <RadioGroup defaultValue="challenger" className="space-y-2">
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="leader" id="leader" />
+                <Label htmlFor="leader" className="text-sm">Market Leader - Establish dominance</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="challenger" id="challenger" />
+                <Label htmlFor="challenger" className="text-sm">Challenger - Compete against established players</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="niche" id="niche" />
+                <Label htmlFor="niche" className="text-sm">Niche Player - Focus on specialized segments</Label>
+              </div>
+            </RadioGroup>
           </div>
 
+          {/* Stakeholder Priority Widget */}
           <div className="p-4 bg-muted rounded">
-            <h3 className="font-medium">Security Settings</h3>
-            <p className="text-sm text-muted-foreground">
-              Enterprise security policies applied
-            </p>
+            <h3 className="font-medium mb-2">Primary Stakeholder Focus</h3>
+            <RadioGroup defaultValue="buyer" className="space-y-2">
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="buyer" id="buyer" />
+                <Label htmlFor="buyer" className="text-sm">Buyer (CIO/CISO) - Strategic outcomes & ROI</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="admin" id="admin" />
+                <Label htmlFor="admin" className="text-sm">Administrator - Implementation & management</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="user" id="user" />
+                <Label htmlFor="user" className="text-sm">End User - Experience & productivity</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="channel" id="channel" />
+                <Label htmlFor="channel" className="text-sm">Channel Partner - Sales enablement</Label>
+              </div>
+            </RadioGroup>
+          </div>
+
+          {/* Value Proposition Widget */}
+          <div className="p-4 bg-muted rounded">
+            <h3 className="font-medium mb-2">Primary Value Driver</h3>
+            <RadioGroup defaultValue="security" className="space-y-2">
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="security" id="security" />
+                <Label htmlFor="security" className="text-sm">Security - Zero Trust & data protection</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="productivity" id="productivity" />
+                <Label htmlFor="productivity" className="text-sm">Productivity - User efficiency & workflow</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="cost" id="cost" />
+                <Label htmlFor="cost" className="text-sm">Cost Optimization - TCO & operational savings</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="innovation" id="innovation" />
+                <Label htmlFor="innovation" className="text-sm">Innovation - Competitive differentiation</Label>
+              </div>
+            </RadioGroup>
+          </div>
+
+          {/* Enterprise Context Widget */}
+          <div className="p-4 bg-muted rounded">
+            <h3 className="font-medium mb-2">Enterprise Context</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label className="text-sm font-medium">Organization Size</Label>
+                <RadioGroup defaultValue="large" className="mt-1 space-y-1">
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="mid" id="mid" />
+                    <Label htmlFor="mid" className="text-xs">Mid-market (500-5k)</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="large" id="large" />
+                    <Label htmlFor="large" className="text-xs">Enterprise (5k+)</Label>
+                  </div>
+                </RadioGroup>
+              </div>
+              <div>
+                <Label className="text-sm font-medium">Industry</Label>
+                <RadioGroup defaultValue="technology" className="mt-1 space-y-1">
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="financial" id="financial" />
+                    <Label htmlFor="financial" className="text-xs">Financial Services</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="healthcare" id="healthcare" />
+                    <Label htmlFor="healthcare" className="text-xs">Healthcare</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="technology" id="technology" />
+                    <Label htmlFor="technology" className="text-xs">Technology</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="other" id="other" />
+                    <Label htmlFor="other" className="text-xs">Other</Label>
+                  </div>
+                </RadioGroup>
+              </div>
+            </div>
           </div>
         </div>
       </div>
