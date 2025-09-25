@@ -17,12 +17,6 @@
     "test": "pnpm lint:quick && jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "benchmark:streaming": "tsx benchmarks/streaming-benchmark.ts",
-    "complexity": "fta src",
-    "complexity:json": "mkdir -p reports && fta src --format json > reports/fta.json && echo 'Wrote reports/fta.json'",
-    "fta:check": "pnpm run complexity:json && node scripts/check-fta-cap.mjs",
-    "fta:quick": "fta src --format=table",
-    "quality:fta": "node scripts/compare-fta.mjs",
     "verify": "pnpm lint && pnpm test",
     "prepare": "husky"
   },
@@ -42,6 +36,7 @@
     "next": "15.5.3",
     "react": "19.1.1",
     "react-dom": "19.1.1",
+    "server-only": "^0.0.1",
     "shiki": "^3.13.0",
     "tailwind-merge": "^3.3.1",
     "zod": "^4.1.11"
@@ -73,7 +68,6 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-sonarjs": "^3.0.5",
     "eslint-plugin-unicorn": "^61.0.2",
-    "fta-cli": "^3.0.0",
     "husky": "^9.1.7",
     "jest": "^30.1.3",
     "jest-environment-jsdom": "30.1.2",
@@ -83,8 +77,8 @@
     "react-hooks": "^1.0.1",
     "tailwindcss": "^4.1.13",
     "ts-jest": "^29.4.4",
-    "tw-animate-css": "^1.3.8",
     "tsx": "^4.19.2",
+    "tw-animate-css": "^1.3.8",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.44.0"
   }

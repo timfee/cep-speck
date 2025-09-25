@@ -1,11 +1,11 @@
 "use client";
 
-import { StructuredPrdWizard } from "@/workflow/structured-prd-wizard";
+import { PRDWizard } from "@/components/prd-wizard";
 
 export default function Page() {
   return (
-    <div className="p-6">
-      <StructuredPrdWizard />
+    <div className="min-h-screen bg-gray-50">
+      <PRDWizard />
     </div>
   );
 }
