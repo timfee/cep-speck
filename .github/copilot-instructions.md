@@ -1,8 +1,26 @@
-# CEP Spec Validation App
+# Modern PRD Wizard Application
 
-A Next.js application that uses AI to generate and validate Chrome Enterprise Premium (CEP) Product Requirements Documents with a hybrid agentic refinement loop using Google Gemini and modular validation system.
+A Next.js 15 application that uses AI to generate Product Requirements Documents with modern React patterns, Server Components, and Server Actions using Google Gemini.
 
 **ALWAYS reference these instructions first and fallback to search or bash commands ONLY when you encounter unexpected information that does not match the info here.**
+
+## 🚨 CRITICAL: Anti-Patterns Prevention
+
+**BEFORE making ANY changes**, consult the [Anti-Patterns Checklist](./.github/anti-patterns-checklist.md) to avoid introducing complexity.
+
+### **Mandatory File Limits**
+
+- **NEVER exceed 30 TypeScript files** in `src/` directory (excluding tests)
+- **NO directories with <3 files** unless domain-justified (e.g., API routes)
+- **NO barrel files** that only re-export other modules
+- **NO duplicate function implementations**
+
+### **Modern Architecture Requirements**
+
+- **USE Server Components and Server Actions** instead of API routes where possible
+- **USE `'use server'` directive** for server-side functions
+- **USE `server-only` package** to prevent server code leaking to client
+- **PREFER direct imports** over indirection layers
 
 ## Working Effectively
 
