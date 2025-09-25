@@ -65,8 +65,6 @@ This project now includes **comprehensive early error detection** to surface lin
 
 - **`pnpm test`** - Now includes FTA complexity check (fails if files exceed cap of 65)
 - **`pnpm build`** - Now includes FTA complexity check
-- **`pnpm fta:check`** - Dedicated FTA complexity validation
-- **`pnpm fta:quick`** - Quick FTA table view of all complexity scores
 - **`pnpm verify`** - Comprehensive validation (lint + test + FTA + build)
 
 **Current FTA Status:** ⚠️ **Several files currently exceed complexity cap of 65** - these need refactoring.
@@ -96,14 +94,12 @@ Use `pnpm fta:quick` to see current complexity scores and identify files that ne
 
   ```bash
   pnpm lint           # Full linting
-  pnpm lint:quick     # Fast linting with cache
   ```
 
 - **Format the code** (recommended before committing):
 
   ```bash
   pnpm format      # Apply formatting
-  pnpm format:check # Check formatting without changes
   ```
 
 - **Build the application** (26.7s validated) - NEVER CANCEL, set timeout to 10+ minutes:
@@ -116,7 +112,6 @@ Use `pnpm fta:quick` to see current complexity scores and identify files that ne
 
   ```bash
   pnpm dev              # Standard dev server (includes pre-dev lint check)
-  pnpm dev:lint-watch   # Dev server + real-time lint watching (RECOMMENDED)
   ```
 
   - Accesses: http://localhost:3000
@@ -389,7 +384,6 @@ echo "GOOGLE_GENERATIVE_AI_API_KEY=your_key" > .env.local
 
 # Enhanced development workflow (with early error detection)
 pnpm verify           # RECOMMENDED: Comprehensive validation first
-pnpm dev:lint-watch   # RECOMMENDED: Dev server + real-time linting
 pnpm dev              # Standard dev server (includes pre-lint check)
 pnpm test             # Run tests (includes linting)
 pnpm build            # Production build (includes linting)
@@ -397,7 +391,6 @@ pnpm format           # Apply code formatting (prettier)
 
 # Individual commands
 pnpm lint             # Full linting
-pnpm lint:quick       # Fast linting with cache
 pnpm verify           # Comprehensive validation (lint + test + complexity + build)
 
 # Testing validation
