@@ -21,13 +21,13 @@ import {
   getDefaultDraftFor,
   mapItemToDraftFor,
   updateItemInOutline,
-} from "../outline-editor-config";
+} from "./outline-editor-config";
 
 import type {
   DraftForKind,
   EditorKind,
   ItemForKind,
-} from "../outline-editor-types";
+} from "./outline-editor-types";
 
 const editorKinds: EditorKind[] = [
   "functionalRequirement",

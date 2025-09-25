@@ -3,8 +3,8 @@
  * This test file is specifically created to address the AI provider failure issue.
  */
 
-import { GeminiProvider } from "../providers";
-import { ResilientAI } from "../resilient-service";
+import { GeminiProvider } from "./providers";
+import { ResilientAI } from "./resilient-service";
 
 // Mock the AI provider
 class MockGeminiProvider extends GeminiProvider {

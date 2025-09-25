@@ -6,9 +6,9 @@ import {
 } from "@/lib/serializers/workflow-to-spec";
 
 import { serializeWorkflowToOutlinePayload } from "@/lib/serializers/workflow-to-structured-outline";
+import type { WorkflowStateSetter } from "@/lib/utils/progress-calculation";
 // Removed direct import of AI service - this should only run on server side
 import { initialWorkflowState } from "@/lib/utils/workflow-initial-state";
-import type { WorkflowStateSetter } from "@/lib/utils/workflow-state";
 
 import type {
   ContentOutline,

@@ -5,7 +5,7 @@
 import { useCallback, useMemo } from "react";
 
 import { WORKFLOW_STEPS } from "@/config/workflow/steps";
-import type { WorkflowStateSetter } from "@/lib/utils/workflow-state";
+import type { WorkflowStateSetter } from "@/lib/utils/progress-calculation";
 import type { StructuredWorkflowState, WorkflowStep } from "@/types/workflow";
 
 // Get step IDs for easier manipulation

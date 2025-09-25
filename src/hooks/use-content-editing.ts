@@ -7,7 +7,7 @@ import {
   mutateOutline,
 } from "@/lib/utils/content-editing-utils";
 
-import type { WorkflowStateSetter } from "@/lib/utils/workflow-state";
+import type { WorkflowStateSetter } from "@/lib/utils/progress-calculation";
 
 import type {
   CustomerJourney,
