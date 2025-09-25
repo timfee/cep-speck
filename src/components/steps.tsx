@@ -60,8 +60,9 @@ export function IdeaStep({ data, onDataChange }: StepProps) {
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium">Product Description</label>
+          <label htmlFor="product-description" className="text-sm font-medium">Product Description</label>
           <Textarea
+            id="product-description"
             value={data.prompt}
             onChange={(e) => onDataChange({ ...data, prompt: e.target.value })}
             placeholder="Describe your product idea here..."
