@@ -157,7 +157,7 @@ Timeline: MVP in 3 months, full product launch in 6 months`
     fireEvent.click(nextButton)
 
     await waitFor(() => {
-      expect(screen.getByText('Enterprise Settings')).toBeInTheDocument()
+      expect(screen.getByRole('heading', { name: 'Enterprise Settings', level: 2 })).toBeInTheDocument()
       expect(screen.getByText('Step 3 of 5')).toBeInTheDocument()
     })
 
@@ -184,7 +184,7 @@ Timeline: MVP in 3 months, full product launch in 6 months`
       expect(screen.getByText('Real-time AI Analysis')).toBeInTheDocument()
     }, { timeout: 5000 })
 
-    expect(mockGeneratePRDContent).toHaveBeenCalledWith(productDescription)
+    expect(mockGeneratePRDContentAction).toHaveBeenCalledWith(productDescription, {})
 
     // Check priority badges are displayed correctly
     expect(screen.getAllByText('high')).toHaveLength(2)
@@ -238,7 +238,7 @@ Timeline: MVP in 3 months, full product launch in 6 months`
     const generateButton = screen.getByRole('button', { name: /generate outline/i })
     fireEvent.click(generateButton)
 
-    expect(mockGenerateContentOutline).toHaveBeenCalledTimes(2)
+    expect(mockGenerateContentOutlineAction).toHaveBeenCalledTimes(2)
   })
 
   it('should preserve data when navigating backward', async () => {
@@ -259,7 +259,7 @@ Timeline: MVP in 3 months, full product launch in 6 months`
     fireEvent.click(nextButton)
 
     await waitFor(() => {
-      expect(screen.getByText('Enterprise Settings')).toBeInTheDocument()
+      expect(screen.getByRole('heading', { name: 'Enterprise Settings', level: 2 })).toBeInTheDocument()
     })
 
     // Navigate back to the beginning
@@ -297,7 +297,7 @@ Timeline: MVP in 3 months, full product launch in 6 months`
     fireEvent.click(nextButton)
 
     await waitFor(() => {
-      expect(screen.getByText('Enterprise Settings')).toBeInTheDocument()
+      expect(screen.getByRole('heading', { name: 'Enterprise Settings', level: 2 })).toBeInTheDocument()
       expect(screen.getByText('Step 3 of 5')).toBeInTheDocument()
     })
 

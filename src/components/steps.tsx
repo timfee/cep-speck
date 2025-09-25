@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -88,11 +88,100 @@ export function IdeaStep({ data, onDataChange }: StepProps) {
   );
 }
 
-export function OutlineStep({ data, isPending, onGenerate }: StepProps) {
+export function OutlineStep({ data, isPending, onDataChange, onGenerate }: StepProps) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingRequirement, setEditingRequirement] = useState<number | null>(null);
+  const [editingMetric, setEditingMetric] = useState<number | null>(null);
+  const [editingMilestone, setEditingMilestone] = useState<number | null>(null);
+
+  const updateRequirement = (index: number, field: 'title' | 'description', value: string) => {
+    if (!data.outline) return;
+    
+    const updated = { ...data.outline };
+    updated.functional_requirements = [...updated.functional_requirements];
+    updated.functional_requirements[index] = {
+      ...updated.functional_requirements[index],
+      [field]: value
+    };
+    
+    onDataChange({ ...data, outline: updated });
+  };
+
+  const updateMetric = (index: number, field: 'name' | 'target', value: string) => {
+    if (!data.outline) return;
+    
+    const updated = { ...data.outline };
+    updated.success_metrics = [...updated.success_metrics];
+    updated.success_metrics[index] = {
+      ...updated.success_metrics[index],
+      [field]: value
+    };
+    
+    onDataChange({ ...data, outline: updated });
+  };
+
+  const updateMilestone = (index: number, field: 'title' | 'timeline', value: string) => {
+    if (!data.outline) return;
+    
+    const updated = { ...data.outline };
+    updated.milestones = [...updated.milestones];
+    updated.milestones[index] = {
+      ...updated.milestones[index],
+      [field]: value
+    };
+    
+    onDataChange({ ...data, outline: updated });
+  };
+
+  const addRequirement = () => {
+    if (!data.outline) return;
+    
+    const updated = { ...data.outline };
+    updated.functional_requirements = [
+      ...updated.functional_requirements,
+      {
+        id: `req-${updated.functional_requirements.length + 1}`,
+        title: 'New Requirement',
+        description: 'Describe the requirement details...'
+      }
+    ];
+    
+    onDataChange({ ...data, outline: updated });
+  };
+
+  const removeRequirement = (index: number) => {
+    if (!data.outline) return;
+    
+    const updated = { ...data.outline };
+    updated.functional_requirements = updated.functional_requirements.filter((_, i) => i !== index);
+    
+    onDataChange({ ...data, outline: updated });
+  };
+
   return (
     <Card className="p-6">
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold">Content Outline</h2>
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold">Content Outline</h2>
+          {data.outline && (
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsEditing(!isEditing)}
+              >
+                {isEditing ? "Done Editing" : "Edit Outline"}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onGenerate}
+              >
+                Regenerate
+              </Button>
+            </div>
+          )}
+        </div>
 
         {isPending === true ? (
           <div className="text-center py-8">
@@ -104,42 +193,131 @@ export function OutlineStep({ data, isPending, onGenerate }: StepProps) {
         ) : data.outline != null ? (
           <div className="space-y-4">
             <div>
-              <h3 className="font-medium">Functional Requirements</h3>
-              <div className="space-y-2 mt-2">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="font-medium">Functional Requirements</h3>
+                {isEditing && (
+                  <Button variant="outline" size="sm" onClick={addRequirement}>
+                    Add Requirement
+                  </Button>
+                )}
+              </div>
+              <div className="space-y-2">
                 {data.outline.functional_requirements.map((req, i) => (
-                  <div key={i} className="p-3 bg-muted rounded">
-                    <div className="font-medium">{req.title}</div>
-                    <div className="text-sm text-muted-foreground">
-                      {req.description}
-                    </div>
+                  <div key={req.id} className="p-3 bg-muted rounded relative">
+                    {isEditing && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="absolute top-2 right-2 h-6 w-6 p-0 text-red-500 hover:text-red-700"
+                        onClick={() => removeRequirement(i)}
+                      >
+                        ×
+                      </Button>
+                    )}
+                    {isEditing && editingRequirement === i ? (
+                      <div className="space-y-2">
+                        <input
+                          type="text"
+                          value={req.title}
+                          onChange={(e) => updateRequirement(i, 'title', e.target.value)}
+                          className="w-full font-medium bg-transparent border-b border-gray-300 focus:border-primary outline-none"
+                          onBlur={() => setEditingRequirement(null)}
+                          autoFocus
+                        />
+                        <textarea
+                          value={req.description}
+                          onChange={(e) => updateRequirement(i, 'description', e.target.value)}
+                          className="w-full text-sm text-muted-foreground bg-transparent border border-gray-300 rounded p-2 focus:border-primary outline-none"
+                          rows={2}
+                        />
+                      </div>
+                    ) : (
+                      <div
+                        onClick={() => isEditing && setEditingRequirement(i)}
+                        className={isEditing ? "cursor-pointer hover:bg-gray-50 -m-1 p-1 rounded" : ""}
+                      >
+                        <div className="font-medium">{req.title}</div>
+                        <div className="text-sm text-muted-foreground">
+                          {req.description}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
             </div>
 
             <div>
-              <h3 className="font-medium">Success Metrics</h3>
-              <div className="space-y-2 mt-2">
+              <h3 className="font-medium mb-3">Success Metrics</h3>
+              <div className="space-y-2">
                 {data.outline.success_metrics.map((metric, i) => (
-                  <div key={i} className="p-3 bg-muted rounded">
-                    <div className="font-medium">{metric.name}</div>
-                    <div className="text-sm text-muted-foreground">
-                      Target: {metric.target}
-                    </div>
+                  <div key={metric.id} className="p-3 bg-muted rounded">
+                    {isEditing && editingMetric === i ? (
+                      <div className="space-y-2">
+                        <input
+                          type="text"
+                          value={metric.name}
+                          onChange={(e) => updateMetric(i, 'name', e.target.value)}
+                          className="w-full font-medium bg-transparent border-b border-gray-300 focus:border-primary outline-none"
+                          onBlur={() => setEditingMetric(null)}
+                          autoFocus
+                        />
+                        <input
+                          type="text"
+                          value={metric.target}
+                          onChange={(e) => updateMetric(i, 'target', e.target.value)}
+                          className="w-full text-sm text-muted-foreground bg-transparent border border-gray-300 rounded p-2 focus:border-primary outline-none"
+                        />
+                      </div>
+                    ) : (
+                      <div
+                        onClick={() => isEditing && setEditingMetric(i)}
+                        className={isEditing ? "cursor-pointer hover:bg-gray-50 -m-1 p-1 rounded" : ""}
+                      >
+                        <div className="font-medium">{metric.name}</div>
+                        <div className="text-sm text-muted-foreground">
+                          Target: {metric.target}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
             </div>
 
             <div>
-              <h3 className="font-medium">Milestones</h3>
-              <div className="space-y-2 mt-2">
+              <h3 className="font-medium mb-3">Milestones</h3>
+              <div className="space-y-2">
                 {data.outline.milestones.map((milestone, i) => (
-                  <div key={i} className="p-3 bg-muted rounded">
-                    <div className="font-medium">{milestone.title}</div>
-                    <div className="text-sm text-muted-foreground">
-                      {milestone.timeline}
-                    </div>
+                  <div key={milestone.id} className="p-3 bg-muted rounded">
+                    {isEditing && editingMilestone === i ? (
+                      <div className="space-y-2">
+                        <input
+                          type="text"
+                          value={milestone.title}
+                          onChange={(e) => updateMilestone(i, 'title', e.target.value)}
+                          className="w-full font-medium bg-transparent border-b border-gray-300 focus:border-primary outline-none"
+                          onBlur={() => setEditingMilestone(null)}
+                          autoFocus
+                        />
+                        <input
+                          type="text"
+                          value={milestone.timeline}
+                          onChange={(e) => updateMilestone(i, 'timeline', e.target.value)}
+                          className="w-full text-sm text-muted-foreground bg-transparent border border-gray-300 rounded p-2 focus:border-primary outline-none"
+                        />
+                      </div>
+                    ) : (
+                      <div
+                        onClick={() => isEditing && setEditingMilestone(i)}
+                        className={isEditing ? "cursor-pointer hover:bg-gray-50 -m-1 p-1 rounded" : ""}
+                      >
+                        <div className="font-medium">{milestone.title}</div>
+                        <div className="text-sm text-muted-foreground">
+                          {milestone.timeline}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -159,112 +337,83 @@ export function SettingsStep() {
   return (
     <Card className="p-6">
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold">Business Context</h2>
+        <h2 className="text-xl font-semibold">Enterprise Settings</h2>
         <p className="text-muted-foreground">
-          Refine your PRD with strategic business context for Chrome Enterprise Premium.
+          Configure deployment and security settings
         </p>
 
         <div className="space-y-4">
-          {/* Market Position Widget */}
+          {/* Deployment Settings */}
           <div className="p-4 bg-muted rounded">
-            <h3 className="font-medium mb-2">Market Position</h3>
-            <RadioGroup defaultValue="challenger" className="space-y-2">
+            <h3 className="font-medium mb-2">Deployment Configuration</h3>
+            <p className="text-sm text-muted-foreground mb-2">Standard cloud deployment selected</p>
+            <RadioGroup defaultValue="cloud" className="space-y-2">
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="leader" id="leader" />
-                <Label htmlFor="leader" className="text-sm">Market Leader - Establish dominance</Label>
+                <RadioGroupItem value="cloud" id="cloud" />
+                <Label htmlFor="cloud" className="text-sm">Cloud Deployment - Scalable and managed</Label>
               </div>
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="challenger" id="challenger" />
-                <Label htmlFor="challenger" className="text-sm">Challenger - Compete against established players</Label>
+                <RadioGroupItem value="hybrid" id="hybrid" />
+                <Label htmlFor="hybrid" className="text-sm">Hybrid Deployment - Cloud and on-premises</Label>
               </div>
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="niche" id="niche" />
-                <Label htmlFor="niche" className="text-sm">Niche Player - Focus on specialized segments</Label>
+                <RadioGroupItem value="onprem" id="onprem" />
+                <Label htmlFor="onprem" className="text-sm">On-Premises - Full control and compliance</Label>
               </div>
             </RadioGroup>
           </div>
 
-          {/* Stakeholder Priority Widget */}
+          {/* Security Settings */}
           <div className="p-4 bg-muted rounded">
-            <h3 className="font-medium mb-2">Primary Stakeholder Focus</h3>
-            <RadioGroup defaultValue="buyer" className="space-y-2">
+            <h3 className="font-medium mb-2">Security Policies</h3>
+            <p className="text-sm text-muted-foreground mb-2">Enterprise security policies applied</p>
+            <RadioGroup defaultValue="enterprise" className="space-y-2">
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="buyer" id="buyer" />
-                <Label htmlFor="buyer" className="text-sm">Buyer (CIO/CISO) - Strategic outcomes & ROI</Label>
+                <RadioGroupItem value="basic" id="basic" />
+                <Label htmlFor="basic" className="text-sm">Basic Security - Standard protection</Label>
               </div>
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="admin" id="admin" />
-                <Label htmlFor="admin" className="text-sm">Administrator - Implementation & management</Label>
+                <RadioGroupItem value="enterprise" id="enterprise" />
+                <Label htmlFor="enterprise" className="text-sm">Enterprise Security - Advanced protection & compliance</Label>
               </div>
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="user" id="user" />
-                <Label htmlFor="user" className="text-sm">End User - Experience & productivity</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="channel" id="channel" />
-                <Label htmlFor="channel" className="text-sm">Channel Partner - Sales enablement</Label>
+                <RadioGroupItem value="custom" id="custom" />
+                <Label htmlFor="custom" className="text-sm">Custom Security - Tailored security policies</Label>
               </div>
             </RadioGroup>
           </div>
 
-          {/* Value Proposition Widget */}
+          {/* Performance Settings */}
           <div className="p-4 bg-muted rounded">
-            <h3 className="font-medium mb-2">Primary Value Driver</h3>
-            <RadioGroup defaultValue="security" className="space-y-2">
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="security" id="security" />
-                <Label htmlFor="security" className="text-sm">Security - Zero Trust & data protection</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="productivity" id="productivity" />
-                <Label htmlFor="productivity" className="text-sm">Productivity - User efficiency & workflow</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="cost" id="cost" />
-                <Label htmlFor="cost" className="text-sm">Cost Optimization - TCO & operational savings</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="innovation" id="innovation" />
-                <Label htmlFor="innovation" className="text-sm">Innovation - Competitive differentiation</Label>
-              </div>
-            </RadioGroup>
-          </div>
-
-          {/* Enterprise Context Widget */}
-          <div className="p-4 bg-muted rounded">
-            <h3 className="font-medium mb-2">Enterprise Context</h3>
+            <h3 className="font-medium mb-2">Performance Configuration</h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label className="text-sm font-medium">Organization Size</Label>
-                <RadioGroup defaultValue="large" className="mt-1 space-y-1">
+                <Label className="text-sm font-medium">Scaling</Label>
+                <RadioGroup defaultValue="auto" className="mt-1 space-y-1">
                   <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="mid" id="mid" />
-                    <Label htmlFor="mid" className="text-xs">Mid-market (500-5k)</Label>
+                    <RadioGroupItem value="auto" id="auto" />
+                    <Label htmlFor="auto" className="text-xs">Auto-scaling</Label>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="large" id="large" />
-                    <Label htmlFor="large" className="text-xs">Enterprise (5k+)</Label>
+                    <RadioGroupItem value="fixed" id="fixed" />
+                    <Label htmlFor="fixed" className="text-xs">Fixed capacity</Label>
                   </div>
                 </RadioGroup>
               </div>
               <div>
-                <Label className="text-sm font-medium">Industry</Label>
-                <RadioGroup defaultValue="technology" className="mt-1 space-y-1">
+                <Label className="text-sm font-medium">Region</Label>
+                <RadioGroup defaultValue="global" className="mt-1 space-y-1">
                   <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="financial" id="financial" />
-                    <Label htmlFor="financial" className="text-xs">Financial Services</Label>
+                    <RadioGroupItem value="us" id="us" />
+                    <Label htmlFor="us" className="text-xs">US Region</Label>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="healthcare" id="healthcare" />
-                    <Label htmlFor="healthcare" className="text-xs">Healthcare</Label>
+                    <RadioGroupItem value="eu" id="eu" />
+                    <Label htmlFor="eu" className="text-xs">EU Region</Label>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="technology" id="technology" />
-                    <Label htmlFor="technology" className="text-xs">Technology</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="other" id="other" />
-                    <Label htmlFor="other" className="text-xs">Other</Label>
+                    <RadioGroupItem value="global" id="global" />
+                    <Label htmlFor="global" className="text-xs">Global</Label>
                   </div>
                 </RadioGroup>
               </div>
