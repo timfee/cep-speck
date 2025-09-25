@@ -1,6 +1,12 @@
 import { generateObject } from 'ai'
 
-import { generatePRDContent, generateContentOutline } from '@/lib/ai'
+// Don't use the global mock for this test file
+jest.unmock('../../src/lib/ai')
+
+// Mock server-only
+jest.mock('server-only', () => {})
+
+import { generatePRDContent, generateContentOutline } from '../../src/lib/ai'
 
 // Mock the ai module
 jest.mock('ai', () => ({
@@ -9,7 +15,7 @@ jest.mock('ai', () => ({
 
 // Mock the google provider
 jest.mock('@ai-sdk/google', () => ({
-  google: jest.fn(() => 'mock-model'),
+  createGoogleGenerativeAI: jest.fn(() => () => 'mock-model'),
 }))
 
 const mockGenerateObject = generateObject as jest.MockedFunction<typeof generateObject>
