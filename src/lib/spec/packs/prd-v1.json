@@ -21,6 +21,79 @@
         "regexPatterns": [],
         "caseSensitive": false
       }
+    },
+    {
+      "id": "competitor-research",
+      "kind": "policy",
+      "priority": 70,
+      "severity": "warn",
+      "params": {
+        "requireTldr": true,
+        "requireCitations": true,
+        "minCompetitors": 3
+      }
+    },
+    {
+      "id": "label-pattern",
+      "kind": "structure",
+      "priority": 85,
+      "severity": "error",
+      "params": {
+        "pattern": "# {n}. {title}",
+        "requireNumbers": true
+      }
+    },
+    {
+      "id": "metrics-required",
+      "kind": "policy",
+      "priority": 80,
+      "severity": "warn",
+      "params": {
+        "requireUnits": true,
+        "requireTimeframe": true,
+        "requireSourceOfTruth": true,
+        "minMetrics": 3
+      }
+    },
+    {
+      "id": "placeholder-quality",
+      "kind": "linter",
+      "priority": 75,
+      "severity": "error",
+      "params": {
+        "maxPlaceholderLength": 100,
+        "requireSpecificity": true
+      }
+    },
+    {
+      "id": "section-count",
+      "kind": "structure",
+      "priority": 88,
+      "severity": "error",
+      "params": {
+        "exactCount": 9
+      }
+    },
+    {
+      "id": "sku-differentiation",
+      "kind": "policy",
+      "priority": 65,
+      "severity": "warn",
+      "params": {
+        "targetSku": "premium",
+        "requireSkuMention": true
+      }
+    },
+    {
+      "id": "technical-feasibility",
+      "kind": "policy",
+      "priority": 60,
+      "severity": "warn",
+      "params": {
+        "requireImplementation": true,
+        "requireArchitecture": true,
+        "requireConstraints": true
+      }
     }
   ],
   "composition": {
@@ -40,18 +113,28 @@
         "disruptive innovation",
         "move the needle",
         "best practices",
-        "scalable solution"
+        "scalable solution",
+        "leverage",
+        "utilize",
+        "optimize",
+        "streamline",
+        "robust",
+        "cutting-edge",
+        "next-generation"
       ],
       "regex": [
         "\\b(very|really|quite)\\s+(good|bad|nice|cool)\\b",
-        "\\b(amazing|awesome|incredible)\\s+(solution|product)\\b"
+        "\\b(amazing|awesome|incredible)\\s+(solution|product)\\b",
+        "\\b(industry|market)\\s+leading\\b"
       ]
     },
     "lexicon": {
       "user": "customer",
       "utilize": "use", 
       "implement": "build",
-      "functionality": "feature"
+      "functionality": "feature",
+      "leverage": "use",
+      "optimize": "improve"
     },
     "targetWordCount": 1600
   }

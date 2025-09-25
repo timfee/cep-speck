@@ -1,11 +1,7 @@
 "use client";
 
-import { PRDWizard } from "@/components/prd-wizard";
+import { PRDGenerator } from "@/components/prd-generator";
 
 export default function Page() {
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <PRDWizard />
-    </div>
-  );
+  return <PRDGenerator />;
 }
