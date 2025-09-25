@@ -121,10 +121,9 @@ describe('Individual Step Components', () => {
     it('should render settings step correctly', () => {
       render(<SettingsStep />)
 
-      expect(screen.getByText('Enterprise Settings')).toBeInTheDocument()
-      expect(screen.getByText(/Configure deployment and security settings/)).toBeInTheDocument()
-      expect(screen.getByText('Deployment Configuration')).toBeInTheDocument()
-      expect(screen.getByText('Security Settings')).toBeInTheDocument()
+      expect(screen.getByText('Business Context')).toBeInTheDocument()
+      expect(screen.getByText(/Refine your PRD with strategic business context/)).toBeInTheDocument()
+      expect(screen.getByText('Market Position')).toBeInTheDocument()
     })
 
     it('should show predefined configuration options', () => {

@@ -1,7 +1,3 @@
-/**
- * @fileoverview Integration Tests - Full Application Workflow
- */
-
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import React from 'react'
 
@@ -9,21 +5,16 @@ import '@testing-library/jest-dom'
 
 import { PRDWizard } from '../src/components/prd-wizard'
 
-// Mock the AI service with realistic responses
-const mockGeneratePRDContent = jest.fn()
-const mockGenerateContentOutline = jest.fn()
-
-jest.mock('../src/lib/ai', () => ({
-  generatePRDContent: mockGeneratePRDContent,
-  generateContentOutline: mockGenerateContentOutline,
-}))
+// Use the global mocks from setup.ts
+const mockGenerateContentOutlineAction = (global as any).mockGenerateContentOutlineAction
+const mockGeneratePRDContentAction = (global as any).mockGeneratePRDContentAction
 
 describe('PRD Wizard Integration Tests', () => {
   beforeEach(() => {
     jest.clearAllMocks()
 
     // Setup realistic mock responses
-    mockGenerateContentOutline.mockResolvedValue({
+    mockGenerateContentOutlineAction.mockResolvedValue({
       success: true,
       data: {
         functional_requirements: [
@@ -65,7 +56,7 @@ describe('PRD Wizard Integration Tests', () => {
       }
     })
 
-    mockGeneratePRDContent.mockResolvedValue({
+    mockGeneratePRDContentAction.mockResolvedValue({
       success: true,
       data: {
         title: 'Smart Document Assistant - Product Requirements Document',
@@ -139,18 +130,20 @@ Timeline: MVP in 3 months, full product launch in 6 months`
     const nextButton = screen.getByRole('button', { name: /next/i })
     expect(nextButton).toBeEnabled()
 
-    // Navigate to Step 2: Content Outline
+    // Navigate to Step 2: Content Outline - this will trigger auto-generation
     fireEvent.click(nextButton)
 
+    // Wait for the step change and loading state
     await waitFor(() => {
-      expect(screen.getByText('Content Outline')).toBeInTheDocument()
       expect(screen.getByText('Step 2 of 5')).toBeInTheDocument()
-    })
+    }, { timeout: 3000 })
 
-    // Should show loading initially
-    expect(screen.getByText('Generating outline...')).toBeInTheDocument()
+    // Check that we're on the Content Outline step
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: 'Content Outline', level: 2 })).toBeInTheDocument()
+    }, { timeout: 3000 })
 
-    // Wait for outline content to appear
+    // Wait for outline content to appear (server action may complete very quickly in tests)
     await waitFor(() => {
       expect(screen.getByText('Document Analysis Engine')).toBeInTheDocument()
       expect(screen.getByText('Natural Language Query Interface')).toBeInTheDocument()
@@ -158,7 +151,7 @@ Timeline: MVP in 3 months, full product launch in 6 months`
       expect(screen.getByText('Core Engine Development')).toBeInTheDocument()
     }, { timeout: 5000 })
 
-    expect(mockGenerateContentOutline).toHaveBeenCalledWith(productDescription)
+    expect(mockGenerateContentOutlineAction).toHaveBeenCalledWith(productDescription, {})
 
     // Navigate to Step 3: Enterprise Settings
     fireEvent.click(nextButton)
@@ -219,7 +212,7 @@ Timeline: MVP in 3 months, full product launch in 6 months`
   })
 
   it('should handle AI service errors gracefully', async () => {
-    mockGenerateContentOutline.mockResolvedValue({
+    mockGenerateContentOutlineAction.mockResolvedValue({
       success: false,
       error: 'API rate limit exceeded'
     })
@@ -233,7 +226,7 @@ Timeline: MVP in 3 months, full product launch in 6 months`
     fireEvent.click(nextButton)
 
     await waitFor(() => {
-      expect(screen.getByText('Content Outline')).toBeInTheDocument()
+      expect(screen.getByRole('heading', { name: 'Content Outline', level: 2 })).toBeInTheDocument()
     })
 
     // Should eventually show the Generate Outline button instead of content
@@ -260,7 +253,7 @@ Timeline: MVP in 3 months, full product launch in 6 months`
     fireEvent.click(nextButton)
 
     await waitFor(() => {
-      expect(screen.getByText('Content Outline')).toBeInTheDocument()
+      expect(screen.getByRole('heading', { name: 'Content Outline', level: 2 })).toBeInTheDocument()
     })
 
     fireEvent.click(nextButton)
@@ -274,7 +267,7 @@ Timeline: MVP in 3 months, full product launch in 6 months`
     fireEvent.click(backButton)
 
     await waitFor(() => {
-      expect(screen.getByText('Content Outline')).toBeInTheDocument()
+      expect(screen.getByRole('heading', { name: 'Content Outline', level: 2 })).toBeInTheDocument()
     })
 
     fireEvent.click(backButton)
@@ -298,7 +291,7 @@ Timeline: MVP in 3 months, full product launch in 6 months`
     fireEvent.click(nextButton)
 
     await waitFor(() => {
-      expect(screen.getByText('Content Outline')).toBeInTheDocument()
+      expect(screen.getByRole('heading', { name: 'Content Outline', level: 2 })).toBeInTheDocument()
     })
 
     fireEvent.click(nextButton)

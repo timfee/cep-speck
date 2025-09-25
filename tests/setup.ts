@@ -24,7 +24,23 @@ jest.mock("next/navigation", () => ({
   usePathname: () => "/",
 }));
 
-// Mock server actions globally - This will be overridden by individual test files
+// Mock server actions used by components - create simple mock functions
+const mockGenerateContentOutlineAction = jest.fn();
+const mockGeneratePRDContentAction = jest.fn();
+
+// Make mocks available globally for test configuration
+(global as any).mockGenerateContentOutlineAction = mockGenerateContentOutlineAction;
+(global as any).mockGeneratePRDContentAction = mockGeneratePRDContentAction;
+
+jest.mock("../src/actions/generate-outline", () => ({
+  generateContentOutlineAction: mockGenerateContentOutlineAction,
+}));
+
+jest.mock("../src/actions/generate-prd", () => ({
+  generatePRDContentAction: mockGeneratePRDContentAction,
+}));
+
+// Keep the original AI lib mocks for AI service tests
 jest.mock("../src/lib/ai", () => ({
   generatePRDContent: jest.fn(),
   generateContentOutline: jest.fn(),
