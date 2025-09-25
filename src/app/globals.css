@@ -44,6 +44,8 @@
 }
 
 :root {
+  --font-geist-sans: "Inter", system-ui, sans-serif;
+  --font-geist-mono: "Geist Mono", "SFMono-Regular", Menlo, monospace;
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -118,5 +120,33 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* Enhanced Code Editor Styling */
+@layer components {
+  .syntax-highlighting {
+    /* Improved focus state for code editor */
+    @apply focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2;
+  }
+
+  /* Spec format highlighting patterns */
+  .syntax-highlighting:focus {
+    /* Enhanced focus appearance */
+    @apply ring-2 ring-blue-500 ring-offset-2;
+  }
+
+  /* Copy button animation improvements */
+  .copy-button-success {
+    @apply transition-all duration-200 ease-in-out;
+  }
+
+  /* Status badge improvements */
+  .status-valid {
+    @apply bg-green-100 text-green-800 border-green-200;
+  }
+
+  .status-invalid {
+    @apply bg-red-100 text-red-800 border-red-200;
   }
 }

@@ -1,0 +1,13 @@
+{
+	"servers": {
+		"gh": {
+			"url": "https://api.githubcopilot.com/mcp/",
+			"type": "http"
+		},
+		"shadcn": {
+			"url": "https://www.shadcn.io/api/mcp",
+			"type": "http"
+		}
+	},
+	"inputs": []
+}
