@@ -40,11 +40,11 @@ jest.mock("../src/actions/generate-prd", () => ({
   generatePRDContentAction: mockGeneratePRDContentAction,
 }));
 
-// Keep the original AI lib mocks for AI service tests
-jest.mock("../src/lib/ai", () => ({
-  generatePRDContent: jest.fn(),
-  generateContentOutline: jest.fn(),
-}));
+// Keep the original AI lib mocks for AI service tests (commented out for integration tests)
+// jest.mock("../src/lib/ai", () => ({
+//   generatePRDContent: jest.fn(),
+//   generateContentOutline: jest.fn(),
+// }));
 
 // Mock environment variables
 process.env.GOOGLE_GENERATIVE_AI_API_KEY = "test-key";

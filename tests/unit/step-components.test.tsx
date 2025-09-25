@@ -121,9 +121,9 @@ describe('Individual Step Components', () => {
     it('should render settings step correctly', () => {
       render(<SettingsStep />)
 
-      expect(screen.getByText('Business Context')).toBeInTheDocument()
-      expect(screen.getByText(/Refine your PRD with strategic business context/)).toBeInTheDocument()
-      expect(screen.getByText('Market Position')).toBeInTheDocument()
+      expect(screen.getByText('Enterprise Settings')).toBeInTheDocument()
+      expect(screen.getByText(/Configure deployment and security settings/)).toBeInTheDocument()
+      expect(screen.getByText('Deployment Configuration')).toBeInTheDocument()
     })
 
     it('should show predefined configuration options', () => {
@@ -145,7 +145,7 @@ describe('Individual Step Components', () => {
     it('should render generate step correctly', () => {
       render(<GenerateStep data={defaultData} onDataChange={jest.fn()} onGenerate={mockOnGenerate} />)
 
-      expect(screen.getByText('Generate PRD')).toBeInTheDocument()
+      expect(screen.getByRole('heading', { name: 'Generate PRD' })).toBeInTheDocument()
     })
 
     it('should show generate button when no PRD exists', () => {
